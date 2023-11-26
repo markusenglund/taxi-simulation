@@ -12,6 +12,7 @@ public class TaxiBehavior : MonoBehaviour
     private Vector3 destination;
 
 
+
     public static Transform Create(Transform prefab, float x, float z)
     {
         Transform taxi = Instantiate(prefab, new Vector3(x, 0.05f, z), Quaternion.identity);
@@ -49,24 +50,12 @@ public class TaxiBehavior : MonoBehaviour
         waypoints.Enqueue(taxiDestination);
     }
 
-    public Vector3 GetRandomDestination()
-    {
-        bool onNorthFacingStreet = UnityEngine.Random.Range(0, 2) == 0;
-        int randomEveryFourth = UnityEngine.Random.Range(0, 4) * 4;
-        int randomEach = UnityEngine.Random.Range(0, 13);
-
-        int x = onNorthFacingStreet ? randomEveryFourth : randomEach;
-        int z = onNorthFacingStreet ? randomEach : randomEveryFourth;
-
-        return new Vector3(x, 0.05f, z);
-    }
-
     void Update()
     {
         // Return if waypoints is empty
         if (waypoints.Count == 0)
         {
-            destination = GetRandomDestination();
+            destination = Utils.GetRandomPosition();
             SetWaypoints();
             Debug.Log("Taxi starting at " + transform.position + " heading to " + destination);
         }
@@ -86,6 +75,8 @@ public class TaxiBehavior : MonoBehaviour
             waypoints.Dequeue();
 
         }
+
+
     }
 
 

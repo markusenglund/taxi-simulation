@@ -9,26 +9,28 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform streetPrefab;
     [SerializeField] public Transform passengerPrefab;
 
+    private float passengerSpawnRate = 0.01f;
+
+
     void Awake()
     {
 
         GenerateStreetGrid();
-        PassengerBehavior.Create(passengerPrefab, 0, 0);
-        PassengerBehavior.Create(passengerPrefab, 3, 0);
-        PassengerBehavior.Create(passengerPrefab, 4, 3);
 
-        TaxiBehavior.Create(taxiPrefab, 0, 0);
-        TaxiBehavior.Create(taxiPrefab, 4, 0);
-        TaxiBehavior.Create(taxiPrefab, 4, 11);
-        TaxiBehavior.Create(taxiPrefab, 8, 7);
-        TaxiBehavior.Create(taxiPrefab, 0, 3);
-        TaxiBehavior.Create(taxiPrefab, 4, 4);
-        TaxiBehavior.Create(taxiPrefab, 4, 5);
-        TaxiBehavior.Create(taxiPrefab, 8, 8);
-        TaxiBehavior.Create(taxiPrefab, 0, 9);
-        TaxiBehavior.Create(taxiPrefab, 4, 10);
-        TaxiBehavior.Create(taxiPrefab, 4, 10);
-        TaxiBehavior.Create(taxiPrefab, 8, 0);
+        // Create 16 passengers in random places
+        for (int i = 0; i < 16; i++)
+        {
+            Vector3 randomPosition = Utils.GetRandomPosition();
+            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+        }
+
+
+        // Create 16 taxis in random places
+        for (int i = 0; i < 16; i++)
+        {
+            Vector3 randomPosition = Utils.GetRandomPosition();
+            Transform taxi = TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z);
+        }
     }
 
     void GenerateStreetGrid()
@@ -76,6 +78,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        // Spawn a passenger
+        if (Random.Range(0f, 1f) < passengerSpawnRate)
+        {
+            Vector3 randomPosition = Utils.GetRandomPosition();
+            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+        }
     }
 }
