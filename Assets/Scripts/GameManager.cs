@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     [SerializeField] public Transform taxiPrefab;
     [SerializeField] public Transform intersectionPrefab;
     [SerializeField] public Transform streetPrefab;
@@ -14,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
 
         GenerateStreetGrid();
 
@@ -31,6 +35,11 @@ public class GameManager : MonoBehaviour
             Vector3 randomPosition = Utils.GetRandomPosition();
             Transform taxi = TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z);
         }
+    }
+
+    public void HailTaxi(PassengerBehavior passenger)
+    {
+        Debug.Log("Dispatching taxi to " + passenger.transform.position);
     }
 
     void GenerateStreetGrid()
@@ -79,7 +88,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // Spawn a passenger
-        if (Random.Range(0f, 1f) < passengerSpawnRate)
+        if (UnityEngine.Random.Range(0f, 1f) < passengerSpawnRate)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
             Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);

@@ -2,10 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum RideState
+{
+    Waiting,
+    Dispatched,
+    PickedUp,
+    DroppedOff
+}
+
 public class PassengerBehavior : MonoBehaviour
 {
+
+    public GameManager gameManager;
     public static Transform Create(Transform prefab, float x, float z)
     {
+
         Quaternion rotation = Quaternion.identity;
         if (x % 4 == 0)
         {
@@ -22,5 +33,11 @@ public class PassengerBehavior : MonoBehaviour
         Transform passenger = Instantiate(prefab, new Vector3(x, 0.08f, z), rotation);
         passenger.name = "Passenger";
         return passenger;
+    }
+
+    void Start()
+    {
+        // Hail a cab
+        GameManager.Instance.HailTaxi(this);
     }
 }
