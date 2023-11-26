@@ -7,12 +7,28 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform taxiPrefab;
     [SerializeField] public Transform intersectionPrefab;
     [SerializeField] public Transform streetPrefab;
+    [SerializeField] public Transform passengerPrefab;
 
     void Awake()
     {
 
         GenerateStreetGrid();
+        PassengerBehavior.Create(passengerPrefab, 0, 0);
+        PassengerBehavior.Create(passengerPrefab, 3, 0);
+        PassengerBehavior.Create(passengerPrefab, 4, 3);
+
         TaxiBehavior.Create(taxiPrefab, 0, 0);
+        TaxiBehavior.Create(taxiPrefab, 4, 0);
+        TaxiBehavior.Create(taxiPrefab, 4, 11);
+        TaxiBehavior.Create(taxiPrefab, 8, 7);
+        TaxiBehavior.Create(taxiPrefab, 0, 3);
+        TaxiBehavior.Create(taxiPrefab, 4, 4);
+        TaxiBehavior.Create(taxiPrefab, 4, 5);
+        TaxiBehavior.Create(taxiPrefab, 8, 8);
+        TaxiBehavior.Create(taxiPrefab, 0, 9);
+        TaxiBehavior.Create(taxiPrefab, 4, 10);
+        TaxiBehavior.Create(taxiPrefab, 4, 10);
+        TaxiBehavior.Create(taxiPrefab, 8, 0);
     }
 
     void GenerateStreetGrid()
