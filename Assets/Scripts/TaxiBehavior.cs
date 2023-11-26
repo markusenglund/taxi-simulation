@@ -37,8 +37,9 @@ public class TaxiBehavior : MonoBehaviour
         // Read the first waypoint from the queue without dequeuing it
         Vector3 waypoint = waypoints.Peek();
 
+        Vector3 direction = waypoint - transform.position;
+        transform.rotation = Quaternion.LookRotation(direction);
 
-        Debug.Log(waypoint);
         // Move the taxi
         transform.position = Vector3.MoveTowards(transform.position, waypoint, speed * Time.deltaTime);
 
@@ -48,6 +49,7 @@ public class TaxiBehavior : MonoBehaviour
         if (transform.position == waypoint)
         {
             waypoints.Dequeue();
+
         }
     }
 
