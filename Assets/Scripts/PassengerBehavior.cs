@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public enum RideState
+public enum PassengerState
 {
+    Idling,
     Waiting,
     Dispatched,
     PickedUp,
@@ -12,26 +14,33 @@ public enum RideState
 
 public class PassengerBehavior : MonoBehaviour
 {
+    public Vector3 positionActual;
 
-    public GameManager gameManager;
+    public PassengerState state = PassengerState.Idling;
+
     public static Transform Create(Transform prefab, float x, float z)
     {
 
         Quaternion rotation = Quaternion.identity;
+
+        float xVisual = x;
+        float zVisual = z;
+
         if (x % 4 == 0)
         {
-            x = x + .23f;
+            xVisual = x + .23f;
             rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
         }
         if (z % 4 == 0)
         {
-            z = z + .23f;
+            zVisual = z + .23f;
             rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
 
         }
 
-        Transform passenger = Instantiate(prefab, new Vector3(x, 0.08f, z), rotation);
+        Transform passenger = Instantiate(prefab, new Vector3(xVisual, 0.08f, zVisual), rotation);
         passenger.name = "Passenger";
+        passenger.GetComponent<PassengerBehavior>().positionActual = new Vector3(x, 0.08f, z);
         return passenger;
     }
 

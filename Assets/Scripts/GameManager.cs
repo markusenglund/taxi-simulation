@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     private float passengerSpawnRate = 0.01f;
 
+    private List<Transform> taxis = new List<Transform>();
+
 
     void Awake()
     {
@@ -22,7 +24,7 @@ public class GameManager : MonoBehaviour
         GenerateStreetGrid();
 
         // Create 16 passengers in random places
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 0; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
             Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
@@ -30,16 +32,45 @@ public class GameManager : MonoBehaviour
 
 
         // Create 16 taxis in random places
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 4; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
-            Transform taxi = TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z);
+            taxis.Add(TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z));
         }
     }
 
     public void HailTaxi(PassengerBehavior passenger)
     {
-        Debug.Log("Dispatching taxi to " + passenger.transform.position);
+        Debug.Log("Dispatching taxi to " + passenger.positionActual);
+        // Find the closest taxi
+        float closestTaxiDistance = Mathf.Infinity;
+        TaxiBehavior closestTaxi = null;
+
+        foreach (Transform taxi in taxis)
+        {
+            TaxiBehavior taxiBehavior = taxi.GetComponent<TaxiBehavior>();
+            if (taxiBehavior.state != TaxiState.Idling)
+            {
+                continue;
+            }
+            float distance = Math.Abs(taxi.position.x - passenger.positionActual.x) + Math.Abs(taxi.position.z - passenger.transform.position.z);
+            if (distance < closestTaxiDistance)
+            {
+                closestTaxiDistance = distance;
+                closestTaxi = taxiBehavior;
+            }
+        }
+
+
+        if (closestTaxi != null)
+        {
+            closestTaxi.SetDestination(passenger.positionActual, TaxiState.Dispatched);
+            passenger.state = PassengerState.Dispatched;
+        }
+        else
+        {
+            passenger.state = PassengerState.Waiting;
+        }
     }
 
     void GenerateStreetGrid()

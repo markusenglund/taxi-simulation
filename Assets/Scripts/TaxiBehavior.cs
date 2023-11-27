@@ -4,12 +4,21 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum TaxiState
+{
+    Idling,
+    Dispatched,
+    DrivingPassenger
+}
+
 public class TaxiBehavior : MonoBehaviour
 {
     private float speed = 1f;
 
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;
+
+    public TaxiState state = TaxiState.Idling;
 
 
 
@@ -20,7 +29,14 @@ public class TaxiBehavior : MonoBehaviour
         return taxi;
     }
 
-    private void SetWaypoints()
+    public void SetDestination(Vector3 destination, TaxiState state)
+    {
+        this.destination = destination;
+        this.state = state;
+        SetWaypoints();
+    }
+
+    public void SetWaypoints()
     {
         // Set up the waypoints
         Vector3 taxiPosition = transform.position;
@@ -52,12 +68,19 @@ public class TaxiBehavior : MonoBehaviour
 
     void Update()
     {
-        // Return if waypoints is empty
+        // Set a new random destination if the taxi has reached its destination but is idling
         if (waypoints.Count == 0)
         {
-            destination = Utils.GetRandomPosition();
-            SetWaypoints();
-            Debug.Log("Taxi starting at " + transform.position + " heading to " + destination);
+            if (state == TaxiState.Dispatched)
+            {
+                return;
+            }
+            else if (state == TaxiState.Idling)
+            {
+                destination = Utils.GetRandomPosition();
+                SetWaypoints();
+                Debug.Log("Taxi idling at " + transform.position + " heading to " + destination);
+            }
         }
         // Read the first waypoint from the queue without dequeuing it
         Vector3 waypoint = waypoints.Peek();
