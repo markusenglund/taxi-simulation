@@ -3,7 +3,8 @@ guid: 712207c4a236ab04b9b5ef8a574c1044
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - spawnAnimationPrefab: {fileID: 4865135451303388, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

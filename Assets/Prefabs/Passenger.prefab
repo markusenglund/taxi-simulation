@@ -367,6 +367,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 712207c4a236ab04b9b5ef8a574c1044, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnAnimationPrefab: {fileID: 4865135451303388, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
+  positionActual: {x: 0, y: 0, z: 0}
+  id: 0
+  state: 0
 --- !u!1 &2761453102985801203
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,8 @@ public enum PassengerState
 
 public class PassengerBehavior : MonoBehaviour
 {
+
+    [SerializeField] public Transform spawnAnimationPrefab;
     public Vector3 positionActual;
 
     static int incrementalId = 1;
@@ -31,6 +33,7 @@ public class PassengerBehavior : MonoBehaviour
     void Start()
     {
         // Hail a cab
+        Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
         GameManager.Instance.HailTaxi(this);
     }
 
