@@ -79,28 +79,28 @@ public class TaxiBehavior : MonoBehaviour
         Vector3 taxiDestination = destination;
 
         Vector3 taxiDirection = taxiDestination - taxiPosition;
-        if ((taxiPosition.x % 4 == 0 && taxiDirection.x == 0) || (taxiPosition.z % 4 == 0 && taxiDirection.z == 0))
+        if ((taxiPosition.x % Utils.blockSize == 0 && taxiDirection.x == 0) || (taxiPosition.z % Utils.blockSize == 0 && taxiDirection.z == 0))
         {
             waypoints.Enqueue(taxiDestination);
             return;
         }
-        if (taxiPosition.x % 4 != 0)
+        if (taxiPosition.x % Utils.blockSize != 0)
         {
-            float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / 4) * 4 : Mathf.Floor(taxiDestination.x / 4) * 4;
+            float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.x / Utils.blockSize) * Utils.blockSize;
             waypoints.Enqueue(new Vector3(bestFirstIntersectionX, 0.05f, taxiPosition.z));
-            if (taxiDestination.x % 4 != 0)
+            if (taxiDestination.x % Utils.blockSize != 0)
             {
-                float bestSecondIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / 4) * 4 : Mathf.Floor(taxiDestination.z / 4) * 4;
+                float bestSecondIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.z / Utils.blockSize) * Utils.blockSize;
                 waypoints.Enqueue(new Vector3(bestFirstIntersectionX, 0.05f, bestSecondIntersectionZ));
             }
         }
         else
         {
-            float bestFirstIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / 4) * 4 : Mathf.Floor(taxiDestination.z / 4) * 4;
+            float bestFirstIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.z / Utils.blockSize) * Utils.blockSize;
             waypoints.Enqueue(new Vector3(taxiPosition.x, 0.05f, bestFirstIntersectionZ));
-            if (taxiDestination.z % 4 != 0)
+            if (taxiDestination.z % Utils.blockSize != 0)
             {
-                float bestSecondIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / 4) * 4 : Mathf.Floor(taxiDestination.x / 4) * 4;
+                float bestSecondIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.x / Utils.blockSize) * Utils.blockSize;
                 waypoints.Enqueue(new Vector3(bestSecondIntersectionX, 0.05f, bestFirstIntersectionZ));
             }
         }

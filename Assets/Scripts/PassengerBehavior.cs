@@ -43,12 +43,12 @@ public class PassengerBehavior : MonoBehaviour
         float xVisual = x;
         float zVisual = z;
 
-        if (x % 4 == 0)
+        if (x % (Utils.blockSize) == 0)
         {
             xVisual = x + .23f;
             rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
         }
-        if (z % 4 == 0)
+        if (z % (Utils.blockSize) == 0)
         {
             zVisual = z + .23f;
             rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
