@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
 public enum TaxiState
 {
     Idling,
     Dispatched,
     DrivingPassenger
 }
+
 
 public class TaxiBehavior : MonoBehaviour
 {
@@ -20,7 +22,15 @@ public class TaxiBehavior : MonoBehaviour
 
     public TaxiState state = TaxiState.Idling;
 
+    static int incrementalId = 1;
+    public int id;
 
+
+    void Awake()
+    {
+        id = incrementalId;
+        incrementalId += 1;
+    }
 
     public static Transform Create(Transform prefab, float x, float z)
     {
@@ -28,6 +38,7 @@ public class TaxiBehavior : MonoBehaviour
         taxi.name = "Taxi";
         return taxi;
     }
+
 
     public void SetDestination(Vector3 destination, TaxiState state)
     {
@@ -79,7 +90,7 @@ public class TaxiBehavior : MonoBehaviour
             {
                 destination = Utils.GetRandomPosition();
                 SetWaypoints();
-                Debug.Log("Taxi idling at " + transform.position + " heading to " + destination);
+                Debug.Log("Taxi " + id + " idling at " + transform.position + " heading to " + destination);
             }
         }
         // Read the first waypoint from the queue without dequeuing it

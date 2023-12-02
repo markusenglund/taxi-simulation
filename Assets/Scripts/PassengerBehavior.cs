@@ -16,7 +16,24 @@ public class PassengerBehavior : MonoBehaviour
 {
     public Vector3 positionActual;
 
+    static int incrementalId = 1;
+    public int id;
+
     public PassengerState state = PassengerState.Idling;
+
+
+    void Awake()
+    {
+        id = incrementalId;
+        incrementalId += 1;
+    }
+
+    void Start()
+    {
+        // Hail a cab
+        GameManager.Instance.HailTaxi(this);
+    }
+
 
     public static Transform Create(Transform prefab, float x, float z)
     {
@@ -40,13 +57,9 @@ public class PassengerBehavior : MonoBehaviour
 
         Transform passenger = Instantiate(prefab, new Vector3(xVisual, 0.08f, zVisual), rotation);
         passenger.name = "Passenger";
-        passenger.GetComponent<PassengerBehavior>().positionActual = new Vector3(x, 0.08f, z);
+        PassengerBehavior passengerComponent = passenger.GetComponent<PassengerBehavior>();
+        passengerComponent.positionActual = new Vector3(x, 0.08f, z);
         return passenger;
     }
 
-    void Start()
-    {
-        // Hail a cab
-        GameManager.Instance.HailTaxi(this);
-    }
 }

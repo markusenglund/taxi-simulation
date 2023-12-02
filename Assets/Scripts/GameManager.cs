@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
         GenerateStreetGrid();
 
-        // Create 16 passengers in random places
+        // Create passengers in random places
         for (int i = 0; i < 0; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
@@ -31,8 +31,8 @@ public class GameManager : MonoBehaviour
         }
 
 
-        // Create 16 taxis in random places
-        for (int i = 0; i < 4; i++)
+        // Create taxis in random places
+        for (int i = 0; i < 1; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
             taxis.Add(TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z));
@@ -41,7 +41,6 @@ public class GameManager : MonoBehaviour
 
     public void HailTaxi(PassengerBehavior passenger)
     {
-        Debug.Log("Dispatching taxi to " + passenger.positionActual);
         // Find the closest taxi
         float closestTaxiDistance = Mathf.Infinity;
         TaxiBehavior closestTaxi = null;
@@ -66,10 +65,13 @@ public class GameManager : MonoBehaviour
         {
             closestTaxi.SetDestination(passenger.positionActual, TaxiState.Dispatched);
             passenger.state = PassengerState.Dispatched;
+            Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+
         }
         else
         {
             passenger.state = PassengerState.Waiting;
+            Debug.Log("No taxis available for passenger " + passenger.id);
         }
     }
 
