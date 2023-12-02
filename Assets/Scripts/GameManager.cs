@@ -22,21 +22,22 @@ public class GameManager : MonoBehaviour
         Instance = this;
 
         GenerateStreetGrid();
-
-        // Create passengers in random places
-        for (int i = 0; i < 0; i++)
-        {
-            Vector3 randomPosition = Utils.GetRandomPosition();
-            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
-        }
-
-
         // Create taxis in random places
         for (int i = 0; i < 1; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
             taxis.Add(TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z));
         }
+
+        StartCoroutine(createPassengers());
+    }
+
+    IEnumerator createPassengers()
+    {
+
+        yield return new WaitForSeconds(1);
+        Vector3 randomPosition = Utils.GetRandomPosition();
+        Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
     }
 
     public void HailTaxi(PassengerBehavior passenger)
@@ -111,20 +112,4 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // Spawn a passenger
-        if (UnityEngine.Random.Range(0f, 1f) < passengerSpawnRate)
-        {
-            Vector3 randomPosition = Utils.GetRandomPosition();
-            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
-        }
-    }
 }

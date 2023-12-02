@@ -49,11 +49,19 @@ public class TaxiBehavior : MonoBehaviour
 
     public void SetWaypoints()
     {
+        // Clear the waypoints queue
+        waypoints.Clear();
+
         // Set up the waypoints
         Vector3 taxiPosition = transform.position;
         Vector3 taxiDestination = destination;
 
         Vector3 taxiDirection = taxiDestination - taxiPosition;
+        if ((taxiPosition.x % 4 == 0 && taxiDirection.x == 0) || (taxiPosition.z % 4 == 0 && taxiDirection.z == 0))
+        {
+            waypoints.Enqueue(taxiDestination);
+            return;
+        }
         if (taxiPosition.x % 4 != 0)
         {
             float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / 4) * 4 : Mathf.Floor(taxiDestination.x / 4) * 4;
