@@ -39,11 +39,33 @@ public class TaxiBehavior : MonoBehaviour
         return taxi;
     }
 
+    public void SetState(TaxiState state)
+    {
+        this.state = state;
+        // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer to the material in Assets/CityBuilder/Models/StreetModels/TrafficLight.fbx
+        Transform taxiVisual = transform.Find("TaxiVisual");
+        Transform taxi = taxiVisual.Find("Taxi");
+        MeshRenderer meshRenderer = taxi.GetComponent<MeshRenderer>();
+        Material[] materials = meshRenderer.materials;
+        if (state == TaxiState.Idling)
+        {
+            materials[1].color = Color.black;
+        }
+        else if (state == TaxiState.Dispatched)
+        {
+            materials[1].color = Color.red;
+        }
+        else if (state == TaxiState.DrivingPassenger)
+        {
+            materials[1].color = Color.green;
+        }
+    }
+
 
     public void SetDestination(Vector3 destination, TaxiState state)
     {
         this.destination = destination;
-        this.state = state;
+        SetState(state);
         SetWaypoints();
     }
 

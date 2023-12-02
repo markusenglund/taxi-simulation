@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac85157f5c3993a479dea55f5f8f8140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
+  id: 0
 --- !u!1001 &3416317258946059232
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101,6 +103,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TaxiVisual
       objectReference: {fileID: 0}
+    - target: {fileID: 7576076812393720882, guid: 45201c88cdabcc740bc9233679ec2cf7, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576076812393720882, guid: 45201c88cdabcc740bc9233679ec2cf7, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: -1580535799172915004, guid: b4fd9af65ae3a8649a6b10d7e9bfb87e, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
