@@ -109,6 +109,8 @@ public class TaxiBehavior : MonoBehaviour
 
     void Update()
     {
+        Debug.DrawLine(transform.position, destination, Color.red);
+
         // Set a new random destination if the taxi has reached its destination but is idling
         if (waypoints.Count == 0)
         {
