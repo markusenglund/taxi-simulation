@@ -56,6 +56,7 @@ public class TaxiBehavior : MonoBehaviour
         else if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
         {
             this.passenger.transform.parent = null;
+            Destroy(this.passenger.transform.gameObject);
         }
         this.passenger = passenger;
 
