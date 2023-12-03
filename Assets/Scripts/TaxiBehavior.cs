@@ -41,10 +41,31 @@ public class TaxiBehavior : MonoBehaviour
         return taxi;
     }
 
-    public void SetState(TaxiState state)
+    public void SetState(TaxiState newState, Vector3 destination, PassengerBehavior passenger = null)
     {
-        this.state = state;
-        // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer to the material in Assets/CityBuilder/Models/StreetModels/TrafficLight.fbx
+        // Put the passenger inside the taxi cab
+        if (newState == TaxiState.DrivingPassenger)
+        {
+            passenger.transform.SetParent(transform);
+            passenger.transform.localPosition = new Vector3(0, 0.08f, 0);
+        }
+        else if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
+        {
+            this.passenger.transform.parent = null;
+        }
+        this.passenger = passenger;
+
+        SetDestination(destination);
+        SetTaxiColor(newState);
+
+
+        this.state = newState;
+    }
+
+    private void SetTaxiColor(TaxiState state)
+    {
+        // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer
+
         Transform taxiVisual = transform.Find("TaxiVisual");
         Transform taxi = taxiVisual.Find("Taxi");
         MeshRenderer meshRenderer = taxi.GetComponent<MeshRenderer>();
@@ -64,17 +85,14 @@ public class TaxiBehavior : MonoBehaviour
     }
 
 
-    public void SetDestination(Vector3 destination, TaxiState state, PassengerBehavior passenger = null)
+    public void SetDestination(Vector3 destination)
     {
         this.destination = destination;
-        this.passenger = passenger;
-        SetState(state);
         SetWaypoints();
     }
 
     public void SetWaypoints()
     {
-        // Clear the waypoints queue
         waypoints.Clear();
 
         // Set up the waypoints
@@ -119,12 +137,29 @@ public class TaxiBehavior : MonoBehaviour
         {
             if (state == TaxiState.Dispatched)
             {
-                return;
+                // TODO: The destination should be read from the passenger
+                Vector3 newDestination = Utils.GetRandomPosition();
+                SetState(TaxiState.DrivingPassenger, newDestination, passenger);
+            }
+            else if (state == TaxiState.DrivingPassenger)
+            {
+                // Check if there are waiting passengers
+                PassengerBehavior nextPassenger = GameManager.Instance.GetNextPassenger();
+                if (nextPassenger != null)
+                {
+                    SetState(TaxiState.Dispatched, nextPassenger.positionActual, nextPassenger);
+                    nextPassenger.SetState(PassengerState.Dispatched, this);
+                }
+                else
+                {
+                    Vector3 newDestination = Utils.GetRandomPosition();
+                    SetState(TaxiState.Idling, transform.position);
+                }
             }
             else if (state == TaxiState.Idling)
             {
-                destination = Utils.GetRandomPosition();
-                SetDestination(destination, TaxiState.Idling);
+                Vector3 newDestination = Utils.GetRandomPosition();
+                SetDestination(newDestination);
             }
         }
         // Read the first waypoint from the queue without dequeuing it
@@ -133,10 +168,8 @@ public class TaxiBehavior : MonoBehaviour
         Vector3 direction = waypoint - transform.position;
         transform.rotation = Quaternion.LookRotation(direction);
 
-        // Move the taxi
         transform.position = Vector3.MoveTowards(transform.position, waypoint, speed * Time.deltaTime);
 
-        // Log the taxi's position
         // If the taxi has reached the first waypoint, remove the first endpoint from the endpoints array
         if (transform.position == waypoint)
         {

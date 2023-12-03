@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     private float passengerSpawnRate = 0.01f;
 
     private List<Transform> taxis = new List<Transform>();
+    private Queue<PassengerBehavior> waitingPassengers = new Queue<PassengerBehavior>();
 
 
     void Awake()
@@ -45,6 +46,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public PassengerBehavior GetNextPassenger()
+    {
+        // TODO: This creates an inefficiency, since the passenger at the front of the queue might not be the closest one to the taxi
+        if (waitingPassengers.Count > 0)
+        {
+            return waitingPassengers.Dequeue();
+        }
+        return null;
+    }
+
     public void HailTaxi(PassengerBehavior passenger)
     {
         // Find the closest taxi
@@ -69,7 +80,7 @@ public class GameManager : MonoBehaviour
 
         if (closestTaxi != null)
         {
-            closestTaxi.SetDestination(passenger.positionActual, TaxiState.Dispatched, passenger);
+            closestTaxi.SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
             passenger.SetState(PassengerState.Dispatched, closestTaxi);
             Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
 
@@ -77,7 +88,8 @@ public class GameManager : MonoBehaviour
         else
         {
             passenger.SetState(PassengerState.Waiting);
-            Debug.Log("No taxis available for passenger " + passenger.id);
+            waitingPassengers.Enqueue(passenger);
+            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number" + waitingPassengers.Count);
         }
     }
 
