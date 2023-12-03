@@ -152,9 +152,6 @@ public class TaxiBehavior : MonoBehaviour
             {
                 SetState(TaxiState.WaitingForPassenger, transform.position, passenger);
                 StartCoroutine(waitForPassenger());
-                // TODO: The destination should be read from the passenger
-                // Vector3 newDestination = Utils.GetRandomPosition();
-                // SetState(TaxiState.DrivingPassenger, newDestination, passenger);
             }
             else if (state == TaxiState.DrivingPassenger)
             {

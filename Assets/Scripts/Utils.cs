@@ -15,11 +15,17 @@ public class Utils : MonoBehaviour
     public static Vector3 GetRandomPosition()
     {
         bool onNorthFacingStreet = UnityEngine.Random.Range(0, 2) == 0;
-        int randomEveryIntersection = UnityEngine.Random.Range(0, onNorthFacingStreet ? numXIntersections : numZIntersections) * blockSize;
-        int randomEach = UnityEngine.Random.Range(0, onNorthFacingStreet ? numTilesX : numTilesZ);
+        int randomIntersection = UnityEngine.Random.Range(0, onNorthFacingStreet ? numXIntersections : numZIntersections) * blockSize;
 
-        int x = onNorthFacingStreet ? randomEveryIntersection : randomEach;
-        int z = onNorthFacingStreet ? randomEach : randomEveryIntersection;
+        // Get a random position on the street grid that does not include the intersections
+        float randomNonIntersection;
+        do
+        {
+            randomNonIntersection = (float)UnityEngine.Random.Range(0, onNorthFacingStreet ? numTilesX * 3 : numTilesZ * 3) / 3f;
+        } while (randomNonIntersection % blockSize == 0);
+
+        float x = onNorthFacingStreet ? randomIntersection : randomNonIntersection;
+        float z = onNorthFacingStreet ? randomNonIntersection : randomIntersection;
 
         return new Vector3(x, 0.05f, z);
     }
