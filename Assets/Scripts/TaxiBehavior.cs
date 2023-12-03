@@ -47,7 +47,10 @@ public class TaxiBehavior : MonoBehaviour
         if (newState == TaxiState.DrivingPassenger)
         {
             passenger.transform.SetParent(transform);
-            passenger.transform.localPosition = new Vector3(0, 0.08f, 0);
+            float middleTaxiX = 0.09f;
+            float topTaxiY = 0.08f;
+            passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
+            passenger.transform.localRotation = Quaternion.identity;
         }
         else if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
         {
