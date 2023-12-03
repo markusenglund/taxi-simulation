@@ -9,6 +9,7 @@ public enum TaxiState
 {
     Idling,
     Dispatched,
+    WaitingForPassenger,
     DrivingPassenger
 }
 
@@ -131,6 +132,14 @@ public class TaxiBehavior : MonoBehaviour
         waypoints.Enqueue(taxiDestination);
     }
 
+    IEnumerator waitForPassenger()
+    {
+        yield return new WaitForSeconds(1);
+        Vector3 newDestination = Utils.GetRandomPosition();
+        SetState(TaxiState.DrivingPassenger, newDestination, passenger);
+
+    }
+
     void Update()
     {
         Debug.DrawLine(transform.position, destination, Color.red);
@@ -140,9 +149,11 @@ public class TaxiBehavior : MonoBehaviour
         {
             if (state == TaxiState.Dispatched)
             {
+                SetState(TaxiState.WaitingForPassenger, transform.position, passenger);
+                StartCoroutine(waitForPassenger());
                 // TODO: The destination should be read from the passenger
-                Vector3 newDestination = Utils.GetRandomPosition();
-                SetState(TaxiState.DrivingPassenger, newDestination, passenger);
+                // Vector3 newDestination = Utils.GetRandomPosition();
+                // SetState(TaxiState.DrivingPassenger, newDestination, passenger);
             }
             else if (state == TaxiState.DrivingPassenger)
             {
@@ -155,29 +166,40 @@ public class TaxiBehavior : MonoBehaviour
                 }
                 else
                 {
-                    Vector3 newDestination = Utils.GetRandomPosition();
                     SetState(TaxiState.Idling, transform.position);
                 }
             }
             else if (state == TaxiState.Idling)
             {
-                Vector3 newDestination = Utils.GetRandomPosition();
-                SetDestination(newDestination);
+                // Just stay still
             }
         }
-        // Read the first waypoint from the queue without dequeuing it
-        Vector3 waypoint = waypoints.Peek();
-
-        Vector3 direction = waypoint - transform.position;
-        transform.rotation = Quaternion.LookRotation(direction);
-
-        transform.position = Vector3.MoveTowards(transform.position, waypoint, speed * Time.deltaTime);
-
-        // If the taxi has reached the first waypoint, remove the first endpoint from the endpoints array
-        if (transform.position == waypoint)
+        else
         {
-            waypoints.Dequeue();
 
+            // Read the first waypoint from the queue without dequeuing it
+            Vector3 waypoint = waypoints.Peek();
+
+            Vector3 direction = waypoint - transform.position;
+            transform.rotation = Quaternion.LookRotation(direction);
+
+            // Distance delta should be lower if the taxi is close to the destination
+            float distanceDelta = speed * Time.deltaTime;
+
+            // If the taxi is close to the destination, set the distance delta to 0.01f
+            if ((destination - transform.position).magnitude < 0.3f)
+            {
+                distanceDelta = distanceDelta / 3;
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, waypoint, distanceDelta);
+
+            // If the taxi has reached the first waypoint, remove the first endpoint from the endpoints array
+            if (transform.position == waypoint)
+            {
+                waypoints.Dequeue();
+
+            }
         }
 
 
