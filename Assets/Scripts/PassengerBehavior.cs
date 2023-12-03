@@ -18,6 +18,8 @@ public class PassengerBehavior : MonoBehaviour
     [SerializeField] public Transform spawnAnimationPrefab;
     public Vector3 positionActual;
 
+    private TaxiBehavior taxi;
+
     static int incrementalId = 1;
     public int id;
 
@@ -65,4 +67,11 @@ public class PassengerBehavior : MonoBehaviour
         return passenger;
     }
 
+
+    // TODO: Implement a method that sets the state of the passenger and allocates a taxi car to it
+    public void SetState(PassengerState state, TaxiBehavior taxi = null)
+    {
+        this.state = state;
+        this.taxi = taxi;
+    }
 }

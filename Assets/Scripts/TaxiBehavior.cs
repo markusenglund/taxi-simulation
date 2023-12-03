@@ -20,6 +20,8 @@ public class TaxiBehavior : MonoBehaviour
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;
 
+    private PassengerBehavior passenger;
+
     public TaxiState state = TaxiState.Idling;
 
     static int incrementalId = 1;
@@ -62,9 +64,10 @@ public class TaxiBehavior : MonoBehaviour
     }
 
 
-    public void SetDestination(Vector3 destination, TaxiState state)
+    public void SetDestination(Vector3 destination, TaxiState state, PassengerBehavior passenger = null)
     {
         this.destination = destination;
+        this.passenger = passenger;
         SetState(state);
         SetWaypoints();
     }
@@ -121,8 +124,7 @@ public class TaxiBehavior : MonoBehaviour
             else if (state == TaxiState.Idling)
             {
                 destination = Utils.GetRandomPosition();
-                SetWaypoints();
-                Debug.Log("Taxi " + id + " idling at " + transform.position + " heading to " + destination);
+                SetDestination(destination, TaxiState.Idling);
             }
         }
         // Read the first waypoint from the queue without dequeuing it

@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
         Utils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
         // Create taxis in random places
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 4; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
             taxis.Add(TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z));
@@ -35,9 +35,14 @@ public class GameManager : MonoBehaviour
     IEnumerator createPassengers()
     {
 
-        yield return new WaitForSeconds(1);
-        Vector3 randomPosition = Utils.GetRandomPosition();
-        Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+        while (true)
+        {
+            // Get a random number between 1 and 8
+            int random = UnityEngine.Random.Range(0, 8);
+            yield return new WaitForSeconds(random);
+            Vector3 randomPosition = Utils.GetRandomPosition();
+            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+        }
     }
 
     public void HailTaxi(PassengerBehavior passenger)
@@ -64,14 +69,14 @@ public class GameManager : MonoBehaviour
 
         if (closestTaxi != null)
         {
-            closestTaxi.SetDestination(passenger.positionActual, TaxiState.Dispatched);
-            passenger.state = PassengerState.Dispatched;
+            closestTaxi.SetDestination(passenger.positionActual, TaxiState.Dispatched, passenger);
+            passenger.SetState(PassengerState.Dispatched, closestTaxi);
             Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
 
         }
         else
         {
-            passenger.state = PassengerState.Waiting;
+            passenger.SetState(PassengerState.Waiting);
             Debug.Log("No taxis available for passenger " + passenger.id);
         }
     }
