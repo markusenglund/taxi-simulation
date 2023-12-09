@@ -36,8 +36,7 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-            // Get a random number between 1 and 8
-            int random = UnityEngine.Random.Range(0, 3);
+            int random = UnityEngine.Random.Range(0, 4);
             yield return new WaitForSeconds(random);
             Vector3 randomPosition = Utils.GetRandomPosition();
             Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
@@ -99,12 +98,11 @@ public class GameManager : MonoBehaviour
         (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
         if (closestTaxi != null)
         {
-            float expectedWaitingTime = closestTaxiDistance / TaxiBehavior.speed;
+            float expectedWaitingTime = (closestTaxiDistance / TaxiBehavior.speed) + 1.6f;
             return expectedWaitingTime;
         }
 
-        // TODO: Create an accurate estimation of avgTimePerTrip
-        float avgTimePerTrip = 20f;
+        float avgTimePerTrip = 18f;
         float numTaxis = taxis.Count;
         float queueSize = waitingPassengers.Count;
 

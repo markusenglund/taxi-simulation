@@ -28,6 +28,8 @@ public class PassengerBehavior : MonoBehaviour
     // TODO: Make this value a random number in some reasonable range
     private float timeWillingToWait = 30f;
 
+    private float expectedPickupTime;
+
 
     void Awake()
     {
@@ -48,6 +50,7 @@ public class PassengerBehavior : MonoBehaviour
         if (expectedWaitingTime < timeWillingToWait)
         {
             GameManager.Instance.HailTaxi(this);
+            expectedPickupTime = Time.time + expectedWaitingTime;
         }
         else
         {
@@ -89,10 +92,15 @@ public class PassengerBehavior : MonoBehaviour
     }
 
 
-    // TODO: Implement a method that sets the state of the passenger and allocates a taxi car to it
     public void SetState(PassengerState state, TaxiBehavior taxi = null)
     {
         this.state = state;
         this.taxi = taxi;
+
+        if (state == PassengerState.PickedUp)
+        {
+            float actualPickupTime = Time.time;
+            Debug.Log("Passenger " + id + " was picked up at " + actualPickupTime + ", expected pickup time was " + expectedPickupTime + ", difference is " + (actualPickupTime - expectedPickupTime));
+        }
     }
 }

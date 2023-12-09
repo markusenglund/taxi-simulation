@@ -138,6 +138,7 @@ public class TaxiBehavior : MonoBehaviour
         yield return new WaitForSeconds(1);
         Vector3 newDestination = Utils.GetRandomPosition();
         SetState(TaxiState.DrivingPassenger, newDestination, passenger);
+        passenger.SetState(PassengerState.PickedUp, this);
 
     }
 
