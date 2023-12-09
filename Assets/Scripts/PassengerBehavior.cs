@@ -25,6 +25,9 @@ public class PassengerBehavior : MonoBehaviour
 
     public PassengerState state = PassengerState.Idling;
 
+    // TODO: Make this value a random number in some reasonable range
+    private float timeWillingToWait = 50f;
+
 
     void Awake()
     {
@@ -34,9 +37,29 @@ public class PassengerBehavior : MonoBehaviour
 
     void Start()
     {
-        // Hail a cab
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
-        GameManager.Instance.HailTaxi(this);
+        // Wait for one second before calling the HailTaxiOrBeDestroyed method
+        Invoke("HailTaxiOrBeDestroyed", 1f);
+    }
+
+    void HailTaxiOrBeDestroyed()
+    {
+        float expectedWaitingTime = GameManager.Instance.GetExpectedWaitingTime(this);
+        Debug.Log("Expected waiting time for passenger " + id + " is " + expectedWaitingTime + ", is willing to wait " + timeWillingToWait);
+        if (expectedWaitingTime < timeWillingToWait)
+        {
+            Debug.Log("Passenger " + id + " is hailing a cab");
+            GameManager.Instance.HailTaxi(this);
+        }
+        else
+        {
+            Debug.Log("Passenger " + id + " is giving up");
+
+            Destroy(gameObject);
+        }
+
+        // TODO: Calculate the actual waiting time and compare to the expected time
+
     }
 
 

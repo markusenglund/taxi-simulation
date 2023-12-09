@@ -16,7 +16,7 @@ public enum TaxiState
 
 public class TaxiBehavior : MonoBehaviour
 {
-    private float speed = 1f;
+    public static float speed = 1f;
 
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;

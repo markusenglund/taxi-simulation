@@ -58,7 +58,24 @@ public class GameManager : MonoBehaviour
 
     public void HailTaxi(PassengerBehavior passenger)
     {
-        // Find the closest taxi
+        (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
+
+        if (closestTaxi != null)
+        {
+            closestTaxi.SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
+            passenger.SetState(PassengerState.Dispatched, closestTaxi);
+            Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+        }
+        else
+        {
+            passenger.SetState(PassengerState.Waiting);
+            waitingPassengers.Enqueue(passenger);
+            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number" + waitingPassengers.Count);
+        }
+    }
+
+    private (TaxiBehavior, float) GetClosestAvailableTaxi(Vector3 position)
+    {
         float closestTaxiDistance = Mathf.Infinity;
         TaxiBehavior closestTaxi = null;
 
@@ -69,28 +86,35 @@ public class GameManager : MonoBehaviour
             {
                 continue;
             }
-            float distance = Math.Abs(taxi.position.x - passenger.positionActual.x) + Math.Abs(taxi.position.z - passenger.transform.position.z);
+            float distance = Math.Abs(taxi.position.x - position.x) + Math.Abs(taxi.position.z - position.z);
             if (distance < closestTaxiDistance)
             {
                 closestTaxiDistance = distance;
                 closestTaxi = taxiBehavior;
             }
         }
+        return (closestTaxi, closestTaxiDistance);
+    }
 
-
+    public float GetExpectedWaitingTime(PassengerBehavior passenger)
+    {
+        (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
         if (closestTaxi != null)
         {
-            closestTaxi.SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
-            passenger.SetState(PassengerState.Dispatched, closestTaxi);
-            Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+            float expectedWaitingTime = closestTaxiDistance / TaxiBehavior.speed;
+            return expectedWaitingTime;
+        }
 
-        }
-        else
-        {
-            passenger.SetState(PassengerState.Waiting);
-            waitingPassengers.Enqueue(passenger);
-            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number" + waitingPassengers.Count);
-        }
+        // TODO: Create an accurate estimation of avgTimePerTrip
+        float avgTimePerTrip = 20f;
+        float numTaxis = taxis.Count;
+        float queueSize = waitingPassengers.Count;
+
+        float avgTaxiArrivalTime = 5f;
+
+        float expectedWaitingTimeForQueue = (avgTimePerTrip * queueSize / numTaxis) + avgTaxiArrivalTime;
+        return expectedWaitingTimeForQueue;
+
     }
 
 
