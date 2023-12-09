@@ -179,7 +179,10 @@ public class TaxiBehavior : MonoBehaviour
             Vector3 waypoint = waypoints.Peek();
 
             Vector3 direction = waypoint - transform.position;
-            transform.rotation = Quaternion.LookRotation(direction);
+            if (direction != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(direction);
+            }
 
             // Distance delta should be lower if the taxi is close to the destination
             float distanceDelta = speed * Time.deltaTime;

@@ -12,8 +12,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform streetPrefab;
     [SerializeField] public Transform passengerPrefab;
 
-    private float passengerSpawnRate = 0.01f;
-
     private List<Transform> taxis = new List<Transform>();
     private Queue<PassengerBehavior> waitingPassengers = new Queue<PassengerBehavior>();
 
@@ -39,7 +37,7 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             // Get a random number between 1 and 8
-            int random = UnityEngine.Random.Range(0, 8);
+            int random = UnityEngine.Random.Range(0, 3);
             yield return new WaitForSeconds(random);
             Vector3 randomPosition = Utils.GetRandomPosition();
             Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
