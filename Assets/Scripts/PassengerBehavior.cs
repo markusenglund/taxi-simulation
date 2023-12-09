@@ -25,8 +25,7 @@ public class PassengerBehavior : MonoBehaviour
 
     public PassengerState state = PassengerState.Idling;
 
-    // TODO: Make this value a random number in some reasonable range
-    private float timeWillingToWait = 30f;
+    private float timeWillingToWait;
 
     private float expectedPickupTime;
 
@@ -35,6 +34,7 @@ public class PassengerBehavior : MonoBehaviour
     {
         id = incrementalId;
         incrementalId += 1;
+        timeWillingToWait = Random.Range(20f, 70f);
     }
 
     void Start()

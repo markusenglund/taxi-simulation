@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         {
             passenger.SetState(PassengerState.Waiting);
             waitingPassengers.Enqueue(passenger);
-            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number" + waitingPassengers.Count);
+            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + waitingPassengers.Count);
         }
     }
 
