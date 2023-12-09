@@ -27,7 +27,11 @@ public class PassengerBehavior : MonoBehaviour
 
     private float timeWillingToWait;
 
+    private float utilityFromGettingTaxi;
+
     private float expectedPickupTime;
+
+    private float hailTime;
 
 
     void Awake()
@@ -35,6 +39,7 @@ public class PassengerBehavior : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeWillingToWait = Random.Range(20f, 70f);
+        utilityFromGettingTaxi = timeWillingToWait + Random.Range(0f, 10f);
     }
 
     void Start()
@@ -51,6 +56,7 @@ public class PassengerBehavior : MonoBehaviour
         {
             GameManager.Instance.HailTaxi(this);
             expectedPickupTime = Time.time + expectedWaitingTime;
+            hailTime = Time.time;
         }
         else
         {
@@ -100,7 +106,10 @@ public class PassengerBehavior : MonoBehaviour
         if (state == PassengerState.PickedUp)
         {
             float actualPickupTime = Time.time;
+            float actualWaitingTime = actualPickupTime - hailTime;
+            float utilitySurplus = utilityFromGettingTaxi - actualWaitingTime;
             Debug.Log("Passenger " + id + " was picked up at " + actualPickupTime + ", expected pickup time was " + expectedPickupTime + ", difference is " + (actualPickupTime - expectedPickupTime));
+            Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
         }
     }
 }
