@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Graph : MonoBehaviour
 {
@@ -78,7 +77,7 @@ public class Graph : MonoBehaviour
         return new Vector2(x, y);
     }
 
-    private void CreateCircle(Vector2 anchoredPosition)
+   /* private void CreateCircle(Vector2 anchoredPosition)
     {
         GameObject gameObject = new GameObject("circle", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
@@ -88,6 +87,6 @@ public class Graph : MonoBehaviour
         rectTransform.sizeDelta = new Vector2(11, 11);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
-    }
+    }*/
 }
 
