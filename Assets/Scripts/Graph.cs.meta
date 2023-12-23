@@ -3,7 +3,10 @@ guid: a4f484700cb401f49a0b127ad7d65382
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - circleSprite: {instanceID: 0}
+  - lrPrefab: {instanceID: 0}
+  - dotPrefab: {fileID: 2614681222366639632, guid: a5b716e42cc4e624382d7a854dbb84e6, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
