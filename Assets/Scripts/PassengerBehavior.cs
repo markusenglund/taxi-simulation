@@ -32,7 +32,9 @@ public class PassengerBehavior : MonoBehaviour
 
     private float hailTime;
 
-    private Graph graph;
+    private Graph waitingTimeGraph;
+
+    private UnservedPassengersGraph unservedPassengersGraph;
 
 
     void Awake()
@@ -41,7 +43,8 @@ public class PassengerBehavior : MonoBehaviour
         incrementalId += 1;
         timeWillingToWait = Random.Range(20f, 70f);
         utilityFromGettingTaxi = timeWillingToWait + Random.Range(0f, 10f);
-        graph = GameObject.Find("Graph").GetComponent<Graph>();
+        waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
+        unservedPassengersGraph = GameObject.Find("UnservedPassengersGraph").GetComponent<UnservedPassengersGraph>();
     }
 
     void Start()
@@ -63,6 +66,7 @@ public class PassengerBehavior : MonoBehaviour
         else
         {
             Debug.Log("Passenger " + id + " is giving up");
+            unservedPassengersGraph.IncrementNumUnservedPassengers();
 
             Destroy(gameObject);
         }
@@ -112,7 +116,7 @@ public class PassengerBehavior : MonoBehaviour
             float utilitySurplus = utilityFromGettingTaxi - actualWaitingTime;
             Debug.Log("Passenger " + id + " was picked up at " + actualPickupTime + ", expected pickup time was " + expectedPickupTime + ", difference is " + (actualPickupTime - expectedPickupTime));
             Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
-            graph.SetNewValue(actualWaitingTime);
+            waitingTimeGraph.SetNewValue(actualWaitingTime);
         }
     }
 }
