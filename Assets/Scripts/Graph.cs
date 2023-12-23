@@ -10,6 +10,7 @@ public class Graph : MonoBehaviour
     [SerializeField] private LineRenderer lrPrefab;
     [SerializeField] private Transform dotPrefab;
     [SerializeField] private TMP_Text textPrefab;
+    [SerializeField] private TMP_Text headerTextPrefab;
     
     
 
@@ -20,6 +21,7 @@ public class Graph : MonoBehaviour
     List<Vector2> points = new List<Vector2>();
 
     float margin = 26f;
+    float marginTop = 50f;
     float maxY = 50f;
     float minY = 0f;
     float maxX = 180f;
@@ -91,6 +93,13 @@ public class Graph : MonoBehaviour
         }
     }
 
+    private void CreateHeaderText() {
+        TMP_Text text = Instantiate(headerTextPrefab, graphContainer);
+        Vector2 textPosition = new Vector2(0, 70f);
+        text.text = "Waiting time (s)";
+        text.rectTransform.anchoredPosition = textPosition;
+    }
+
     private void InstantiateGraph()
     {
         lineRenderer = Instantiate(lrPrefab, graphContainer);
@@ -99,6 +108,7 @@ public class Graph : MonoBehaviour
         lineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         CreateAxes();
         CreateAxisLabels();
+        CreateHeaderText();
     }
 
 
@@ -110,7 +120,7 @@ public class Graph : MonoBehaviour
         Debug.Log("graphHeight: " + graphHeight);
         Debug.Log("graphWidth: " + graphWidth);
 
-        float y = Mathf.Lerp(margin, graphHeight - margin, (vector.y - minY) / (maxY - minY));
+        float y = Mathf.Lerp(margin, graphHeight - marginTop, (vector.y - minY) / (maxY - minY));
         float x = Mathf.Lerp(margin, graphWidth - margin, (vector.x - minX) / (maxX - minX));
 
         return new Vector2(x, y);
