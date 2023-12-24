@@ -26,6 +26,8 @@ public class PassengerBehavior : MonoBehaviour
 
     private float timeWillingToWait;
 
+    private float moneyWillingToSpend;
+
     private float utilityFromGettingTaxi;
 
     private float expectedPickupTime;
@@ -36,15 +38,19 @@ public class PassengerBehavior : MonoBehaviour
 
     private UnservedPassengersGraph unservedPassengersGraph;
 
+    private PassengersScatterPlot passengersScatterPlot;
+
 
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
         timeWillingToWait = Random.Range(20f, 70f);
+        moneyWillingToSpend = Random.Range(20f, 180f);
         utilityFromGettingTaxi = timeWillingToWait + Random.Range(0f, 10f);
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
         unservedPassengersGraph = GameObject.Find("UnservedPassengersGraph").GetComponent<UnservedPassengersGraph>();
+        passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
     }
 
     void Start()
@@ -62,6 +68,7 @@ public class PassengerBehavior : MonoBehaviour
             GameManager.Instance.HailTaxi(this);
             expectedPickupTime = Time.time + expectedWaitingTime;
             hailTime = Time.time;
+            passengersScatterPlot.AppendPassenger(timeWillingToWait, true, moneyWillingToSpend);
         }
         else
         {

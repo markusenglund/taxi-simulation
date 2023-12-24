@@ -18,7 +18,7 @@ public class Graph : MonoBehaviour
 
     Transform dot;
 
-    List<Vector2> points = new List<Vector2>();
+    List<Vector2> values = new List<Vector2>();
 
     float margin = 26f;
     float marginTop = 50f;
@@ -54,7 +54,7 @@ public class Graph : MonoBehaviour
     {
         float time = Time.time;
         Vector2 point = new Vector2(time, value);
-        points.Add(point);
+        values.Add(point);
         // lineRenderer.positionCount++;
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
         // lineRenderer.SetPosition(lineRenderer.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
