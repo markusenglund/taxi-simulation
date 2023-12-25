@@ -120,14 +120,12 @@ public class UnservedPassengersGraph : MonoBehaviour
         float graphHeight = graphContainer.sizeDelta.y;
         float graphWidth = graphContainer.sizeDelta.x;
 
-        Debug.Log("graphHeight: " + graphHeight);
-        Debug.Log("graphWidth: " + graphWidth);
-
         float y = Mathf.Lerp(margin, graphHeight - marginTop, (vector.y - minY) / (maxY - minY));
         float x = Mathf.Lerp(margin, graphWidth - margin, (vector.x - minX) / (maxX - minX));
 
         return new Vector2(x, y);
     }
+
 
     private void CreateDot(Vector2 position) {
         Transform dot = Instantiate(dotPrefab, graphContainer);

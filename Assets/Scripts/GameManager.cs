@@ -33,6 +33,12 @@ public class GameManager : MonoBehaviour
 
     IEnumerator createPassengers()
     {
+        // Create 8 passengers to start
+        for (int i = 0; i < 8; i++)
+        {
+            Vector3 randomPosition = Utils.GetRandomPosition();
+            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+        }
 
         while (true)
         {

@@ -74,6 +74,7 @@ public class PassengerBehavior : MonoBehaviour
         {
             Debug.Log("Passenger " + id + " is giving up");
             unservedPassengersGraph.IncrementNumUnservedPassengers();
+            passengersScatterPlot.AppendPassenger(timeWillingToWait, false, moneyWillingToSpend);
 
             Destroy(gameObject);
         }

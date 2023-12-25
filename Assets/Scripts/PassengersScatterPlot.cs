@@ -19,6 +19,7 @@ public class PassengersScatterPlot : MonoBehaviour
     [SerializeField] private Transform dotPrefab;
     [SerializeField] private TMP_Text textPrefab;
     [SerializeField] private TMP_Text headerTextPrefab;
+    [SerializeField] private TMP_Text legendTextPrefab;
     
     
 
@@ -102,9 +103,34 @@ public class PassengersScatterPlot : MonoBehaviour
 
     private void CreateHeaderText() {
         TMP_Text text = Instantiate(headerTextPrefab, graphContainer);
-        Vector2 textPosition = new Vector2(0, 70f);
-        text.text = "Unserved passengers";
+        Vector2 textPosition = new Vector2(-52f, 124f);
+        text.text = "Passengers";
         text.rectTransform.anchoredPosition = textPosition;
+    }
+
+        
+    private void CreateLegend() {
+        TMP_Text text1 = Instantiate(legendTextPrefab, graphContainer);
+        Vector2 textPosition1 = new Vector2(80, 128f);
+        text1.text = "Hailed taxi";
+        text1.rectTransform.anchoredPosition = textPosition1;
+
+        Transform greenDot = Instantiate(dotPrefab, graphContainer);
+        RectTransform greenDotTransform = greenDot.GetComponent<RectTransform>();
+        greenDotTransform.anchoredPosition = new Vector3(32f, 135f, -1);
+        greenDotTransform.localScale = new Vector3(8, 8, 1);
+        greenDot.GetComponent<Renderer>().material.color = Color.green;
+
+        TMP_Text text2 = Instantiate(legendTextPrefab, graphContainer);
+        Vector2 textPosition2 = new Vector2(80, 108f);
+        text2.text = "Unserved";
+        text2.rectTransform.anchoredPosition = textPosition2;
+
+        Transform redDot = Instantiate(dotPrefab, graphContainer);
+        RectTransform redDotTransform = redDot.GetComponent<RectTransform>();
+        redDotTransform.anchoredPosition = new Vector3(32f, 115f, -1);
+        redDotTransform.localScale = new Vector3(8, 8, 1);
+        redDot.GetComponent<Renderer>().material.color = Color.red;
     }
 
     private void InstantiateGraph()
@@ -116,6 +142,7 @@ public class PassengersScatterPlot : MonoBehaviour
         CreateAxes();
         CreateAxisLabels();
         CreateHeaderText();
+        CreateLegend();
     }
 
 
@@ -124,14 +151,13 @@ public class PassengersScatterPlot : MonoBehaviour
         float graphHeight = graphContainer.sizeDelta.y;
         float graphWidth = graphContainer.sizeDelta.x;
 
-        Debug.Log("graphHeight: " + graphHeight);
-        Debug.Log("graphWidth: " + graphWidth);
-
         float y = Mathf.Lerp(margin, graphHeight - marginTop, (vector.y - minWillingnessToWait) / (maxWillingnessToWait - minWillingnessToWait));
         float x = Mathf.Lerp(margin, graphWidth - margin, (vector.x - minWillingnessToWait) / (maxWillingnessToSpend - minWillingnessToWait));
 
         return new Vector2(x, y);
     }
+
+
 
     private void CreateDot(Vector2 position, bool wasServed) {
         Transform dot = Instantiate(dotPrefab, graphContainer);
@@ -140,11 +166,11 @@ public class PassengersScatterPlot : MonoBehaviour
         rectTransform.anchorMax = new Vector2(0, 0);
         rectTransform.anchoredPosition = new Vector3(position.x, position.y, -1);
         if (wasServed) {
-            dot.GetComponent<SpriteRenderer>().color = Color.green;
+            dot.GetComponent<Renderer>().material.color = Color.green;
         } else {
-            dot.GetComponent<SpriteRenderer>().color = Color.red;
+             dot.GetComponent<Renderer>().material.color = Color.red;
+
         }
-        
     }
 }
 

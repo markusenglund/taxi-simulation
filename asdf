@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UnityProjectReference>true</UnityProjectReference>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Unity.Profiling.Editor" Version="3.0.0" />
+    <PackageReference Include="Unity.Profiling.Editor" Version="3.0.0" />
+    <!-- Add any other necessary package references here -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="**/*.cs" />
+    <!-- Add any other necessary file includes here -->
+  </ItemGroup>
+
+</Project>
