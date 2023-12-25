@@ -31,7 +31,7 @@ public class PassengersScatterPlot : MonoBehaviour
 
     List<Passenger> passengers = new List<Passenger>();
     
-    float margin = 26f;
+    float margin = 40f;
     float marginTop = 50f;
     float maxWillingnessToWait = 70f;
     float minWillingnessToWait = 0f;
@@ -90,8 +90,8 @@ public class PassengersScatterPlot : MonoBehaviour
 
     }
 
-    private void CreateAxisLabels() {
-        // Create y axis labels
+    private void CreateAxisValues() {
+        // Create y axis values
         int step = Mathf.RoundToInt((maxWillingnessToWait - minWillingnessToWait) / 5f);
         for (int i = (int)minWillingnessToWait; i <= maxWillingnessToWait; i += step) {
             TMP_Text text = Instantiate(textPrefab, graphContainer);
@@ -100,7 +100,7 @@ public class PassengersScatterPlot : MonoBehaviour
             text.rectTransform.anchoredPosition = textPosition;
         }
 
-        // Create x axis labels
+        // Create x axis values
         step = Mathf.RoundToInt((maxWillingnessToSpend - minWillingnessToSpend) / 6f);
         for (int i = (int)minWillingnessToSpend; i <= maxWillingnessToSpend; i += step) {
             TMP_Text text = Instantiate(textPrefab, graphContainer);
@@ -112,6 +112,29 @@ public class PassengersScatterPlot : MonoBehaviour
             text.text = i.ToString();
             text.rectTransform.anchoredPosition = textPosition;
         }
+    }
+
+    private void CreateAxisLabels() {
+        // Create y axis label
+        TMP_Text text = Instantiate(textPrefab, graphContainer);
+        Vector2 textPosition = new Vector2(0f, 0f);
+        text.text = "Waiting willingness (s)";
+        text.rectTransform.anchoredPosition = textPosition;
+        text.rectTransform.Rotate(0, 0, -90);
+        float graphHeight = graphContainer.sizeDelta.y;
+        text.rectTransform.sizeDelta = new Vector2(graphHeight, 20);
+        text.alignment = TextAlignmentOptions.Center;
+        text.rectTransform.pivot = new Vector2(1f, 0f);
+
+        // Create x axis label
+        TMP_Text text2 = Instantiate(textPrefab, graphContainer);
+        Vector2 textPosition2 = new Vector2(0f, 0f);
+        text2.text = "Spending willingness ($)";
+        text2.rectTransform.anchoredPosition = textPosition2;
+        float graphWidth = graphContainer.sizeDelta.x;
+        text2.rectTransform.sizeDelta = new Vector2(graphWidth, 20);
+        text2.alignment = TextAlignmentOptions.Center;
+        text2.rectTransform.pivot = new Vector2(0f, 0f);
     }
 
     private void CreateHeaderText() {
@@ -153,6 +176,7 @@ public class PassengersScatterPlot : MonoBehaviour
         Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         lineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         CreateAxes();
+        CreateAxisValues();
         CreateAxisLabels();
         CreateHeaderText();
         CreateLegend();
