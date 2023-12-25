@@ -99,6 +99,19 @@ public class PassengersScatterPlot : MonoBehaviour
             text.text = i.ToString();
             text.rectTransform.anchoredPosition = textPosition;
         }
+
+        // Create x axis labels
+        step = Mathf.RoundToInt((maxWillingnessToSpend - minWillingnessToSpend) / 6f);
+        for (int i = (int)minWillingnessToSpend; i <= maxWillingnessToSpend; i += step) {
+            TMP_Text text = Instantiate(textPrefab, graphContainer);
+            Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(i, 0));
+            // Set pivot to top center
+            text.rectTransform.pivot = new Vector2(0.5f, 1f);
+            // Set textmeshpro text alignment to center
+            text.alignment = TextAlignmentOptions.Center;
+            text.text = i.ToString();
+            text.rectTransform.anchoredPosition = textPosition;
+        }
     }
 
     private void CreateHeaderText() {
