@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f84677c9121a4f643bec54b40e6db71b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - lrPrefab: {instanceID: 0}
+  - dotPrefab: {instanceID: 0}
+  - textPrefab: {instanceID: 0}
+  - headerTextPrefab: {instanceID: 0}
+  - legendTextPrefab: {fileID: 8850123907274976968, guid: ac1003e5499d13d448f7be07194f29d5, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

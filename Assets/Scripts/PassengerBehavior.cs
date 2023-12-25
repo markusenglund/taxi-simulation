@@ -36,7 +36,7 @@ public class PassengerBehavior : MonoBehaviour
 
     private Graph waitingTimeGraph;
 
-    private UnservedPassengersGraph unservedPassengersGraph;
+    private PassengersGraph passengersGraph;
 
     private PassengersScatterPlot passengersScatterPlot;
 
@@ -49,7 +49,7 @@ public class PassengerBehavior : MonoBehaviour
         moneyWillingToSpend = Random.Range(20f, 180f);
         utilityFromGettingTaxi = timeWillingToWait + Random.Range(0f, 10f);
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
-        unservedPassengersGraph = GameObject.Find("UnservedPassengersGraph").GetComponent<UnservedPassengersGraph>();
+        passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
         passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
     }
 
@@ -73,8 +73,9 @@ public class PassengerBehavior : MonoBehaviour
         else
         {
             Debug.Log("Passenger " + id + " is giving up");
-            unservedPassengersGraph.IncrementNumUnservedPassengers();
-            passengersScatterPlot.AppendPassenger(timeWillingToWait, false, moneyWillingToSpend);
+            passengersGraph.IncrementNumUnservedPassengers();
+            passengersScatterPlot.AppendPassenger(timeWillingToWait, false
+            , moneyWillingToSpend);
 
             Destroy(gameObject);
         }
@@ -125,6 +126,7 @@ public class PassengerBehavior : MonoBehaviour
             Debug.Log("Passenger " + id + " was picked up at " + actualPickupTime + ", expected pickup time was " + expectedPickupTime + ", difference is " + (actualPickupTime - expectedPickupTime));
             Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
             waitingTimeGraph.SetNewValue(actualWaitingTime);
+            passengersGraph.IncrementNumPickedUpPassengers();
         }
     }
 }
