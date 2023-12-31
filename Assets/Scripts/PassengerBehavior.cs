@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,11 +25,6 @@ public class PassengerBehavior : MonoBehaviour
 
     public PassengerState state = PassengerState.Idling;
 
-    private float timeWillingToWait;
-
-    private float moneyWillingToSpend;
-
-    private float utilityFromGettingTaxi;
 
     private float expectedPickupTime;
 
@@ -41,16 +37,47 @@ public class PassengerBehavior : MonoBehaviour
     private PassengersScatterPlot passengersScatterPlot;
 
 
+    // Economic parameters
+    private double hourlyIncome;
+
+    private float tripUtilityScore;
+
+    private float timePreference;
+
+    private float waitingCostPerHour;
+
+    private float utilityScorePerDollar;
+
+    // Represents the utility of the ride measured in dollars
+    private float moneyWillingToSpend;
+
+    private float timeWillingToWait;
+
+    // private float moneyWillingToSpend;
+
+    private float utilityFromGettingTaxi;
+
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
-        timeWillingToWait = Random.Range(20f, 70f);
-        moneyWillingToSpend = Random.Range(20f, 180f);
-        utilityFromGettingTaxi = timeWillingToWait + Random.Range(0f, 10f);
+        GenerateEconomicParameters();
+        timeWillingToWait = UnityEngine.Random.Range(20f, 70f);
+        moneyWillingToSpend = UnityEngine.Random.Range(20f, 180f);
+        utilityFromGettingTaxi = timeWillingToWait + UnityEngine.Random.Range(0f, 10f);
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
         passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
+    }
+
+    void GenerateEconomicParameters()
+    {
+        // mu=3, sigma=0.7 creates a distribution with mean=25.7, median=20 and 1.1% of the population with income > 100
+        double mu = 3;
+        double sigma = 0.7;
+        hourlyIncome = StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+
+        Debug.Log("Hourly income is " + hourlyIncome);
     }
 
     void Start()
