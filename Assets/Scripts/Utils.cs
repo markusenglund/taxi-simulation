@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,6 +29,11 @@ public class Utils : MonoBehaviour
         float z = onNorthFacingStreet ? randomNonIntersection : randomIntersection;
 
         return new Vector3(x, 0.05f, z);
+    }
+
+    public static float GetDistance(Vector3 position1, Vector3 position2)
+    {
+        return Math.Abs(position1.x - position2.x) + Math.Abs(position1.z - position2.z);
     }
 
     public static void GenerateStreetGrid(Transform intersectionPrefab, Transform streetPrefab)

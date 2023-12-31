@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
             {
                 continue;
             }
-            float distance = Math.Abs(taxi.position.x - position.x) + Math.Abs(taxi.position.z - position.z);
+            float distance = Utils.GetDistance(taxi.position, position);
             if (distance < closestTaxiDistance)
             {
                 closestTaxiDistance = distance;

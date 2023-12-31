@@ -30,6 +30,8 @@ public class PassengerBehavior : MonoBehaviour
 
     private float hailTime;
 
+    private Vector3 destination = Utils.GetRandomPosition();
+
     private Graph waitingTimeGraph;
 
     private PassengersGraph passengersGraph;
@@ -40,13 +42,12 @@ public class PassengerBehavior : MonoBehaviour
     // Economic parameters
     private double hourlyIncome;
 
-    private float tripUtilityScore;
+    private double tripUtilityScore;
 
-    private float timePreference;
+    private double timePreference;
 
-    private float waitingCostPerHour;
+    private double waitingCostPerHour;
 
-    private float utilityScorePerDollar;
 
     // Represents the utility of the ride measured in dollars
     private float moneyWillingToSpend;
@@ -72,14 +73,34 @@ public class PassengerBehavior : MonoBehaviour
 
     void GenerateEconomicParameters()
     {
-        // mu=3, sigma=0.7 creates a distribution with mean=25.7, median=20 and 1.1% of the population with income > 100
-        double mu = 3;
-        double sigma = 0.7;
-        hourlyIncome = StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+        GenerateHourlyIncome();
+        GenerateTripUtilityScore();
+        // Passengers value their time on average 3x their hourly income, sqrt(tripUtilityScore) is on average around 1.5 so we multiply by a random variable that is normally distributed with mean 2 and std 0.5
+        timePreference = Math.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(2, 0.5, 0, 4);
+        waitingCostPerHour = hourlyIncome * timePreference;
+    }
 
+    void GenerateHourlyIncome()
+    {
+        double mu = 0;
+        double sigma = 0.7;
+        double medianIncome = 20;
+        // with mu=0, sigma=0.7 this a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
+        hourlyIncome = medianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
         Debug.Log("Hourly income is " + hourlyIncome);
     }
 
+
+    void GenerateTripUtilityScore()
+    {
+        float tripDistance = Utils.GetDistance(positionActual, destination);
+        float tripDistanceUtilityModifier = Mathf.Sqrt(tripDistance);
+
+
+        double mu = 0;
+        double sigma = 0.4;
+        tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+    }
     void Start()
     {
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
