@@ -119,6 +119,15 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public float GetFare(PassengerBehavior passenger, Vector3 destination)
+    {
+        float distance = Utils.GetDistance(passenger.positionActual, destination);
+        // This formula was empirically chosen to approximate the fare for a getting a ride in Utrecht
+        float startingFare = 4f;
+        float baseFare = startingFare + (distance * 2f);
+        return baseFare;
+    }
+
 
 
 }

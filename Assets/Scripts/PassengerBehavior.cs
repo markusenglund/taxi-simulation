@@ -63,9 +63,9 @@ public class PassengerBehavior : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         GenerateEconomicParameters();
-        timeWillingToWait = UnityEngine.Random.Range(20f, 70f);
-        moneyWillingToSpend = UnityEngine.Random.Range(20f, 180f);
-        utilityFromGettingTaxi = timeWillingToWait + UnityEngine.Random.Range(0f, 10f);
+        // timeWillingToWait = UnityEngine.Random.Range(20f, 70f);
+        // moneyWillingToSpend = UnityEngine.Random.Range(20f, 180f);
+        // utilityFromGettingTaxi = timeWillingToWait + UnityEngine.Random.Range(0f, 10f);
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
         passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
@@ -110,6 +110,9 @@ public class PassengerBehavior : MonoBehaviour
     void HailTaxiOrBeDestroyed()
     {
         float expectedWaitingTime = GameManager.Instance.GetExpectedWaitingTime(this);
+        float fare = GameManager.Instance.GetFare(this, destination);
+        // TODO: START HERE
+        // double utilityFromGettingTaxi = tripUtilityScore - waitingCostPerHour * expectedWaitingTime + fare;
         Debug.Log("Expected waiting time for passenger " + id + " is " + expectedWaitingTime + ", is willing to wait " + timeWillingToWait);
         if (expectedWaitingTime < timeWillingToWait)
         {
@@ -122,8 +125,7 @@ public class PassengerBehavior : MonoBehaviour
         {
             Debug.Log("Passenger " + id + " is giving up");
             passengersGraph.IncrementNumUnservedPassengers();
-            passengersScatterPlot.AppendPassenger(timeWillingToWait, false
-            , moneyWillingToSpend);
+            passengersScatterPlot.AppendPassenger(timeWillingToWait, false, moneyWillingToSpend);
 
             Destroy(gameObject);
         }
