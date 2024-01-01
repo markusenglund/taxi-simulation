@@ -11,8 +11,8 @@ public class Graph : MonoBehaviour
     [SerializeField] private Transform dotPrefab;
     [SerializeField] private TMP_Text textPrefab;
     [SerializeField] private TMP_Text headerTextPrefab;
-    
-    
+
+
 
     LineRenderer lineRenderer;
 
@@ -32,28 +32,13 @@ public class Graph : MonoBehaviour
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         InstantiateGraph();
-
-        // StartCoroutine(GetNewValues());
     }
 
-    // IEnumerator GetNewValues()
-    // {
-    //     List<int> values = new List<int>() { 45, 10, 85, 100, 15, 94, 14, 44, 5, 10 };
-    //     // Do a for loop of the values list
-    //     for (int i = 0; i < values.Count; i++)
-    //     {
-    //         int random = UnityEngine.Random.Range(0, 4);
-    //         yield return new WaitForSeconds(random);
-    //         lineRenderer.positionCount++;
-    //         Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(Time.time, values[i]));
-    //         lineRenderer.SetPosition(lineRenderer.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
-    //     }
-    // }
-
-    public void SetNewValue(float value)
+    public void SetNewValue(float hoursWaited)
     {
         float time = Time.time;
-        Vector2 point = new Vector2(time, value);
+        float minutesWaited = hoursWaited * 60;
+        Vector2 point = new Vector2(time, minutesWaited);
         values.Add(point);
         // lineRenderer.positionCount++;
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
@@ -64,7 +49,8 @@ public class Graph : MonoBehaviour
     }
 
 
-    private void CreateAxes() {
+    private void CreateAxes()
+    {
         // Create x axis with the line renderer
         lineRenderer = Instantiate(lrPrefab, graphContainer);
         lineRenderer.positionCount = 2;
@@ -82,10 +68,12 @@ public class Graph : MonoBehaviour
 
     }
 
-    private void CreateAxisLabels() {
+    private void CreateAxisLabels()
+    {
         // Create y axis labels
         int step = Mathf.RoundToInt((maxY - minY) / 5f);
-        for (int i = (int)minY; i <= maxY; i += step) {
+        for (int i = (int)minY; i <= maxY; i += step)
+        {
             TMP_Text text = Instantiate(textPrefab, graphContainer);
             Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(0, i));
             text.text = i.ToString();
@@ -93,10 +81,11 @@ public class Graph : MonoBehaviour
         }
     }
 
-    private void CreateHeaderText() {
+    private void CreateHeaderText()
+    {
         TMP_Text text = Instantiate(headerTextPrefab, graphContainer);
         Vector2 textPosition = new Vector2(0, 70f);
-        text.text = "Waiting time (s)";
+        text.text = "Waiting time (minutes)";
         text.rectTransform.anchoredPosition = textPosition;
     }
 
@@ -123,25 +112,14 @@ public class Graph : MonoBehaviour
         return new Vector2(x, y);
     }
 
-    private void CreateDot(Vector2 position) {
+    private void CreateDot(Vector2 position)
+    {
         Transform dot = Instantiate(dotPrefab, graphContainer);
         RectTransform rectTransform = dot.GetComponent<RectTransform>();
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
         rectTransform.anchoredPosition = new Vector3(position.x, position.y, -1);
-        
-    }
 
-   /* private void CreateCircle(Vector2 anchoredPosition)
-    {
-        GameObject gameObject = new GameObject("circle", typeof(Image));
-        gameObject.transform.SetParent(graphContainer, false);
-        gameObject.GetComponent<Image>().sprite = circleSprite;
-        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = anchoredPosition;
-        rectTransform.sizeDelta = new Vector2(11, 11);
-        rectTransform.anchorMin = new Vector2(0, 0);
-        rectTransform.anchorMax = new Vector2(0, 0);
-    }*/
+    }
 }
 

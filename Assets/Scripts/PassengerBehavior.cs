@@ -30,7 +30,7 @@ public class PassengerBehavior : MonoBehaviour
 
     private float hailTime;
 
-    private Vector3 destination = Utils.GetRandomPosition();
+    private Vector3 destination;
 
     private Graph waitingTimeGraph;
 
@@ -40,21 +40,17 @@ public class PassengerBehavior : MonoBehaviour
 
 
     // Economic parameters
+
+    const double medianIncome = 20;
     private double hourlyIncome;
 
     private double tripUtilityScore;
 
+    private double tripUtilityValue;
+
     private double timePreference;
 
     private double waitingCostPerHour;
-
-
-    // Represents the utility of the ride measured in dollars
-    private float moneyWillingToSpend;
-
-    private float timeWillingToWait;
-
-    // private float moneyWillingToSpend;
 
     private float utilityFromGettingTaxi;
 
@@ -62,10 +58,8 @@ public class PassengerBehavior : MonoBehaviour
     {
         id = incrementalId;
         incrementalId += 1;
+        destination = Utils.GetRandomPosition();
         GenerateEconomicParameters();
-        // timeWillingToWait = UnityEngine.Random.Range(20f, 70f);
-        // moneyWillingToSpend = UnityEngine.Random.Range(20f, 180f);
-        // utilityFromGettingTaxi = timeWillingToWait + UnityEngine.Random.Range(0f, 10f);
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
         passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
@@ -75,19 +69,21 @@ public class PassengerBehavior : MonoBehaviour
     {
         GenerateHourlyIncome();
         GenerateTripUtilityScore();
-        // Passengers value their time on average 3x their hourly income, sqrt(tripUtilityScore) is on average around 1.5 so we multiply by a random variable that is normally distributed with mean 2 and std 0.5
-        timePreference = Math.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(2, 0.5, 0, 4);
+        // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
+        timePreference = Math.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(1.5, 0.5, 0, 3);
         waitingCostPerHour = hourlyIncome * timePreference;
+        // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
+        tripUtilityValue = tripUtilityScore * hourlyIncome;
+        Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
     }
 
     void GenerateHourlyIncome()
     {
         double mu = 0;
         double sigma = 0.7;
-        double medianIncome = 20;
-        // with mu=0, sigma=0.7 this a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
+        // with mu=0, sigma=0.7, medianIncome=20  this a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
         hourlyIncome = medianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
-        Debug.Log("Hourly income is " + hourlyIncome);
+        Debug.Log("Passenger " + id + " hourly income is " + hourlyIncome);
     }
 
 
@@ -100,6 +96,7 @@ public class PassengerBehavior : MonoBehaviour
         double mu = 0;
         double sigma = 0.4;
         tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+        Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
     }
     void Start()
     {
@@ -111,26 +108,26 @@ public class PassengerBehavior : MonoBehaviour
     {
         float expectedWaitingTime = GameManager.Instance.GetExpectedWaitingTime(this);
         float fare = GameManager.Instance.GetFare(this, destination);
-        // TODO: START HERE
-        // double utilityFromGettingTaxi = tripUtilityScore - waitingCostPerHour * expectedWaitingTime + fare;
-        Debug.Log("Expected waiting time for passenger " + id + " is " + expectedWaitingTime + ", is willing to wait " + timeWillingToWait);
-        if (expectedWaitingTime < timeWillingToWait)
+        double waitingCost = expectedWaitingTime * waitingCostPerHour;
+        double netUtilityValueFromRide = tripUtilityValue - waitingCost - fare;
+        Debug.Log("Passenger " + id + " Net utility $ from ride: " + netUtilityValueFromRide);
+        Debug.Log("Passenger " + id + " - fare $: " + fare + ", waiting cost $: " + waitingCost + " for waiting " + expectedWaitingTime + " hours");
+        if (netUtilityValueFromRide > 0)
         {
+            Debug.Log("Passenger " + id + " is hailing a taxi");
             GameManager.Instance.HailTaxi(this);
-            expectedPickupTime = Time.time + expectedWaitingTime;
-            hailTime = Time.time;
-            passengersScatterPlot.AppendPassenger(timeWillingToWait, true, moneyWillingToSpend);
+            hailTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            expectedPickupTime = hailTime + expectedWaitingTime;
+            passengersScatterPlot.AppendPassenger(tripUtilityScore, hourlyIncome, true);
         }
         else
         {
             Debug.Log("Passenger " + id + " is giving up");
             passengersGraph.IncrementNumUnservedPassengers();
-            passengersScatterPlot.AppendPassenger(timeWillingToWait, false, moneyWillingToSpend);
+            passengersScatterPlot.AppendPassenger(tripUtilityScore, hourlyIncome, false);
 
             Destroy(gameObject);
         }
-
-        // TODO: Calculate the actual waiting time and compare to the expected time
 
     }
 
@@ -170,7 +167,7 @@ public class PassengerBehavior : MonoBehaviour
 
         if (state == PassengerState.PickedUp)
         {
-            float actualPickupTime = Time.time;
+            float actualPickupTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
             float actualWaitingTime = actualPickupTime - hailTime;
             float utilitySurplus = utilityFromGettingTaxi - actualWaitingTime;
             Debug.Log("Passenger " + id + " was picked up at " + actualPickupTime + ", expected pickup time was " + expectedPickupTime + ", difference is " + (actualPickupTime - expectedPickupTime));

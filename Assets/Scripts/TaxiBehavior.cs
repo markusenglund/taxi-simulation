@@ -15,7 +15,9 @@ public enum TaxiState
 
 public class TaxiBehavior : MonoBehaviour
 {
-    public static float speed = 1f;
+    private static float realSpeed = 1f;
+
+    public static float simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour(realSpeed);
 
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;
@@ -185,7 +187,7 @@ public class TaxiBehavior : MonoBehaviour
             }
 
             // Distance delta should be lower if the taxi is close to the destination
-            float distanceDelta = speed * Time.deltaTime;
+            float distanceDelta = realSpeed * Time.deltaTime;
 
             // If the taxi is close to the destination, set the distance delta to 0.01f
             if ((destination - transform.position).magnitude < 0.3f)

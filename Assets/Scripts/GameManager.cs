@@ -104,15 +104,17 @@ public class GameManager : MonoBehaviour
         (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
         if (closestTaxi != null)
         {
-            float expectedWaitingTime = (closestTaxiDistance / TaxiBehavior.speed) + 1.6f;
+            // simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour();
+            float extraPickUpTime = 1.6f / 60f; // 1.6 simulation minutes
+            float expectedWaitingTime = (closestTaxiDistance / TaxiBehavior.simulationSpeed) + extraPickUpTime;
             return expectedWaitingTime;
         }
 
-        float avgTimePerTrip = 18f;
+        float avgTimePerTrip = 18f / 60f; // 18 simulation minutes
         float numTaxis = taxis.Count;
         float queueSize = waitingPassengers.Count;
 
-        float avgTaxiArrivalTime = 5f;
+        float avgTaxiArrivalTime = 5f / 60f; // 5 simulation minutes
 
         float expectedWaitingTimeForQueue = (avgTimePerTrip * queueSize / numTaxis) + avgTaxiArrivalTime;
         return expectedWaitingTimeForQueue;
