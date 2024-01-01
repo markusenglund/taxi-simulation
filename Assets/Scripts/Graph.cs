@@ -40,11 +40,7 @@ public class Graph : MonoBehaviour
         float minutesWaited = hoursWaited * 60;
         Vector2 point = new Vector2(time, minutesWaited);
         values.Add(point);
-        // lineRenderer.positionCount++;
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
-        // lineRenderer.SetPosition(lineRenderer.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
-        // Debug.Log("graphPosition: " + graphPosition);
-        // Debug.Log("point: " + point);
         CreateDot(graphPosition);
     }
 
