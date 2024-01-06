@@ -12,6 +12,45 @@ public enum PassengerState
     DroppedOff
 }
 
+public class PassengerEconomicParameters
+{
+    // Base values
+    public float hourlyIncome { get; set; }
+    public float tripUtilityScore { get; set; }
+    public float timePreference { get; set; }
+
+    // Derived values
+    public float waitingCostPerHour { get; set; }
+    public float tripUtilityValue { get; set; }
+}
+
+public class PassengerDecisionData
+{
+
+    public bool hasAcceptedRideOffer { get; set; }
+
+    public float decisionTime { get; set; }
+
+    public float expectedPickupTime { get; set; }
+    public float expectedWaitingTime { get; set; }
+    public float expectedWaitingCost { get; set; }
+
+    public float fare { get; set; }
+
+    public float expectedValueSurplus { get; set; }
+
+    public float expectedUtilitySurplus { get; set; }
+}
+
+public class PassengerPickedUpData
+{
+    public float pickedUpTime { get; set; }
+    public float waitingCost { get; set; }
+    public float waitingTime { get; set; }
+    public float valueSurplus { get; set; }
+    public float utilitySurplus { get; set; }
+}
+
 public class PassengerBehavior : MonoBehaviour
 {
 
@@ -26,9 +65,9 @@ public class PassengerBehavior : MonoBehaviour
     public PassengerState state = PassengerState.Idling;
 
 
-    private float expectedPickupTime;
+    // private float expectedPickupTime;
 
-    private float hailTime;
+    // private float decisionTime;
 
     private Vector3 destination;
 
@@ -41,18 +80,24 @@ public class PassengerBehavior : MonoBehaviour
 
     // Economic parameters
 
-    const double medianIncome = 20;
-    private double hourlyIncome;
+    const float medianIncome = 20;
+    // private float hourlyIncome;
 
-    private double tripUtilityScore;
+    // private float tripUtilityScore;
 
-    private double tripUtilityValue;
+    // private float tripUtilityValue;
 
-    private double timePreference;
+    // private float timePreference;
 
-    private double waitingCostPerHour;
+    // private float waitingCostPerHour;
 
-    private float utilityFromGettingTaxi;
+    // private float utilityFromGettingTaxi;
+
+    // private float fare;
+
+    public PassengerEconomicParameters passengerEconomicParameters;
+    public PassengerDecisionData passengerDecisionData;
+    public PassengerPickedUpData passengerPickedUpData;
 
     void Awake()
     {
@@ -67,36 +112,48 @@ public class PassengerBehavior : MonoBehaviour
 
     void GenerateEconomicParameters()
     {
-        GenerateHourlyIncome();
-        GenerateTripUtilityScore();
+        float hourlyIncome = GenerateHourlyIncome();
+        float tripUtilityScore = GenerateTripUtilityScore();
         // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
-        timePreference = Math.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(1.5, 0.5, 0, 3);
-        waitingCostPerHour = hourlyIncome * timePreference;
+        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(1.5f, 0.5f, 0, 3f);
+        float waitingCostPerHour = hourlyIncome * timePreference;
         // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
-        tripUtilityValue = tripUtilityScore * hourlyIncome;
+        float tripUtilityValue = tripUtilityScore * hourlyIncome;
         Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
+        passengerEconomicParameters = new PassengerEconomicParameters()
+        {
+            hourlyIncome = hourlyIncome,
+            tripUtilityScore = tripUtilityScore,
+            timePreference = timePreference,
+            waitingCostPerHour = waitingCostPerHour,
+            tripUtilityValue = tripUtilityValue
+        };
     }
 
-    void GenerateHourlyIncome()
+
+    float GenerateHourlyIncome()
     {
-        double mu = 0;
-        double sigma = 0.7;
+        float mu = 0;
+        float sigma = 0.7f;
         // with mu=0, sigma=0.7, medianIncome=20  this a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
-        hourlyIncome = medianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+        float hourlyIncome = medianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
         Debug.Log("Passenger " + id + " hourly income is " + hourlyIncome);
+
+        return hourlyIncome;
     }
 
 
-    void GenerateTripUtilityScore()
+    float GenerateTripUtilityScore()
     {
         float tripDistance = Utils.GetDistance(positionActual, destination);
         float tripDistanceUtilityModifier = Mathf.Sqrt(tripDistance);
 
 
-        double mu = 0;
-        double sigma = 0.4;
-        tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+        float mu = 0;
+        float sigma = 0.4f;
+        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
         Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
+        return tripUtilityScore;
     }
     void Start()
     {
@@ -108,26 +165,42 @@ public class PassengerBehavior : MonoBehaviour
     {
         float expectedWaitingTime = GameManager.Instance.GetExpectedWaitingTime(this);
         float fare = GameManager.Instance.GetFare(this, destination);
-        double waitingCost = expectedWaitingTime * waitingCostPerHour;
-        double netUtilityValueFromRide = tripUtilityValue - waitingCost - fare;
-        Debug.Log("Passenger " + id + " Net utility $ from ride: " + netUtilityValueFromRide);
-        Debug.Log("Passenger " + id + " - fare $: " + fare + ", waiting cost $: " + waitingCost + " for waiting " + expectedWaitingTime + " hours");
-        if (netUtilityValueFromRide > 0)
+        float expectedWaitingCost = expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
+
+        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - fare;
+        float expectedUtilitySurplus = expectedValueSurplus;
+
+        Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
+        Debug.Log("Passenger " + id + " - fare $: " + fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + expectedWaitingTime + " hours");
+        float decisionTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float expectedPickupTime = decisionTime + expectedWaitingTime;
+        bool hasAcceptedRideOffer = expectedValueSurplus > 0;
+        if (hasAcceptedRideOffer)
         {
             Debug.Log("Passenger " + id + " is hailing a taxi");
             GameManager.Instance.HailTaxi(this);
-            hailTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-            expectedPickupTime = hailTime + expectedWaitingTime;
-            passengersScatterPlot.AppendPassenger(tripUtilityScore, hourlyIncome, true);
         }
         else
         {
             Debug.Log("Passenger " + id + " is giving up");
             passengersGraph.IncrementNumUnservedPassengers();
-            passengersScatterPlot.AppendPassenger(tripUtilityScore, hourlyIncome, false);
 
             Destroy(gameObject);
         }
+
+        passengerDecisionData = new PassengerDecisionData()
+        {
+            hasAcceptedRideOffer = hasAcceptedRideOffer,
+            decisionTime = decisionTime,
+            expectedPickupTime = expectedPickupTime,
+            expectedWaitingTime = expectedWaitingTime,
+            expectedWaitingCost = expectedWaitingCost,
+            fare = fare,
+            expectedValueSurplus = expectedValueSurplus,
+            expectedUtilitySurplus = expectedUtilitySurplus
+        };
+
+        passengersScatterPlot.AppendPassenger(passengerEconomicParameters, passengerDecisionData);
 
     }
 
@@ -140,12 +213,12 @@ public class PassengerBehavior : MonoBehaviour
         float xVisual = x;
         float zVisual = z;
 
-        if (x % (Utils.blockSize) == 0)
+        if (x % Utils.blockSize == 0)
         {
             xVisual = x + .23f;
             rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
         }
-        if (z % (Utils.blockSize) == 0)
+        if (z % Utils.blockSize == 0)
         {
             zVisual = z + .23f;
             rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
@@ -167,13 +240,29 @@ public class PassengerBehavior : MonoBehaviour
 
         if (state == PassengerState.PickedUp)
         {
-            float actualPickupTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-            float actualWaitingTime = actualPickupTime - hailTime;
-            float utilitySurplus = utilityFromGettingTaxi - actualWaitingTime;
-            Debug.Log("Passenger " + id + " was picked up at " + actualPickupTime + ", expected pickup time was " + expectedPickupTime + ", difference is " + (actualPickupTime - expectedPickupTime));
+            float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            float waitingTime = pickedUpTime - passengerDecisionData.decisionTime;
+            float waitingCost = waitingTime * passengerEconomicParameters.waitingCostPerHour;
+            // TODO: Glitch - utilityFromGettingTaxi is null
+            float valueSurplus = passengerEconomicParameters.tripUtilityValue - waitingCost - passengerDecisionData.fare;
+
+            float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
+            Debug.Log("Passenger " + id + " was picked up at " + pickedUpTime + ", expected pickup time was " + passengerDecisionData.expectedPickupTime + ", difference is " + (pickedUpTime - passengerDecisionData.expectedPickupTime));
             Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
-            waitingTimeGraph.SetNewValue(actualWaitingTime);
+
+            passengerPickedUpData = new PassengerPickedUpData()
+            {
+                pickedUpTime = pickedUpTime,
+                waitingCost = waitingCost,
+                waitingTime = waitingTime,
+                valueSurplus = valueSurplus,
+                utilitySurplus = utilitySurplus
+            };
+
+
+            waitingTimeGraph.SetNewValue(waitingTime);
             passengersGraph.IncrementNumPickedUpPassengers();
+            // TODO: Add it to the surplus graph
         }
     }
 }

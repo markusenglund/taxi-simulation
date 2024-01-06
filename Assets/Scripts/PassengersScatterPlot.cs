@@ -5,10 +5,8 @@ using TMPro;
 
 public class Passenger
 {
-    public double tripUtilityScore { get; set; }
-    public double income { get; set; }
-    public bool wasServed { get; set; }
-    public float realTime { get; set; }
+    public PassengerEconomicParameters economicParameters { get; set; }
+    public PassengerDecisionData decisionData { get; set; }
 }
 
 
@@ -45,30 +43,24 @@ public class PassengersScatterPlot : MonoBehaviour
         InstantiateGraph();
     }
 
-    public void AppendPassenger(
-        double tripUtilityScore,
-        double income,
-        bool wasServed
-    )
+    public void AppendPassenger(PassengerEconomicParameters economicParameters, PassengerDecisionData decisionData)
     {
         float realTime = Time.time;
 
         // Create a passenger
         Passenger passenger = new Passenger()
         {
-            tripUtilityScore = tripUtilityScore,
-            wasServed = wasServed,
-            income = income,
-            realTime = realTime
+            economicParameters = economicParameters,
+            decisionData = decisionData
         };
 
 
 
         passengers.Add(passenger);
-        Vector2 point = new Vector2((float)income, (float)tripUtilityScore);
+        Vector2 point = new Vector2(economicParameters.hourlyIncome, economicParameters.tripUtilityScore);
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
 
-        CreateDot(graphPosition, wasServed);
+        CreateDot(graphPosition, decisionData.hasAcceptedRideOffer);
     }
 
 

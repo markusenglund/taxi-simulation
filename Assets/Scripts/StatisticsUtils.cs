@@ -17,9 +17,9 @@ public class StatisticsUtils : MonoBehaviour
         return y1;
     }
 
-    public static double GetRandomFromNormalDistribution(
-        double mean,
-        double standardDeviation,
+    public static float GetRandomFromNormalDistribution(
+        float mean,
+        float standardDeviation,
         float min = float.NegativeInfinity,
         float max = float.PositiveInfinity
     )
@@ -33,16 +33,16 @@ public class StatisticsUtils : MonoBehaviour
             return GetRandomFromNormalDistribution(mean, standardDeviation, min, max);
         }
 
-        return value;
+        return (float)value;
     }
 
-    public static double getRandomFromLogNormalDistribution(
-        double mu, double sigma
+    public static float getRandomFromLogNormalDistribution(
+        float mu, float sigma
     )
     {
         double standardNormalVariable = GetStandardNormalVariable();
         double logNormalVariable = Math.Exp(mu + sigma * standardNormalVariable);
 
-        return logNormalVariable;
+        return (float)logNormalVariable;
     }
 }
