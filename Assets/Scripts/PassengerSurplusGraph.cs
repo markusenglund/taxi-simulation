@@ -14,7 +14,7 @@ public class PassengerSurplusGraph : MonoBehaviour
 
 
 
-  LineRenderer utilitySurplusLine;
+  LineRenderer fourthQuartileUtilitySurplusPerCapitaLine;
 
   float accumulatedPassengerUtilitySurplus = 0f;
 
@@ -24,7 +24,7 @@ public class PassengerSurplusGraph : MonoBehaviour
 
   float margin = 26f;
   float marginTop = 50f;
-  float maxY = 50f;
+  float maxY = 3f;
   float minY = 0f;
   float maxX = 180f;
   float minX = 0f;
@@ -59,14 +59,72 @@ public class PassengerSurplusGraph : MonoBehaviour
   {
     float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
     float simulationTimeMinutes = simulationTime * 60f;
-    Vector2 point = new Vector2(simulationTimeMinutes, accumulatedPassengerUtilitySurplus);
-    passengerSurplusPoints.Add(point);
-    utilitySurplusLine.positionCount++;
-    Vector2 graphPosition = ConvertValueToGraphPosition(point);
-    Debug.Log("Point: " + point);
-    Debug.Log("Graph position: " + graphPosition);
-    utilitySurplusLine.SetPosition(utilitySurplusLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
 
+    float[] quartiledUtilitySurplusPerCapita = CalculateQuartiledUtilitySurplusPerCapita();
+
+    // Create fourth quartile line if it is null
+    if (fourthQuartileUtilitySurplusPerCapitaLine == null)
+    {
+      InstantiateLine(3);
+    }
+
+    Debug.Log("Quartiled utility surplus per capita: " + quartiledUtilitySurplusPerCapita[0] + ", " + quartiledUtilitySurplusPerCapita[1] + ", " + quartiledUtilitySurplusPerCapita[2] + ", " + quartiledUtilitySurplusPerCapita[3]);
+
+    Vector2 fourthQuartilePoint = new Vector2(simulationTimeMinutes, quartiledUtilitySurplusPerCapita[3]);
+    passengerSurplusPoints.Add(fourthQuartilePoint);
+    fourthQuartileUtilitySurplusPerCapitaLine.positionCount++;
+    Vector2 graphPosition = ConvertValueToGraphPosition(fourthQuartilePoint);
+
+    Debug.Log("Point: " + fourthQuartilePoint);
+    Debug.Log("Graph position: " + graphPosition);
+
+    fourthQuartileUtilitySurplusPerCapitaLine.SetPosition(fourthQuartileUtilitySurplusPerCapitaLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+
+  }
+
+  float[] CalculateQuartiledUtilitySurplusPerCapita()
+  {
+    float[] quartiledUtilitySurplusPerCapita = new float[4];
+    float[] quartiledUtilitySurplus = new float[4];
+    int[] quartiledPopulation = new int[4];
+    // FIXME: Hard-coded values for now based on mu=0.7 and median 20
+    float[] quartiledIncomeTopRange = { 12.47f, 20.0f, 32.07f, float.PositiveInfinity };
+    foreach (PassengerBehavior passenger in pickedUpPassengers)
+    {
+      float utilitySurplus = passenger.passengerPickedUpData.utilitySurplus;
+      float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;
+
+      if (hourlyIncome < quartiledIncomeTopRange[0])
+      {
+        quartiledUtilitySurplus[0] += utilitySurplus;
+        quartiledPopulation[0]++;
+      }
+      else if (hourlyIncome < quartiledIncomeTopRange[1])
+      {
+        quartiledUtilitySurplus[1] += utilitySurplus;
+        quartiledPopulation[1]++;
+      }
+      else if (hourlyIncome < quartiledIncomeTopRange[2])
+      {
+        quartiledUtilitySurplus[2] += utilitySurplus;
+        quartiledPopulation[2]++;
+      }
+      else
+      {
+        quartiledUtilitySurplus[3] += utilitySurplus;
+        quartiledPopulation[3]++;
+      }
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+      if (quartiledPopulation[i] != 0)
+      {
+        quartiledUtilitySurplusPerCapita[i] = quartiledUtilitySurplus[i] / quartiledPopulation[i];
+      }
+    }
+
+    return quartiledUtilitySurplusPerCapita;
   }
 
 
@@ -128,17 +186,22 @@ public class PassengerSurplusGraph : MonoBehaviour
     greenLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
   }
 
+  private void InstantiateLine(int quartile)
+  {
+    LineRenderer line = Instantiate(lrPrefab, graphContainer);
+    line.positionCount = 0;
+
+    if (quartile == 3)
+    {
+      // Set line to purple color
+      line.startColor = new Color(0.5f, 0.0f, 0.5f, 1.0f);
+      line.endColor = new Color(0.5f, 0.0f, 0.5f, 1.0f);
+      fourthQuartileUtilitySurplusPerCapitaLine = line;
+    }
+  }
+
   private void InstantiateGraph()
   {
-    utilitySurplusLine = Instantiate(lrPrefab, graphContainer);
-    utilitySurplusLine.positionCount = 1;
-    Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
-    utilitySurplusLine.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
-
-    // Set the color of the utility surplus line to green
-    utilitySurplusLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    utilitySurplusLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-
     CreateAxes();
     CreateAxisLabels();
     CreateHeaderText();
