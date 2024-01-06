@@ -64,12 +64,7 @@ public class PassengerBehavior : MonoBehaviour
 
     public PassengerState state = PassengerState.Idling;
 
-
-    // private float expectedPickupTime;
-
-    // private float decisionTime;
-
-    private Vector3 destination;
+    public Vector3 destination;
 
     private Graph waitingTimeGraph;
 
@@ -77,23 +72,9 @@ public class PassengerBehavior : MonoBehaviour
 
     private PassengersScatterPlot passengersScatterPlot;
 
-
-    // Economic parameters
+    private PassengerSurplusGraph passengerSurplusGraph;
 
     const float medianIncome = 20;
-    // private float hourlyIncome;
-
-    // private float tripUtilityScore;
-
-    // private float tripUtilityValue;
-
-    // private float timePreference;
-
-    // private float waitingCostPerHour;
-
-    // private float utilityFromGettingTaxi;
-
-    // private float fare;
 
     public PassengerEconomicParameters passengerEconomicParameters;
     public PassengerDecisionData passengerDecisionData;
@@ -108,6 +89,8 @@ public class PassengerBehavior : MonoBehaviour
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
         passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
+
+        passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
     }
 
     void GenerateEconomicParameters()
@@ -262,7 +245,7 @@ public class PassengerBehavior : MonoBehaviour
 
             waitingTimeGraph.SetNewValue(waitingTime);
             passengersGraph.IncrementNumPickedUpPassengers();
-            // TODO: Add it to the surplus graph
+            passengerSurplusGraph.AppendPassenger(this);
         }
     }
 }

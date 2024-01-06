@@ -45,8 +45,6 @@ public class PassengersScatterPlot : MonoBehaviour
 
     public void AppendPassenger(PassengerEconomicParameters economicParameters, PassengerDecisionData decisionData)
     {
-        float realTime = Time.time;
-
         // Create a passenger
         Passenger passenger = new Passenger()
         {
