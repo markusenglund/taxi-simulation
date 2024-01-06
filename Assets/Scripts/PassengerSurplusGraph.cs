@@ -29,6 +29,11 @@ public class PassengerSurplusGraph : MonoBehaviour
   float maxX = 180f;
   float minX = 0f;
 
+  Color purple = new Color(0.5f, 0.0f, 0.5f, 1.0f);
+  Color blue = new Color(0.0f, 0.0f, 1.0f, 1.0f);
+  Color green = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+  Color yellow = new Color(1.0f, 1.0f, 0.0f, 1.0f);
+
   const float timeInterval = 2f;
 
 
@@ -170,20 +175,23 @@ public class PassengerSurplusGraph : MonoBehaviour
 
   private void CreateLegend()
   {
-    TMP_Text text1 = Instantiate(legendTextPrefab, graphContainer);
-    Vector2 textPosition1 = new Vector2(80, 74f);
-    text1.text = "Acc surplus";
-    text1.rectTransform.anchoredPosition = textPosition1;
+    TMP_Text fourthQuartile = Instantiate(legendTextPrefab, graphContainer);
+    Vector2 textPosition1 = new Vector2(120f, 74f);
+    fourthQuartile.text = "Fourth quartile (n=0)";
+    fourthQuartile.rectTransform.anchoredPosition = textPosition1;
+
+    fourthQuartile.rectTransform.sizeDelta = new Vector2(160, 30);
+
 
     // Create a tiny green line with the line renderer
-    LineRenderer greenLine = Instantiate(lrPrefab, graphContainer);
-    greenLine.positionCount = 2;
-    Vector2 greenLinePosition1 = new Vector2(225, 181);
-    Vector2 greenLinePosition2 = new Vector2(235, 181);
-    greenLine.SetPosition(0, new Vector3(greenLinePosition1.x, greenLinePosition1.y, 0));
-    greenLine.SetPosition(1, new Vector3(greenLinePosition2.x, greenLinePosition2.y, 0));
-    greenLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    greenLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+    LineRenderer fourthQuartileLine = Instantiate(lrPrefab, graphContainer);
+    fourthQuartileLine.positionCount = 2;
+    Vector2 fourthQuartilePos1 = new Vector2(225, 181);
+    Vector2 fourthQuartilePos2 = new Vector2(235, 181);
+    fourthQuartileLine.SetPosition(0, new Vector3(fourthQuartilePos1.x, fourthQuartilePos1.y, 0));
+    fourthQuartileLine.SetPosition(1, new Vector3(fourthQuartilePos2.x, fourthQuartilePos2.y, 0));
+    fourthQuartileLine.startColor = purple;
+    fourthQuartileLine.endColor = purple;
   }
 
   private void InstantiateLine(int quartile)
@@ -193,9 +201,8 @@ public class PassengerSurplusGraph : MonoBehaviour
 
     if (quartile == 3)
     {
-      // Set line to purple color
-      line.startColor = new Color(0.5f, 0.0f, 0.5f, 1.0f);
-      line.endColor = new Color(0.5f, 0.0f, 0.5f, 1.0f);
+      line.startColor = purple;
+      line.endColor = purple;
       fourthQuartileUtilitySurplusPerCapitaLine = line;
     }
   }
