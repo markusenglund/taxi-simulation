@@ -51,7 +51,7 @@ public class PassengerPickedUpData
     public float utilitySurplus { get; set; }
 }
 
-public class PassengerBehavior : MonoBehaviour
+public class Passenger : MonoBehaviour
 {
 
     [SerializeField] public Transform spawnAnimationPrefab;
@@ -214,7 +214,7 @@ public class PassengerBehavior : MonoBehaviour
 
         Transform passenger = Instantiate(prefab, new Vector3(xVisual, 0.08f, zVisual), rotation);
         passenger.name = "Passenger";
-        PassengerBehavior passengerComponent = passenger.GetComponent<PassengerBehavior>();
+        Passenger passengerComponent = passenger.GetComponent<Passenger>();
         passengerComponent.positionActual = new Vector3(x, 0.08f, z);
         return passenger;
     }
@@ -230,7 +230,6 @@ public class PassengerBehavior : MonoBehaviour
             float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
             float waitingTime = pickedUpTime - passengerDecisionData.decisionTime;
             float waitingCost = waitingTime * passengerEconomicParameters.waitingCostPerHour;
-            // TODO: Glitch - utilityFromGettingTaxi is null
             float valueSurplus = passengerEconomicParameters.tripUtilityValue - waitingCost - passengerDecisionData.fare;
 
             float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;

@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform passengerPrefab;
 
     private List<Transform> taxis = new List<Transform>();
-    private Queue<PassengerBehavior> waitingPassengers = new Queue<PassengerBehavior>();
+    private Queue<Passenger> waitingPassengers = new Queue<Passenger>();
 
 
     void Awake()
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 8; i++)
         {
             Vector3 randomPosition = Utils.GetRandomPosition();
-            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
 
         while (true)
@@ -45,11 +45,11 @@ public class GameManager : MonoBehaviour
             int random = UnityEngine.Random.Range(0, 4);
             yield return new WaitForSeconds(random);
             Vector3 randomPosition = Utils.GetRandomPosition();
-            Transform passenger = PassengerBehavior.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
     }
 
-    public PassengerBehavior GetNextPassenger()
+    public Passenger GetNextPassenger()
     {
         // TODO: This creates an inefficiency, since the passenger at the front of the queue might not be the closest one to the taxi
         if (waitingPassengers.Count > 0)
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public void HailTaxi(PassengerBehavior passenger)
+    public void HailTaxi(Passenger passenger)
     {
         (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
 
@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         return (closestTaxi, closestTaxiDistance);
     }
 
-    public float GetExpectedWaitingTime(PassengerBehavior passenger)
+    public float GetExpectedWaitingTime(Passenger passenger)
     {
         (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
         if (closestTaxi != null)
@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public float GetFare(PassengerBehavior passenger, Vector3 destination)
+    public float GetFare(Passenger passenger, Vector3 destination)
     {
         float distance = Utils.GetDistance(passenger.positionActual, destination);
         // This formula was empirically chosen to approximate the fare for a getting a ride in Utrecht

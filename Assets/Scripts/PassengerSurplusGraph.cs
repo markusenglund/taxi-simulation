@@ -24,7 +24,7 @@ public class PassengerSurplusGraph : MonoBehaviour
 
   List<Vector2> passengerSurplusPoints = new List<Vector2>();
 
-  List<PassengerBehavior> passengers = new List<PassengerBehavior>();
+  List<Passenger> passengers = new List<Passenger>();
 
   float margin = 26f;
   float marginTop = 50f;
@@ -45,7 +45,7 @@ public class PassengerSurplusGraph : MonoBehaviour
     StartCoroutine(UpdateGraphAtInterval());
   }
 
-  public void AppendPassenger(PassengerBehavior passenger)
+  public void AppendPassenger(Passenger passenger)
   {
     passengers.Add(passenger);
   }
@@ -93,7 +93,7 @@ public class PassengerSurplusGraph : MonoBehaviour
     int[] quartiledPopulation = new int[4];
     // FIXME: Hard-coded values for now based on mu=0.7 and median 20
     float[] quartiledIncomeTopRange = { 12.47f, 20.0f, 32.07f, float.PositiveInfinity };
-    foreach (PassengerBehavior passenger in passengers)
+    foreach (Passenger passenger in passengers)
     {
       float utilitySurplus = passenger.passengerPickedUpData != null ? passenger.passengerPickedUpData.utilitySurplus : 0;
       float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;

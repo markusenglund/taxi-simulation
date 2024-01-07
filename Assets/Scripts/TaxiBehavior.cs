@@ -22,7 +22,7 @@ public class TaxiBehavior : MonoBehaviour
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;
 
-    private PassengerBehavior passenger;
+    private Passenger passenger;
 
     public TaxiState state = TaxiState.Idling;
 
@@ -43,7 +43,7 @@ public class TaxiBehavior : MonoBehaviour
         return taxi;
     }
 
-    public void SetState(TaxiState newState, Vector3 destination, PassengerBehavior passenger = null)
+    public void SetState(TaxiState newState, Vector3 destination, Passenger passenger = null)
     {
         // Put the passenger inside the taxi cab
         if (newState == TaxiState.DrivingPassenger)
@@ -158,7 +158,7 @@ public class TaxiBehavior : MonoBehaviour
             else if (state == TaxiState.DrivingPassenger)
             {
                 // Check if there are waiting passengers
-                PassengerBehavior nextPassenger = GameManager.Instance.GetNextPassenger();
+                Passenger nextPassenger = GameManager.Instance.GetNextPassenger();
                 if (nextPassenger != null)
                 {
                     SetState(TaxiState.Dispatched, nextPassenger.positionActual, nextPassenger);

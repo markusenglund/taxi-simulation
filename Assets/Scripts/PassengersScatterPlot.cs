@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Passenger
+public class Passenger2
 {
     public PassengerEconomicParameters economicParameters { get; set; }
     public PassengerDecisionData decisionData { get; set; }
@@ -27,7 +27,7 @@ public class PassengersScatterPlot : MonoBehaviour
 
     List<Vector2> values = new List<Vector2>();
 
-    List<Passenger> passengers = new List<Passenger>();
+    List<Passenger2> passengers = new List<Passenger2>();
 
     float margin = 40f;
     float marginTop = 50f;
@@ -46,7 +46,7 @@ public class PassengersScatterPlot : MonoBehaviour
     public void AppendPassenger(PassengerEconomicParameters economicParameters, PassengerDecisionData decisionData)
     {
         // Create a passenger
-        Passenger passenger = new Passenger()
+        Passenger2 passenger = new Passenger2()
         {
             economicParameters = economicParameters,
             decisionData = decisionData
