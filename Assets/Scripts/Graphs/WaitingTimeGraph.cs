@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Graph : MonoBehaviour
+public class WaitingTimeGraph : MonoBehaviour
 {
     private RectTransform graphContainer;
     [SerializeField] private Sprite circleSprite;

@@ -66,11 +66,11 @@ public class Passenger : MonoBehaviour
 
     public Vector3 destination;
 
-    private Graph waitingTimeGraph;
+    private WaitingTimeGraph waitingTimeGraph;
 
     private PassengersGraph passengersGraph;
 
-    private PassengersScatterPlot passengersScatterPlot;
+    private UtilityIncomeScatterPlot passengersScatterPlot;
 
     private PassengerSurplusGraph passengerSurplusGraph;
 
@@ -86,9 +86,9 @@ public class Passenger : MonoBehaviour
         incrementalId += 1;
         destination = GridUtils.GetRandomPosition();
         GenerateEconomicParameters();
-        waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
+        waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
-        passengersScatterPlot = GameObject.Find("PassengersScatterPlot").GetComponent<PassengersScatterPlot>();
+        passengersScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
         passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 
 
-public class PassengersScatterPlot : MonoBehaviour
+public class UtilityIncomeScatterPlot : MonoBehaviour
 {
     private RectTransform graphContainer;
     [SerializeField] private LineRenderer lrPrefab;

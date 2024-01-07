@@ -371,6 +371,7 @@ MonoBehaviour:
   positionActual: {x: 0, y: 0, z: 0}
   id: 0
   state: 0
+  destination: {x: 0, y: 0, z: 0}
 --- !u!1 &2761453102985801203
 GameObject:
   m_ObjectHideFlags: 0
