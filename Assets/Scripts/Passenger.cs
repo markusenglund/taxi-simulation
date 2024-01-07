@@ -84,7 +84,7 @@ public class Passenger : MonoBehaviour
     {
         id = incrementalId;
         incrementalId += 1;
-        destination = Utils.GetRandomPosition();
+        destination = GridUtils.GetRandomPosition();
         GenerateEconomicParameters();
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<Graph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
@@ -128,7 +128,7 @@ public class Passenger : MonoBehaviour
 
     float GenerateTripUtilityScore()
     {
-        float tripDistance = Utils.GetDistance(positionActual, destination);
+        float tripDistance = GridUtils.GetDistance(positionActual, destination);
         float tripDistanceUtilityModifier = Mathf.Sqrt(tripDistance);
 
 
@@ -200,12 +200,12 @@ public class Passenger : MonoBehaviour
         float xVisual = x;
         float zVisual = z;
 
-        if (x % Utils.blockSize == 0)
+        if (x % GridUtils.blockSize == 0)
         {
             xVisual = x + .23f;
             rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
         }
-        if (z % Utils.blockSize == 0)
+        if (z % GridUtils.blockSize == 0)
         {
             zVisual = z + .23f;
             rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));

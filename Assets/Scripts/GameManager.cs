@@ -20,11 +20,11 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
 
-        Utils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
+        GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
         // Create taxis in random places
         for (int i = 0; i < 4; i++)
         {
-            Vector3 randomPosition = Utils.GetRandomPosition();
+            Vector3 randomPosition = GridUtils.GetRandomPosition();
             taxis.Add(TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z));
         }
 
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         // Create 8 passengers to start
         for (int i = 0; i < 8; i++)
         {
-            Vector3 randomPosition = Utils.GetRandomPosition();
+            Vector3 randomPosition = GridUtils.GetRandomPosition();
             Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
 
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         {
             int random = UnityEngine.Random.Range(0, 4);
             yield return new WaitForSeconds(random);
-            Vector3 randomPosition = Utils.GetRandomPosition();
+            Vector3 randomPosition = GridUtils.GetRandomPosition();
             Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
     }
@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
             {
                 continue;
             }
-            float distance = Utils.GetDistance(taxi.position, position);
+            float distance = GridUtils.GetDistance(taxi.position, position);
             if (distance < closestTaxiDistance)
             {
                 closestTaxiDistance = distance;
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
 
     public float GetFare(Passenger passenger, Vector3 destination)
     {
-        float distance = Utils.GetDistance(passenger.positionActual, destination);
+        float distance = GridUtils.GetDistance(passenger.positionActual, destination);
         // This formula was empirically chosen to approximate the fare for a getting a ride in Utrecht
         float startingFare = 4f;
         float baseFare = startingFare + (distance * 2f);

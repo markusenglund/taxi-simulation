@@ -106,28 +106,28 @@ public class TaxiBehavior : MonoBehaviour
         Vector3 taxiDestination = destination;
 
         Vector3 taxiDirection = taxiDestination - taxiPosition;
-        if ((taxiPosition.x % Utils.blockSize == 0 && taxiDirection.x == 0) || (taxiPosition.z % Utils.blockSize == 0 && taxiDirection.z == 0))
+        if ((taxiPosition.x % GridUtils.blockSize == 0 && taxiDirection.x == 0) || (taxiPosition.z % GridUtils.blockSize == 0 && taxiDirection.z == 0))
         {
             waypoints.Enqueue(taxiDestination);
             return;
         }
-        if (taxiPosition.x % Utils.blockSize != 0)
+        if (taxiPosition.x % GridUtils.blockSize != 0)
         {
-            float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.x / Utils.blockSize) * Utils.blockSize;
+            float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize;
             waypoints.Enqueue(new Vector3(bestFirstIntersectionX, 0.05f, taxiPosition.z));
-            if (taxiDestination.x % Utils.blockSize != 0)
+            if (taxiDestination.x % GridUtils.blockSize != 0)
             {
-                float bestSecondIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.z / Utils.blockSize) * Utils.blockSize;
+                float bestSecondIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize;
                 waypoints.Enqueue(new Vector3(bestFirstIntersectionX, 0.05f, bestSecondIntersectionZ));
             }
         }
         else
         {
-            float bestFirstIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.z / Utils.blockSize) * Utils.blockSize;
+            float bestFirstIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize;
             waypoints.Enqueue(new Vector3(taxiPosition.x, 0.05f, bestFirstIntersectionZ));
-            if (taxiDestination.z % Utils.blockSize != 0)
+            if (taxiDestination.z % GridUtils.blockSize != 0)
             {
-                float bestSecondIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / Utils.blockSize) * Utils.blockSize : Mathf.Floor(taxiDestination.x / Utils.blockSize) * Utils.blockSize;
+                float bestSecondIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize;
                 waypoints.Enqueue(new Vector3(bestSecondIntersectionX, 0.05f, bestFirstIntersectionZ));
             }
         }
@@ -137,7 +137,7 @@ public class TaxiBehavior : MonoBehaviour
     IEnumerator waitForPassenger()
     {
         yield return new WaitForSeconds(1);
-        Vector3 newDestination = Utils.GetRandomPosition();
+        Vector3 newDestination = GridUtils.GetRandomPosition();
         SetState(TaxiState.DrivingPassenger, newDestination, passenger);
         passenger.SetState(PassengerState.PickedUp, this);
 
