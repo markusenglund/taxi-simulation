@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition();
-            taxis.Add(TaxiBehavior.Create(taxiPrefab, randomPosition.x, randomPosition.z));
+            taxis.Add(Driver.Create(taxiPrefab, randomPosition.x, randomPosition.z));
         }
 
         StartCoroutine(createPassengers());
@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
 
     public void HailTaxi(Passenger passenger)
     {
-        (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
+        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
 
         if (closestTaxi != null)
         {
@@ -77,14 +77,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private (TaxiBehavior, float) GetClosestAvailableTaxi(Vector3 position)
+    private (Driver, float) GetClosestAvailableTaxi(Vector3 position)
     {
         float closestTaxiDistance = Mathf.Infinity;
-        TaxiBehavior closestTaxi = null;
+        Driver closestTaxi = null;
 
         foreach (Transform taxi in taxis)
         {
-            TaxiBehavior taxiBehavior = taxi.GetComponent<TaxiBehavior>();
+            Driver taxiBehavior = taxi.GetComponent<Driver>();
             if (taxiBehavior.state != TaxiState.Idling)
             {
                 continue;
@@ -101,12 +101,12 @@ public class GameManager : MonoBehaviour
 
     public float GetExpectedWaitingTime(Passenger passenger)
     {
-        (TaxiBehavior closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
+        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
         if (closestTaxi != null)
         {
             // simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour();
             float extraPickUpTime = 1.6f / 60f; // 1.6 simulation minutes
-            float expectedWaitingTime = (closestTaxiDistance / TaxiBehavior.simulationSpeed) + extraPickUpTime;
+            float expectedWaitingTime = (closestTaxiDistance / Driver.simulationSpeed) + extraPickUpTime;
             return expectedWaitingTime;
         }
 

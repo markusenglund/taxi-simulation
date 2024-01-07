@@ -57,7 +57,7 @@ public class Passenger : MonoBehaviour
     [SerializeField] public Transform spawnAnimationPrefab;
     public Vector3 positionActual;
 
-    private TaxiBehavior taxi;
+    private Driver taxi;
 
     static int incrementalId = 1;
     public int id;
@@ -220,7 +220,7 @@ public class Passenger : MonoBehaviour
     }
 
 
-    public void SetState(PassengerState state, TaxiBehavior taxi = null)
+    public void SetState(PassengerState state, Driver taxi = null)
     {
         this.state = state;
         this.taxi = taxi;

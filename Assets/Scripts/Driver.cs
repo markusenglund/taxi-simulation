@@ -13,7 +13,7 @@ public enum TaxiState
 }
 
 
-public class TaxiBehavior : MonoBehaviour
+public class Driver : MonoBehaviour
 {
     private static float realSpeed = 1f;
 
