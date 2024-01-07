@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PassengerSurplusGraph : MonoBehaviour
 {
@@ -12,15 +13,18 @@ public class PassengerSurplusGraph : MonoBehaviour
   [SerializeField] private TMP_Text headerTextPrefab;
   [SerializeField] private TMP_Text legendTextPrefab;
 
+  List<LineRenderer> quartileLines = new List<LineRenderer>(4);
+
+  TMP_Text firstQuartileLegend;
+  TMP_Text secondQuartileLegend;
+  TMP_Text thirdQuartileLegend;
+  TMP_Text fourthQuartileLegend;
 
 
-  LineRenderer fourthQuartileUtilitySurplusPerCapitaLine;
-
-  float accumulatedPassengerUtilitySurplus = 0f;
 
   List<Vector2> passengerSurplusPoints = new List<Vector2>();
 
-  List<PassengerBehavior> pickedUpPassengers = new List<PassengerBehavior>();
+  List<PassengerBehavior> passengers = new List<PassengerBehavior>();
 
   float margin = 26f;
   float marginTop = 50f;
@@ -28,11 +32,7 @@ public class PassengerSurplusGraph : MonoBehaviour
   float minY = 0f;
   float maxX = 180f;
   float minX = 0f;
-
-  Color purple = new Color(0.5f, 0.0f, 0.5f, 1.0f);
-  Color blue = new Color(0.0f, 0.0f, 1.0f, 1.0f);
-  Color green = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-  Color yellow = new Color(1.0f, 1.0f, 0.0f, 1.0f);
+  Color[] quartileColors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
   const float timeInterval = 2f;
 
@@ -47,8 +47,7 @@ public class PassengerSurplusGraph : MonoBehaviour
 
   public void AppendPassenger(PassengerBehavior passenger)
   {
-    pickedUpPassengers.Add(passenger);
-    accumulatedPassengerUtilitySurplus += passenger.passengerPickedUpData.utilitySurplus;
+    passengers.Add(passenger);
   }
 
   IEnumerator UpdateGraphAtInterval()
@@ -65,38 +64,38 @@ public class PassengerSurplusGraph : MonoBehaviour
     float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
     float simulationTimeMinutes = simulationTime * 60f;
 
-    float[] quartiledUtilitySurplusPerCapita = CalculateQuartiledUtilitySurplusPerCapita();
+    (float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = CalculateQuartiledUtilitySurplusPerCapita();
 
-    // Create fourth quartile line if it is null
-    if (fourthQuartileUtilitySurplusPerCapitaLine == null)
-    {
-      InstantiateLine(3);
-    }
-
+    UpdateLegends(quartiledPopulation);
     Debug.Log("Quartiled utility surplus per capita: " + quartiledUtilitySurplusPerCapita[0] + ", " + quartiledUtilitySurplusPerCapita[1] + ", " + quartiledUtilitySurplusPerCapita[2] + ", " + quartiledUtilitySurplusPerCapita[3]);
 
-    Vector2 fourthQuartilePoint = new Vector2(simulationTimeMinutes, quartiledUtilitySurplusPerCapita[3]);
-    passengerSurplusPoints.Add(fourthQuartilePoint);
-    fourthQuartileUtilitySurplusPerCapitaLine.positionCount++;
-    Vector2 graphPosition = ConvertValueToGraphPosition(fourthQuartilePoint);
-
-    Debug.Log("Point: " + fourthQuartilePoint);
-    Debug.Log("Graph position: " + graphPosition);
-
-    fourthQuartileUtilitySurplusPerCapitaLine.SetPosition(fourthQuartileUtilitySurplusPerCapitaLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+    // Add points to all 4 quartile lines
+    for (int i = 0; i < 4; i++)
+    {
+      if (quartiledPopulation[i] == 0)
+      {
+        continue;
+      }
+      LineRenderer quartileLine = quartileLines[i];
+      Vector2 quartilePoint = new Vector2(simulationTimeMinutes, quartiledUtilitySurplusPerCapita[i]);
+      // passengerSurplusPoints.Add(quartilePoint);
+      quartileLine.positionCount++;
+      Vector2 graphPosition = ConvertValueToGraphPosition(quartilePoint);
+      quartileLine.SetPosition(quartileLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+    }
 
   }
 
-  float[] CalculateQuartiledUtilitySurplusPerCapita()
+  (float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) CalculateQuartiledUtilitySurplusPerCapita()
   {
     float[] quartiledUtilitySurplusPerCapita = new float[4];
     float[] quartiledUtilitySurplus = new float[4];
     int[] quartiledPopulation = new int[4];
     // FIXME: Hard-coded values for now based on mu=0.7 and median 20
     float[] quartiledIncomeTopRange = { 12.47f, 20.0f, 32.07f, float.PositiveInfinity };
-    foreach (PassengerBehavior passenger in pickedUpPassengers)
+    foreach (PassengerBehavior passenger in passengers)
     {
-      float utilitySurplus = passenger.passengerPickedUpData.utilitySurplus;
+      float utilitySurplus = passenger.passengerPickedUpData != null ? passenger.passengerPickedUpData.utilitySurplus : 0;
       float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;
 
       if (hourlyIncome < quartiledIncomeTopRange[0])
@@ -129,8 +128,9 @@ public class PassengerSurplusGraph : MonoBehaviour
       }
     }
 
-    return quartiledUtilitySurplusPerCapita;
+    return (quartiledUtilitySurplusPerCapita, quartiledPopulation);
   }
+
 
 
   private void CreateAxes()
@@ -177,33 +177,76 @@ public class PassengerSurplusGraph : MonoBehaviour
   {
     TMP_Text fourthQuartile = Instantiate(legendTextPrefab, graphContainer);
     Vector2 textPosition1 = new Vector2(120f, 74f);
-    fourthQuartile.text = "Fourth quartile (n=0)";
-    fourthQuartile.rectTransform.anchoredPosition = textPosition1;
+    Vector2 textPosition2 = new Vector2(120f, 60f);
+    Vector2 textPosition3 = new Vector2(120f, 46f);
+    Vector2 textPosition4 = new Vector2(120f, 32f);
+    Vector2[] textPositions = { textPosition1, textPosition2, textPosition3, textPosition4 };
+    // fourthQuartile.text = "Fourth quartile (n=0)";
+    // fourthQuartile.rectTransform.anchoredPosition = textPosition1;
+    // fourthQuartile.rectTransform.sizeDelta = new Vector2(160, 30);
+    for (int i = 0; i < 4; i++)
+    {
+      TMP_Text text = Instantiate(legendTextPrefab, graphContainer);
+      text.rectTransform.anchoredPosition = textPositions[i];
+      text.rectTransform.sizeDelta = new Vector2(160, 30);
 
-    fourthQuartile.rectTransform.sizeDelta = new Vector2(160, 30);
+      // Create a tiny green line with the line renderer
+      LineRenderer line = Instantiate(lrPrefab, graphContainer);
+
+      RectTransform lineRectTransform = line.GetComponent<RectTransform>();
+      lineRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+      lineRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+
+      line.positionCount = 2;
+      Vector2 linePos1 = textPositions[i] + new Vector2(-95, 7);
+      Vector2 linePos2 = textPositions[i] + new Vector2(-85, 7);
+      line.SetPosition(0, new Vector3(linePos1.x, linePos1.y, 0));
+      line.SetPosition(1, new Vector3(linePos2.x, linePos2.y, 0));
+      line.startColor = quartileColors[i];
+      line.endColor = quartileColors[i];
 
 
-    // Create a tiny green line with the line renderer
-    LineRenderer fourthQuartileLine = Instantiate(lrPrefab, graphContainer);
-    fourthQuartileLine.positionCount = 2;
-    Vector2 fourthQuartilePos1 = new Vector2(225, 181);
-    Vector2 fourthQuartilePos2 = new Vector2(235, 181);
-    fourthQuartileLine.SetPosition(0, new Vector3(fourthQuartilePos1.x, fourthQuartilePos1.y, 0));
-    fourthQuartileLine.SetPosition(1, new Vector3(fourthQuartilePos2.x, fourthQuartilePos2.y, 0));
-    fourthQuartileLine.startColor = purple;
-    fourthQuartileLine.endColor = purple;
+      if (i == 0)
+      {
+        firstQuartileLegend = text;
+      }
+      else if (i == 1)
+      {
+        secondQuartileLegend = text;
+      }
+      else if (i == 2)
+      {
+        thirdQuartileLegend = text;
+      }
+      else
+      {
+        fourthQuartileLegend = text;
+      }
+    }
+
+    UpdateLegends(new int[] { 0, 0, 0, 0 });
   }
 
-  private void InstantiateLine(int quartile)
-  {
-    LineRenderer line = Instantiate(lrPrefab, graphContainer);
-    line.positionCount = 0;
 
-    if (quartile == 3)
+  private void UpdateLegends(int[] quartiledPopulation)
+  {
+    firstQuartileLegend.text = "First quartile (n=" + quartiledPopulation[0] + ")";
+    secondQuartileLegend.text = "Second quartile (n=" + quartiledPopulation[1] + ")";
+    thirdQuartileLegend.text = "Third quartile (n=" + quartiledPopulation[2] + ")";
+    fourthQuartileLegend.text = "Fourth quartile (n=" + quartiledPopulation[3] + ")";
+  }
+
+  private void InstantiateLines()
+  {
+
+
+    for (int i = 0; i < 4; i++)
     {
-      line.startColor = purple;
-      line.endColor = purple;
-      fourthQuartileUtilitySurplusPerCapitaLine = line;
+      LineRenderer line = Instantiate(lrPrefab, graphContainer);
+      line.positionCount = 0;
+      line.startColor = quartileColors[i];
+      line.endColor = quartileColors[i];
+      quartileLines.Add(line);
     }
   }
 
@@ -213,6 +256,7 @@ public class PassengerSurplusGraph : MonoBehaviour
     CreateAxisLabels();
     CreateHeaderText();
     CreateLegend();
+    InstantiateLines();
   }
 
 
@@ -227,15 +271,5 @@ public class PassengerSurplusGraph : MonoBehaviour
     return new Vector2(x, y);
   }
 
-
-  private void CreateDot(Vector2 position)
-  {
-    Transform dot = Instantiate(dotPrefab, graphContainer);
-    RectTransform rectTransform = dot.GetComponent<RectTransform>();
-    rectTransform.anchorMin = new Vector2(0, 0);
-    rectTransform.anchorMax = new Vector2(0, 0);
-    rectTransform.anchoredPosition = new Vector3(position.x, position.y, -1);
-
-  }
 }
 

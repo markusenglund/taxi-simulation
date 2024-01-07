@@ -158,18 +158,7 @@ public class PassengerBehavior : MonoBehaviour
         float decisionTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         float expectedPickupTime = decisionTime + expectedWaitingTime;
         bool hasAcceptedRideOffer = expectedValueSurplus > 0;
-        if (hasAcceptedRideOffer)
-        {
-            Debug.Log("Passenger " + id + " is hailing a taxi");
-            GameManager.Instance.HailTaxi(this);
-        }
-        else
-        {
-            Debug.Log("Passenger " + id + " is giving up");
-            passengersGraph.IncrementNumUnservedPassengers();
 
-            Destroy(gameObject);
-        }
 
         passengerDecisionData = new PassengerDecisionData()
         {
@@ -184,6 +173,21 @@ public class PassengerBehavior : MonoBehaviour
         };
 
         passengersScatterPlot.AppendPassenger(passengerEconomicParameters, passengerDecisionData);
+
+        if (hasAcceptedRideOffer)
+        {
+            Debug.Log("Passenger " + id + " is hailing a taxi");
+            GameManager.Instance.HailTaxi(this);
+        }
+        else
+        {
+            Debug.Log("Passenger " + id + " is giving up");
+            passengersGraph.IncrementNumUnservedPassengers();
+            passengerSurplusGraph.AppendPassenger(this);
+
+            Destroy(gameObject);
+        }
+
 
     }
 
