@@ -172,7 +172,7 @@ public class Passenger : MonoBehaviour
             expectedUtilitySurplus = expectedUtilitySurplus
         };
 
-        passengersScatterPlot.AppendPassenger(passengerEconomicParameters, passengerDecisionData);
+        passengersScatterPlot.AppendPassenger(this);
 
         if (hasAcceptedRideOffer)
         {

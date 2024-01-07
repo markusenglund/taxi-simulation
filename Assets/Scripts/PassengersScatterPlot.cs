@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Passenger2
-{
-    public PassengerEconomicParameters economicParameters { get; set; }
-    public PassengerDecisionData decisionData { get; set; }
-}
-
 
 public class PassengersScatterPlot : MonoBehaviour
 {
@@ -27,8 +21,6 @@ public class PassengersScatterPlot : MonoBehaviour
 
     List<Vector2> values = new List<Vector2>();
 
-    List<Passenger2> passengers = new List<Passenger2>();
-
     float margin = 40f;
     float marginTop = 50f;
     float maxUtilityScore = 10f;
@@ -43,22 +35,12 @@ public class PassengersScatterPlot : MonoBehaviour
         InstantiateGraph();
     }
 
-    public void AppendPassenger(PassengerEconomicParameters economicParameters, PassengerDecisionData decisionData)
+    public void AppendPassenger(Passenger passenger)
     {
-        // Create a passenger
-        Passenger2 passenger = new Passenger2()
-        {
-            economicParameters = economicParameters,
-            decisionData = decisionData
-        };
-
-
-
-        passengers.Add(passenger);
-        Vector2 point = new Vector2(economicParameters.hourlyIncome, economicParameters.tripUtilityScore);
+        Vector2 point = new Vector2(passenger.passengerEconomicParameters.hourlyIncome, passenger.passengerEconomicParameters.tripUtilityScore);
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
 
-        CreateDot(graphPosition, decisionData.hasAcceptedRideOffer);
+        CreateDot(graphPosition, passenger.passengerDecisionData.hasAcceptedRideOffer);
     }
 
 
