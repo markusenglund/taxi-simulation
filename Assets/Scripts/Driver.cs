@@ -29,11 +29,29 @@ public class Driver : MonoBehaviour
     static int incrementalId = 1;
     public int id;
 
+    // Economic parameters
+    // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
+
+    const float driverFareCutPercentage = 0.67f;
+    const float uberFareCutPercentage = 0.33f;
+    // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
+    const float averageOpportunityCostPerHour = 9f;
+    const float marginalCostPerKm = 0.2f;
+    const float fixedCostsPerDay = 5f;
+
+    // TODO: opportunity cost should vary based upon the time of day and also have a very tightly grouped random distribution around minimum wage
+    // But let's stick with a constant value for now with a normal distribution around minimum wage
+    float opportunityCostPerHour;
+
+    public float accGrossRevenue = 0f;
+    public float accCosts = fixedCostsPerDay;
+
 
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
+        GenerateEconomicParameters();
     }
 
     public static Transform Create(Transform prefab, float x, float z)
@@ -43,9 +61,21 @@ public class Driver : MonoBehaviour
         return taxi;
     }
 
+    void GenerateEconomicParameters()
+    {
+        // Ultra tight spread slightly above minimum wage, reflecting the reality that you don't drive for Uber if you're career is going great.
+        opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, 1f);
+    }
+
     public void SetState(TaxiState newState, Vector3 destination, Passenger passenger = null)
     {
         // Put the passenger inside the taxi cab
+        if (newState == TaxiState.Dispatched)
+        {
+            // TODO: Calculate cost of driving to passenger
+
+            // TODO: Figure out when and what more to calculate
+        }
         if (newState == TaxiState.DrivingPassenger)
         {
             passenger.transform.SetParent(transform);
@@ -54,7 +84,7 @@ public class Driver : MonoBehaviour
             passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
             passenger.transform.localRotation = Quaternion.identity;
         }
-        else if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
+        if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
         {
             this.passenger.transform.parent = null;
             Destroy(this.passenger.transform.gameObject);
