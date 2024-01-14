@@ -65,8 +65,8 @@ public class GameManager : MonoBehaviour
 
         if (closestTaxi != null)
         {
-            closestTaxi.SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
             passenger.SetState(PassengerState.Dispatched, closestTaxi);
+            closestTaxi.DispatchDriver(passenger, closestTaxiDistance);
             Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
         }
         else

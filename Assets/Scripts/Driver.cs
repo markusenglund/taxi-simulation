@@ -14,39 +14,39 @@ public enum TaxiState
 
 public class TripData
 {
-    Vector3 startPosition { get; set; }
-    Vector3 pickUpPosition { get; set; }
-    Vector3 destination { get; set; }
+    public Vector3 startPosition { get; set; }
+    public Vector3 pickUpPosition { get; set; }
+    public Vector3 destination { get; set; }
 
-    float timeSpentEnRoute { get; set; }
-    float timeSpentOnTrip { get; set; }
+    public float timeSpentEnRoute { get; set; }
+    public float timeSpentOnTrip { get; set; }
 
-    float distanceEnRoute { get; set; }
-    float distanceOnTrip { get; set; }
+    public float distanceEnRoute { get; set; }
+    public float distanceOnTrip { get; set; }
 
-    float marginalCostEnRoute { get; set; }
-    float marginalCostOnTrip { get; set; }
+    public float marginalCostEnRoute { get; set; }
+    public float marginalCostOnTrip { get; set; }
 
-    float timeCostEnRoute { get; set; }
-    float timeCostOnTrip { get; set; }
+    public float timeCostEnRoute { get; set; }
+    public float timeCostOnTrip { get; set; }
 
-    float baseFare { get; set; }
-    float surgeMultiplier { get; set; }
-    float fare { get; set; }
+    public float baseFare { get; set; }
+    public float surgeMultiplier { get; set; }
+    public float fare { get; set; }
 
     // Driver's cut of the fare, before expenses
-    float driverRevenue { get; set; }
+    public float driverRevenue { get; set; }
 
-    float uberRevenue { get; set; }
+    public float uberRevenue { get; set; }
 
     // Revenue minus marginal costs (not including cost of time)
-    float operationalProfit { get; set; }
+    public float operationalProfit { get; set; }
 
     // Revenue minus marginal costs minus opportunity cost of time
-    float surplusValue { get; set; }
+    public float surplusValue { get; set; }
 
     // Dubious measure of driver welfare created from surplus value
-    float utilitySurplus { get; set; }
+    public float utilitySurplus { get; set; }
 }
 
 
@@ -107,16 +107,34 @@ public class Driver : MonoBehaviour
         opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, 1f);
     }
 
+    public void DispatchDriver(Passenger passenger, float distanceToPassenger)
+    {
+        // TODO: Calculate cost of driving to the passenger's location
+        currentTrip = new TripData()
+        {
+            startPosition = transform.position,
+            pickUpPosition = passenger.positionActual,
+            destination = passenger.destination,
+            distanceEnRoute = distanceToPassenger,
+            distanceOnTrip = 0f, // Get as argument,
+            marginalCostEnRoute = 0f, //Calculate
+            marginalCostOnTrip = 0f, //Calculate
+            baseFare = 0f,// Get as arg,
+            surgeMultiplier = 0f, // Get as arg
+            fare = 0f, // Get as arg
+            driverRevenue = 0f, // Get as arg
+            uberRevenue = 0f, // Get as arg
+            operationalProfit = 0f, // Calculate
+            surplusValue = 0f, // Calculate
+            utilitySurplus = 0f // Calculate
+        };
+
+        SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
+    }
+
     public void SetState(TaxiState newState, Vector3 destination, Passenger passenger = null)
     {
         // Put the passenger inside the taxi cab
-        if (newState == TaxiState.Dispatched)
-        {
-            // TODO: Calculate cost of driving to the passenger's location
-
-
-            // TODO: Figure out when and what more to calculate
-        }
         if (newState == TaxiState.DrivingPassenger)
         {
             passenger.transform.SetParent(transform);
