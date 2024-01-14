@@ -199,10 +199,10 @@ public class Driver : MonoBehaviour
         waypoints.Enqueue(taxiDestination);
     }
 
-    IEnumerator waitForPassenger()
+    IEnumerator pickUpPassenger()
     {
         yield return new WaitForSeconds(1);
-        Vector3 newDestination = GridUtils.GetRandomPosition();
+        Vector3 newDestination = currentDriverTrip.tripBase.destination;
         SetState(TaxiState.DrivingPassenger, newDestination, passenger);
         passenger.SetState(PassengerState.PickedUp, this);
 
@@ -218,7 +218,7 @@ public class Driver : MonoBehaviour
             if (state == TaxiState.Dispatched)
             {
                 SetState(TaxiState.WaitingForPassenger, transform.position, passenger);
-                StartCoroutine(waitForPassenger());
+                StartCoroutine(pickUpPassenger());
             }
             else if (state == TaxiState.DrivingPassenger)
             {
