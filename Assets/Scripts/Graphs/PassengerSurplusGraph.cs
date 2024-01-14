@@ -174,15 +174,12 @@ public class PassengerSurplusGraph : MonoBehaviour
 
   private void CreateLegend()
   {
-    TMP_Text fourthQuartile = Instantiate(legendTextPrefab, graphContainer);
     Vector2 textPosition1 = new Vector2(120f, 74f);
     Vector2 textPosition2 = new Vector2(120f, 60f);
     Vector2 textPosition3 = new Vector2(120f, 46f);
     Vector2 textPosition4 = new Vector2(120f, 32f);
     Vector2[] textPositions = { textPosition1, textPosition2, textPosition3, textPosition4 };
-    // fourthQuartile.text = "Fourth quartile (n=0)";
-    // fourthQuartile.rectTransform.anchoredPosition = textPosition1;
-    // fourthQuartile.rectTransform.sizeDelta = new Vector2(160, 30);
+
     for (int i = 0; i < 4; i++)
     {
       TMP_Text text = Instantiate(legendTextPrefab, graphContainer);
