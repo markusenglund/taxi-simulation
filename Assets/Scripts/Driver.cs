@@ -12,32 +12,14 @@ public enum TaxiState
     DrivingPassenger
 }
 
-public class TripData
+public class DriverTripEconomy
 {
-    public Vector3 startPosition { get; set; }
-    public Vector3 pickUpPosition { get; set; }
-    public Vector3 destination { get; set; }
-
-    public float timeSpentEnRoute { get; set; }
-    public float timeSpentOnTrip { get; set; }
-
-    public float distanceEnRoute { get; set; }
-    public float distanceOnTrip { get; set; }
 
     public float marginalCostEnRoute { get; set; }
     public float marginalCostOnTrip { get; set; }
 
     public float timeCostEnRoute { get; set; }
     public float timeCostOnTrip { get; set; }
-
-    public float baseFare { get; set; }
-    public float surgeMultiplier { get; set; }
-    public float fare { get; set; }
-
-    // Driver's cut of the fare, before expenses
-    public float driverRevenue { get; set; }
-
-    public float uberRevenue { get; set; }
 
     // Revenue minus marginal costs (not including cost of time)
     public float operationalProfit { get; set; }

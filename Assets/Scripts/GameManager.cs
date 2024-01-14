@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     private List<Transform> taxis = new List<Transform>();
     private Queue<Passenger> waitingPassengers = new Queue<Passenger>();
 
+    private List<Trip> trips = new List<Trip>();
+
 
     void Awake()
     {
