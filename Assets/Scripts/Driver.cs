@@ -12,6 +12,43 @@ public enum TaxiState
     DrivingPassenger
 }
 
+public class TripData
+{
+    Vector3 startPosition { get; set; }
+    Vector3 pickUpPosition { get; set; }
+    Vector3 destination { get; set; }
+
+    float timeSpentEnRoute { get; set; }
+    float timeSpentOnTrip { get; set; }
+
+    float distanceEnRoute { get; set; }
+    float distanceOnTrip { get; set; }
+
+    float marginalCostEnRoute { get; set; }
+    float marginalCostOnTrip { get; set; }
+
+    float timeCostEnRoute { get; set; }
+    float timeCostOnTrip { get; set; }
+
+    float baseFare { get; set; }
+    float surgeMultiplier { get; set; }
+    float fare { get; set; }
+
+    // Driver's cut of the fare, before expenses
+    float driverRevenue { get; set; }
+
+    float uberRevenue { get; set; }
+
+    // Revenue minus marginal costs (not including cost of time)
+    float operationalProfit { get; set; }
+
+    // Revenue minus marginal costs minus opportunity cost of time
+    float surplusValue { get; set; }
+
+    // Dubious measure of driver welfare created from surplus value
+    float utilitySurplus { get; set; }
+}
+
 
 public class Driver : MonoBehaviour
 {
@@ -36,7 +73,8 @@ public class Driver : MonoBehaviour
     const float uberFareCutPercentage = 0.33f;
     // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
     const float averageOpportunityCostPerHour = 9f;
-    const float marginalCostPerKm = 0.2f;
+    // Marginal costs include fuel + the part of maintenance, repairs, and depreciation that is proportional to the distance driven, estimated at $0.21 per mile = $0.13 per km
+    const float marginalCostPerKm = 0.13f;
     const float fixedCostsPerDay = 5f;
 
     // TODO: opportunity cost should vary based upon the time of day and also have a very tightly grouped random distribution around minimum wage
@@ -45,6 +83,8 @@ public class Driver : MonoBehaviour
 
     public float accGrossRevenue = 0f;
     public float accCosts = fixedCostsPerDay;
+
+    public TripData currentTrip = null;
 
 
     void Awake()
@@ -72,7 +112,8 @@ public class Driver : MonoBehaviour
         // Put the passenger inside the taxi cab
         if (newState == TaxiState.Dispatched)
         {
-            // TODO: Calculate cost of driving to passenger
+            // TODO: Calculate cost of driving to the passenger's location
+
 
             // TODO: Figure out when and what more to calculate
         }
