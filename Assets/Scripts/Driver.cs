@@ -51,8 +51,7 @@ public class Driver : MonoBehaviour
     // Economic parameters
     // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
 
-    const float driverFareCutPercentage = 0.67f;
-    const float uberFareCutPercentage = 0.33f;
+
     // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
     const float averageOpportunityCostPerHour = 9f;
     // Marginal costs include fuel + the part of maintenance, repairs, and depreciation that is proportional to the distance driven, estimated at $0.21 per mile = $0.13 per km

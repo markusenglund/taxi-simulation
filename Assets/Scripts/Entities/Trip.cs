@@ -27,9 +27,4 @@ public class Trip
     public float distanceOnTrip { get; set; }
 
     public Fare fare { get; set; }
-
-    // Driver's cut of the fare, before expenses
-    public float driverRevenue { get; set; }
-
-    public float uberRevenue { get; set; }
 }

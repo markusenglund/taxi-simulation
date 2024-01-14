@@ -8,6 +8,10 @@ public class Fare
     public float baseFare { get; set; }
     public float surgeMultiplier { get; set; }
     public float total { get; set; }
+
+    public float driverCut { get; set; }
+
+    public float uberCut { get; set; }
 }
 
 public class RideOffer
@@ -17,7 +21,7 @@ public class RideOffer
     public float expectedWaitingTime { get; set; }
     public Fare fare { get; set; }
 
-    public float enRouteDistance { get; set; }
+    public float tripDistance { get; set; }
 }
 
 public class GameManager : MonoBehaviour
@@ -35,6 +39,9 @@ public class GameManager : MonoBehaviour
     private List<Trip> trips = new List<Trip>();
 
     private float surgeMultiplier = 1f;
+
+    const float driverFareCutPercentage = 0.67f;
+    const float uberFareCutPercentage = 0.33f;
 
 
     void Awake()
@@ -87,10 +94,6 @@ public class GameManager : MonoBehaviour
 
         if (closestTaxi != null)
         {
-            passenger.SetState(PassengerState.Dispatched, closestTaxi);
-            closestTaxi.DispatchDriver(passenger, closestTaxiDistance);
-            Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
-
             Trip trip = new Trip
             {
                 driver = closestTaxi,
@@ -100,11 +103,16 @@ public class GameManager : MonoBehaviour
                 pickUpPosition = passenger.positionActual,
                 destination = passenger.destination,
                 distanceEnRoute = closestTaxiDistance,
-                distanceOnTrip = 0f,
+                distanceOnTrip = rideOffer.tripDistance,
                 fare = rideOffer.fare,
-                driverRevenue = 0f,
-                uberRevenue = 0f
             };
+
+            trips.Add(trip);
+
+            passenger.SetState(PassengerState.Dispatched, closestTaxi);
+            closestTaxi.DispatchDriver(passenger, closestTaxiDistance);
+            Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+
         }
         else
         {
@@ -164,11 +172,15 @@ public class GameManager : MonoBehaviour
         float startingFare = 4f;
         float baseFare = startingFare + (distance * 2f);
         float total = baseFare * surgeMultiplier;
+        float driverCut = total * driverFareCutPercentage;
+        float uberCut = total * uberFareCutPercentage;
         Fare fare = new Fare()
         {
             baseFare = baseFare,
             surgeMultiplier = surgeMultiplier,
-            total = total
+            total = total,
+            driverCut = driverCut,
+            uberCut = uberCut
         };
 
         return fare;
@@ -176,15 +188,15 @@ public class GameManager : MonoBehaviour
 
     public RideOffer RequestRideOffer(UnityEngine.Vector3 position, UnityEngine.Vector3 destination)
     {
-        float enRouteDistance = GridUtils.GetDistance(position, destination);
-        Fare fare = GetFare(enRouteDistance);
+        float tripDistance = GridUtils.GetDistance(position, destination);
+        Fare fare = GetFare(tripDistance);
         float expectedWaitingTime = GetExpectedWaitingTime(position);
 
         RideOffer tripOffer = new RideOffer
         {
             expectedWaitingTime = expectedWaitingTime,
             fare = fare,
-            enRouteDistance = enRouteDistance
+            tripDistance = tripDistance
         };
 
         return tripOffer;
