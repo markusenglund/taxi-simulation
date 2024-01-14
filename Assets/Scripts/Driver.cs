@@ -66,7 +66,7 @@ public class Driver : MonoBehaviour
     public float accGrossRevenue = 0f;
     public float accCosts = fixedCostsPerDay;
 
-    public TripData currentTrip = null;
+    // public TripData currentTrip = null;
 
 
     void Awake()
@@ -92,24 +92,24 @@ public class Driver : MonoBehaviour
     public void DispatchDriver(Passenger passenger, float distanceToPassenger)
     {
         // TODO: Calculate cost of driving to the passenger's location
-        currentTrip = new TripData()
-        {
-            startPosition = transform.position,
-            pickUpPosition = passenger.positionActual,
-            destination = passenger.destination,
-            distanceEnRoute = distanceToPassenger,
-            distanceOnTrip = 0f, // Get as argument,
-            marginalCostEnRoute = 0f, //Calculate
-            marginalCostOnTrip = 0f, //Calculate
-            baseFare = 0f,// Get as arg,
-            surgeMultiplier = 0f, // Get as arg
-            fare = 0f, // Get as arg
-            driverRevenue = 0f, // Get as arg
-            uberRevenue = 0f, // Get as arg
-            operationalProfit = 0f, // Calculate
-            surplusValue = 0f, // Calculate
-            utilitySurplus = 0f // Calculate
-        };
+        // currentTrip = new TripData()
+        // {
+        //     startPosition = transform.position,
+        //     pickUpPosition = passenger.positionActual,
+        //     destination = passenger.destination,
+        //     distanceEnRoute = distanceToPassenger,
+        //     distanceOnTrip = 0f, // Get as argument,
+        //     marginalCostEnRoute = 0f, //Calculate
+        //     marginalCostOnTrip = 0f, //Calculate
+        //     baseFare = 0f,// Get as arg,
+        //     surgeMultiplier = 0f, // Get as arg
+        //     fare = 0f, // Get as arg
+        //     driverRevenue = 0f, // Get as arg
+        //     uberRevenue = 0f, // Get as arg
+        //     operationalProfit = 0f, // Calculate
+        //     surplusValue = 0f, // Calculate
+        //     utilitySurplus = 0f // Calculate
+        // };
 
         SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
     }

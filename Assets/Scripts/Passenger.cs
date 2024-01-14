@@ -141,22 +141,21 @@ public class Passenger : MonoBehaviour
     void Start()
     {
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
-        Invoke("HailTaxiOrBeDestroyed", 1f);
+        Invoke("MakeTripDecision", 1f);
     }
 
-    void HailTaxiOrBeDestroyed()
+    void MakeTripDecision()
     {
-        float expectedWaitingTime = GameManager.Instance.GetExpectedWaitingTime(this);
-        float fare = GameManager.Instance.GetFare(this, destination);
-        float expectedWaitingCost = expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
+        RideOffer tripOffer = GameManager.Instance.RequestRideOffer(positionActual, destination);
+        float expectedWaitingCost = tripOffer.expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
 
-        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - fare;
+        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - tripOffer.fare.total;
         float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
 
         Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
-        Debug.Log("Passenger " + id + " - fare $: " + fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + expectedWaitingTime + " hours");
+        Debug.Log("Passenger " + id + " - fare $: " + tripOffer.fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + tripOffer.expectedWaitingTime + " hours");
         float decisionTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float expectedPickupTime = decisionTime + expectedWaitingTime;
+        float expectedPickupTime = decisionTime + tripOffer.expectedWaitingTime;
         bool hasAcceptedRideOffer = expectedValueSurplus > 0;
 
 
@@ -165,9 +164,9 @@ public class Passenger : MonoBehaviour
             hasAcceptedRideOffer = hasAcceptedRideOffer,
             decisionTime = decisionTime,
             expectedPickupTime = expectedPickupTime,
-            expectedWaitingTime = expectedWaitingTime,
+            expectedWaitingTime = tripOffer.expectedWaitingTime,
             expectedWaitingCost = expectedWaitingCost,
-            fare = fare,
+            fare = tripOffer.fare.total,
             expectedValueSurplus = expectedValueSurplus,
             expectedUtilitySurplus = expectedUtilitySurplus
         };
@@ -177,7 +176,7 @@ public class Passenger : MonoBehaviour
         if (hasAcceptedRideOffer)
         {
             Debug.Log("Passenger " + id + " is hailing a taxi");
-            GameManager.Instance.HailTaxi(this);
+            GameManager.Instance.HailTaxi(this, tripOffer);
         }
         else
         {

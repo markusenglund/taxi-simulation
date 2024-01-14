@@ -3,6 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Fare
+{
+    public float baseFare { get; set; }
+    public float surgeMultiplier { get; set; }
+    public float total { get; set; }
+}
+
+public class RideOffer
+{
+    public Driver driver { get; set; }
+    public Passenger passenger { get; set; }
+    public float expectedWaitingTime { get; set; }
+    public Fare fare { get; set; }
+
+    public float enRouteDistance { get; set; }
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -16,6 +33,8 @@ public class GameManager : MonoBehaviour
     private Queue<Passenger> waitingPassengers = new Queue<Passenger>();
 
     private List<Trip> trips = new List<Trip>();
+
+    private float surgeMultiplier = 1f;
 
 
     void Awake()
@@ -61,8 +80,9 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public void HailTaxi(Passenger passenger)
+    public void HailTaxi(Passenger passenger, RideOffer rideOffer)
     {
+        // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
 
         if (closestTaxi != null)
@@ -70,6 +90,21 @@ public class GameManager : MonoBehaviour
             passenger.SetState(PassengerState.Dispatched, closestTaxi);
             closestTaxi.DispatchDriver(passenger, closestTaxiDistance);
             Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+
+            Trip trip = new Trip
+            {
+                driver = closestTaxi,
+                passenger = passenger,
+                state = TripState.EnRoute,
+                driverStartPosition = closestTaxi.transform.position,
+                pickUpPosition = passenger.positionActual,
+                destination = passenger.destination,
+                distanceEnRoute = closestTaxiDistance,
+                distanceOnTrip = 0f,
+                fare = rideOffer.fare,
+                driverRevenue = 0f,
+                uberRevenue = 0f
+            };
         }
         else
         {
@@ -79,7 +114,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private (Driver, float) GetClosestAvailableTaxi(Vector3 position)
+    private (Driver, float) GetClosestAvailableTaxi(UnityEngine.Vector3 position)
     {
         float closestTaxiDistance = Mathf.Infinity;
         Driver closestTaxi = null;
@@ -101,9 +136,9 @@ public class GameManager : MonoBehaviour
         return (closestTaxi, closestTaxiDistance);
     }
 
-    public float GetExpectedWaitingTime(Passenger passenger)
+    private float GetExpectedWaitingTime(UnityEngine.Vector3 position)
     {
-        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
+        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(position);
         if (closestTaxi != null)
         {
             // simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour();
@@ -123,15 +158,37 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public float GetFare(Passenger passenger, Vector3 destination)
+    private Fare GetFare(float distance)
     {
-        float distance = GridUtils.GetDistance(passenger.positionActual, destination);
         // This formula was empirically chosen to approximate the fare for a getting a ride in Utrecht
         float startingFare = 4f;
         float baseFare = startingFare + (distance * 2f);
-        return baseFare;
+        float total = baseFare * surgeMultiplier;
+        Fare fare = new Fare()
+        {
+            baseFare = baseFare,
+            surgeMultiplier = surgeMultiplier,
+            total = total
+        };
+
+        return fare;
     }
 
+    public RideOffer RequestRideOffer(UnityEngine.Vector3 position, UnityEngine.Vector3 destination)
+    {
+        float enRouteDistance = GridUtils.GetDistance(position, destination);
+        Fare fare = GetFare(enRouteDistance);
+        float expectedWaitingTime = GetExpectedWaitingTime(position);
 
+        RideOffer tripOffer = new RideOffer
+        {
+            expectedWaitingTime = expectedWaitingTime,
+            fare = fare,
+            enRouteDistance = enRouteDistance
+        };
+
+        return tripOffer;
+
+    }
 
 }

@@ -26,10 +26,7 @@ public class Trip
     public float distanceEnRoute { get; set; }
     public float distanceOnTrip { get; set; }
 
-
-    public float baseFare { get; set; }
-    public float surgeMultiplier { get; set; }
-    public float fare { get; set; }
+    public Fare fare { get; set; }
 
     // Driver's cut of the fare, before expenses
     public float driverRevenue { get; set; }
