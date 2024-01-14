@@ -110,7 +110,7 @@ public class GameManager : MonoBehaviour
             trips.Add(trip);
 
             passenger.SetState(PassengerState.Dispatched, closestTaxi);
-            closestTaxi.DispatchDriver(passenger, closestTaxiDistance);
+            closestTaxi.DispatchDriver(passenger, trip);
             Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
 
         }

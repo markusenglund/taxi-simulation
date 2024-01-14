@@ -12,8 +12,9 @@ public enum TaxiState
     DrivingPassenger
 }
 
-public class DriverTripEconomy
+public class DriverTrip
 {
+    public Trip tripBase { get; set; }
 
     public float marginalCostEnRoute { get; set; }
     public float marginalCostOnTrip { get; set; }
@@ -22,7 +23,7 @@ public class DriverTripEconomy
     public float timeCostOnTrip { get; set; }
 
     // Revenue minus marginal costs (not including cost of time)
-    public float operationalProfit { get; set; }
+    public float operatingProfit { get; set; }
 
     // Revenue minus marginal costs minus opportunity cost of time
     public float surplusValue { get; set; }
@@ -48,6 +49,8 @@ public class Driver : MonoBehaviour
     static int incrementalId = 1;
     public int id;
 
+    private DriverTrip currentDriverTrip = null;
+
     // Economic parameters
     // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
 
@@ -65,7 +68,7 @@ public class Driver : MonoBehaviour
     public float accGrossRevenue = 0f;
     public float accCosts = fixedCostsPerDay;
 
-    // public TripData currentTrip = null;
+    // public TripData currentDriverTrip = null;
 
 
     void Awake()
@@ -88,28 +91,20 @@ public class Driver : MonoBehaviour
         opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, 1f);
     }
 
-    public void DispatchDriver(Passenger passenger, float distanceToPassenger)
+    public void DispatchDriver(Passenger passenger, Trip trip)
     {
-        // TODO: Calculate cost of driving to the passenger's location
-        // currentTrip = new TripData()
-        // {
-        //     startPosition = transform.position,
-        //     pickUpPosition = passenger.positionActual,
-        //     destination = passenger.destination,
-        //     distanceEnRoute = distanceToPassenger,
-        //     distanceOnTrip = 0f, // Get as argument,
-        //     marginalCostEnRoute = 0f, //Calculate
-        //     marginalCostOnTrip = 0f, //Calculate
-        //     baseFare = 0f,// Get as arg,
-        //     surgeMultiplier = 0f, // Get as arg
-        //     fare = 0f, // Get as arg
-        //     driverRevenue = 0f, // Get as arg
-        //     uberRevenue = 0f, // Get as arg
-        //     operationalProfit = 0f, // Calculate
-        //     surplusValue = 0f, // Calculate
-        //     utilitySurplus = 0f // Calculate
-        // };
+        float marginalCostEnRoute = trip.distanceEnRoute * marginalCostPerKm;
+        float marginalCostOnTrip = trip.distanceOnTrip * marginalCostPerKm;
+        float operatingProfit = trip.fare.driverCut - marginalCostEnRoute - marginalCostOnTrip;
 
+        DriverTrip driverTrip = new DriverTrip
+        {
+            tripBase = trip,
+            marginalCostEnRoute = marginalCostEnRoute,
+            marginalCostOnTrip = marginalCostOnTrip,
+            operatingProfit = operatingProfit
+        };
+        currentDriverTrip = driverTrip;
         SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
     }
 
