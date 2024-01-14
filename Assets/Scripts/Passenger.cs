@@ -151,7 +151,7 @@ public class Passenger : MonoBehaviour
         float expectedWaitingCost = expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
 
         float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - fare;
-        float expectedUtilitySurplus = expectedValueSurplus;
+        float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
 
         Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
         Debug.Log("Passenger " + id + " - fare $: " + fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + expectedWaitingTime + " hours");
