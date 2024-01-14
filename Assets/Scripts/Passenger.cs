@@ -29,13 +29,12 @@ public class PassengerDecisionData
 
     public bool hasAcceptedRideOffer { get; set; }
 
+    public RideOffer rideOffer { get; set; }
+
     public float decisionTime { get; set; }
 
     public float expectedPickupTime { get; set; }
-    public float expectedWaitingTime { get; set; }
     public float expectedWaitingCost { get; set; }
-
-    public float fare { get; set; }
 
     public float expectedValueSurplus { get; set; }
 
@@ -146,27 +145,26 @@ public class Passenger : MonoBehaviour
 
     void MakeTripDecision()
     {
-        RideOffer tripOffer = GameManager.Instance.RequestRideOffer(positionActual, destination);
-        float expectedWaitingCost = tripOffer.expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
+        RideOffer rideOffer = GameManager.Instance.RequestRideOffer(positionActual, destination);
+        float expectedWaitingCost = rideOffer.expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
 
-        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - tripOffer.fare.total;
+        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - rideOffer.fare.total;
         float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
 
         Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
-        Debug.Log("Passenger " + id + " - fare $: " + tripOffer.fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + tripOffer.expectedWaitingTime + " hours");
+        Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
         float decisionTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float expectedPickupTime = decisionTime + tripOffer.expectedWaitingTime;
+        float expectedPickupTime = decisionTime + rideOffer.expectedWaitingTime;
         bool hasAcceptedRideOffer = expectedValueSurplus > 0;
 
 
         passengerDecisionData = new PassengerDecisionData()
         {
             hasAcceptedRideOffer = hasAcceptedRideOffer,
+            rideOffer = rideOffer,
             decisionTime = decisionTime,
             expectedPickupTime = expectedPickupTime,
-            expectedWaitingTime = tripOffer.expectedWaitingTime,
             expectedWaitingCost = expectedWaitingCost,
-            fare = tripOffer.fare.total,
             expectedValueSurplus = expectedValueSurplus,
             expectedUtilitySurplus = expectedUtilitySurplus
         };
@@ -176,7 +174,7 @@ public class Passenger : MonoBehaviour
         if (hasAcceptedRideOffer)
         {
             Debug.Log("Passenger " + id + " is hailing a taxi");
-            GameManager.Instance.HailTaxi(this, tripOffer);
+            GameManager.Instance.AcceptRideOffer(this, rideOffer);
         }
         else
         {
@@ -229,7 +227,7 @@ public class Passenger : MonoBehaviour
             float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
             float waitingTime = pickedUpTime - passengerDecisionData.decisionTime;
             float waitingCost = waitingTime * passengerEconomicParameters.waitingCostPerHour;
-            float valueSurplus = passengerEconomicParameters.tripUtilityValue - waitingCost - passengerDecisionData.fare;
+            float valueSurplus = passengerEconomicParameters.tripUtilityValue - waitingCost - passengerDecisionData.rideOffer.fare.total;
 
             float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
             Debug.Log("Passenger " + id + " was picked up at " + pickedUpTime + ", expected pickup time was " + passengerDecisionData.expectedPickupTime + ", difference is " + (pickedUpTime - passengerDecisionData.expectedPickupTime));

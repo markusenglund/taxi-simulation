@@ -87,38 +87,53 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public void HailTaxi(Passenger passenger, RideOffer rideOffer)
+    private void DispatchDriver(Driver driver, Passenger passenger, RideOffer rideOffer, float distanceEnRoute)
+    {
+        Trip trip = new Trip
+        {
+            driver = driver,
+            passenger = passenger,
+            state = TripState.EnRoute,
+            driverStartPosition = driver.transform.position,
+            pickUpPosition = passenger.positionActual,
+            destination = passenger.destination,
+            distanceEnRoute = distanceEnRoute,
+            distanceOnTrip = rideOffer.tripDistance,
+            fare = rideOffer.fare,
+        };
+
+        trips.Add(trip);
+
+        passenger.SetState(PassengerState.Dispatched, driver);
+        driver.DispatchDriver(passenger, trip);
+        Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+    }
+
+    public void AcceptRideOffer(Passenger passenger, RideOffer rideOffer)
     {
         // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
 
         if (closestTaxi != null)
         {
-            Trip trip = new Trip
-            {
-                driver = closestTaxi,
-                passenger = passenger,
-                state = TripState.EnRoute,
-                driverStartPosition = closestTaxi.transform.position,
-                pickUpPosition = passenger.positionActual,
-                destination = passenger.destination,
-                distanceEnRoute = closestTaxiDistance,
-                distanceOnTrip = rideOffer.tripDistance,
-                fare = rideOffer.fare,
-            };
-
-            trips.Add(trip);
-
-            passenger.SetState(PassengerState.Dispatched, closestTaxi);
-            closestTaxi.DispatchDriver(passenger, trip);
-            Debug.Log("Dispatching taxi " + closestTaxi.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
-
+            DispatchDriver(closestTaxi, passenger, rideOffer, closestTaxiDistance);
         }
         else
         {
             passenger.SetState(PassengerState.Waiting);
             waitingPassengers.Enqueue(passenger);
             Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + waitingPassengers.Count);
+        }
+    }
+
+    public void HandleDriverIdle(Driver driver)
+    {
+        Passenger passenger = GetNextPassenger();
+        if (passenger != null)
+        {
+            RideOffer rideOffer = passenger.passengerDecisionData.rideOffer;
+            float distanceEnRoute = GridUtils.GetDistance(driver.transform.position, passenger.positionActual);
+            DispatchDriver(driver, passenger, rideOffer, distanceEnRoute);
         }
     }
 

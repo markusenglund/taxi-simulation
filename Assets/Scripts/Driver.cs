@@ -222,17 +222,8 @@ public class Driver : MonoBehaviour
             }
             else if (state == TaxiState.DrivingPassenger)
             {
-                // Check if there are waiting passengers
-                Passenger nextPassenger = GameManager.Instance.GetNextPassenger();
-                if (nextPassenger != null)
-                {
-                    SetState(TaxiState.Dispatched, nextPassenger.positionActual, nextPassenger);
-                    nextPassenger.SetState(PassengerState.Dispatched, this);
-                }
-                else
-                {
-                    SetState(TaxiState.Idling, transform.position);
-                }
+                SetState(TaxiState.Idling, transform.position);
+                GameManager.Instance.HandleDriverIdle(this);
             }
             else if (state == TaxiState.Idling)
             {
