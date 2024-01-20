@@ -61,15 +61,17 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 8; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition();
-            Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
+
+        yield return new WaitForSeconds(2f);
 
         while (true)
         {
             int random = Random.Range(0, 4);
             yield return new WaitForSeconds(random);
             Vector3 randomPosition = GridUtils.GetRandomPosition();
-            Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
     }
 
@@ -103,6 +105,7 @@ public class GameManager : MonoBehaviour
         if (closestTaxi != null)
         {
             trip.AssignDriver(closestTaxi, closestTaxiDistance);
+            closestTaxi.HandleDriverAssigned(trip);
             DispatchDriver(closestTaxi, trip);
         }
         else
@@ -122,6 +125,7 @@ public class GameManager : MonoBehaviour
         {
             float enRouteDistance = GridUtils.GetDistance(driver.transform.position, trip.tripCreatedData.passenger.positionActual);
             trip.AssignDriver(driver, enRouteDistance);
+            driver.HandleDriverAssigned(trip);
             DispatchDriver(driver, trip);
         }
     }

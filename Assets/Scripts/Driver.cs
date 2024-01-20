@@ -23,6 +23,7 @@ public class Driver : MonoBehaviour
     public int id;
 
     private Trip currentTrip = null;
+    private Trip nextTrip = null;
 
     // Economic parameters
 
@@ -63,14 +64,21 @@ public class Driver : MonoBehaviour
         estimatedHourlyIncome = 10f;
     }
 
+    public void HandleDriverAssigned(Trip trip)
+    {
+        nextTrip = trip;
+        SetState(TaxiState.AssignedToTrip);
+    }
+
     public void HandleDriverDispatched(Trip trip)
     {
         currentTrip = trip;
+        nextTrip = null;
         SetDestination(trip.tripCreatedData.passenger.positionActual);
         SetTaxiColor();
     }
 
-    public void SetState(TaxiState newState, Vector3 destination)
+    public void SetState(TaxiState newState)
     {
         this.state = newState;
     }
@@ -208,7 +216,7 @@ public class Driver : MonoBehaviour
         currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
 
 
-        SetState(TaxiState.Idling, transform.position);
+        SetState(TaxiState.Idling);
         currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
         currentTrip = null;
         SetTaxiColor();
