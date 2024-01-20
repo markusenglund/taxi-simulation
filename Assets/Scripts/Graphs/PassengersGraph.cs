@@ -11,8 +11,8 @@ public class PassengersGraph : MonoBehaviour
     [SerializeField] private TMP_Text textPrefab;
     [SerializeField] private TMP_Text headerTextPrefab;
     [SerializeField] private TMP_Text legendTextPrefab;
-    
-    
+
+
 
     LineRenderer unservedLine;
     LineRenderer pickedUpLine;
@@ -24,12 +24,12 @@ public class PassengersGraph : MonoBehaviour
 
     int numUnservedPassengers = 0;
     int numPickedUpPassengers = 0;
-    
+
     float margin = 26f;
     float marginTop = 50f;
     float maxY = 50f;
     float minY = 0f;
-    float maxX = 180f;
+    float maxX = 6f;
     float minX = 0f;
 
     float timeInterval = 2f;
@@ -64,8 +64,9 @@ public class PassengersGraph : MonoBehaviour
 
     private void UpdateGraph()
     {
-        float time = Time.time;
-        Vector2 point = new Vector2(time, numUnservedPassengers);
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+
+        Vector2 point = new Vector2(simulationTime, numUnservedPassengers);
         unservedLinePoints.Add(point);
         unservedLine.positionCount++;
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
@@ -75,7 +76,7 @@ public class PassengersGraph : MonoBehaviour
         // CreateDot(graphPosition);
 
         // Update picked up line
-        Vector2 point2 = new Vector2(time, numPickedUpPassengers);
+        Vector2 point2 = new Vector2(simulationTime, numPickedUpPassengers);
         pickedUpLinePoints.Add(point2);
         pickedUpLine.positionCount++;
         Vector2 pickedUpGraphPosition = ConvertValueToGraphPosition(point2);
@@ -85,9 +86,10 @@ public class PassengersGraph : MonoBehaviour
     }
 
 
-    private void CreateAxes() {
+    private void CreateAxes()
+    {
         // Create x axis with the line renderer
-    LineRenderer xLineRenderer = Instantiate(lrPrefab, graphContainer);
+        LineRenderer xLineRenderer = Instantiate(lrPrefab, graphContainer);
         xLineRenderer.positionCount = 2;
         Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         Vector2 maxXPosition = ConvertValueToGraphPosition(new Vector2(maxX, 0));
@@ -103,10 +105,12 @@ public class PassengersGraph : MonoBehaviour
 
     }
 
-    private void CreateAxisLabels() {
+    private void CreateAxisLabels()
+    {
         // Create y axis labels
         int step = Mathf.RoundToInt((maxY - minY) / 5f);
-        for (int i = (int)minY; i <= maxY; i += step) {
+        for (int i = (int)minY; i <= maxY; i += step)
+        {
             TMP_Text text = Instantiate(textPrefab, graphContainer);
             Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(0, i));
             text.text = i.ToString();
@@ -114,14 +118,16 @@ public class PassengersGraph : MonoBehaviour
         }
     }
 
-    private void CreateHeaderText() {
+    private void CreateHeaderText()
+    {
         TMP_Text text = Instantiate(headerTextPrefab, graphContainer);
         Vector2 textPosition = new Vector2(-52f, 70f);
         text.text = "Passengers";
         text.rectTransform.anchoredPosition = textPosition;
     }
 
-    private void CreateLegend() {
+    private void CreateLegend()
+    {
         TMP_Text text1 = Instantiate(legendTextPrefab, graphContainer);
         Vector2 textPosition1 = new Vector2(80, 74f);
         text1.text = "Picked up";
@@ -169,7 +175,7 @@ public class PassengersGraph : MonoBehaviour
         // Set the color of picked up line to green
         pickedUpLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
         pickedUpLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-        
+
         CreateAxes();
         CreateAxisLabels();
         CreateHeaderText();
@@ -189,13 +195,14 @@ public class PassengersGraph : MonoBehaviour
     }
 
 
-    private void CreateDot(Vector2 position) {
+    private void CreateDot(Vector2 position)
+    {
         Transform dot = Instantiate(dotPrefab, graphContainer);
         RectTransform rectTransform = dot.GetComponent<RectTransform>();
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
         rectTransform.anchoredPosition = new Vector3(position.x, position.y, -1);
-        
+
     }
 }
 

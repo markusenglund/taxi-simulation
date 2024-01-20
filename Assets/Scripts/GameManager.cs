@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
         Passenger passenger = trip.tripCreatedData.passenger;
         trip.DispatchDriver(driver.transform.position);
         driver.HandleDriverDispatched(trip);
-        Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+        // Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
     }
 
     public Trip AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
         else
         {
             queuedTrips.Enqueue(trip);
-            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + queuedTrips.Count);
+            // Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + queuedTrips.Count);
         }
 
         return trip;
@@ -157,7 +157,6 @@ public class GameManager : MonoBehaviour
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
         if (closestTaxi != null)
         {
-            // simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour();
             float extraPickUpTime = 1.6f / 60f; // 1.6 simulation minutes
             float expectedWaitingTime = (closestTaxiDistance / Driver.simulationSpeed) + extraPickUpTime;
             return expectedWaitingTime;
@@ -177,6 +176,7 @@ public class GameManager : MonoBehaviour
     private Fare GetFare(float distance)
     {
         // This formula was empirically chosen to approximate the fare for a getting a ride in Utrecht
+        // $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used in the "Who benefits?" paper, which is a bit less than the formula below
         float startingFare = 4f;
         float baseFare = startingFare + (distance * 2f);
         float total = baseFare * surgeMultiplier;

@@ -20,9 +20,9 @@ public class DriverProfitGraph : MonoBehaviour
 
     float margin = 26f;
     float marginTop = 50f;
-    float maxY = 60f;
+    float maxY = 30f;
     float minY = 0f;
-    float maxX = 3f;
+    float maxX = 6f;
     float minX = 0f;
 
     const float timeInterval = 5f;

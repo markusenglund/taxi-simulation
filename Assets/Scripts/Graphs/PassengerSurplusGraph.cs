@@ -29,7 +29,7 @@ public class PassengerSurplusGraph : MonoBehaviour
   float marginTop = 50f;
   float maxY = 3f;
   float minY = 0f;
-  float maxX = 180f;
+  float maxX = 6f;
   float minX = 0f;
   Color[] quartileColors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
@@ -61,12 +61,11 @@ public class PassengerSurplusGraph : MonoBehaviour
   private void UpdateGraph()
   {
     float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-    float simulationTimeMinutes = simulationTime * 60f;
 
     (float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = CalculateQuartiledUtilitySurplusPerCapita();
 
     UpdateLegends(quartiledPopulation);
-    Debug.Log("Quartiled utility surplus per capita: " + quartiledUtilitySurplusPerCapita[0] + ", " + quartiledUtilitySurplusPerCapita[1] + ", " + quartiledUtilitySurplusPerCapita[2] + ", " + quartiledUtilitySurplusPerCapita[3]);
+    // Debug.Log("Quartiled utility surplus per capita: " + quartiledUtilitySurplusPerCapita[0] + ", " + quartiledUtilitySurplusPerCapita[1] + ", " + quartiledUtilitySurplusPerCapita[2] + ", " + quartiledUtilitySurplusPerCapita[3]);
 
     // Add points to all 4 quartile lines
     for (int i = 0; i < 4; i++)
@@ -76,7 +75,7 @@ public class PassengerSurplusGraph : MonoBehaviour
         continue;
       }
       LineRenderer quartileLine = quartileLines[i];
-      Vector2 quartilePoint = new Vector2(simulationTimeMinutes, quartiledUtilitySurplusPerCapita[i]);
+      Vector2 quartilePoint = new Vector2(simulationTime, quartiledUtilitySurplusPerCapita[i]);
       // passengerSurplusPoints.Add(quartilePoint);
       quartileLine.positionCount++;
       Vector2 graphPosition = ConvertValueToGraphPosition(quartilePoint);

@@ -69,7 +69,7 @@ public class Passenger : MonoBehaviour
         float waitingCostPerHour = hourlyIncome * timePreference;
         // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
-        Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
+        // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
         passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
@@ -87,7 +87,7 @@ public class Passenger : MonoBehaviour
         float sigma = 0.7f;
         // with mu=0, sigma=0.7, medianIncome=20  this a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
         float hourlyIncome = medianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
-        Debug.Log("Passenger " + id + " hourly income is " + hourlyIncome);
+        // Debug.Log("Passenger " + id + " hourly income is " + hourlyIncome);
 
         return hourlyIncome;
     }
@@ -102,7 +102,7 @@ public class Passenger : MonoBehaviour
         float mu = 0;
         float sigma = 0.4f;
         float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
-        Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
+        // Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
         return tripUtilityScore;
     }
     void Start()
@@ -137,8 +137,8 @@ public class Passenger : MonoBehaviour
         float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
         hasAcceptedRideOffer = expectedValueSurplus > 0;
 
-        Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
-        Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
+        // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
+        // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedValueSurplus);
         TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
         {
             hasAcceptedRideOffer = hasAcceptedRideOffer,
@@ -152,13 +152,13 @@ public class Passenger : MonoBehaviour
 
         if (hasAcceptedRideOffer)
         {
-            Debug.Log("Passenger " + id + " is hailing a taxi");
+            // Debug.Log("Passenger " + id + " is hailing a taxi");
             currentTrip = GameManager.Instance.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
             SetState(PassengerState.AssignedToTrip);
         }
         else
         {
-            Debug.Log("Passenger " + id + " is giving up");
+            // Debug.Log("Passenger " + id + " is giving up");
             passengersGraph.IncrementNumUnservedPassengers();
             passengerSurplusGraph.AppendPassenger(this);
 

@@ -22,9 +22,9 @@ public class WaitingTimeGraph : MonoBehaviour
 
     float margin = 26f;
     float marginTop = 50f;
-    float maxY = 50f;
+    float maxY = 100f;
     float minY = 0f;
-    float maxX = 180f;
+    float maxX = 6f;
     float minX = 0f;
 
 
@@ -36,9 +36,10 @@ public class WaitingTimeGraph : MonoBehaviour
 
     public void SetNewValue(float hoursWaited)
     {
-        float time = Time.time;
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+
         float minutesWaited = hoursWaited * 60;
-        Vector2 point = new Vector2(time, minutesWaited);
+        Vector2 point = new Vector2(simulationTime, minutesWaited);
         values.Add(point);
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
         CreateDot(graphPosition);

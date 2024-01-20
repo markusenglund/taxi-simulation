@@ -11,9 +11,11 @@ public enum TaxiState
 
 public class Driver : MonoBehaviour
 {
-    private static float realSpeed = 1f;
+    // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights)
+    // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
+    public static float simulationSpeed = 30f;
+    private static float realSpeed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(simulationSpeed);
 
-    public static float simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour(realSpeed);
 
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;
@@ -132,7 +134,7 @@ public class Driver : MonoBehaviour
 
         float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
         float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * marginalCostPerKm;
-        float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip;
+        float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip - currentTrip.pickedUpDriverData.marginalCostEnRoute;
         float valueSurplus = grossProfit - timeCostOnTrip;
         float utilitySurplus = valueSurplus / estimatedHourlyIncome;
 
@@ -144,6 +146,8 @@ public class Driver : MonoBehaviour
             valueSurplus = valueSurplus,
             utilitySurplus = utilitySurplus
         };
+
+        Debug.Log($"Driver {id} profit: {droppedOffDriverData.grossProfit}, fare cut: {currentTrip.tripCreatedData.fare.driverCut} marginal cost: {droppedOffDriverData.marginalCostOnTrip + currentTrip.pickedUpDriverData.marginalCostEnRoute}, time spent: {timeSpentOnTrip + currentTrip.pickedUpData.timeSpentEnRoute}");
 
         currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
 
