@@ -7,6 +7,7 @@ public enum TripState
     Queued,
     DriverAssigned,
     DriverEnRoute,
+    DriverWaiting,
     OnTrip,
     Completed
 }
@@ -87,7 +88,7 @@ public class DroppedOffDriverData
     public float marginalCostOnTrip { get; set; }
     // Revenue minus marginal costs (not including cost of time)
 
-    public float operatingProfit { get; set; }
+    public float grossProfit { get; set; }
     // Revenue minus marginal costs minus opportunity cost of time
 
     public float valueSurplus { get; set; }
@@ -145,11 +146,23 @@ public class Trip
         };
     }
 
-    public void pickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData, PickedUpPassengerData pickedUpPassengerData)
+    public void HandleDriverArrivedAtPickUp()
+    {
+        state = TripState.DriverWaiting;
+    }
+
+    public void PickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData, PickedUpPassengerData pickedUpPassengerData)
     {
         state = TripState.OnTrip;
         this.pickedUpData = pickedUpData;
         this.pickedUpDriverData = pickedUpDriverData;
         this.pickedUpPassengerData = pickedUpPassengerData;
+    }
+
+    public void DropOffPassenger(DroppedOffData droppedOffData, DroppedOffDriverData droppedOffDriverData)
+    {
+        state = TripState.Completed;
+        this.droppedOffData = droppedOffData;
+        this.droppedOffDriverData = droppedOffDriverData;
     }
 }

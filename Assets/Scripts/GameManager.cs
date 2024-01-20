@@ -87,7 +87,6 @@ public class GameManager : MonoBehaviour
     {
         Passenger passenger = trip.tripCreatedData.passenger;
         trip.DispatchDriver(driver.transform.position);
-        passenger.SetState(PassengerState.Dispatched, driver);
         driver.HandleDriverDispatched(trip);
         Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
     }
@@ -109,7 +108,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            passenger.SetState(PassengerState.Waiting);
             queuedTrips.Enqueue(trip);
             Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + queuedTrips.Count);
         }
@@ -117,8 +115,9 @@ public class GameManager : MonoBehaviour
         return trip;
     }
 
-    public void HandleDriverIdle(Driver driver)
+    public void HandleTripCompleted(Driver driver)
     {
+        // Assign driver to next trip if there is one
         Trip trip = GetNextTrip();
         if (trip != null)
         {

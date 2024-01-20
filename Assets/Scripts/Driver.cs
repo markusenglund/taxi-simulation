@@ -7,9 +7,7 @@ using UnityEngine;
 public enum TaxiState
 {
     Idling,
-    Dispatched,
-    WaitingForPassenger,
-    DrivingPassenger
+    AssignedToTrip
 }
 
 public class Driver : MonoBehaviour
@@ -38,6 +36,7 @@ public class Driver : MonoBehaviour
     // TODO: opportunity cost should vary based upon the time of day and also have a very tightly grouped random distribution around minimum wage
     // But let's stick with a constant value for now with a normal distribution around minimum wage
     float opportunityCostPerHour;
+    float estimatedHourlyIncome;
 
     public float accGrossRevenue = 0f;
     public float accCosts = fixedCostsPerDay;
@@ -61,41 +60,23 @@ public class Driver : MonoBehaviour
     {
         // Ultra tight spread slightly above minimum wage, reflecting the reality that you don't drive for Uber if you're career is going great.
         opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, 1f);
+        // TODO: Measure actual average hourly income for drivers in the simulation and put it here, for now let's set it at 10$ per hour
+        estimatedHourlyIncome = 10f;
     }
 
     public void HandleDriverDispatched(Trip trip)
     {
         currentTrip = trip;
-        SetState(TaxiState.Dispatched, trip.tripCreatedData.passenger.positionActual);
+        SetDestination(trip.tripCreatedData.passenger.positionActual);
+        SetTaxiColor();
     }
 
     public void SetState(TaxiState newState, Vector3 destination)
     {
-        // Put the passenger inside the taxi cab
-        if (newState == TaxiState.DrivingPassenger)
-        {
-            Passenger passenger = currentTrip.tripCreatedData.passenger;
-            passenger.transform.SetParent(transform);
-            float middleTaxiX = 0.09f;
-            float topTaxiY = 0.08f;
-            passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
-            passenger.transform.localRotation = Quaternion.identity;
-        }
-        if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
-        {
-            Passenger passenger = currentTrip.tripCreatedData.passenger;
-            passenger.transform.parent = null;
-            Destroy(passenger.transform.gameObject);
-        }
-
-        SetDestination(destination);
-        SetTaxiColor(newState);
-
-
         this.state = newState;
     }
 
-    private void SetTaxiColor(TaxiState state)
+    private void SetTaxiColor()
     {
         // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer
 
@@ -103,15 +84,15 @@ public class Driver : MonoBehaviour
         Transform taxi = taxiVisual.Find("Taxi");
         MeshRenderer meshRenderer = taxi.GetComponent<MeshRenderer>();
         Material[] materials = meshRenderer.materials;
-        if (state == TaxiState.Idling)
+        if (currentTrip == null || currentTrip.state == TripState.Queued)
         {
             materials[1].color = Color.black;
         }
-        else if (state == TaxiState.Dispatched)
+        else if (currentTrip.state == TripState.DriverEnRoute)
         {
             materials[1].color = Color.red;
         }
-        else if (state == TaxiState.DrivingPassenger)
+        else if (currentTrip.state == TripState.OnTrip)
         {
             materials[1].color = Color.green;
         }
@@ -161,12 +142,18 @@ public class Driver : MonoBehaviour
         waypoints.Enqueue(taxiDestination);
     }
 
-    IEnumerator pickUpPassenger()
+    IEnumerator PickUpPassenger()
     {
         yield return new WaitForSeconds(1);
-        Vector3 newDestination = currentTrip.tripCreatedData.destination;
-        SetState(TaxiState.DrivingPassenger, newDestination);
+        // Put the passenger on top of the taxi cab
+        Passenger passenger = currentTrip.tripCreatedData.passenger;
+        passenger.transform.SetParent(transform);
+        float middleTaxiX = 0.09f;
+        float topTaxiY = 0.08f;
+        passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
+        passenger.transform.localRotation = Quaternion.identity;
 
+        // Calculate trip pickup data
         float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         float timeSpentEnRoute = pickedUpTime - currentTrip.driverAssignedData.matchedTime;
         float waitingTime = pickedUpTime - currentTrip.tripCreatedData.createdTime;
@@ -186,7 +173,48 @@ public class Driver : MonoBehaviour
 
         PickedUpPassengerData pickedUpPassengerData = currentTrip.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
 
-        currentTrip.pickUpPassenger(pickedUpData, pickedUpDriverData, pickedUpPassengerData);
+        currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData, pickedUpPassengerData);
+
+        SetDestination(currentTrip.tripCreatedData.destination);
+        SetTaxiColor();
+    }
+
+    private void DropOffPassenger()
+    {
+        float droppedOffTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float timeSpentOnTrip = droppedOffTime - currentTrip.pickedUpData.pickedUpTime;
+
+        DroppedOffData droppedOffData = new DroppedOffData
+        {
+            droppedOffTime = droppedOffTime,
+            timeSpentOnTrip = timeSpentOnTrip
+
+        };
+
+        float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
+        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * marginalCostPerKm;
+        float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip;
+        float valueSurplus = grossProfit - timeCostOnTrip;
+        float utilitySurplus = valueSurplus / estimatedHourlyIncome;
+
+        DroppedOffDriverData droppedOffDriverData = new DroppedOffDriverData
+        {
+            timeCostOnTrip = timeCostOnTrip,
+            marginalCostOnTrip = marginalCostOnTrip,
+            grossProfit = grossProfit,
+            valueSurplus = valueSurplus,
+            utilitySurplus = utilitySurplus
+        };
+
+        currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
+
+
+        SetState(TaxiState.Idling, transform.position);
+        currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
+        currentTrip = null;
+        SetTaxiColor();
+        GameManager.Instance.HandleTripCompleted(this);
+
     }
 
     void Update()
@@ -196,15 +224,18 @@ public class Driver : MonoBehaviour
         // Set a new random destination if the taxi has reached its destination but is idling
         if (waypoints.Count == 0)
         {
-            if (state == TaxiState.Dispatched)
+            if (currentTrip != null)
             {
-                SetState(TaxiState.WaitingForPassenger, transform.position);
-                StartCoroutine(pickUpPassenger());
-            }
-            else if (state == TaxiState.DrivingPassenger)
-            {
-                SetState(TaxiState.Idling, transform.position);
-                GameManager.Instance.HandleDriverIdle(this);
+                if (currentTrip.state == TripState.DriverEnRoute)
+                {
+                    currentTrip.HandleDriverArrivedAtPickUp();
+                    StartCoroutine(PickUpPassenger());
+                }
+                else if (currentTrip.state == TripState.OnTrip)
+                {
+                    DropOffPassenger();
+
+                }
             }
             else if (state == TaxiState.Idling)
             {

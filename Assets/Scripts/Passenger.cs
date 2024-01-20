@@ -6,9 +6,7 @@ using UnityEngine;
 public enum PassengerState
 {
     Idling,
-    Waiting,
-    Dispatched,
-    PickedUp,
+    AssignedToTrip,
     DroppedOff
 }
 
@@ -188,6 +186,7 @@ public class Passenger : MonoBehaviour
         {
             Debug.Log("Passenger " + id + " is hailing a taxi");
             currentTrip = GameManager.Instance.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
+            SetState(PassengerState.AssignedToTrip);
         }
         else
         {
@@ -246,9 +245,6 @@ public class Passenger : MonoBehaviour
             utilitySurplus = utilitySurplus
         };
 
-        SetState(PassengerState.PickedUp);
-
-
         waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
         passengersGraph.IncrementNumPickedUpPassengers();
         passengerSurplusGraph.AppendPassenger(this);
@@ -258,6 +254,13 @@ public class Passenger : MonoBehaviour
     public void SetState(PassengerState state)
     {
         this.state = state;
+    }
+
+    public void HandlePassengerDroppedOff()
+    {
+        this.transform.parent = null;
+        SetState(PassengerState.DroppedOff);
+        Destroy(gameObject);
     }
 }
 
