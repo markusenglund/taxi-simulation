@@ -148,7 +148,6 @@ public class PassengerSurplusGraph : MonoBehaviour
     Vector2 maxYPosition = ConvertValueToGraphPosition(new Vector2(0, maxY));
     yLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
     yLineRenderer.SetPosition(1, new Vector3(maxYPosition.x, maxYPosition.y, 0));
-
   }
 
   private void CreateAxisLabels()

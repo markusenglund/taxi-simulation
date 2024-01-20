@@ -22,6 +22,7 @@ public class Driver : MonoBehaviour
     static int incrementalId = 1;
     public int id;
 
+    private List<Trip> completedTrips = new List<Trip>();
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
@@ -38,15 +39,16 @@ public class Driver : MonoBehaviour
     float opportunityCostPerHour;
     float estimatedHourlyIncome;
 
-    public float accGrossRevenue = 0f;
-    public float accCosts = fixedCostsPerDay;
-
+    private DriverProfitGraph driverProfitGraph;
 
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
         GenerateEconomicParameters();
+        driverProfitGraph = GameObject.Find("DriverProfitGraph").GetComponent<DriverProfitGraph>();
+        driverProfitGraph.AppendDriver(this);
+
     }
 
     public static Transform Create(Transform prefab, float x, float z)
@@ -64,6 +66,44 @@ public class Driver : MonoBehaviour
         estimatedHourlyIncome = 10f;
     }
 
+    IEnumerator PickUpPassenger()
+    {
+        yield return new WaitForSeconds(1);
+        // Put the passenger on top of the taxi cab
+        Passenger passenger = currentTrip.tripCreatedData.passenger;
+        passenger.transform.SetParent(transform);
+        float middleTaxiX = 0.09f;
+        float topTaxiY = 0.08f;
+        passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
+        passenger.transform.localRotation = Quaternion.identity;
+
+        // Calculate trip pickup data
+        float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float timeSpentEnRoute = pickedUpTime - currentTrip.driverAssignedData.matchedTime;
+        float waitingTime = pickedUpTime - currentTrip.tripCreatedData.createdTime;
+        PickedUpData pickedUpData = new PickedUpData
+        {
+            pickedUpTime = pickedUpTime,
+            timeSpentEnRoute = timeSpentEnRoute,
+            waitingTime = waitingTime
+        };
+
+        // Create driver pickup data
+        PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
+        {
+            timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
+            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * marginalCostPerKm
+        };
+
+        PickedUpPassengerData pickedUpPassengerData = currentTrip.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
+
+        currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData, pickedUpPassengerData);
+
+        SetDestination(currentTrip.tripCreatedData.destination);
+        SetTaxiColor();
+    }
+
+
     public void HandleDriverAssigned(Trip trip)
     {
         nextTrip = trip;
@@ -76,6 +116,59 @@ public class Driver : MonoBehaviour
         nextTrip = null;
         SetDestination(trip.tripCreatedData.passenger.positionActual);
         SetTaxiColor();
+    }
+
+    private void DropOffPassenger()
+    {
+        float droppedOffTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float timeSpentOnTrip = droppedOffTime - currentTrip.pickedUpData.pickedUpTime;
+
+        DroppedOffData droppedOffData = new DroppedOffData
+        {
+            droppedOffTime = droppedOffTime,
+            timeSpentOnTrip = timeSpentOnTrip
+
+        };
+
+        float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
+        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * marginalCostPerKm;
+        float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip;
+        float valueSurplus = grossProfit - timeCostOnTrip;
+        float utilitySurplus = valueSurplus / estimatedHourlyIncome;
+
+        DroppedOffDriverData droppedOffDriverData = new DroppedOffDriverData
+        {
+            timeCostOnTrip = timeCostOnTrip,
+            marginalCostOnTrip = marginalCostOnTrip,
+            grossProfit = grossProfit,
+            valueSurplus = valueSurplus,
+            utilitySurplus = utilitySurplus
+        };
+
+        currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
+
+
+        SetState(TaxiState.Idling);
+        currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
+        completedTrips.Add(currentTrip);
+        currentTrip = null;
+        SetTaxiColor();
+        GameManager.Instance.HandleTripCompleted(this);
+
+    }
+
+    public float CalculateGrossProfitLastHour()
+    {
+        float grossProfitLastHour = 0;
+        foreach (Trip trip in completedTrips)
+        {
+            float oneHourAgo = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - 1;
+            if (trip.droppedOffData.droppedOffTime > oneHourAgo)
+            {
+                grossProfitLastHour += trip.droppedOffDriverData.grossProfit;
+            }
+        }
+        return grossProfitLastHour;
     }
 
     public void SetState(TaxiState newState)
@@ -149,80 +242,8 @@ public class Driver : MonoBehaviour
         waypoints.Enqueue(taxiDestination);
     }
 
-    IEnumerator PickUpPassenger()
-    {
-        yield return new WaitForSeconds(1);
-        // Put the passenger on top of the taxi cab
-        Passenger passenger = currentTrip.tripCreatedData.passenger;
-        passenger.transform.SetParent(transform);
-        float middleTaxiX = 0.09f;
-        float topTaxiY = 0.08f;
-        passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
-        passenger.transform.localRotation = Quaternion.identity;
-
-        // Calculate trip pickup data
-        float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float timeSpentEnRoute = pickedUpTime - currentTrip.driverAssignedData.matchedTime;
-        float waitingTime = pickedUpTime - currentTrip.tripCreatedData.createdTime;
-        PickedUpData pickedUpData = new PickedUpData
-        {
-            pickedUpTime = pickedUpTime,
-            timeSpentEnRoute = timeSpentEnRoute,
-            waitingTime = waitingTime
-        };
-
-        // Create driver pickup data
-        PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
-        {
-            timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
-            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * marginalCostPerKm
-        };
-
-        PickedUpPassengerData pickedUpPassengerData = currentTrip.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
-
-        currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData, pickedUpPassengerData);
-
-        SetDestination(currentTrip.tripCreatedData.destination);
-        SetTaxiColor();
-    }
-
-    private void DropOffPassenger()
-    {
-        float droppedOffTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float timeSpentOnTrip = droppedOffTime - currentTrip.pickedUpData.pickedUpTime;
-
-        DroppedOffData droppedOffData = new DroppedOffData
-        {
-            droppedOffTime = droppedOffTime,
-            timeSpentOnTrip = timeSpentOnTrip
-
-        };
-
-        float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
-        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * marginalCostPerKm;
-        float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip;
-        float valueSurplus = grossProfit - timeCostOnTrip;
-        float utilitySurplus = valueSurplus / estimatedHourlyIncome;
-
-        DroppedOffDriverData droppedOffDriverData = new DroppedOffDriverData
-        {
-            timeCostOnTrip = timeCostOnTrip,
-            marginalCostOnTrip = marginalCostOnTrip,
-            grossProfit = grossProfit,
-            valueSurplus = valueSurplus,
-            utilitySurplus = utilitySurplus
-        };
-
-        currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
 
 
-        SetState(TaxiState.Idling);
-        currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
-        currentTrip = null;
-        SetTaxiColor();
-        GameManager.Instance.HandleTripCompleted(this);
-
-    }
 
     void Update()
     {

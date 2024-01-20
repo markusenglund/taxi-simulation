@@ -25,8 +25,6 @@ public class Passenger : MonoBehaviour
     [SerializeField] public Transform spawnAnimationPrefab;
     public Vector3 positionActual;
 
-    private Driver taxi;
-
     static int incrementalId = 1;
     public int id;
 
