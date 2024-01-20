@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum PassengerState
@@ -20,32 +17,6 @@ public class PassengerEconomicParameters
     // Derived values
     public float waitingCostPerHour { get; set; }
     public float tripUtilityValue { get; set; }
-}
-
-public class PassengerDecisionData
-{
-
-    public bool hasAcceptedRideOffer { get; set; }
-
-    public RideOffer rideOffer { get; set; }
-
-    public float decisionTime { get; set; }
-
-    public float expectedPickupTime { get; set; }
-    public float expectedWaitingCost { get; set; }
-
-    public float expectedValueSurplus { get; set; }
-
-    public float expectedUtilitySurplus { get; set; }
-}
-
-public class PassengerPickedUpData
-{
-    public float pickedUpTime { get; set; }
-    public float waitingCost { get; set; }
-    public float waitingTime { get; set; }
-    public float valueSurplus { get; set; }
-    public float utilitySurplus { get; set; }
 }
 
 public class Passenger : MonoBehaviour
@@ -76,8 +47,6 @@ public class Passenger : MonoBehaviour
     public Trip currentTrip;
 
     public PassengerEconomicParameters passengerEconomicParameters;
-    public PassengerDecisionData passengerDecisionData;
-    public PassengerPickedUpData passengerPickedUpData;
 
     void Awake()
     {
@@ -231,11 +200,10 @@ public class Passenger : MonoBehaviour
     public PickedUpPassengerData HandlePassengerPickedUp(PickedUpData pickedUpData)
     {
         float waitingCost = pickedUpData.waitingTime * passengerEconomicParameters.waitingCostPerHour;
-        // TODO: START HERE - figure out where these variables are and use them - we're done with this soon! Let's do it!
         float valueSurplus = currentTrip.tripCreatedPassengerData.tripUtilityValue - waitingCost - currentTrip.tripCreatedData.fare.total;
 
         float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
-        Debug.Log("Passenger " + id + " was picked up at " + pickedUpData.pickedUpTime + ", expected pickup time was " + passengerDecisionData.expectedPickupTime + ", difference is " + (pickedUpData.pickedUpTime - passengerDecisionData.expectedPickupTime));
+        Debug.Log("Passenger " + id + " was picked up at " + pickedUpData.pickedUpTime + ", expected pickup time was " + currentTrip.tripCreatedData.expectedPickupTime + ", difference is " + (pickedUpData.pickedUpTime - currentTrip.tripCreatedData.expectedPickupTime));
         Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
 
         PickedUpPassengerData passengerPickedUpData = new PickedUpPassengerData()
