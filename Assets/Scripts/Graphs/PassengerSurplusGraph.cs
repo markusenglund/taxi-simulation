@@ -94,7 +94,7 @@ public class PassengerSurplusGraph : MonoBehaviour
     float[] quartiledIncomeTopRange = { 12.47f, 20.0f, 32.07f, float.PositiveInfinity };
     foreach (Passenger passenger in passengers)
     {
-      float utilitySurplus = passenger.passengerPickedUpData != null ? passenger.passengerPickedUpData.utilitySurplus : 0;
+      float utilitySurplus = passenger.currentTrip != null ? passenger.currentTrip.pickedUpPassengerData.utilitySurplus : 0;
       float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;
 
       if (hourlyIncome < quartiledIncomeTopRange[0])

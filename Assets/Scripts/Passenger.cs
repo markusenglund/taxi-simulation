@@ -38,12 +38,13 @@ public class Passenger : MonoBehaviour
 
     private PassengersGraph passengersGraph;
 
-    private UtilityIncomeScatterPlot passengersScatterPlot;
+    private UtilityIncomeScatterPlot utilityIncomeScatterPlot;
 
     private PassengerSurplusGraph passengerSurplusGraph;
 
     const float medianIncome = 20;
 
+    public bool hasAcceptedRideOffer = false;
     public Trip currentTrip;
 
     public PassengerEconomicParameters passengerEconomicParameters;
@@ -56,7 +57,7 @@ public class Passenger : MonoBehaviour
         GenerateEconomicParameters();
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
         passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
-        passengersScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
+        utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
         passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
     }
@@ -136,7 +137,7 @@ public class Passenger : MonoBehaviour
 
         float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - rideOffer.fare.total;
         float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
-        bool hasAcceptedRideOffer = expectedValueSurplus > 0;
+        hasAcceptedRideOffer = expectedValueSurplus > 0;
 
         Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
         Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
@@ -149,7 +150,7 @@ public class Passenger : MonoBehaviour
             expectedUtilitySurplus = expectedUtilitySurplus
         };
 
-        passengersScatterPlot.AppendPassenger(this);
+        utilityIncomeScatterPlot.AppendPassenger(this);
 
         if (hasAcceptedRideOffer)
         {
