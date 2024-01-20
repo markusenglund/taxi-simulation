@@ -12,27 +12,6 @@ public enum TaxiState
     DrivingPassenger
 }
 
-public class DriverTrip
-{
-    public Trip tripBase { get; set; }
-
-    // public float marginalCostEnRoute { get; set; }
-    // public float marginalCostOnTrip { get; set; }
-
-    // public float timeCostEnRoute { get; set; }
-    // public float timeCostOnTrip { get; set; }
-
-    // Revenue minus marginal costs (not including cost of time)
-    public float operatingProfit { get; set; }
-
-    // Revenue minus marginal costs minus opportunity cost of time
-    public float surplusValue { get; set; }
-
-    // Dubious measure of driver welfare created from surplus value
-    public float utilitySurplus { get; set; }
-}
-
-
 public class Driver : MonoBehaviour
 {
     private static float realSpeed = 1f;
@@ -41,19 +20,14 @@ public class Driver : MonoBehaviour
 
     private Queue<Vector3> waypoints = new Queue<Vector3>();
     private Vector3 destination;
-
-    private Passenger passenger;
-
     public TaxiState state = TaxiState.Idling;
 
     static int incrementalId = 1;
     public int id;
 
-    private DriverTrip currentDriverTrip = null;
+    private Trip currentTrip = null;
 
     // Economic parameters
-    // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
-
 
     // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
     const float averageOpportunityCostPerHour = 9f;
@@ -67,8 +41,6 @@ public class Driver : MonoBehaviour
 
     public float accGrossRevenue = 0f;
     public float accCosts = fixedCostsPerDay;
-
-    // public TripData currentDriverTrip = null;
 
 
     void Awake()
@@ -91,28 +63,18 @@ public class Driver : MonoBehaviour
         opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, 1f);
     }
 
-    public void DispatchDriver(Passenger passenger, Trip trip)
+    public void HandleDriverDispatched(Trip trip)
     {
-        float marginalCostEnRoute = trip.distanceEnRoute * marginalCostPerKm;
-        float marginalCostOnTrip = trip.distanceOnTrip * marginalCostPerKm;
-        float operatingProfit = trip.fare.driverCut - marginalCostEnRoute - marginalCostOnTrip;
-
-        DriverTrip driverTrip = new DriverTrip
-        {
-            tripBase = trip,
-            marginalCostEnRoute = marginalCostEnRoute,
-            marginalCostOnTrip = marginalCostOnTrip,
-            operatingProfit = operatingProfit
-        };
-        currentDriverTrip = driverTrip;
-        SetState(TaxiState.Dispatched, passenger.positionActual, passenger);
+        currentTrip = trip;
+        SetState(TaxiState.Dispatched, trip.tripCreatedData.passenger.positionActual);
     }
 
-    public void SetState(TaxiState newState, Vector3 destination, Passenger passenger = null)
+    public void SetState(TaxiState newState, Vector3 destination)
     {
         // Put the passenger inside the taxi cab
         if (newState == TaxiState.DrivingPassenger)
         {
+            Passenger passenger = currentTrip.tripCreatedData.passenger;
             passenger.transform.SetParent(transform);
             float middleTaxiX = 0.09f;
             float topTaxiY = 0.08f;
@@ -121,10 +83,10 @@ public class Driver : MonoBehaviour
         }
         if (this.state == TaxiState.DrivingPassenger && newState != TaxiState.DrivingPassenger)
         {
-            this.passenger.transform.parent = null;
-            Destroy(this.passenger.transform.gameObject);
+            Passenger passenger = currentTrip.tripCreatedData.passenger;
+            passenger.transform.parent = null;
+            Destroy(passenger.transform.gameObject);
         }
-        this.passenger = passenger;
 
         SetDestination(destination);
         SetTaxiColor(newState);
@@ -202,10 +164,29 @@ public class Driver : MonoBehaviour
     IEnumerator pickUpPassenger()
     {
         yield return new WaitForSeconds(1);
-        Vector3 newDestination = currentDriverTrip.tripBase.destination;
-        SetState(TaxiState.DrivingPassenger, newDestination, passenger);
-        passenger.SetState(PassengerState.PickedUp, this);
+        Vector3 newDestination = currentTrip.tripCreatedData.destination;
+        SetState(TaxiState.DrivingPassenger, newDestination);
 
+        float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float timeSpentEnRoute = pickedUpTime - currentTrip.driverAssignedData.matchedTime;
+        float waitingTime = pickedUpTime - currentTrip.tripCreatedData.createdTime;
+        PickedUpData pickedUpData = new PickedUpData
+        {
+            pickedUpTime = pickedUpTime,
+            timeSpentEnRoute = timeSpentEnRoute,
+            waitingTime = waitingTime
+        };
+
+        // Create driver pickup data
+        PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
+        {
+            timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
+            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * marginalCostPerKm
+        };
+
+        PickedUpPassengerData pickedUpPassengerData = currentTrip.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
+
+        currentTrip.pickUpPassenger(pickedUpData, pickedUpDriverData, pickedUpPassengerData);
     }
 
     void Update()
@@ -217,7 +198,7 @@ public class Driver : MonoBehaviour
         {
             if (state == TaxiState.Dispatched)
             {
-                SetState(TaxiState.WaitingForPassenger, transform.position, passenger);
+                SetState(TaxiState.WaitingForPassenger, transform.position);
                 StartCoroutine(pickUpPassenger());
             }
             else if (state == TaxiState.DrivingPassenger)

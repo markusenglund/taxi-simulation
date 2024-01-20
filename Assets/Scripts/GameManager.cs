@@ -9,6 +9,7 @@ public class Fare
     public float surgeMultiplier { get; set; }
     public float total { get; set; }
 
+    // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
     public float driverCut { get; set; }
 
     public float uberCut { get; set; }
@@ -30,7 +31,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform passengerPrefab;
 
     private List<Transform> taxis = new List<Transform>();
-    private Queue<Passenger> waitingPassengers = new Queue<Passenger>();
+    private Queue<Trip> queuedTrips = new Queue<Trip>();
 
     private List<Trip> trips = new List<Trip>();
 
@@ -66,37 +67,36 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-            int random = UnityEngine.Random.Range(0, 4);
+            int random = Random.Range(0, 4);
             yield return new WaitForSeconds(random);
             Vector3 randomPosition = GridUtils.GetRandomPosition();
             Transform passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
     }
 
-    public Passenger GetNextPassenger()
+    public Trip GetNextTrip()
     {
         // TODO: This creates an inefficiency, since the passenger at the front of the queue might not be the closest one to the taxi
-        if (waitingPassengers.Count > 0)
+        if (queuedTrips.Count > 0)
         {
-            return waitingPassengers.Dequeue();
+            return queuedTrips.Dequeue();
         }
         return null;
     }
     private void DispatchDriver(Driver driver, Trip trip)
     {
-
-        trips.Add(trip);
-
-        trip.tripCreatedData.passenger.SetState(PassengerState.Dispatched, driver);
-        driver.DispatchDriver(passenger, trip);
+        Passenger passenger = trip.tripCreatedData.passenger;
+        trip.DispatchDriver(driver.transform.position);
+        passenger.SetState(PassengerState.Dispatched, driver);
+        driver.HandleDriverDispatched(trip);
         Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
     }
 
-    public void AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
+    public Trip AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
     {
         Passenger passenger = tripCreatedData.passenger;
         // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
-        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
+        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(passenger.positionActual);
 
         Trip trip = new Trip(tripCreatedData, tripCreatedPassengerData);
 
@@ -110,23 +110,25 @@ public class GameManager : MonoBehaviour
         else
         {
             passenger.SetState(PassengerState.Waiting);
-            waitingPassengers.Enqueue(passenger);
-            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + waitingPassengers.Count);
+            queuedTrips.Enqueue(trip);
+            Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + queuedTrips.Count);
         }
+
+        return trip;
     }
 
     public void HandleDriverIdle(Driver driver)
     {
-        Passenger passenger = GetNextPassenger();
-        if (passenger != null)
+        Trip trip = GetNextTrip();
+        if (trip != null)
         {
-            RideOffer rideOffer = passenger.passengerDecisionData.rideOffer;
-            float distanceEnRoute = GridUtils.GetDistance(driver.transform.position, passenger.positionActual);
-            DispatchDriver(driver, passenger, rideOffer, distanceEnRoute);
+            float enRouteDistance = GridUtils.GetDistance(driver.transform.position, trip.tripCreatedData.passenger.positionActual);
+            trip.AssignDriver(driver, enRouteDistance);
+            DispatchDriver(driver, trip);
         }
     }
 
-    private (Driver, float) GetClosestAvailableTaxi(UnityEngine.Vector3 position)
+    private (Driver, float) GetClosestAvailableDriver(Vector3 position)
     {
         float closestTaxiDistance = Mathf.Infinity;
         Driver closestTaxi = null;
@@ -148,9 +150,9 @@ public class GameManager : MonoBehaviour
         return (closestTaxi, closestTaxiDistance);
     }
 
-    private float GetExpectedWaitingTime(UnityEngine.Vector3 position)
+    private float GetExpectedWaitingTime(Vector3 position)
     {
-        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(position);
+        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
         if (closestTaxi != null)
         {
             // simulationSpeed = TimeUtils.ConvertRealSpeedToSimulationSpeedPerHour();
@@ -161,7 +163,7 @@ public class GameManager : MonoBehaviour
 
         float avgTimePerTrip = 18f / 60f; // 18 simulation minutes
         float numTaxis = taxis.Count;
-        float queueSize = waitingPassengers.Count;
+        float queueSize = queuedTrips.Count;
 
         float avgTaxiArrivalTime = 5f / 60f; // 5 simulation minutes
 
@@ -190,7 +192,7 @@ public class GameManager : MonoBehaviour
         return fare;
     }
 
-    public RideOffer RequestRideOffer(UnityEngine.Vector3 position, UnityEngine.Vector3 destination)
+    public RideOffer RequestRideOffer(Vector3 position, Vector3 destination)
     {
         float tripDistance = GridUtils.GetDistance(position, destination);
         Fare fare = GetFare(tripDistance);

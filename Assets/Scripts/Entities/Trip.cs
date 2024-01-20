@@ -28,6 +28,8 @@ public class TripCreatedPassengerData
 {
     public bool hasAcceptedRideOffer { get; set; }
 
+    public float tripUtilityValue { get; set; }
+
     public float expectedWaitingCost { get; set; }
 
     public float expectedValueSurplus { get; set; }
@@ -141,5 +143,13 @@ public class Trip
             startPosition = startPosition,
             driverDispatchedTime = driverDispatchedTime
         };
+    }
+
+    public void pickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData, PickedUpPassengerData pickedUpPassengerData)
+    {
+        state = TripState.OnTrip;
+        this.pickedUpData = pickedUpData;
+        this.pickedUpDriverData = pickedUpDriverData;
+        this.pickedUpPassengerData = pickedUpPassengerData;
     }
 }

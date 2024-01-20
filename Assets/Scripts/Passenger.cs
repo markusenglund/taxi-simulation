@@ -75,6 +75,8 @@ public class Passenger : MonoBehaviour
 
     const float medianIncome = 20;
 
+    public Trip currentTrip;
+
     public PassengerEconomicParameters passengerEconomicParameters;
     public PassengerDecisionData passengerDecisionData;
     public PassengerPickedUpData passengerPickedUpData;
@@ -174,6 +176,7 @@ public class Passenger : MonoBehaviour
         TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
         {
             hasAcceptedRideOffer = hasAcceptedRideOffer,
+            tripUtilityValue = passengerEconomicParameters.tripUtilityValue,
             expectedWaitingCost = expectedWaitingCost,
             expectedValueSurplus = expectedValueSurplus,
             expectedUtilitySurplus = expectedUtilitySurplus
@@ -184,7 +187,7 @@ public class Passenger : MonoBehaviour
         if (hasAcceptedRideOffer)
         {
             Debug.Log("Passenger " + id + " is hailing a taxi");
-            GameManager.Instance.AcceptRideOffer(this, rideOffer);
+            currentTrip = GameManager.Instance.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
         }
         else
         {
@@ -226,36 +229,36 @@ public class Passenger : MonoBehaviour
         return passenger;
     }
 
+    public PickedUpPassengerData HandlePassengerPickedUp(PickedUpData pickedUpData)
+    {
+        float waitingCost = pickedUpData.waitingTime * passengerEconomicParameters.waitingCostPerHour;
+        // TODO: START HERE - figure out where these variables are and use them - we're done with this soon! Let's do it!
+        float valueSurplus = currentTrip.tripCreatedPassengerData.tripUtilityValue - waitingCost - currentTrip.tripCreatedData.fare.total;
 
-    public void SetState(PassengerState state, Driver taxi = null)
+        float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
+        Debug.Log("Passenger " + id + " was picked up at " + pickedUpData.pickedUpTime + ", expected pickup time was " + passengerDecisionData.expectedPickupTime + ", difference is " + (pickedUpData.pickedUpTime - passengerDecisionData.expectedPickupTime));
+        Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
+
+        PickedUpPassengerData passengerPickedUpData = new PickedUpPassengerData()
+        {
+            waitingCost = waitingCost,
+            valueSurplus = valueSurplus,
+            utilitySurplus = utilitySurplus
+        };
+
+        SetState(PassengerState.PickedUp);
+
+
+        waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
+        passengersGraph.IncrementNumPickedUpPassengers();
+        passengerSurplusGraph.AppendPassenger(this);
+
+        return passengerPickedUpData;
+    }
+    public void SetState(PassengerState state)
     {
         this.state = state;
-        this.taxi = taxi;
-
-        if (state == PassengerState.PickedUp)
-        {
-            float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-            float waitingTime = pickedUpTime - passengerDecisionData.decisionTime;
-            float waitingCost = waitingTime * passengerEconomicParameters.waitingCostPerHour;
-            float valueSurplus = passengerEconomicParameters.tripUtilityValue - waitingCost - passengerDecisionData.rideOffer.fare.total;
-
-            float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
-            Debug.Log("Passenger " + id + " was picked up at " + pickedUpTime + ", expected pickup time was " + passengerDecisionData.expectedPickupTime + ", difference is " + (pickedUpTime - passengerDecisionData.expectedPickupTime));
-            Debug.Log("Surplus gained by passenger " + id + " is " + utilitySurplus);
-
-            passengerPickedUpData = new PassengerPickedUpData()
-            {
-                pickedUpTime = pickedUpTime,
-                waitingCost = waitingCost,
-                waitingTime = waitingTime,
-                valueSurplus = valueSurplus,
-                utilitySurplus = utilitySurplus
-            };
-
-
-            waitingTimeGraph.SetNewValue(waitingTime);
-            passengersGraph.IncrementNumPickedUpPassengers();
-            passengerSurplusGraph.AppendPassenger(this);
-        }
     }
 }
+
+
