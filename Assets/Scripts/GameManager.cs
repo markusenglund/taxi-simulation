@@ -16,12 +16,8 @@ public class Fare
 
 public class RideOffer
 {
-    public Driver driver { get; set; }
-    public Passenger passenger { get; set; }
     public float expectedWaitingTime { get; set; }
     public Fare fare { get; set; }
-
-    public float tripDistance { get; set; }
 }
 
 public class GameManager : MonoBehaviour
@@ -86,37 +82,30 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
-
-    private void DispatchDriver(Driver driver, Passenger passenger, RideOffer rideOffer, float distanceEnRoute)
+    private void DispatchDriver(Driver driver, Trip trip)
     {
-        Trip trip = new Trip
-        {
-            driver = driver,
-            passenger = passenger,
-            state = TripState.EnRoute,
-            driverStartPosition = driver.transform.position,
-            pickUpPosition = passenger.positionActual,
-            destination = passenger.destination,
-            distanceEnRoute = distanceEnRoute,
-            distanceOnTrip = rideOffer.tripDistance,
-            fare = rideOffer.fare,
-        };
 
         trips.Add(trip);
 
-        passenger.SetState(PassengerState.Dispatched, driver);
+        trip.tripCreatedData.passenger.SetState(PassengerState.Dispatched, driver);
         driver.DispatchDriver(passenger, trip);
         Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
     }
 
-    public void AcceptRideOffer(Passenger passenger, RideOffer rideOffer)
+    public void AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
     {
+        Passenger passenger = tripCreatedData.passenger;
         // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableTaxi(passenger.positionActual);
 
+        Trip trip = new Trip(tripCreatedData, tripCreatedPassengerData);
+
+        trips.Add(trip);
+
         if (closestTaxi != null)
         {
-            DispatchDriver(closestTaxi, passenger, rideOffer, closestTaxiDistance);
+            trip.AssignDriver(closestTaxi, closestTaxiDistance);
+            DispatchDriver(closestTaxi, trip);
         }
         else
         {
@@ -211,7 +200,6 @@ public class GameManager : MonoBehaviour
         {
             expectedWaitingTime = expectedWaitingTime,
             fare = fare,
-            tripDistance = tripDistance
         };
 
         return tripOffer;

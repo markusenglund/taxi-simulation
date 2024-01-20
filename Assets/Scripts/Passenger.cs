@@ -146,24 +146,34 @@ public class Passenger : MonoBehaviour
     void MakeTripDecision()
     {
         RideOffer rideOffer = GameManager.Instance.RequestRideOffer(positionActual, destination);
+
+
+        float tripCreatedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
+
+        TripCreatedData tripCreatedData = new TripCreatedData()
+        {
+            passenger = this,
+            createdTime = tripCreatedTime,
+            pickUpPosition = positionActual,
+            destination = destination,
+            tripDistance = GridUtils.GetDistance(positionActual, destination),
+            expectedWaitingTime = rideOffer.expectedWaitingTime,
+            fare = rideOffer.fare,
+            expectedPickupTime = expectedPickupTime
+        };
+
         float expectedWaitingCost = rideOffer.expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
 
         float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - rideOffer.fare.total;
         float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
+        bool hasAcceptedRideOffer = expectedValueSurplus > 0;
 
         Debug.Log("Passenger " + id + " Net utility $ from ride: " + expectedValueSurplus);
         Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
-        float decisionTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float expectedPickupTime = decisionTime + rideOffer.expectedWaitingTime;
-        bool hasAcceptedRideOffer = expectedValueSurplus > 0;
-
-
-        passengerDecisionData = new PassengerDecisionData()
+        TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
         {
             hasAcceptedRideOffer = hasAcceptedRideOffer,
-            rideOffer = rideOffer,
-            decisionTime = decisionTime,
-            expectedPickupTime = expectedPickupTime,
             expectedWaitingCost = expectedWaitingCost,
             expectedValueSurplus = expectedValueSurplus,
             expectedUtilitySurplus = expectedUtilitySurplus

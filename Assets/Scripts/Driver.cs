@@ -16,11 +16,11 @@ public class DriverTrip
 {
     public Trip tripBase { get; set; }
 
-    public float marginalCostEnRoute { get; set; }
-    public float marginalCostOnTrip { get; set; }
+    // public float marginalCostEnRoute { get; set; }
+    // public float marginalCostOnTrip { get; set; }
 
-    public float timeCostEnRoute { get; set; }
-    public float timeCostOnTrip { get; set; }
+    // public float timeCostEnRoute { get; set; }
+    // public float timeCostOnTrip { get; set; }
 
     // Revenue minus marginal costs (not including cost of time)
     public float operatingProfit { get; set; }
