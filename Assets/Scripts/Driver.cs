@@ -161,18 +161,18 @@ public class Driver : MonoBehaviour
 
     }
 
-    public float CalculateGrossProfitLastHour()
+    public float CalculateGrossProfitLastInterval(float intervalHours)
     {
-        float grossProfitLastHour = 0;
+        float grossProfitInterval = 0;
         foreach (Trip trip in completedTrips)
         {
-            float oneHourAgo = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - 1;
-            if (trip.droppedOffData.droppedOffTime > oneHourAgo)
+            float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+            if (trip.droppedOffData.droppedOffTime > intervalStartTime)
             {
-                grossProfitLastHour += trip.droppedOffDriverData.grossProfit;
+                grossProfitInterval += trip.droppedOffDriverData.grossProfit;
             }
         }
-        return grossProfitLastHour;
+        return grossProfitInterval;
     }
 
     public void SetState(TaxiState newState)

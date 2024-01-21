@@ -25,7 +25,8 @@ public class DriverProfitGraph : MonoBehaviour
     float maxX = 24f;
     float minX = 0f;
 
-    const float timeInterval = 5f;
+    // Update graph every 15 minutes
+    const float timeInterval = 15f / 60f;
 
     private void Awake()
     {
@@ -56,7 +57,8 @@ public class DriverProfitGraph : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(timeInterval);
+            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
+            yield return new WaitForSeconds(intervalRealSeconds);
             UpdateGraph();
         }
     }
@@ -70,8 +72,9 @@ public class DriverProfitGraph : MonoBehaviour
             LineRenderer line = lines[i];
             if (driver != null)
             {
-                float grossProfitLastHour = driver.CalculateGrossProfitLastHour();
-                Vector2 point = new Vector2(simulationTime, grossProfitLastHour);
+                float grossProfitLastTwoHours = driver.CalculateGrossProfitLastInterval(2f);
+                float grossProfitPerHour = grossProfitLastTwoHours / 2f;
+                Vector2 point = new Vector2(simulationTime, grossProfitPerHour);
                 Vector2 graphPosition = ConvertValueToGraphPosition(point);
                 line.positionCount++;
                 line.SetPosition(line.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
