@@ -73,6 +73,36 @@ public class GameManager : MonoBehaviour
         { 24, 12f}
     };
 
+    Dictionary<int, float> supplyIndexByHour = new Dictionary<int, float>()
+    {
+        { 0, 5f },
+        { 1, 3f },
+        { 2, 2f },
+        { 3, 1f },
+        { 4, 1f },
+        { 5, 1.5f },
+        { 6, 2f },
+        { 7, 3.5f },
+        { 8, 5f },
+        { 9, 6f },
+        { 10, 6f },
+        { 11, 6f },
+        { 12, 6f},
+        { 13, 6f},
+        { 14, 6.5f},
+        { 15, 7f},
+        { 16, 9f},
+        { 17, 11f},
+        { 18, 13f},
+        { 19, 12f},
+        { 20, 12f},
+        { 21, 12f},
+        { 22, 13f},
+        { 23, 14f},
+        { 24, 12f}
+
+    };
+
 
     void Awake()
     {
