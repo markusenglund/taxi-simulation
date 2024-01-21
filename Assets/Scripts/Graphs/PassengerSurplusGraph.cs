@@ -29,7 +29,7 @@ public class PassengerSurplusGraph : MonoBehaviour
   float marginTop = 50f;
   float maxY = 3f;
   float minY = 0f;
-  float maxX = 6f;
+  float maxX = 24f;
   float minX = 0f;
   Color[] quartileColors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
@@ -149,15 +149,29 @@ public class PassengerSurplusGraph : MonoBehaviour
     yLineRenderer.SetPosition(1, new Vector3(maxYPosition.x, maxYPosition.y, 0));
   }
 
-  private void CreateAxisLabels()
+  private void CreateAxisValues()
   {
-    // Create y axis labels
+    // Create y axis values
     int step = Mathf.RoundToInt((maxY - minY) / 5f);
     for (int i = (int)minY; i <= maxY; i += step)
     {
       TMP_Text text = Instantiate(textPrefab, graphContainer);
       Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(0, i));
       text.text = i.ToString();
+      text.rectTransform.anchoredPosition = textPosition;
+    }
+
+    // Create x axis values
+    step = Mathf.RoundToInt((maxX - minX) / 6f);
+    for (int i = (int)minX; i <= maxX; i += step)
+    {
+      TMP_Text text = Instantiate(textPrefab, graphContainer);
+      Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(i, 0));
+      // Set pivot to top center
+      text.rectTransform.pivot = new Vector2(0.5f, 1f);
+      // Set textmeshpro text alignment to center
+      text.alignment = TextAlignmentOptions.Center;
+      text.text = TimeUtils.ConvertSimulationHoursToTimeString(i);
       text.rectTransform.anchoredPosition = textPosition;
     }
   }
@@ -247,7 +261,7 @@ public class PassengerSurplusGraph : MonoBehaviour
   private void InstantiateGraph()
   {
     CreateAxes();
-    CreateAxisLabels();
+    CreateAxisValues();
     CreateHeaderText();
     CreateLegend();
     InstantiateLines();

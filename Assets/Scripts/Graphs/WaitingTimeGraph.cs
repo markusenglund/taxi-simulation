@@ -24,7 +24,7 @@ public class WaitingTimeGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = 0f;
-    float maxX = 6f;
+    float maxX = 24f;
     float minX = 0f;
 
 
@@ -65,7 +65,7 @@ public class WaitingTimeGraph : MonoBehaviour
 
     }
 
-    private void CreateAxisLabels()
+    private void CreateAxisValues()
     {
         // Create y axis labels
         int step = Mathf.RoundToInt((maxY - minY) / 5f);
@@ -74,6 +74,20 @@ public class WaitingTimeGraph : MonoBehaviour
             TMP_Text text = Instantiate(textPrefab, graphContainer);
             Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(0, i));
             text.text = i.ToString();
+            text.rectTransform.anchoredPosition = textPosition;
+        }
+
+        // Create x axis values
+        step = Mathf.RoundToInt((maxX - minX) / 6f);
+        for (int i = (int)minX; i <= maxX; i += step)
+        {
+            TMP_Text text = Instantiate(textPrefab, graphContainer);
+            Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(i, 0));
+            // Set pivot to top center
+            text.rectTransform.pivot = new Vector2(0.5f, 1f);
+            // Set textmeshpro text alignment to center
+            text.alignment = TextAlignmentOptions.Center;
+            text.text = TimeUtils.ConvertSimulationHoursToTimeString(i);
             text.rectTransform.anchoredPosition = textPosition;
         }
     }
@@ -93,7 +107,7 @@ public class WaitingTimeGraph : MonoBehaviour
         Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         lineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         CreateAxes();
-        CreateAxisLabels();
+        CreateAxisValues();
         CreateHeaderText();
     }
 
