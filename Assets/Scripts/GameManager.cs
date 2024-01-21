@@ -39,6 +39,34 @@ public class GameManager : MonoBehaviour
     const float driverFareCutPercentage = 0.67f;
     const float uberFareCutPercentage = 0.33f;
 
+    // Based on real friday data, demand is indexed by as 1 being the lowest measured number
+    Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
+    {
+        { 0, 5f },
+        { 1, 3f },
+        { 2, 2f },
+        { 3, 1f },
+        { 4, 1f },
+        { 5, 1.5f },
+        { 6, 2f },
+        { 7, 3f },
+        { 8, 4f },
+        { 9, 5f },
+        { 10, 5f },
+        { 11, 5f },
+        { 12, 5f},
+        { 13, 5.5f},
+        { 14, 6f},
+        { 15, 7f},
+        { 16, 9f},
+        { 17, 11f},
+        { 18, 13f},
+        { 21, 12f},
+        { 22, 14f},
+        { 23, 16f},
+        { 24, 12f}
+    };
+
 
     void Awake()
     {
