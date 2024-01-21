@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     const float driverFareCutPercentage = 0.67f;
     const float uberFareCutPercentage = 0.33f;
 
+    public const float timeSpentWaitingForPassenger = 1f / 60f;
+
     // Based on real friday data, demand is indexed by as 1 being the lowest measured number
     Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
     {
@@ -61,7 +63,9 @@ public class GameManager : MonoBehaviour
         { 16, 9f},
         { 17, 11f},
         { 18, 13f},
-        { 21, 12f},
+        { 19, 12f},
+        { 20, 12f},
+        { 21, 13f},
         { 22, 14f},
         { 23, 16f},
         { 24, 12f}
@@ -106,7 +110,7 @@ public class GameManager : MonoBehaviour
 
             float expectedPassengersPerHour = demandIndex * 10f;
 
-            Debug.Log($"Demand index: {demandIndex}, passengers per hour: {expectedPassengersPerHour} at time {simulationTime}");
+            // Debug.Log($"Demand index: {demandIndex}, passengers per hour: {expectedPassengersPerHour} at time {simulationTime}");
             float interval = 1f / 30f;
             yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(interval));
 
@@ -186,6 +190,26 @@ public class GameManager : MonoBehaviour
             driver.HandleDriverAssigned(trip);
             DispatchDriver(driver, trip);
         }
+
+
+        // Calculate late average enroute time and ontrip time based on all trips
+        float totalEnrouteTime = 0;
+        float totalOnTripTime = 0;
+        int numTrips = 0;
+        foreach (Trip _trip in trips)
+        {
+            if (_trip.droppedOffData != null)
+            {
+                totalEnrouteTime += _trip.pickedUpData.timeSpentEnRoute;
+                totalOnTripTime += _trip.droppedOffData.timeSpentOnTrip;
+                numTrips += 1;
+            }
+        }
+
+        float averageEnrouteTime = totalEnrouteTime / numTrips;
+        float averageOnTripTime = totalOnTripTime / numTrips;
+
+        Debug.Log($"Average enroute time: {averageEnrouteTime} average on trip time: {averageOnTripTime}, based on {numTrips} trips");
     }
 
     private (Driver, float) GetClosestAvailableDriver(Vector3 position)
@@ -215,18 +239,18 @@ public class GameManager : MonoBehaviour
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
         if (closestTaxi != null)
         {
-            float extraPickUpTime = 1.6f / 60f; // 1.6 simulation minutes
+            float extraPickUpTime = timeSpentWaitingForPassenger + 0.6f / 60f;
             float expectedWaitingTime = (closestTaxiDistance / Driver.simulationSpeed) + extraPickUpTime;
             return expectedWaitingTime;
         }
 
-        float avgTimePerTrip = 18f / 60f; // 18 simulation minutes
+        // ! These approximations that will change based on how efficient the queueing algorithm is
+        float avgTimeEnRoute = 11f / 60f;
+        float avgTimeOnTrip = 10f / 60f;
         float numTaxis = taxis.Count;
         float queueSize = queuedTrips.Count;
 
-        float avgTaxiArrivalTime = 5f / 60f; // 5 simulation minutes
-
-        float expectedWaitingTimeForQueue = (avgTimePerTrip * queueSize / numTaxis) + avgTaxiArrivalTime;
+        float expectedWaitingTimeForQueue = ((avgTimeEnRoute + avgTimeOnTrip) * queueSize / numTaxis) + avgTimeEnRoute;
         return expectedWaitingTimeForQueue;
 
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TimeUtils : MonoBehaviour
 {
-    private static float simulationSecondsPerRealSecond = 120;
+    private static float simulationSecondsPerRealSecond = 5 * 60;
 
     public static float ConvertRealSpeedToSimulationSpeedPerHour(float realSpeed)
     {

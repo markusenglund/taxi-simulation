@@ -70,7 +70,7 @@ public class Driver : MonoBehaviour
 
     IEnumerator PickUpPassenger()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(GameManager.timeSpentWaitingForPassenger));
         // Put the passenger on top of the taxi cab
         Passenger passenger = currentTrip.tripCreatedData.passenger;
         passenger.transform.SetParent(transform);
@@ -81,7 +81,7 @@ public class Driver : MonoBehaviour
 
         // Calculate trip pickup data
         float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float timeSpentEnRoute = pickedUpTime - currentTrip.driverAssignedData.matchedTime;
+        float timeSpentEnRoute = pickedUpTime - currentTrip.driverDispatchedData.driverDispatchedTime;
         float waitingTime = pickedUpTime - currentTrip.tripCreatedData.createdTime;
         PickedUpData pickedUpData = new PickedUpData
         {
@@ -150,6 +150,8 @@ public class Driver : MonoBehaviour
         Debug.Log($"Driver {id} profit: {droppedOffDriverData.grossProfit}, fare cut: {currentTrip.tripCreatedData.fare.driverCut} marginal cost: {droppedOffDriverData.marginalCostOnTrip + currentTrip.pickedUpDriverData.marginalCostEnRoute}, time spent: {timeSpentOnTrip + currentTrip.pickedUpData.timeSpentEnRoute}");
 
         currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
+
+        // Debug.Log($"On trip time: {droppedOffData.timeSpentOnTrip} On trip distance: {currentTrip.tripCreatedData.tripDistance} km, En route time: {currentTrip.pickedUpData.timeSpentEnRoute} En route distance: {currentTrip.driverAssignedData.enRouteDistance} km");
 
 
         SetState(TaxiState.Idling);
@@ -289,8 +291,8 @@ public class Driver : MonoBehaviour
             // Distance delta should be lower if the taxi is close to the destination
             float distanceDelta = realSpeed * Time.deltaTime;
 
-            // If the taxi is close to the destination, set the distance delta to 0.01f
-            if ((destination - transform.position).magnitude < 0.3f)
+            // If the taxi is very close to the destination, drive slower
+            if ((destination - transform.position).magnitude < 0.15f)
             {
                 distanceDelta = distanceDelta / 3;
             }
