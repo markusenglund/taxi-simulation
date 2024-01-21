@@ -25,4 +25,12 @@ public class TimeUtils : MonoBehaviour
     {
         return simulationHours * 3600 / simulationSecondsPerRealSecond;
     }
+
+    public static string ConvertSimulationHoursToTimeString(float simulationHours)
+    {
+        int hours = (int)simulationHours;
+        int minutes = (int)((simulationHours - hours) * 60);
+        int hoursSinceMidnight = hours % 24;
+        return hoursSinceMidnight.ToString("00") + ":" + minutes.ToString("00");
+    }
 }
