@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class PassengersGraph : MonoBehaviour
+public class SupplyDemandGraph : MonoBehaviour
 {
     private RectTransform graphContainer;
     [SerializeField] private LineRenderer lrPrefab;
