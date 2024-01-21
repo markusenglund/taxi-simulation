@@ -79,11 +79,11 @@ public class GameManager : MonoBehaviour
             Vector3 randomPosition = GridUtils.GetRandomPosition();
             taxis.Add(Driver.Create(taxiPrefab, randomPosition.x, randomPosition.z));
         }
-
+        // createInitialPassengers();
         StartCoroutine(createPassengers());
     }
 
-    IEnumerator createPassengers()
+    private void createInitialPassengers()
     {
         // Create 8 passengers to start
         for (int i = 0; i < 8; i++)
@@ -91,15 +91,45 @@ public class GameManager : MonoBehaviour
             Vector3 randomPosition = GridUtils.GetRandomPosition();
             Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
         }
+    }
 
-        yield return new WaitForSeconds(2f);
+    IEnumerator createPassengers()
+    {
 
         while (true)
         {
-            int random = Random.Range(0, 4);
-            yield return new WaitForSeconds(random);
-            Vector3 randomPosition = GridUtils.GetRandomPosition();
-            Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            // Get the demand index for the two hours surrounding the current time and get the weighted average of them
+            int currentHour = Mathf.FloorToInt(simulationTime);
+            float percentOfHour = simulationTime - currentHour;
+            float demandIndex = demandIndexByHour[currentHour] * percentOfHour + demandIndexByHour[currentHour + 1] * (1 - percentOfHour);
+
+            float expectedPassengersPerHour = demandIndex * 10f;
+
+            Debug.Log($"Demand index: {demandIndex}, passengers per hour: {expectedPassengersPerHour} at time {simulationTime}");
+            float interval = 1f / 30f;
+            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(interval));
+
+            float expectedPassengersInInterval = expectedPassengersPerHour * interval;
+            float numPassengersToCreate = 0;
+
+
+            // TODO: Use an actual poisson distribution calculation instead of this inefficient approximation
+            int iterations = 20;
+            for (int i = 0; i < iterations; i++)
+            {
+                float chanceOfCreatingPassenger = expectedPassengersInInterval / iterations;
+                if (Random.value < chanceOfCreatingPassenger)
+                {
+                    numPassengersToCreate += 1;
+                }
+            }
+
+            for (int i = 0; i < numPassengersToCreate; i++)
+            {
+                Vector3 randomPosition = GridUtils.GetRandomPosition();
+                Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            }
         }
     }
 

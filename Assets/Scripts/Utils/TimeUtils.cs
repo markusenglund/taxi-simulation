@@ -20,4 +20,9 @@ public class TimeUtils : MonoBehaviour
     {
         return realSeconds * simulationSecondsPerRealSecond / 3600;
     }
+
+    public static float ConvertSimulationHoursToRealSeconds(float simulationHours)
+    {
+        return simulationHours * 3600 / simulationSecondsPerRealSecond;
+    }
 }
