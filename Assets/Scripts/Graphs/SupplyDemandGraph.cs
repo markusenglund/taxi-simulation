@@ -26,6 +26,9 @@ public class SupplyDemandGraph : MonoBehaviour
 
     float timeInterval = 20f / 60f;
 
+    Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+    Color passengersLineColor = new Color(0.2f, 0.6f, 1.0f, 1.0f);
+
 
     private void Awake()
     {
@@ -115,54 +118,56 @@ public class SupplyDemandGraph : MonoBehaviour
     {
         TMP_Text text = Instantiate(headerTextPrefab, graphContainer);
         Vector2 textPosition = new Vector2(-52f, 70f);
-        text.text = "Passengers";
+        text.text = "Supply & Demand";
         text.rectTransform.anchoredPosition = textPosition;
     }
 
     private void CreateLegend()
     {
         TMP_Text text1 = Instantiate(legendTextPrefab, graphContainer);
-        Vector2 textPosition1 = new Vector2(80, 74f);
-        text1.text = "Picked up";
+        Vector2 textPosition1 = new Vector2(140, 74f);
+        text1.text = "Potential riders/hr";
         text1.rectTransform.anchoredPosition = textPosition1;
+        text1.rectTransform.sizeDelta = new Vector2(130, 30);
 
         // Create a tiny green line with the line renderer
-        LineRenderer greenLine = Instantiate(lrPrefab, graphContainer);
-        greenLine.positionCount = 2;
-        Vector2 greenLinePosition1 = new Vector2(225, 181);
-        Vector2 greenLinePosition2 = new Vector2(235, 181);
-        greenLine.SetPosition(0, new Vector3(greenLinePosition1.x, greenLinePosition1.y, 0));
-        greenLine.SetPosition(1, new Vector3(greenLinePosition2.x, greenLinePosition2.y, 0));
-        greenLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-        greenLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+        LineRenderer passengersLegendLine = Instantiate(lrPrefab, graphContainer);
+        passengersLegendLine.positionCount = 2;
+        Vector2 greenLinePosition1 = new Vector2(255, 181);
+        Vector2 greenLinePosition2 = new Vector2(265, 181);
+        passengersLegendLine.SetPosition(0, new Vector3(greenLinePosition1.x, greenLinePosition1.y, 0));
+        passengersLegendLine.SetPosition(1, new Vector3(greenLinePosition2.x, greenLinePosition2.y, 0));
+        passengersLegendLine.startColor = passengersLineColor;
+        passengersLegendLine.endColor = passengersLineColor;
 
         TMP_Text text2 = Instantiate(legendTextPrefab, graphContainer);
-        Vector2 textPosition2 = new Vector2(80, 54f);
-        text2.text = "Unserved";
+        Vector2 textPosition2 = new Vector2(140, 54f);
+        text2.text = "Trips started/hr";
         text2.rectTransform.anchoredPosition = textPosition2;
+        text2.rectTransform.sizeDelta = new Vector2(130, 30);
 
         // Create a tiny red line with the line renderer
-        LineRenderer redLine = Instantiate(lrPrefab, graphContainer);
-        redLine.positionCount = 2;
-        Vector2 redLinePosition1 = new Vector2(225, 162);
-        Vector2 redLinePosition2 = new Vector2(235, 162);
-        redLine.SetPosition(0, new Vector3(redLinePosition1.x, redLinePosition1.y, 0));
-        redLine.SetPosition(1, new Vector3(redLinePosition2.x, redLinePosition2.y, 0));
-        redLine.startColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        redLine.endColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        LineRenderer tripsLegendLine = Instantiate(lrPrefab, graphContainer);
+        tripsLegendLine.positionCount = 2;
+        Vector2 redLinePosition1 = new Vector2(255, 162);
+        Vector2 redLinePosition2 = new Vector2(265, 162);
+        tripsLegendLine.SetPosition(0, new Vector3(redLinePosition1.x, redLinePosition1.y, 0));
+        tripsLegendLine.SetPosition(1, new Vector3(redLinePosition2.x, redLinePosition2.y, 0));
+        tripsLegendLine.startColor = tripsLineColor;
+        tripsLegendLine.endColor = tripsLineColor;
     }
 
     private void InstantiateLines()
     {
         passengersLine = Instantiate(lrPrefab, graphContainer);
         passengersLine.positionCount = 0;
-        passengersLine.startColor = new Color(0.0f, 0.0f, 1.0f, 1.0f);
-        passengersLine.endColor = new Color(0.0f, 0.0f, 1.0f, 1.0f);
+        passengersLine.startColor = passengersLineColor;
+        passengersLine.endColor = passengersLineColor;
 
         tripsLine = Instantiate(lrPrefab, graphContainer);
         tripsLine.positionCount = 0;
-        tripsLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-        tripsLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+        tripsLine.startColor = tripsLineColor;
+        tripsLine.endColor = tripsLineColor;
     }
 
     private void InstantiateGraph()
