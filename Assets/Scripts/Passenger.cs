@@ -28,13 +28,13 @@ public class Passenger : MonoBehaviour
     static int incrementalId = 1;
     public int id;
 
+    public float timeCreated;
+
     public PassengerState state = PassengerState.Idling;
 
     public Vector3 destination;
 
     private WaitingTimeGraph waitingTimeGraph;
-
-    private PassengersGraph passengersGraph;
 
     private UtilityIncomeScatterPlot utilityIncomeScatterPlot;
 
@@ -51,10 +51,10 @@ public class Passenger : MonoBehaviour
     {
         id = incrementalId;
         incrementalId += 1;
+        timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         destination = GridUtils.GetRandomPosition();
         GenerateEconomicParameters();
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
-        passengersGraph = GameObject.Find("PassengersGraph").GetComponent<PassengersGraph>();
         utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
         passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
@@ -159,7 +159,6 @@ public class Passenger : MonoBehaviour
         else
         {
             // Debug.Log("Passenger " + id + " is giving up");
-            passengersGraph.IncrementNumUnservedPassengers();
             passengerSurplusGraph.AppendPassenger(this);
 
             Destroy(gameObject);
@@ -169,7 +168,7 @@ public class Passenger : MonoBehaviour
     }
 
 
-    public static Transform Create(Transform prefab, float x, float z)
+    public static Passenger Create(Transform prefab, float x, float z)
     {
 
         Quaternion rotation = Quaternion.identity;
@@ -189,10 +188,10 @@ public class Passenger : MonoBehaviour
 
         }
 
-        Transform passenger = Instantiate(prefab, new Vector3(xVisual, 0.08f, zVisual), rotation);
-        passenger.name = "Passenger";
-        Passenger passengerComponent = passenger.GetComponent<Passenger>();
-        passengerComponent.positionActual = new Vector3(x, 0.08f, z);
+        Transform passengerTransform = Instantiate(prefab, new Vector3(xVisual, 0.08f, zVisual), rotation);
+        passengerTransform.name = "Passenger";
+        Passenger passenger = passengerTransform.GetComponent<Passenger>();
+        passenger.positionActual = new Vector3(x, 0.08f, z);
         return passenger;
     }
 
@@ -214,7 +213,6 @@ public class Passenger : MonoBehaviour
         };
 
         waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
-        passengersGraph.IncrementNumPickedUpPassengers();
         passengerSurplusGraph.AppendPassenger(this);
 
         return passengerPickedUpData;

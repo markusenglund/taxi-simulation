@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
 
     private List<Trip> trips = new List<Trip>();
 
+    private List<Passenger> passengers = new List<Passenger>();
+
     private float surgeMultiplier = 1f;
 
     const float driverFareCutPercentage = 0.67f;
@@ -93,7 +95,8 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 8; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition();
-            Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+            passengers.Add(passenger);
         }
     }
 
@@ -108,7 +111,7 @@ public class GameManager : MonoBehaviour
             float percentOfHour = simulationTime - currentHour;
             float demandIndex = demandIndexByHour[currentHour] * percentOfHour + demandIndexByHour[currentHour + 1] * (1 - percentOfHour);
 
-            float expectedPassengersPerHour = demandIndex * 10f;
+            float expectedPassengersPerHour = demandIndex * 5f;
 
             // Debug.Log($"Demand index: {demandIndex}, passengers per hour: {expectedPassengersPerHour} at time {simulationTime}");
             float interval = 1f / 30f;
@@ -132,7 +135,8 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < numPassengersToCreate; i++)
             {
                 Vector3 randomPosition = GridUtils.GetRandomPosition();
-                Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
+                passengers.Add(passenger);
             }
         }
     }
@@ -146,6 +150,37 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+
+    public int CalculateNumStartedTripsInLastInterval(float intervalHours)
+    {
+        float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+        int numStartedTrips = 0;
+        foreach (Trip trip in trips)
+        {
+            if (trip.pickedUpData != null && trip.pickedUpData.pickedUpTime > intervalStartTime)
+            {
+                numStartedTrips += 1;
+            }
+        }
+
+        return numStartedTrips;
+    }
+
+    public int CalculateNumPassengersSpawnedInLastInterval(float intervalHours)
+    {
+        float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+        int numPassengersSpawned = 0;
+        foreach (Passenger passenger in passengers)
+        {
+            if (passenger.timeCreated > intervalStartTime)
+            {
+                numPassengersSpawned += 1;
+            }
+        }
+
+        return numPassengersSpawned;
+    }
+
     private void DispatchDriver(Driver driver, Trip trip)
     {
         Passenger passenger = trip.tripCreatedData.passenger;
@@ -190,8 +225,13 @@ public class GameManager : MonoBehaviour
             driver.HandleDriverAssigned(trip);
             DispatchDriver(driver, trip);
         }
+        LogAverageTripTime();
 
 
+    }
+
+    private void LogAverageTripTime()
+    {
         // Calculate late average enroute time and ontrip time based on all trips
         float totalEnrouteTime = 0;
         float totalOnTripTime = 0;

@@ -47,8 +47,6 @@ public class DriverProfitGraph : MonoBehaviour
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
-        // CreateLegend();
-
         StartCoroutine(UpdateGraphAtInterval());
 
     }

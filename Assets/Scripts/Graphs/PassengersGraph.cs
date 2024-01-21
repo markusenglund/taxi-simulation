@@ -7,32 +7,24 @@ public class PassengersGraph : MonoBehaviour
 {
     private RectTransform graphContainer;
     [SerializeField] private LineRenderer lrPrefab;
-    [SerializeField] private Transform dotPrefab;
     [SerializeField] private TMP_Text textPrefab;
     [SerializeField] private TMP_Text headerTextPrefab;
     [SerializeField] private TMP_Text legendTextPrefab;
 
 
 
-    LineRenderer unservedLine;
-    LineRenderer pickedUpLine;
+    LineRenderer passengersLine;
+    LineRenderer tripsLine;
 
-    Transform dot;
-
-    List<Vector2> unservedLinePoints = new List<Vector2>();
-    List<Vector2> pickedUpLinePoints = new List<Vector2>();
-
-    int numUnservedPassengers = 0;
-    int numPickedUpPassengers = 0;
 
     float margin = 26f;
     float marginTop = 50f;
-    float maxY = 50f;
+    float maxY = 100f;
     float minY = 0f;
     float maxX = 24f;
     float minX = 0f;
 
-    float timeInterval = 2f;
+    float timeInterval = 20f / 60f;
 
 
     private void Awake()
@@ -40,49 +32,36 @@ public class PassengersGraph : MonoBehaviour
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         InstantiateGraph();
 
-        StartCoroutine(AddLatestCumulativeValue());
+        StartCoroutine(UpdateGraphAtInterval());
     }
 
-    IEnumerator AddLatestCumulativeValue()
+    IEnumerator UpdateGraphAtInterval()
     {
         while (true)
         {
-            yield return new WaitForSeconds(timeInterval);
+            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval));
             UpdateGraph();
         }
     }
 
-    public void IncrementNumUnservedPassengers()
-    {
-        numUnservedPassengers += 1;
-    }
-
-    public void IncrementNumPickedUpPassengers()
-    {
-        numPickedUpPassengers += 1;
-    }
 
     private void UpdateGraph()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
 
-        Vector2 point = new Vector2(simulationTime, numUnservedPassengers);
-        unservedLinePoints.Add(point);
-        unservedLine.positionCount++;
-        Vector2 graphPosition = ConvertValueToGraphPosition(point);
-        unservedLine.SetPosition(unservedLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
-        // Debug.Log("graphPosition: " + graphPosition);
-        // Debug.Log("point: " + point);
-        // CreateDot(graphPosition);
+        // Update passengers line
+        passengersLine.positionCount += 1;
+        int numPassengersSpawnedPerHour = GameManager.Instance.CalculateNumPassengersSpawnedInLastInterval(1);
 
-        // Update picked up line
-        Vector2 point2 = new Vector2(simulationTime, numPickedUpPassengers);
-        pickedUpLinePoints.Add(point2);
-        pickedUpLine.positionCount++;
-        Vector2 pickedUpGraphPosition = ConvertValueToGraphPosition(point2);
-        pickedUpLine.SetPosition(pickedUpLine.positionCount - 1, new Vector3(pickedUpGraphPosition.x, pickedUpGraphPosition.y, 0));
+        Vector2 passengersPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numPassengersSpawnedPerHour));
+        passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(passengersPosition.x, passengersPosition.y, 0));
 
+        // Update trips line
+        tripsLine.positionCount += 1;
+        int numTripsStartedPerHour = GameManager.Instance.CalculateNumStartedTripsInLastInterval(1);
 
+        Vector2 tripsPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numTripsStartedPerHour));
+        tripsLine.SetPosition(tripsLine.positionCount - 1, new Vector3(tripsPosition.x, tripsPosition.y, 0));
     }
 
 
@@ -173,23 +152,22 @@ public class PassengersGraph : MonoBehaviour
         redLine.endColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
     }
 
+    private void InstantiateLines()
+    {
+        passengersLine = Instantiate(lrPrefab, graphContainer);
+        passengersLine.positionCount = 0;
+        passengersLine.startColor = new Color(0.0f, 0.0f, 1.0f, 1.0f);
+        passengersLine.endColor = new Color(0.0f, 0.0f, 1.0f, 1.0f);
+
+        tripsLine = Instantiate(lrPrefab, graphContainer);
+        tripsLine.positionCount = 0;
+        tripsLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+        tripsLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+    }
+
     private void InstantiateGraph()
     {
-        unservedLine = Instantiate(lrPrefab, graphContainer);
-        unservedLine.positionCount = 1;
-        Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
-        unservedLine.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
-        // Set the color of unserved line to red
-        unservedLine.startColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        unservedLine.endColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-
-        pickedUpLine = Instantiate(lrPrefab, graphContainer);
-        pickedUpLine.positionCount = 1;
-        pickedUpLine.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
-        // Set the color of picked up line to green
-        pickedUpLine.startColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-        pickedUpLine.endColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-
+        InstantiateLines();
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
@@ -206,17 +184,6 @@ public class PassengersGraph : MonoBehaviour
         float x = Mathf.Lerp(margin, graphWidth - margin, (vector.x - minX) / (maxX - minX));
 
         return new Vector2(x, y);
-    }
-
-
-    private void CreateDot(Vector2 position)
-    {
-        Transform dot = Instantiate(dotPrefab, graphContainer);
-        RectTransform rectTransform = dot.GetComponent<RectTransform>();
-        rectTransform.anchorMin = new Vector2(0, 0);
-        rectTransform.anchorMax = new Vector2(0, 0);
-        rectTransform.anchoredPosition = new Vector3(position.x, position.y, -1);
-
     }
 }
 
