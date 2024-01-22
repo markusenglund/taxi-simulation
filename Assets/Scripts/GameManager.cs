@@ -7,10 +7,7 @@ public class Fare
     public float baseFare { get; set; }
     public float surgeMultiplier { get; set; }
     public float total { get; set; }
-
-    // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
     public float driverCut { get; set; }
-
     public float uberCut { get; set; }
 }
 
@@ -35,13 +32,6 @@ public class GameManager : MonoBehaviour
     private List<Trip> trips = new List<Trip>();
 
     private List<Passenger> passengers = new List<Passenger>();
-
-    private float surgeMultiplier = 1f;
-
-    const float driverFareCutPercentage = 0.67f;
-    const float uberFareCutPercentage = 0.33f;
-
-    public const float timeSpentWaitingForPassenger = 1f / 60f;
 
     // Based on real friday data, demand is indexed by as 1 being the lowest measured number
     Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
@@ -280,8 +270,8 @@ public class GameManager : MonoBehaviour
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
         if (closestTaxi != null)
         {
-            float extraPickUpTime = timeSpentWaitingForPassenger + 0.6f / 60f;
-            float expectedWaitingTime = (closestTaxiDistance / Driver.simulationSpeed) + extraPickUpTime;
+            float extraPickUpTime = SimulationSettings.timeSpentWaitingForPassenger + 0.6f / 60f;
+            float expectedWaitingTime = (closestTaxiDistance / SimulationSettings.driverSpeed) + extraPickUpTime;
             return expectedWaitingTime;
         }
 
@@ -298,17 +288,14 @@ public class GameManager : MonoBehaviour
 
     private Fare GetFare(float distance)
     {
-        // This formula was empirically chosen to approximate the fare for a getting a ride in Utrecht
-        // $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used in the "Who benefits?" paper, which is a bit less than the formula below
-        float startingFare = 4f;
-        float baseFare = startingFare + (distance * 2f);
-        float total = baseFare * surgeMultiplier;
-        float driverCut = total * driverFareCutPercentage;
-        float uberCut = total * uberFareCutPercentage;
+        float baseFare = SimulationSettings.baseStartingFare + (distance * SimulationSettings.baseFarePerKm);
+        float total = baseFare * SimulationSettings.surgeMultiplier;
+        float driverCut = total * SimulationSettings.driverFareCutPercentage;
+        float uberCut = total * SimulationSettings.uberFareCutPercentage;
         Fare fare = new Fare()
         {
             baseFare = baseFare,
-            surgeMultiplier = surgeMultiplier,
+            surgeMultiplier = SimulationSettings.surgeMultiplier,
             total = total,
             driverCut = driverCut,
             uberCut = uberCut

@@ -11,10 +11,7 @@ public enum TaxiState
 
 public class Driver : MonoBehaviour
 {
-    // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights)
-    // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
-    public static float simulationSpeed = 30f;
-    private static float realSpeed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(simulationSpeed);
+
 
 
     private Queue<Vector3> waypoints = new Queue<Vector3>();
@@ -28,13 +25,6 @@ public class Driver : MonoBehaviour
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
-    // Economic parameters
-
-    // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
-    const float averageOpportunityCostPerHour = 9f;
-    // Marginal costs include fuel + the part of maintenance, repairs, and depreciation that is proportional to the distance driven, estimated at $0.21 per mile = $0.13 per km
-    const float marginalCostPerKm = 0.13f;
-    const float fixedCostsPerDay = 5f;
 
     // TODO: opportunity cost should vary based upon the time of day and also have a very tightly grouped random distribution around minimum wage
     // But let's stick with a constant value for now with a normal distribution around minimum wage
@@ -63,14 +53,14 @@ public class Driver : MonoBehaviour
     void GenerateEconomicParameters()
     {
         // Ultra tight spread slightly above minimum wage, reflecting the reality that you don't drive for Uber if you're career is going great.
-        opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, 1f);
+        opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(SimulationSettings.driverAverageOpportunityCostPerHour, 1f);
         // TODO: Measure actual average hourly income for drivers in the simulation and put it here, for now let's set it at 10$ per hour
         estimatedHourlyIncome = 10f;
     }
 
     IEnumerator PickUpPassenger()
     {
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(GameManager.timeSpentWaitingForPassenger));
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(SimulationSettings.timeSpentWaitingForPassenger));
         // Put the passenger on top of the taxi cab
         Passenger passenger = currentTrip.tripCreatedData.passenger;
         passenger.transform.SetParent(transform);
@@ -94,7 +84,7 @@ public class Driver : MonoBehaviour
         PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
         {
             timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
-            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * marginalCostPerKm
+            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * SimulationSettings.driverMarginalCostPerKm
         };
 
         PickedUpPassengerData pickedUpPassengerData = currentTrip.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
@@ -133,7 +123,7 @@ public class Driver : MonoBehaviour
         };
 
         float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
-        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * marginalCostPerKm;
+        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * SimulationSettings.driverMarginalCostPerKm;
         float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip - currentTrip.pickedUpDriverData.marginalCostEnRoute;
         float valueSurplus = grossProfit - timeCostOnTrip;
         float utilitySurplus = valueSurplus / estimatedHourlyIncome;
@@ -289,6 +279,8 @@ public class Driver : MonoBehaviour
             }
 
             // Distance delta should be lower if the taxi is close to the destination
+            float realSpeed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(SimulationSettings.driverSpeed);
+
             float distanceDelta = realSpeed * Time.deltaTime;
 
             // If the taxi is very close to the destination, drive slower

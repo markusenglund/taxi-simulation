@@ -40,7 +40,6 @@ public class Passenger : MonoBehaviour
 
     private PassengerSurplusGraph passengerSurplusGraph;
 
-    const float medianIncome = 20;
 
     public bool hasAcceptedRideOffer = false;
     public Trip currentTrip;
@@ -84,9 +83,7 @@ public class Passenger : MonoBehaviour
     float GenerateHourlyIncome()
     {
         float mu = 0;
-        float sigma = 0.7f;
-        // with mu=0, sigma=0.7, medianIncome=20  this a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
-        float hourlyIncome = medianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+        float hourlyIncome = SimulationSettings.passengerMedianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, SimulationSettings.passengerIncomeSigma);
         // Debug.Log("Passenger " + id + " hourly income is " + hourlyIncome);
 
         return hourlyIncome;

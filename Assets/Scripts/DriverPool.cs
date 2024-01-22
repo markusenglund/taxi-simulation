@@ -76,12 +76,13 @@ public class DriverPool : MonoBehaviour
         }
     }
 
-    DriverSession CalculateMostProfitableSession(float baseOpportunityCostIndexByHour, float baseOpportunityCostPerHour, float preferredSessionLength)
-    {
-        float sessionValue = 0;
-        return sessionValue;
-    }
+    // DriverSession CalculateMostProfitableSession(float baseOpportunityCostIndexByHour, float baseOpportunityCostPerHour, float preferredSessionLength)
+    // {
+    //     float sessionValue = 0;
+    //     return sessionValue;
+    // }
 
+    // TODO: START HERE!
     float CalculateExpectedGrossProfitForOneHourOfWork(float startTime)
     {
         // We need the following information:
@@ -89,7 +90,9 @@ public class DriverPool : MonoBehaviour
         // Total ride capacity in the hour (supply)
         // Personal ride capacity
         // Number of passengers in the hour who are willing to pay the fare (demand)
+        float driverSpeed = SimulationSettings.driverSpeed;
         // Max gross profit = 30km/hr * 1hr * 2f(per km fare) * surgeMultiplier * 0.67 (drivers cut) - 30km * 0.13f
         // Then the expected gross profit is = maxGrossProfit * Min(demand / supply (including new supply), 1)
+        return 0;
     }
 }
