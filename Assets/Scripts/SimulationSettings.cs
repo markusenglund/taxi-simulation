@@ -9,7 +9,7 @@ public static class SimulationSettings
     public const float driverSpeed = 30f;
     public const float timeSpentWaitingForPassenger = 1f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
-    // $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used in the "Who benefits?" paper, which is a bit less than the formula below
+    // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
     public const float baseStartingFare = 4f;
     public const float baseFarePerKm = 1.5f;
     public const float surgeMultiplier = 1f;
@@ -31,6 +31,35 @@ public static class SimulationSettings
     public const float passengerMedianIncome = 20;
     public const float passengerIncomeSigma = 0.7f;
 
-
+    // Based on real friday data, demand is indexed by as 1 being the lowest measured number
+    public static readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
+    // TODO: We should add some data for start of Saturday to help drivers make an informed decision when they pick a session
+    {
+        { 0, 5f },
+        { 1, 3f },
+        { 2, 2f },
+        { 3, 1f },
+        { 4, 1f },
+        { 5, 1.5f },
+        { 6, 2f },
+        { 7, 3f },
+        { 8, 4f },
+        { 9, 5f },
+        { 10, 5f },
+        { 11, 5f },
+        { 12, 5f},
+        { 13, 5.5f},
+        { 14, 6f},
+        { 15, 7f},
+        { 16, 9f},
+        { 17, 11f},
+        { 18, 13f},
+        { 19, 12f},
+        { 20, 12f},
+        { 21, 13f},
+        { 22, 14f},
+        { 23, 16f},
+        { 24, 12f}
+    };
 
 }

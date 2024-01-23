@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -12,8 +14,9 @@ public class DriverPersonality
 
 public class DriverSession
 {
-    public float startTime { get; set; }
-    public float endTime { get; set; }
+    public int startTime { get; set; }
+    public int endTime { get; set; }
+    public float expectedSurplusValue { get; set; }
 }
 
 public class DriverPool : MonoBehaviour
@@ -70,29 +73,106 @@ public class DriverPool : MonoBehaviour
             // Capped normally distributed between 5 and 13
             float baseOpportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, opportunityCostStd, averageOpportunityCostPerHour - 2 * opportunityCostStd, averageOpportunityCostPerHour + 2 * opportunityCostStd);
 
-            float preferredSessionLength = Random.Range(3f, 12f);
+            float preferredSessionLength = UnityEngine.Random.Range(3f, 12f);
 
             // TODO: Figure out opportunity cost index by hour - we probably want a few archetypes of drivers, some that work only during rush hour, some that work only during the day, some that work only at night, etc.
         }
     }
 
-    // DriverSession CalculateMostProfitableSession(float baseOpportunityCostIndexByHour, float baseOpportunityCostPerHour, float preferredSessionLength)
-    // {
-    //     float sessionValue = 0;
-    //     return sessionValue;
-    // }
-
-    // TODO: START HERE!
-    float CalculateExpectedGrossProfitForOneHourOfWork(float startTime)
+    DriverSession CalculateMostProfitableSession(float[] opportunityCostProfile, float baseOpportunityCostPerHour, int preferredSessionLength)
     {
-        // We need the following information:
-        // The average fare in the hour
-        // Total ride capacity in the hour (supply)
-        // Personal ride capacity
-        // Number of passengers in the hour who are willing to pay the fare (demand)
+        float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour();
+        float[] expectedSurplusValueByHour = new float[24];
+        for (int i = 0; i < 24; i++)
+        {
+            float opportunityCostIndex = opportunityCostProfile[i];
+            expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * baseOpportunityCostPerHour);
+        }
+
+        DriverSession mostProfitableSession = new DriverSession()
+        {
+            startTime = 0,
+            endTime = 0,
+            expectedSurplusValue = Mathf.NegativeInfinity
+        };
+        // TODO: START HERE - Simplify this into one single function that just checks every single possible session length, it's basically what we're doing anyway.
+        for (int i = -3; i <= 3; i++)
+        {
+            DriverSession currentSession = CalculateMostProfitableSessionOfLength(preferredSessionLength + i, expectedSurplusValueByHour);
+            int deviation = Math.Abs(i);
+            float deviationCost = baseOpportunityCostPerHour * deviation * (deviation + 1) / 4;
+            float currentSessionSurplusValue = currentSession.expectedSurplusValue - deviationCost;
+            if (currentSessionSurplusValue > mostProfitableSession.expectedSurplusValue)
+            {
+                mostProfitableSession = currentSession;
+                // Ugly, fix!
+                mostProfitableSession.expectedSurplusValue = currentSessionSurplusValue;
+            }
+        }
+        return mostProfitableSession;
+    }
+
+    DriverSession CalculateMostProfitableSessionOfLength(int hours, float[] expectedSurplusValueByHour)
+    {
+        DriverSession mostProfitableSession = new DriverSession()
+        {
+            startTime = 0,
+            endTime = 0,
+            expectedSurplusValue = Mathf.NegativeInfinity
+        };
+        float currentSessionSurplusSum = 0;
+        for (int i = 0; i < hours; i++)
+        {
+            currentSessionSurplusSum += expectedSurplusValueByHour[i];
+        }
+        for (int i = 0; i < 24; i++)
+        {
+            int leadingIndex = (i + hours) % 24;
+            currentSessionSurplusSum += expectedSurplusValueByHour[leadingIndex];
+            currentSessionSurplusSum -= expectedSurplusValueByHour[i];
+            if (currentSessionSurplusSum > mostProfitableSession.expectedSurplusValue)
+            {
+                mostProfitableSession = new DriverSession()
+                {
+                    startTime = i,
+                    endTime = i + hours,
+                    expectedSurplusValue = currentSessionSurplusSum
+                };
+            }
+        }
+        return mostProfitableSession;
+    }
+
+
+    private float[] CalculateExpectedGrossProfitByHour()
+    {
+        float[] expectedGrossProfitByHour = new float[24];
+        for (int i = 0; i < 24; i++)
+        {
+            expectedGrossProfitByHour[i] = CalculateExpectedGrossProfitForOneHourOfWork(i);
+        }
+        return expectedGrossProfitByHour;
+    }
+
+    private float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay)
+    {
+
         float driverSpeed = SimulationSettings.driverSpeed;
-        // Max gross profit = 30km/hr * 1hr * 2f(per km fare) * surgeMultiplier * 0.67 (drivers cut) - 30km * 0.13f
-        // Then the expected gross profit is = maxGrossProfit * Min(demand / supply (including new supply), 1)
-        return 0;
+        float perKmFare = SimulationSettings.baseFarePerKm * SimulationSettings.surgeMultiplier;
+        float driverFareCutPercentage = SimulationSettings.driverFareCutPercentage;
+        float marginalCostPerKm = SimulationSettings.driverMarginalCostPerKm;
+
+        // Theoretical earnings ceiling per hour, assuming that the driver is always driving a passenger or on the way to a passenger who is on average startingBaseFare/baseFarePerKm kms away
+        float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
+
+        // TODO: Supply index will be a dynamic variable based on a slot allocation algorithm, that uses this method. So this will have to change. Also, we should include the driver's added capacity in the demand index. Or should we?
+        float supplyIndex = (supplyIndexByHour[hourOfTheDay] + supplyIndexByHour[hourOfTheDay + 1]) / 2;
+        float demandIndex = (SimulationSettings.demandIndexByHour[hourOfTheDay] + SimulationSettings.demandIndexByHour[hourOfTheDay + 1]) / 2;
+
+        // TODO: Create a method to get the estimated percentage of passengers who are willing to pay the fare
+
+        // For now we assume that the driver can drive passengers at full capacity if there are 1.3x more passengers than driver trip capacity
+        float expectedGrossProfit = maxGrossProfitPerHour * Mathf.Min(demandIndex / (supplyIndex * 1.3f), 1);
+        return expectedGrossProfit;
     }
 }
