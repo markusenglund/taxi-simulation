@@ -16,7 +16,6 @@ public class DriverSession
 {
     public int startTime { get; set; }
     public int endTime { get; set; }
-    public float expectedSurplusValue { get; set; }
 }
 
 public class DriverPool : MonoBehaviour
@@ -93,54 +92,54 @@ public class DriverPool : MonoBehaviour
         {
             startTime = 0,
             endTime = 0,
-            expectedSurplusValue = Mathf.NegativeInfinity
         };
-        // TODO: START HERE - Simplify this into one single function that just checks every single possible session length, it's basically what we're doing anyway.
-        for (int i = -3; i <= 3; i++)
+        float maxSurplusValue = Mathf.NegativeInfinity;
+        for (int i = 1; i < 24; i++)
         {
-            DriverSession currentSession = CalculateMostProfitableSessionOfLength(preferredSessionLength + i, expectedSurplusValueByHour);
-            int deviation = Math.Abs(i);
-            float deviationCost = baseOpportunityCostPerHour * deviation * (deviation + 1) / 4;
-            float currentSessionSurplusValue = currentSession.expectedSurplusValue - deviationCost;
-            if (currentSessionSurplusValue > mostProfitableSession.expectedSurplusValue)
+            (DriverSession session, float expectedUtilityValue) = CalculateMostProfitableSessionOfLength(i, preferredSessionLength, expectedSurplusValueByHour, baseOpportunityCostPerHour);
+            if (expectedUtilityValue > maxSurplusValue)
             {
-                mostProfitableSession = currentSession;
-                // Ugly, fix!
-                mostProfitableSession.expectedSurplusValue = currentSessionSurplusValue;
+                mostProfitableSession = session;
+                maxSurplusValue = expectedUtilityValue;
             }
         }
         return mostProfitableSession;
     }
 
-    DriverSession CalculateMostProfitableSessionOfLength(int hours, float[] expectedSurplusValueByHour)
+    (DriverSession session, float expectedUtilityValue) CalculateMostProfitableSessionOfLength(int sessionLength, int preferredSessionLength, float[] expectedSurplusValueByHour, float baseOpportunityCostPerHour)
     {
         DriverSession mostProfitableSession = new DriverSession()
         {
             startTime = 0,
             endTime = 0,
-            expectedSurplusValue = Mathf.NegativeInfinity
         };
+        float maxSurplusSum = Mathf.NegativeInfinity;
         float currentSessionSurplusSum = 0;
-        for (int i = 0; i < hours; i++)
+        for (int i = 0; i < sessionLength; i++)
         {
             currentSessionSurplusSum += expectedSurplusValueByHour[i];
         }
         for (int i = 0; i < 24; i++)
         {
-            int leadingIndex = (i + hours) % 24;
+            int leadingIndex = (i + sessionLength) % 24;
             currentSessionSurplusSum += expectedSurplusValueByHour[leadingIndex];
             currentSessionSurplusSum -= expectedSurplusValueByHour[i];
-            if (currentSessionSurplusSum > mostProfitableSession.expectedSurplusValue)
+            if (currentSessionSurplusSum > maxSurplusSum)
             {
                 mostProfitableSession = new DriverSession()
                 {
                     startTime = i,
-                    endTime = i + hours,
-                    expectedSurplusValue = currentSessionSurplusSum
+                    endTime = i + sessionLength,
                 };
+                maxSurplusSum = currentSessionSurplusSum;
             }
         }
-        return mostProfitableSession;
+
+        int deviationFromPreferredLength = Math.Abs(sessionLength - preferredSessionLength);
+        // Cost of deviatiating one additional hour, is the size of the deviation * baseOpportunityCostPerHour / 2
+        float deviationCost = baseOpportunityCostPerHour * deviationFromPreferredLength * (deviationFromPreferredLength + 1) / 4;
+        float currentSessionSurplusValue = maxSurplusSum - deviationCost;
+        return (mostProfitableSession, currentSessionSurplusValue);
     }
 
 
