@@ -49,6 +49,12 @@ public class GameManager : MonoBehaviour
         StartCoroutine(createPassengers());
     }
 
+    void Start()
+    {
+        DriverPool.Instance.CreateDriverPool();
+
+    }
+
 
     private void createInitialPassengers()
     {

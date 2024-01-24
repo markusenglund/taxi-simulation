@@ -64,18 +64,43 @@ public class DriverPool : MonoBehaviour
     }
 
 
-    private void CreateDriverPool()
+    public void CreateDriverPool()
     {
-        float[] officeHoursOpportunityCostProfile = new float[24] { 5f, 3f, 2f, 1f, 1f, 1.5f, 2f, 3.5f, 5f, 6f, 6f, 6f, 6f, 6f, 6.5f, 7f, 9f, 11f, 13f, 12f, 12f, 12f, 13f, 14f };
+        // Profile of a person who strongly prefers working 9-5
+        float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 5, 5, 4, 2, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
+        // Profile of a person who will work at any time
+        float[] profitMaximizerProfile = new float[24] { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f };
+        // Profile of a person who slightly flexible but prefers working early mornings
+        float[] earlyBirdProfile = new float[24] { 3, 4, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5f, 2, 2, 2, 2, 2, 3 };
+        // Profile of a person who has built his life around driving at peak late night earning hours
+        float[] lateSleeperProfile = new float[24] { 1.1f, 1.2f, 1.3f, 1.5f, 3, 5, 5, 5, 5, 5, 5, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.1f, 1.1f };
+        // Profile of a person who is busy during 9-5, and will work only in the evenings
+        float[] worksTwoJobsProfile = new float[24] { 1.2f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.1f, 1.1f };
+
+        float[] medianProfile = new float[24];
+        for (int i = 0; i < 24; i++)
+        {
+            // Sort the opportunity cost profiles by hour and take the median
+            float[] opportunityCostsByHour = new float[5] { workLifeBalanceProfile[i], profitMaximizerProfile[i], earlyBirdProfile[i], lateSleeperProfile[i], worksTwoJobsProfile[i] };
+            Array.Sort(opportunityCostsByHour);
+            medianProfile[i] = opportunityCostsByHour[2];
+        }
+        Debug.Log("Median opprtunity cost profile:");
+        Debug.Log(medianProfile);
+        float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile };
+        DriverSession[] sessions = new DriverSession[10];
         for (int i = 0; i < 10; i++)
         {
             // Capped normally distributed between 5 and 13
             float baseOpportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, opportunityCostStd, averageOpportunityCostPerHour - 2 * opportunityCostStd, averageOpportunityCostPerHour + 2 * opportunityCostStd);
 
             float preferredSessionLength = UnityEngine.Random.Range(3f, 12f);
-
-            // TODO: Figure out opportunity cost index by hour - we probably want a few archetypes of drivers, some that work only during rush hour, some that work only during the day, some that work only at night, etc.
+            float[] opportunityCostProfile = opportunityCostProfiles[i % 5];
+            DriverSession session = CalculateMostProfitableSession(opportunityCostProfile, baseOpportunityCostPerHour, (int)preferredSessionLength);
+            sessions[i] = session;
         }
+        Debug.Log("Sessions:");
+        Debug.Log(sessions);
     }
 
     DriverSession CalculateMostProfitableSession(float[] opportunityCostProfile, float baseOpportunityCostPerHour, int preferredSessionLength)
