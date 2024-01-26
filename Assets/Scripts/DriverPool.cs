@@ -66,28 +66,30 @@ public class DriverPool : MonoBehaviour
 
     public void CreateDriverPool()
     {
-        // Profile of a person who strongly prefers working 9-5
-        float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 5, 5, 4, 2, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
+        // Profile of a person who strongly prefers working 8-5
+        float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
         // Profile of a person who will work at any time
-        float[] profitMaximizerProfile = new float[24] { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f };
+        float[] profitMaximizerProfile = new float[24] { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Profile of a person who slightly flexible but prefers working early mornings
         float[] earlyBirdProfile = new float[24] { 3, 4, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5f, 2, 2, 2, 2, 2, 3 };
         // Profile of a person who has built his life around driving at peak late night earning hours
-        float[] lateSleeperProfile = new float[24] { 1.1f, 1.2f, 1.3f, 1.5f, 3, 5, 5, 5, 5, 5, 5, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.1f, 1.1f };
+        float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 3, 4, 4, 4, 4, 4, 4, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Profile of a person who is busy during 9-5, and will work only in the evenings
-        float[] worksTwoJobsProfile = new float[24] { 1.2f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.1f, 1.1f };
+        float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+        // Typical driver profile
+        float[] normalDriverProfile = new float[24]
+        { 1.3f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.2f, 1.2f, 1.2f};
 
         float[] medianProfile = new float[24];
         for (int i = 0; i < 24; i++)
         {
             // Sort the opportunity cost profiles by hour and take the median
-            float[] opportunityCostsByHour = new float[5] { workLifeBalanceProfile[i], profitMaximizerProfile[i], earlyBirdProfile[i], lateSleeperProfile[i], worksTwoJobsProfile[i] };
+            float[] opportunityCostsByHour = new float[6] { workLifeBalanceProfile[i], profitMaximizerProfile[i], earlyBirdProfile[i], lateSleeperProfile[i], worksTwoJobsProfile[i], normalDriverProfile[i] };
             Array.Sort(opportunityCostsByHour);
             medianProfile[i] = opportunityCostsByHour[2];
         }
-        Debug.Log("Median opprtunity cost profile:");
-        Debug.Log(medianProfile);
-        float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile };
+
+        float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
         DriverSession[] sessions = new DriverSession[10];
         for (int i = 0; i < 10; i++)
         {
@@ -100,11 +102,11 @@ public class DriverPool : MonoBehaviour
             sessions[i] = session;
         }
         Debug.Log("Sessions:");
-        Debug.Log(sessions);
     }
 
     DriverSession CalculateMostProfitableSession(float[] opportunityCostProfile, float baseOpportunityCostPerHour, int preferredSessionLength)
     {
+
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour();
         float[] expectedSurplusValueByHour = new float[24];
         for (int i = 0; i < 24; i++)

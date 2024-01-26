@@ -62,4 +62,17 @@ public static class SimulationSettings
         { 24, 12f}
     };
 
+    public const float demandIndexMultiplier = 5;
+
+    public static List<float> GetExpectedPassengersByHour()
+    {
+        List<float> expectedPassengersByHour = new List<float>();
+        for (int i = 0; i < 24; i++)
+        {
+            expectedPassengersByHour.Add(demandIndexByHour[i] * demandIndexMultiplier);
+        }
+        return expectedPassengersByHour;
+    }
+
+
 }

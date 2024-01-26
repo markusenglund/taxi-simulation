@@ -76,9 +76,8 @@ public class GameManager : MonoBehaviour
             // Get the demand index for the two hours surrounding the current time and get the weighted average of them
             int currentHour = Mathf.FloorToInt(simulationTime);
             float percentOfHour = simulationTime - currentHour;
-            float demandIndex = SimulationSettings.demandIndexByHour[currentHour] * percentOfHour + SimulationSettings.demandIndexByHour[currentHour + 1] * (1 - percentOfHour);
-
-            float expectedPassengersPerHour = demandIndex * 5f;
+            List<float> expectedPassengersByHour = SimulationSettings.GetExpectedPassengersByHour();
+            float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * percentOfHour + expectedPassengersByHour[currentHour + 1] * (1 - percentOfHour);
 
             // Debug.Log($"Demand index: {demandIndex}, passengers per hour: {expectedPassengersPerHour} at time {simulationTime}");
             float interval = 1f / 30f;
