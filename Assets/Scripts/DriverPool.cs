@@ -81,13 +81,15 @@ public class DriverPool : MonoBehaviour
         }
 
         DriverSession[] sessions = new DriverSession[SimulationSettings.numDrivers];
+        float[] surplusValues = new float[SimulationSettings.numDrivers];
         // First pass at creating driver sessions
         float[] firstGuessTripCapacityByHour = SimulationSettings.GetFirstGuessTripCapacityByHour();
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             DriverPersonality driver = drivers[i];
-            DriverSession session = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
+            (DriverSession session, float surplusValue) = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
             sessions[i] = session;
+            surplusValues[i] = surplusValue;
         }
 
         // Second pass at creating driver sessions, now based upon actual supply from the first pass. Give the drivers a chance  to adjust their session slow in 4 iterations
@@ -96,9 +98,14 @@ public class DriverPool : MonoBehaviour
             int driverIndex = i % SimulationSettings.numDrivers;
             DriverPersonality driver = drivers[driverIndex];
             float[] tripCapacityByHour = GetTripCapacityByHour(sessions);
-            DriverSession session = CalculateMostProfitableSession(driver, tripCapacityByHour);
+            (DriverSession session, float surplusValue) = CalculateMostProfitableSession(driver, tripCapacityByHour);
             sessions[driverIndex] = session;
+            surplusValues[driverIndex] = surplusValue;
+
         }
+
+        Debug.Log("Surplus values:");
+        Debug.Log(string.Join(", ", surplusValues.Select(x => x.ToString()).ToArray()));
 
         float[] secondPassTripCapacityByHour = GetTripCapacityByHour(sessions);
 
@@ -118,6 +125,10 @@ public class DriverPool : MonoBehaviour
         for (int i = 0; i < sessions.Length; i++)
         {
             DriverSession session = sessions[i];
+            if (session == null)
+            {
+                continue;
+            }
             for (int j = session.startTime; j < session.endTime; j++)
             {
                 tripCapacityByHour[j % 24] += SimulationSettings.driverAverageTripsPerHour;
@@ -126,7 +137,7 @@ public class DriverPool : MonoBehaviour
         return tripCapacityByHour;
     }
 
-    DriverSession CalculateMostProfitableSession(DriverPersonality driver, float[] tripCapacityByHour)
+    (DriverSession? session, float surplusValue) CalculateMostProfitableSession(DriverPersonality driver, float[] tripCapacityByHour)
     {
 
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
@@ -152,7 +163,11 @@ public class DriverPool : MonoBehaviour
                 maxSurplusValue = expectedUtilityValue;
             }
         }
-        return mostProfitableSession;
+        if (maxSurplusValue <= 0)
+        {
+            return (null, 0);
+        }
+        return (mostProfitableSession, maxSurplusValue);
     }
 
     (DriverSession session, float expectedUtilityValue) CalculateMostProfitableSessionOfLength(int sessionLength, int preferredSessionLength, float[] expectedSurplusValueByHour, float baseOpportunityCostPerHour)
