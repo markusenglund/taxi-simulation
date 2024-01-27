@@ -64,8 +64,7 @@ public static class DriverPool
         float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
-            // Capped normally distributed between 5 and 13
-            float baseOpportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, opportunityCostStd, averageOpportunityCostPerHour - 2 * opportunityCostStd, averageOpportunityCostPerHour + 2 * opportunityCostStd);
+            float baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
 
             int preferredSessionLength = UnityEngine.Random.Range(3, 12);
             float[] opportunityCostProfile = opportunityCostProfiles[i % opportunityCostProfiles.Length];

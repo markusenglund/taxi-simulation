@@ -61,7 +61,7 @@ public class Passenger : MonoBehaviour
 
     void GenerateEconomicParameters()
     {
-        float hourlyIncome = GenerateHourlyIncome();
+        float hourlyIncome = SimulationSettings.GetRandomHourlyIncome();
         float tripUtilityScore = GenerateTripUtilityScore();
         // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
         float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(1.5f, 0.5f, 0, 3f);
@@ -77,16 +77,6 @@ public class Passenger : MonoBehaviour
             waitingCostPerHour = waitingCostPerHour,
             tripUtilityValue = tripUtilityValue
         };
-    }
-
-
-    float GenerateHourlyIncome()
-    {
-        float mu = 0;
-        float hourlyIncome = SimulationSettings.passengerMedianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, SimulationSettings.passengerIncomeSigma);
-        // Debug.Log("Passenger " + id + " hourly income is " + hourlyIncome);
-
-        return hourlyIncome;
     }
 
 

@@ -125,5 +125,12 @@ public static class SimulationSettings
         return expectedTripCapacityByHour;
     }
 
+    public static float GetRandomHourlyIncome()
+    {
+        float mu = 0;
+        float hourlyIncome = passengerMedianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, passengerIncomeSigma);
+
+        return hourlyIncome;
+    }
 
 }

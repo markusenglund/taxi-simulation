@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
             int currentHour = Mathf.FloorToInt(simulationTime);
             float percentOfHour = simulationTime - currentHour;
             float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
-            float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * percentOfHour + expectedPassengersByHour[currentHour + 1] * (1 - percentOfHour);
+            float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * percentOfHour + expectedPassengersByHour[(currentHour + 1) % 24] * (1 - percentOfHour);
 
             float interval = 1f / 30f;
             yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(interval));
