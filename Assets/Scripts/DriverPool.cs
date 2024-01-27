@@ -18,6 +18,24 @@ public static class DriverPool
     const float averageOpportunityCostPerHour = 9f;
     const float opportunityCostStd = 2f;
 
+    public static DriverPerson[] GetDriversActiveDuringMidnight()
+    {
+        DriverPerson[] midnightDrivers = drivers.Where(x => x.session != null && (x.session.startTime == 0 || x.session.endTime > 24)).ToArray();
+
+        Debug.Log($"Drivers active during midnight: {midnightDrivers.Length} out of {SimulationSettings.numDrivers} drivers");
+
+        return midnightDrivers;
+    }
+
+    public static DriverPerson[] GetDriversStartingAtHour(int hour)
+    {
+        DriverPerson[] driversStartingAtHour = drivers.Where(x => x.session != null && x.session.startTime == hour).ToArray();
+
+        Debug.Log($"Drivers starting at hour {hour}: {driversStartingAtHour.Length} out of {SimulationSettings.numDrivers} drivers");
+
+        return driversStartingAtHour;
+    }
+
     public static void CreateDriverPool()
     {
         // Profile of a person who strongly prefers working 8-5
@@ -106,7 +124,7 @@ public static class DriverPool
         Debug.Log(string.Join(", ", SimulationSettings.expectedPassengersByHour.Select(x => x.ToString()).ToArray()));
 
         Debug.Log("Expected supply demand imbalance per hour:");
-        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - SimulationSettings.expectedPassengersByHour[i]).ToString()).ToArray()));
+        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % 24]) / 2).ToString()).ToArray()));
     }
 
     private static float[] GetTripCapacityByHour(DriverSession[] sessions)

@@ -25,6 +25,10 @@ public class Driver : MonoBehaviour
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
+    private bool isSessionOver = false;
+
+    public DriverPerson driverPerson;
+
 
     // TODO: opportunity cost should vary based upon the time of day and also have a very tightly grouped random distribution around minimum wage
     // But let's stick with a constant value for now with a normal distribution around minimum wage
@@ -43,11 +47,13 @@ public class Driver : MonoBehaviour
 
     }
 
-    public static Transform Create(Transform prefab, float x, float z)
+    public static Driver Create(DriverPerson person, Transform prefab, float x, float z)
     {
         Transform taxi = Instantiate(prefab, new Vector3(x, 0.05f, z), Quaternion.identity);
+        Driver driver = taxi.GetComponent<Driver>();
+        driver.driverPerson = person;
         taxi.name = "Taxi";
-        return taxi;
+        return driver;
     }
 
     void GenerateEconomicParameters()
@@ -148,8 +154,15 @@ public class Driver : MonoBehaviour
         currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
         completedTrips.Add(currentTrip);
         currentTrip = null;
-        SetTaxiColor();
-        GameManager.Instance.HandleTripCompleted(this);
+        if (isSessionOver)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            SetTaxiColor();
+            GameManager.Instance.HandleTripCompleted(this);
+        }
 
     }
 
@@ -193,6 +206,16 @@ public class Driver : MonoBehaviour
             materials[1].color = Color.green;
         }
     }
+
+    public void HandleEndOfSession()
+    {
+        isSessionOver = true;
+        if (state == TaxiState.Idling)
+        {
+            Destroy(gameObject);
+        }
+    }
+
 
 
     public void SetDestination(Vector3 destination)

@@ -38,8 +38,8 @@ public class DriverProfitGraph : MonoBehaviour
 
     public void AppendDriver(Driver driver)
     {
-        drivers.Add(driver);
-        InstantiateLine(drivers.Count - 1);
+        // drivers.Add(driver);
+        // InstantiateLine(drivers.Count - 1);
     }
 
     private void InstantiateGraph()
@@ -47,19 +47,19 @@ public class DriverProfitGraph : MonoBehaviour
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
-        StartCoroutine(UpdateGraphAtInterval());
+        // StartCoroutine(UpdateGraphAtInterval());
 
     }
 
-    IEnumerator UpdateGraphAtInterval()
-    {
-        while (true)
-        {
-            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
-            yield return new WaitForSeconds(intervalRealSeconds);
-            UpdateGraph();
-        }
-    }
+    // IEnumerator UpdateGraphAtInterval()
+    // {
+    //     while (true)
+    //     {
+    //         float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
+    //         yield return new WaitForSeconds(intervalRealSeconds);
+    //         UpdateGraph();
+    //     }
+    // }
 
     private void UpdateGraph()
     {

@@ -26,12 +26,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Transform streetPrefab;
     [SerializeField] public Transform passengerPrefab;
 
-    private List<Transform> taxis = new List<Transform>();
+    private List<Driver> drivers = new List<Driver>();
     private Queue<Trip> queuedTrips = new Queue<Trip>();
 
     private List<Trip> trips = new List<Trip>();
 
     private List<Passenger> passengers = new List<Passenger>();
+
+    private int currentHour = 0;
 
 
     void Awake()
@@ -41,18 +43,42 @@ public class GameManager : MonoBehaviour
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
         // Create taxis in random places
         DriverPool.CreateDriverPool();
-        for (int i = 0; i < 4; i++)
+        DriverPerson[] midnightDrivers = DriverPool.GetDriversActiveDuringMidnight();
+        for (int i = 0; i < midnightDrivers.Length; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition();
-            taxis.Add(Driver.Create(taxiPrefab, randomPosition.x, randomPosition.z));
+            DriverPerson driverPerson = midnightDrivers[i];
+            drivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z));
         }
         // createInitialPassengers();
         StartCoroutine(createPassengers());
     }
 
-    void Start()
+    void Update()
     {
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        if (simulationTime > currentHour + 1)
+        {
+            currentHour = Mathf.FloorToInt(simulationTime);
+            DriverPerson[] newDrivers = DriverPool.GetDriversStartingAtHour(currentHour);
+            for (int i = 0; i < newDrivers.Length; i++)
+            {
+                Vector3 randomPosition = GridUtils.GetRandomPosition();
+                DriverPerson driverPerson = newDrivers[i];
 
+                drivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z));
+            }
+
+            for (int i = 0; i < drivers.Count; i++)
+            {
+                Driver driver = drivers[i];
+                if (driver.driverPerson.session.endTime == currentHour)
+                {
+                    driver.HandleEndOfSession();
+                    drivers.Remove(driver);
+                }
+            }
+        }
     }
 
 
@@ -222,18 +248,17 @@ public class GameManager : MonoBehaviour
         float closestTaxiDistance = Mathf.Infinity;
         Driver closestTaxi = null;
 
-        foreach (Transform taxi in taxis)
+        foreach (Driver driver in drivers)
         {
-            Driver taxiBehavior = taxi.GetComponent<Driver>();
-            if (taxiBehavior.state != TaxiState.Idling)
+            if (driver.state != TaxiState.Idling)
             {
                 continue;
             }
-            float distance = GridUtils.GetDistance(taxi.position, position);
+            float distance = GridUtils.GetDistance(driver.transform.position, position);
             if (distance < closestTaxiDistance)
             {
                 closestTaxiDistance = distance;
-                closestTaxi = taxiBehavior;
+                closestTaxi = driver;
             }
         }
         return (closestTaxi, closestTaxiDistance);
@@ -252,7 +277,7 @@ public class GameManager : MonoBehaviour
         // ! These approximations that will change based on how efficient the queueing algorithm is
         float avgTimeEnRoute = 11f / 60f;
         float avgTimeOnTrip = 10f / 60f;
-        float numTaxis = taxis.Count;
+        float numTaxis = drivers.Count;
         float queueSize = queuedTrips.Count;
 
         float expectedWaitingTimeForQueue = ((avgTimeEnRoute + avgTimeOnTrip) * queueSize / numTaxis) + avgTimeEnRoute;
