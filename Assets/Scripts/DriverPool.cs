@@ -90,15 +90,26 @@ public class DriverPool : MonoBehaviour
             sessions[i] = session;
         }
 
-        // Second pass at creating driver sessions, now based upon actual supply from the first pass
-        for (int i = 0; i < SimulationSettings.numDrivers; i++)
+        // Second pass at creating driver sessions, now based upon actual supply from the first pass. Give the drivers a chance  to adjust their session slow in 4 iterations
+        for (int i = 0; i < SimulationSettings.numDrivers * 4; i++)
         {
-            DriverPersonality driver = drivers[i];
+            int driverIndex = i % SimulationSettings.numDrivers;
+            DriverPersonality driver = drivers[driverIndex];
             float[] tripCapacityByHour = GetTripCapacityByHour(sessions);
             DriverSession session = CalculateMostProfitableSession(driver, tripCapacityByHour);
-            sessions[i] = session;
+            sessions[driverIndex] = session;
         }
-        Debug.Log("Sessions:");
+
+        float[] secondPassTripCapacityByHour = GetTripCapacityByHour(sessions);
+
+        Debug.Log("Second pass Trip capacity:");
+        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select(x => x.ToString()).ToArray()));
+
+        Debug.Log("Expected passengers by hour:");
+        Debug.Log(string.Join(", ", SimulationSettings.expectedPassengersByHour.Select(x => x.ToString()).ToArray()));
+
+        Debug.Log("Expected supply demand imbalance per hour:");
+        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - SimulationSettings.expectedPassengersByHour[i]).ToString()).ToArray()));
     }
 
     float[] GetTripCapacityByHour(DriverSession[] sessions)
@@ -201,7 +212,6 @@ public class DriverPool : MonoBehaviour
         // Theoretical earnings ceiling per hour, assuming that the driver is always driving a passenger or on the way to a passenger who is on average startingBaseFare/baseFarePerKm kms away
         float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
 
-        Debug.Log($"Hour {hourOfTheDay}: Expected passengers: {SimulationSettings.expectedPassengersByHour[hourOfTheDay]}");
         float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay % 24] + SimulationSettings.expectedPassengersByHour[(hourOfTheDay + 1) % 24]) / 2;
 
         float expectedTripCapacityIncludingDriver = expectedTripCapacity + 1 * SimulationSettings.driverAverageTripsPerHour;
