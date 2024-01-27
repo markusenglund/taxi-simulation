@@ -25,6 +25,41 @@ public static class SimulationSettings
     public const float driverMarginalCostPerKm = 0.13f;
     public const float driverFixedCostsPerDay = 5f;
 
+    // This value is supposed to be directly comparable to the demand index. If the demand index is 1 and the supply index is 2, then the expected number of passengers is 2x the expected number of maximum trip capacity for that hour
+    public static readonly Dictionary<int, float> firstEstimationOfSupplyIndexByHour = new Dictionary<int, float>()
+    {
+        { 0, 5f },
+        { 1, 3f },
+        { 2, 2f },
+        { 3, 1f },
+        { 4, 1f },
+        { 5, 1.5f },
+        { 6, 2f },
+        { 7, 3.5f },
+        { 8, 5f },
+        { 9, 6f },
+        { 10, 6f },
+        { 11, 6f },
+        { 12, 6f},
+        { 13, 6f},
+        { 14, 6.5f},
+        { 15, 7f},
+        { 16, 9f},
+        { 17, 11f},
+        { 18, 13f},
+        { 19, 12f},
+        { 20, 12f},
+        { 21, 12f},
+        { 22, 13f},
+        { 23, 14f},
+        { 24, 12f}
+    };
+
+    // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
+    public const float driverAverageTripsPerHour = 2.85f;
+
+    public const int numDrivers = 18;
+
 
     // Passenger economic parameters
     // A log-normal distribution with mu=0, sigma=0.7, medianIncome=20. This a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
@@ -64,7 +99,12 @@ public static class SimulationSettings
 
     public const float demandIndexMultiplier = 5;
 
-    public static List<float> GetExpectedPassengersByHour()
+    // Computed values
+    public static List<float> expectedPassengersByHour = GetExpectedPassengersByHour();
+
+
+
+    private static List<float> GetExpectedPassengersByHour()
     {
         List<float> expectedPassengersByHour = new List<float>();
         for (int i = 0; i < 24; i++)
@@ -72,6 +112,17 @@ public static class SimulationSettings
             expectedPassengersByHour.Add(demandIndexByHour[i] * demandIndexMultiplier);
         }
         return expectedPassengersByHour;
+    }
+
+    public static List<float> GetFirstGuessTripCapacityByHour()
+    {
+        List<float> expectedTripCapacityByHour = new List<float>();
+        for (int i = 0; i < 24; i++)
+        {
+            float expectedTripCapacity = firstEstimationOfSupplyIndexByHour[i] * demandIndexMultiplier;
+            expectedTripCapacityByHour.Add(expectedTripCapacity);
+        }
+        return expectedTripCapacityByHour;
     }
 
 

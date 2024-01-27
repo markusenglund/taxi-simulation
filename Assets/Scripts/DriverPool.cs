@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class DriverPersonality
 {
-    public float[] baseOpportunityCostIndexByHour { get; set; }
+    public float[] opportunityCostProfile { get; set; }
     public float baseOpportunityCostPerHour { get; set; }
-    public float preferredSessionLength { get; set; }
+    public int preferredSessionLength { get; set; }
 }
 
 public class DriverSession
@@ -28,35 +28,7 @@ public class DriverPool : MonoBehaviour
     const float averageOpportunityCostPerHour = 9f;
     const float opportunityCostStd = 2f;
 
-    Dictionary<int, float> supplyIndexByHour = new Dictionary<int, float>()
-    {
-        { 0, 5f },
-        { 1, 3f },
-        { 2, 2f },
-        { 3, 1f },
-        { 4, 1f },
-        { 5, 1.5f },
-        { 6, 2f },
-        { 7, 3.5f },
-        { 8, 5f },
-        { 9, 6f },
-        { 10, 6f },
-        { 11, 6f },
-        { 12, 6f},
-        { 13, 6f},
-        { 14, 6.5f},
-        { 15, 7f},
-        { 16, 9f},
-        { 17, 11f},
-        { 18, 13f},
-        { 19, 12f},
-        { 20, 12f},
-        { 21, 12f},
-        { 22, 13f},
-        { 23, 14f},
-        { 24, 12f}
 
-    };
 
     void Awake()
     {
@@ -80,39 +52,55 @@ public class DriverPool : MonoBehaviour
         float[] normalDriverProfile = new float[24]
         { 1.3f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.2f, 1.2f, 1.2f};
 
-        float[] medianProfile = new float[24];
-        for (int i = 0; i < 24; i++)
-        {
-            // Sort the opportunity cost profiles by hour and take the median
-            float[] opportunityCostsByHour = new float[6] { workLifeBalanceProfile[i], profitMaximizerProfile[i], earlyBirdProfile[i], lateSleeperProfile[i], worksTwoJobsProfile[i], normalDriverProfile[i] };
-            Array.Sort(opportunityCostsByHour);
-            medianProfile[i] = opportunityCostsByHour[2];
-        }
+        // float[] medianProfile = new float[24];
+        // for (int i = 0; i < 24; i++)
+        // {
+        //     // Sort the opportunity cost profiles by hour and take the median
+        //     float[] opportunityCostsByHour = new float[6] { workLifeBalanceProfile[i], profitMaximizerProfile[i], earlyBirdProfile[i], lateSleeperProfile[i], worksTwoJobsProfile[i], normalDriverProfile[i] };
+        //     Array.Sort(opportunityCostsByHour);
+        //     medianProfile[i] = opportunityCostsByHour[2];
+        // }
 
         float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
-        DriverSession[] sessions = new DriverSession[10];
-        for (int i = 0; i < 10; i++)
+        DriverPersonality[] drivers = new DriverPersonality[SimulationSettings.numDrivers];
+        DriverSession[] sessions = new DriverSession[SimulationSettings.numDrivers];
+        for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             // Capped normally distributed between 5 and 13
             float baseOpportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(averageOpportunityCostPerHour, opportunityCostStd, averageOpportunityCostPerHour - 2 * opportunityCostStd, averageOpportunityCostPerHour + 2 * opportunityCostStd);
 
-            float preferredSessionLength = UnityEngine.Random.Range(3f, 12f);
-            float[] opportunityCostProfile = opportunityCostProfiles[i % 5];
-            DriverSession session = CalculateMostProfitableSession(opportunityCostProfile, baseOpportunityCostPerHour, (int)preferredSessionLength);
+            int preferredSessionLength = UnityEngine.Random.Range(3, 12);
+            float[] opportunityCostProfile = opportunityCostProfiles[i % opportunityCostProfiles.Length];
+            DriverPersonality driver = new DriverPersonality()
+            {
+                opportunityCostProfile = opportunityCostProfile,
+                baseOpportunityCostPerHour = baseOpportunityCostPerHour,
+                preferredSessionLength = preferredSessionLength,
+            };
+            drivers[i] = driver;
+
+        }
+
+        // First pass at creating driver profiles
+        List<float> firstGuessTripCapacityByHour = SimulationSettings.GetFirstGuessTripCapacityByHour();
+        for (int i = 0; i < SimulationSettings.numDrivers; i++)
+        {
+            DriverPersonality driver = drivers[i];
+            DriverSession session = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
             sessions[i] = session;
         }
         Debug.Log("Sessions:");
     }
 
-    DriverSession CalculateMostProfitableSession(float[] opportunityCostProfile, float baseOpportunityCostPerHour, int preferredSessionLength)
+    DriverSession CalculateMostProfitableSession(DriverPersonality driver, List<float> tripCapacityByHour)
     {
 
-        float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour();
+        float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
         float[] expectedSurplusValueByHour = new float[24];
         for (int i = 0; i < 24; i++)
         {
-            float opportunityCostIndex = opportunityCostProfile[i];
-            expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * baseOpportunityCostPerHour);
+            float opportunityCostIndex = driver.opportunityCostProfile[i];
+            expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * driver.baseOpportunityCostPerHour);
         }
 
         DriverSession mostProfitableSession = new DriverSession()
@@ -123,7 +111,7 @@ public class DriverPool : MonoBehaviour
         float maxSurplusValue = Mathf.NegativeInfinity;
         for (int i = 1; i < 24; i++)
         {
-            (DriverSession session, float expectedUtilityValue) = CalculateMostProfitableSessionOfLength(i, preferredSessionLength, expectedSurplusValueByHour, baseOpportunityCostPerHour);
+            (DriverSession session, float expectedUtilityValue) = CalculateMostProfitableSessionOfLength(i, driver.preferredSessionLength, expectedSurplusValueByHour, driver.baseOpportunityCostPerHour);
             if (expectedUtilityValue > maxSurplusValue)
             {
                 mostProfitableSession = session;
@@ -170,19 +158,18 @@ public class DriverPool : MonoBehaviour
     }
 
 
-    private float[] CalculateExpectedGrossProfitByHour()
+    private float[] CalculateExpectedGrossProfitByHour(List<float> tripCapacityByHour)
     {
         float[] expectedGrossProfitByHour = new float[24];
         for (int i = 0; i < 24; i++)
         {
-            expectedGrossProfitByHour[i] = CalculateExpectedGrossProfitForOneHourOfWork(i);
+            expectedGrossProfitByHour[i] = CalculateExpectedGrossProfitForOneHourOfWork(i, tripCapacityByHour[i]);
         }
         return expectedGrossProfitByHour;
     }
 
-    private float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay)
+    private float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacity)
     {
-
         float driverSpeed = SimulationSettings.driverSpeed;
         float perKmFare = SimulationSettings.baseFarePerKm * SimulationSettings.surgeMultiplier;
         float driverFareCutPercentage = SimulationSettings.driverFareCutPercentage;
@@ -191,14 +178,14 @@ public class DriverPool : MonoBehaviour
         // Theoretical earnings ceiling per hour, assuming that the driver is always driving a passenger or on the way to a passenger who is on average startingBaseFare/baseFarePerKm kms away
         float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
 
-        // TODO: Supply index will be a dynamic variable based on a slot allocation algorithm, that uses this method. So this will have to change. Also, we should include the driver's added capacity in the demand index. Or should we?
-        float supplyIndex = (supplyIndexByHour[hourOfTheDay] + supplyIndexByHour[hourOfTheDay + 1]) / 2;
-        float demandIndex = (SimulationSettings.demandIndexByHour[hourOfTheDay] + SimulationSettings.demandIndexByHour[hourOfTheDay + 1]) / 2;
+        float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay] + SimulationSettings.expectedPassengersByHour[hourOfTheDay + 1]) / 2;
+
+        float expectedTripCapacityIncludingDriver = expectedTripCapacity + 1 * SimulationSettings.driverAverageTripsPerHour;
 
         // TODO: Create a method to get the estimated percentage of passengers who are willing to pay the fare
 
         // For now we assume that the driver can drive passengers at full capacity if there are 1.3x more passengers than driver trip capacity
-        float expectedGrossProfit = maxGrossProfitPerHour * Mathf.Min(demandIndex / (supplyIndex * 1.3f), 1);
+        float expectedGrossProfit = maxGrossProfitPerHour * Mathf.Min(expectedNumPassengers / (expectedTripCapacityIncludingDriver * 1.3f), 1);
         return expectedGrossProfit;
     }
 }
