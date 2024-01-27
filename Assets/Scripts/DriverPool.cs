@@ -4,14 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
-public class DriverPersonality
-{
-    public float[] opportunityCostProfile { get; set; }
-    public float baseOpportunityCostPerHour { get; set; }
-    public int preferredSessionLength { get; set; }
-}
-
 public class DriverSession
 {
     public int startTime { get; set; }
@@ -22,7 +14,7 @@ public class DriverPool : MonoBehaviour
 {
     public static DriverPool Instance { get; private set; }
 
-    public List<DriverPersonality> drivers = new List<DriverPersonality>();
+    public List<DriverPerson> drivers = new List<DriverPerson>();
 
     // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
     const float averageOpportunityCostPerHour = 9f;
@@ -36,7 +28,7 @@ public class DriverPool : MonoBehaviour
     }
 
 
-    public void CreateDriverPool()
+    public DriverPerson[] CreateDriverPool()
     {
         // Profile of a person who strongly prefers working 8-5
         float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
@@ -62,7 +54,7 @@ public class DriverPool : MonoBehaviour
         // }
 
         float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
-        DriverPersonality[] drivers = new DriverPersonality[SimulationSettings.numDrivers];
+        DriverPerson[] drivers = new DriverPerson[SimulationSettings.numDrivers];
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             // Capped normally distributed between 5 and 13
@@ -70,7 +62,7 @@ public class DriverPool : MonoBehaviour
 
             int preferredSessionLength = UnityEngine.Random.Range(3, 12);
             float[] opportunityCostProfile = opportunityCostProfiles[i % opportunityCostProfiles.Length];
-            DriverPersonality driver = new DriverPersonality()
+            DriverPerson driver = new DriverPerson()
             {
                 opportunityCostProfile = opportunityCostProfile,
                 baseOpportunityCostPerHour = baseOpportunityCostPerHour,
@@ -86,7 +78,7 @@ public class DriverPool : MonoBehaviour
         float[] firstGuessTripCapacityByHour = SimulationSettings.GetFirstGuessTripCapacityByHour();
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
-            DriverPersonality driver = drivers[i];
+            DriverPerson driver = drivers[i];
             (DriverSession session, float surplusValue) = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
             sessions[i] = session;
             surplusValues[i] = surplusValue;
@@ -96,13 +88,22 @@ public class DriverPool : MonoBehaviour
         for (int i = 0; i < SimulationSettings.numDrivers * 4; i++)
         {
             int driverIndex = i % SimulationSettings.numDrivers;
-            DriverPersonality driver = drivers[driverIndex];
+            DriverPerson driver = drivers[driverIndex];
             float[] tripCapacityByHour = GetTripCapacityByHour(sessions);
             (DriverSession session, float surplusValue) = CalculateMostProfitableSession(driver, tripCapacityByHour);
             sessions[driverIndex] = session;
             surplusValues[driverIndex] = surplusValue;
-
         }
+
+        for (int i = 0; i < SimulationSettings.numDrivers; i++)
+        {
+            DriverPerson driver = drivers[i];
+            driver.session = sessions[i];
+            driver.expectedSurplusValue = surplusValues[i];
+        }
+
+        int numDriversWithSessions = sessions.Where(x => x != null).Count();
+        Debug.Log($"Number of drivers with sessions: {numDriversWithSessions} out of {SimulationSettings.numDrivers} drivers");
 
         Debug.Log("Surplus values:");
         Debug.Log(string.Join(", ", surplusValues.Select(x => x.ToString()).ToArray()));
@@ -117,6 +118,8 @@ public class DriverPool : MonoBehaviour
 
         Debug.Log("Expected supply demand imbalance per hour:");
         Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - SimulationSettings.expectedPassengersByHour[i]).ToString()).ToArray()));
+
+        return drivers;
     }
 
     float[] GetTripCapacityByHour(DriverSession[] sessions)
@@ -137,7 +140,7 @@ public class DriverPool : MonoBehaviour
         return tripCapacityByHour;
     }
 
-    (DriverSession? session, float surplusValue) CalculateMostProfitableSession(DriverPersonality driver, float[] tripCapacityByHour)
+    (DriverSession session, float surplusValue) CalculateMostProfitableSession(DriverPerson driver, float[] tripCapacityByHour)
     {
 
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
