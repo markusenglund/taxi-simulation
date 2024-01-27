@@ -63,7 +63,6 @@ public class DriverPool : MonoBehaviour
 
         float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
         DriverPersonality[] drivers = new DriverPersonality[SimulationSettings.numDrivers];
-        DriverSession[] sessions = new DriverSession[SimulationSettings.numDrivers];
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             // Capped normally distributed between 5 and 13
@@ -81,18 +80,42 @@ public class DriverPool : MonoBehaviour
 
         }
 
-        // First pass at creating driver profiles
-        List<float> firstGuessTripCapacityByHour = SimulationSettings.GetFirstGuessTripCapacityByHour();
+        DriverSession[] sessions = new DriverSession[SimulationSettings.numDrivers];
+        // First pass at creating driver sessions
+        float[] firstGuessTripCapacityByHour = SimulationSettings.GetFirstGuessTripCapacityByHour();
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             DriverPersonality driver = drivers[i];
             DriverSession session = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
             sessions[i] = session;
         }
+
+        // Second pass at creating driver sessions, now based upon actual supply from the first pass
+        for (int i = 0; i < SimulationSettings.numDrivers; i++)
+        {
+            DriverPersonality driver = drivers[i];
+            float[] tripCapacityByHour = GetTripCapacityByHour(sessions);
+            DriverSession session = CalculateMostProfitableSession(driver, tripCapacityByHour);
+            sessions[i] = session;
+        }
         Debug.Log("Sessions:");
     }
 
-    DriverSession CalculateMostProfitableSession(DriverPersonality driver, List<float> tripCapacityByHour)
+    float[] GetTripCapacityByHour(DriverSession[] sessions)
+    {
+        float[] tripCapacityByHour = new float[24];
+        for (int i = 0; i < sessions.Length; i++)
+        {
+            DriverSession session = sessions[i];
+            for (int j = session.startTime; j < session.endTime; j++)
+            {
+                tripCapacityByHour[j % 24] += SimulationSettings.driverAverageTripsPerHour;
+            }
+        }
+        return tripCapacityByHour;
+    }
+
+    DriverSession CalculateMostProfitableSession(DriverPersonality driver, float[] tripCapacityByHour)
     {
 
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
@@ -158,7 +181,7 @@ public class DriverPool : MonoBehaviour
     }
 
 
-    private float[] CalculateExpectedGrossProfitByHour(List<float> tripCapacityByHour)
+    private float[] CalculateExpectedGrossProfitByHour(float[] tripCapacityByHour)
     {
         float[] expectedGrossProfitByHour = new float[24];
         for (int i = 0; i < 24; i++)
@@ -178,7 +201,8 @@ public class DriverPool : MonoBehaviour
         // Theoretical earnings ceiling per hour, assuming that the driver is always driving a passenger or on the way to a passenger who is on average startingBaseFare/baseFarePerKm kms away
         float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
 
-        float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay] + SimulationSettings.expectedPassengersByHour[hourOfTheDay + 1]) / 2;
+        Debug.Log($"Hour {hourOfTheDay}: Expected passengers: {SimulationSettings.expectedPassengersByHour[hourOfTheDay]}");
+        float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay % 24] + SimulationSettings.expectedPassengersByHour[(hourOfTheDay + 1) % 24]) / 2;
 
         float expectedTripCapacityIncludingDriver = expectedTripCapacity + 1 * SimulationSettings.driverAverageTripsPerHour;
 

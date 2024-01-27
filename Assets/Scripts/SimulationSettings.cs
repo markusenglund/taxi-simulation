@@ -100,27 +100,27 @@ public static class SimulationSettings
     public const float demandIndexMultiplier = 5;
 
     // Computed values
-    public static List<float> expectedPassengersByHour = GetExpectedPassengersByHour();
+    public static float[] expectedPassengersByHour = GetExpectedPassengersByHour();
 
 
 
-    private static List<float> GetExpectedPassengersByHour()
+    private static float[] GetExpectedPassengersByHour()
     {
-        List<float> expectedPassengersByHour = new List<float>();
+        float[] expectedPassengersByHour = new float[24];
         for (int i = 0; i < 24; i++)
         {
-            expectedPassengersByHour.Add(demandIndexByHour[i] * demandIndexMultiplier);
+            expectedPassengersByHour[i] = demandIndexByHour[i] * demandIndexMultiplier;
         }
         return expectedPassengersByHour;
     }
 
-    public static List<float> GetFirstGuessTripCapacityByHour()
+    public static float[] GetFirstGuessTripCapacityByHour()
     {
-        List<float> expectedTripCapacityByHour = new List<float>();
+        float[] expectedTripCapacityByHour = new float[24];
         for (int i = 0; i < 24; i++)
         {
             float expectedTripCapacity = firstEstimationOfSupplyIndexByHour[i] * demandIndexMultiplier;
-            expectedTripCapacityByHour.Add(expectedTripCapacity);
+            expectedTripCapacityByHour[i] = expectedTripCapacity;
         }
         return expectedTripCapacityByHour;
     }
