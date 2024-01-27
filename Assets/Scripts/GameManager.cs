@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
 
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
         // Create taxis in random places
+        DriverPool.CreateDriverPool();
         for (int i = 0; i < 4; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition();
@@ -51,7 +52,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        DriverPool.Instance.CreateDriverPool();
 
     }
 

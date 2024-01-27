@@ -10,25 +10,15 @@ public class DriverSession
     public int endTime { get; set; }
 }
 
-public class DriverPool : MonoBehaviour
+public static class DriverPool
 {
-    public static DriverPool Instance { get; private set; }
-
-    public List<DriverPerson> drivers = new List<DriverPerson>();
+    public static DriverPerson[] drivers = new DriverPerson[SimulationSettings.numDrivers];
 
     // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
     const float averageOpportunityCostPerHour = 9f;
     const float opportunityCostStd = 2f;
 
-
-
-    void Awake()
-    {
-        Instance = this;
-    }
-
-
-    public DriverPerson[] CreateDriverPool()
+    public static void CreateDriverPool()
     {
         // Profile of a person who strongly prefers working 8-5
         float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
@@ -54,7 +44,6 @@ public class DriverPool : MonoBehaviour
         // }
 
         float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
-        DriverPerson[] drivers = new DriverPerson[SimulationSettings.numDrivers];
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             // Capped normally distributed between 5 and 13
@@ -118,11 +107,9 @@ public class DriverPool : MonoBehaviour
 
         Debug.Log("Expected supply demand imbalance per hour:");
         Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - SimulationSettings.expectedPassengersByHour[i]).ToString()).ToArray()));
-
-        return drivers;
     }
 
-    float[] GetTripCapacityByHour(DriverSession[] sessions)
+    private static float[] GetTripCapacityByHour(DriverSession[] sessions)
     {
         float[] tripCapacityByHour = new float[24];
         for (int i = 0; i < sessions.Length; i++)
@@ -140,7 +127,7 @@ public class DriverPool : MonoBehaviour
         return tripCapacityByHour;
     }
 
-    (DriverSession session, float surplusValue) CalculateMostProfitableSession(DriverPerson driver, float[] tripCapacityByHour)
+    private static (DriverSession session, float surplusValue) CalculateMostProfitableSession(DriverPerson driver, float[] tripCapacityByHour)
     {
 
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
@@ -173,7 +160,7 @@ public class DriverPool : MonoBehaviour
         return (mostProfitableSession, maxSurplusValue);
     }
 
-    (DriverSession session, float expectedUtilityValue) CalculateMostProfitableSessionOfLength(int sessionLength, int preferredSessionLength, float[] expectedSurplusValueByHour, float baseOpportunityCostPerHour)
+    private static (DriverSession session, float expectedUtilityValue) CalculateMostProfitableSessionOfLength(int sessionLength, int preferredSessionLength, float[] expectedSurplusValueByHour, float baseOpportunityCostPerHour)
     {
         DriverSession mostProfitableSession = new DriverSession()
         {
@@ -210,7 +197,7 @@ public class DriverPool : MonoBehaviour
     }
 
 
-    private float[] CalculateExpectedGrossProfitByHour(float[] tripCapacityByHour)
+    private static float[] CalculateExpectedGrossProfitByHour(float[] tripCapacityByHour)
     {
         float[] expectedGrossProfitByHour = new float[24];
         for (int i = 0; i < 24; i++)
@@ -220,7 +207,7 @@ public class DriverPool : MonoBehaviour
         return expectedGrossProfitByHour;
     }
 
-    private float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacity)
+    private static float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacity)
     {
         float driverSpeed = SimulationSettings.driverSpeed;
         float perKmFare = SimulationSettings.baseFarePerKm * SimulationSettings.surgeMultiplier;
