@@ -47,9 +47,9 @@ public static class DriverPool
         // Profile of a person who has built his life around driving at peak late night earning hours
         float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 2, 2, 2, 3, 3, 3, 2, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Profile of a person who is busy during 9-5, and will work only in the evenings
-        float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+        // float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Typical driver profile
-        float[] normalDriverProfile = new float[24] { 1.3f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.2f, 1.2f, 1.2f };
+        float[] normalDriverProfile = new float[24] { 1.4f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.3f, 1.4f, 1.4f, 1.4f };
 
         // float[] medianProfile = new float[24];
         // for (int i = 0; i < 24; i++)
@@ -60,10 +60,14 @@ public static class DriverPool
         //     medianProfile[i] = opportunityCostsByHour[2];
         // }
 
-        float[][] opportunityCostProfiles = new float[6][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, worksTwoJobsProfile, normalDriverProfile };
+        float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, normalDriverProfile };
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             float baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
+            while (baseOpportunityCostPerHour > 20)
+            {
+                baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
+            }
 
             int preferredSessionLength = UnityEngine.Random.Range(4, 11);
             float[] opportunityCostProfile = opportunityCostProfiles[i % opportunityCostProfiles.Length];

@@ -58,7 +58,7 @@ public static class SimulationSettings
     // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
     public const float driverAverageTripsPerHour = 2.85f;
 
-    public const int numDrivers = 100;
+    public const int numDrivers = 50;
 
 
     // Passenger economic parameters
