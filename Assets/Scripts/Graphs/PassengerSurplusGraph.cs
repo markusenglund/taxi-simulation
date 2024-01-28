@@ -89,8 +89,8 @@ public class PassengerSurplusGraph : MonoBehaviour
     float[] quartiledUtilitySurplusPerCapita = new float[4];
     float[] quartiledUtilitySurplus = new float[4];
     int[] quartiledPopulation = new int[4];
-    // FIXME: Hard-coded values for now based on mu=0.7 and median 20
-    float[] quartiledIncomeTopRange = { 12.47f, 20.0f, 32.07f, float.PositiveInfinity };
+    // FIXME: Hard-coded values for now based on mu=0.9, median 16 + 4 fixed income
+    float[] quartiledIncomeTopRange = { 12.72f, 20.0f, 33.36f, float.PositiveInfinity };
     foreach (Passenger passenger in passengers)
     {
       float utilitySurplus = passenger.currentTrip != null ? passenger.currentTrip.pickedUpPassengerData.utilitySurplus : 0;
