@@ -60,24 +60,29 @@ public class GameManager : MonoBehaviour
         if (simulationTime > currentHour + 1)
         {
             currentHour = Mathf.FloorToInt(simulationTime);
-            DriverPerson[] newDrivers = DriverPool.GetDriversStartingAtHour(currentHour);
-            for (int i = 0; i < newDrivers.Length; i++)
+            List<Driver> nextDrivers = new List<Driver>();
+            DriverPerson[] driverToCreate = DriverPool.GetDriversStartingAtHour(currentHour);
+            for (int i = 0; i < driverToCreate.Length; i++)
             {
                 Vector3 randomPosition = GridUtils.GetRandomPosition();
-                DriverPerson driverPerson = newDrivers[i];
+                DriverPerson driverPerson = driverToCreate[i];
 
-                drivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z));
+                nextDrivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z));
             }
 
             for (int i = 0; i < drivers.Count; i++)
             {
                 Driver driver = drivers[i];
-                if (driver.driverPerson.session.endTime == currentHour)
+                if ((driver.driverPerson.session.endTime % 24) == (currentHour % 24))
                 {
                     driver.HandleEndOfSession();
-                    drivers.Remove(driver);
+                }
+                else
+                {
+                    nextDrivers.Add(driver);
                 }
             }
+            drivers = nextDrivers;
         }
     }
 
