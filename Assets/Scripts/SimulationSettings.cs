@@ -62,9 +62,8 @@ public static class SimulationSettings
 
 
     // Passenger economic parameters
-    // A log-normal distribution with mu=0, sigma=0.7, medianIncome=20. This a distribution with mean=25.6, median=20 and 1.1% of the population with income > 100
     public const float passengerMedianIncome = 20;
-    public const float passengerIncomeSigma = 0.7f;
+    public const float passengerIncomeSigma = 0.9f;
 
     // Based on real friday data, demand is indexed by as 1 being the lowest measured number
     public static readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
@@ -127,8 +126,11 @@ public static class SimulationSettings
 
     public static float GetRandomHourlyIncome()
     {
+        // When agents income approach zero, their time becomes completely worthless which is not realistic, so we set a minimum income of 4$/hr
+        // A log-normal distribution with mu=0, sigma=0.9, medianIncome=17. This a distribution with mean=27, median=20 and 2.3% of the population with income > 100
+        float minIncome = 4f;
         float mu = 0;
-        float hourlyIncome = passengerMedianIncome * StatisticsUtils.getRandomFromLogNormalDistribution(mu, passengerIncomeSigma);
+        float hourlyIncome = (passengerMedianIncome - minIncome) * StatisticsUtils.getRandomFromLogNormalDistribution(mu, passengerIncomeSigma);
 
         return hourlyIncome;
     }
