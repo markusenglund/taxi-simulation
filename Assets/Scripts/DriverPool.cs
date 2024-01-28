@@ -41,16 +41,15 @@ public static class DriverPool
         // Profile of a person who strongly prefers working 8-5
         float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
         // Profile of a person who will work at any time
-        float[] profitMaximizerProfile = new float[24] { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+        float[] profitMaximizerProfile = new float[24] { 1.2f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Profile of a person who slightly flexible but prefers working early mornings
-        float[] earlyBirdProfile = new float[24] { 3, 4, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5f, 2, 2, 2, 2, 2, 3 };
+        float[] earlyBirdProfile = new float[24] { 3, 3, 3, 1.5f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.3f, 1.5f, 1.5f, 1.5f, 1.5f, 2, 3 };
         // Profile of a person who has built his life around driving at peak late night earning hours
-        float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 3, 4, 4, 4, 4, 4, 4, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+        float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 2, 2, 2, 3, 3, 3, 2, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Profile of a person who is busy during 9-5, and will work only in the evenings
         float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
         // Typical driver profile
-        float[] normalDriverProfile = new float[24]
-        { 1.3f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.2f, 1.2f, 1.2f};
+        float[] normalDriverProfile = new float[24] { 1.3f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.2f, 1.2f, 1.2f };
 
         // float[] medianProfile = new float[24];
         // for (int i = 0; i < 24; i++)
@@ -66,7 +65,7 @@ public static class DriverPool
         {
             float baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
 
-            int preferredSessionLength = UnityEngine.Random.Range(3, 12);
+            int preferredSessionLength = UnityEngine.Random.Range(4, 11);
             float[] opportunityCostProfile = opportunityCostProfiles[i % opportunityCostProfiles.Length];
             DriverPerson driver = new DriverPerson()
             {
@@ -124,6 +123,12 @@ public static class DriverPool
 
         Debug.Log("Expected supply demand imbalance per hour:");
         Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % 24]) / 2).ToString()).ToArray()));
+        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) =>
+            {
+                float numPassengers = (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % 24]) / 2;
+                return String.Format("{0:P2}", (x - numPassengers) / numPassengers);
+            }
+        ).ToArray()));
     }
 
     private static float[] GetTripCapacityByHour(DriverSession[] sessions)
@@ -207,8 +212,8 @@ public static class DriverPool
         }
 
         int deviationFromPreferredLength = Math.Abs(sessionLength - preferredSessionLength);
-        // Cost of deviatiating one additional hour, is the size of the deviation * baseOpportunityCostPerHour / 2
-        float deviationCost = baseOpportunityCostPerHour * deviationFromPreferredLength * (deviationFromPreferredLength + 1) / 4;
+        // Cost of deviatiating one additional hour, is the size of the deviation * baseOpportunityCostPerHour / 4
+        float deviationCost = baseOpportunityCostPerHour * deviationFromPreferredLength * (deviationFromPreferredLength + 1) / 8;
         float currentSessionSurplusValue = maxSurplusSum - deviationCost;
         return (mostProfitableSession, currentSessionSurplusValue);
     }
