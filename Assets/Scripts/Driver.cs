@@ -21,11 +21,10 @@ public class Driver : MonoBehaviour
     static int incrementalId = 1;
     public int id;
 
-    private List<Trip> completedTrips = new List<Trip>();
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
-    private bool isSessionOver = false;
+    private bool isEndingSession = false;
 
     public DriverPerson driverPerson;
 
@@ -35,16 +34,11 @@ public class Driver : MonoBehaviour
     float opportunityCostPerHour;
     float estimatedHourlyIncome;
 
-    private DriverProfitGraph driverProfitGraph;
-
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
         GenerateEconomicParameters();
-        driverProfitGraph = GameObject.Find("DriverProfitGraph").GetComponent<DriverProfitGraph>();
-        driverProfitGraph.AppendDriver(this);
-
     }
 
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z)
@@ -152,9 +146,9 @@ public class Driver : MonoBehaviour
 
         SetState(TaxiState.Idling);
         currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
-        completedTrips.Add(currentTrip);
+        driverPerson.completedTrips.Add(currentTrip);
         currentTrip = null;
-        if (isSessionOver)
+        if (isEndingSession)
         {
             EndSession();
         }
@@ -169,7 +163,7 @@ public class Driver : MonoBehaviour
     public float CalculateGrossProfitLastInterval(float intervalHours)
     {
         float grossProfitInterval = 0;
-        foreach (Trip trip in completedTrips)
+        foreach (Trip trip in driverPerson.completedTrips)
         {
             float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
             if (trip.droppedOffData.droppedOffTime > intervalStartTime)
@@ -209,7 +203,7 @@ public class Driver : MonoBehaviour
 
     public void HandleEndOfSession()
     {
-        isSessionOver = true;
+        isEndingSession = true;
         if (state == TaxiState.Idling)
         {
             EndSession();

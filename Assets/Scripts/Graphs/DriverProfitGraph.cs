@@ -12,9 +12,7 @@ public class DriverProfitGraph : MonoBehaviour
     [SerializeField] private TMP_Text headerTextPrefab;
     [SerializeField] private TMP_Text legendTextPrefab;
 
-    List<LineRenderer> lines = new List<LineRenderer>();
-
-    List<Driver> drivers = new List<Driver>();
+    LineRenderer grossProfitLine;
 
     Color[] colors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
@@ -25,7 +23,7 @@ public class DriverProfitGraph : MonoBehaviour
     float maxX = 24f;
     float minX = 0f;
 
-    // Update graph every 15 minutes
+    // Update graph every 15 in sim minutes
     const float timeInterval = 15f / 60f;
 
     private void Awake()
@@ -36,57 +34,42 @@ public class DriverProfitGraph : MonoBehaviour
 
     }
 
-    public void AppendDriver(Driver driver)
-    {
-        // drivers.Add(driver);
-        // InstantiateLine(drivers.Count - 1);
-    }
-
     private void InstantiateGraph()
     {
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
-        // StartCoroutine(UpdateGraphAtInterval());
+        InstantiateLine();
+        StartCoroutine(UpdateGraphAtInterval());
 
     }
 
-    // IEnumerator UpdateGraphAtInterval()
-    // {
-    //     while (true)
-    //     {
-    //         float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
-    //         yield return new WaitForSeconds(intervalRealSeconds);
-    //         UpdateGraph();
-    //     }
-    // }
+    IEnumerator UpdateGraphAtInterval()
+    {
+        while (true)
+        {
+            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
+            yield return new WaitForSeconds(intervalRealSeconds);
+            UpdateGraph();
+        }
+    }
 
     private void UpdateGraph()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        for (int i = 0; i < drivers.Count; i++)
-        {
-            Driver driver = drivers[i];
-            LineRenderer line = lines[i];
-            if (driver != null)
-            {
-                float grossProfitLastTwoHours = driver.CalculateGrossProfitLastInterval(2f);
-                float grossProfitPerHour = grossProfitLastTwoHours / 2f;
-                Vector2 point = new Vector2(simulationTime, grossProfitPerHour);
-                Vector2 graphPosition = ConvertValueToGraphPosition(point);
-                line.positionCount++;
-                line.SetPosition(line.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
-            }
-        }
+        float grossProfitLastHour = DriverPool.CalculateAverageHourlyGrossProfitLastInterval(1f);
+        Vector2 point = new Vector2(simulationTime, grossProfitLastHour);
+        Vector2 graphPosition = ConvertValueToGraphPosition(point);
+        grossProfitLine.positionCount++;
+        grossProfitLine.SetPosition(grossProfitLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
     }
 
-    private void InstantiateLine(int i)
+    private void InstantiateLine()
     {
-        LineRenderer line = Instantiate(lrPrefab, graphContainer);
-        line.positionCount = 0;
-        line.startColor = colors[i];
-        line.endColor = colors[i];
-        lines.Add(line);
+        grossProfitLine = Instantiate(lrPrefab, graphContainer);
+        grossProfitLine.positionCount = 0;
+        grossProfitLine.startColor = colors[0];
+        grossProfitLine.endColor = colors[0];
     }
 
     private void CreateHeaderText()

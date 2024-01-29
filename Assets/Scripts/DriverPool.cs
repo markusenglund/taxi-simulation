@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DriverSession
+public class SessionInterval
 {
     public int startTime { get; set; }
     public int endTime { get; set; }
@@ -20,7 +20,7 @@ public static class DriverPool
 
     public static DriverPerson[] GetDriversActiveDuringMidnight()
     {
-        DriverPerson[] midnightDrivers = drivers.Where(x => x.session != null && (x.session.startTime == 0 || x.session.endTime > 24)).ToArray();
+        DriverPerson[] midnightDrivers = drivers.Where(x => x.interval != null && (x.interval.startTime == 0 || x.interval.endTime > 24)).ToArray();
 
         Debug.Log($"Drivers active during midnight: {midnightDrivers.Length} out of {SimulationSettings.numDrivers} drivers");
 
@@ -29,11 +29,66 @@ public static class DriverPool
 
     public static DriverPerson[] GetDriversStartingAtHour(int hour)
     {
-        DriverPerson[] driversStartingAtHour = drivers.Where(x => x.session != null && x.session.startTime == hour).ToArray();
+        DriverPerson[] driversStartingAtHour = drivers.Where(x => x.interval != null && x.interval.startTime == hour).ToArray();
 
         Debug.Log($"Drivers starting at hour {hour}: {driversStartingAtHour.Length} out of {SimulationSettings.numDrivers} drivers");
 
         return driversStartingAtHour;
+    }
+
+    public static float CalculateAverageHourlyGrossProfitLastInterval(float intervalHours)
+    {
+        float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float intervalStartTime = currentTime - intervalHours;
+
+        float totalGrossProfit = 0;
+        float totalDriverTime = 0;
+        DriverPerson[] driversActiveDuringInterval = drivers.Where(driver =>
+        {
+            if (driver.interval == null)
+            {
+                return false;
+            }
+            bool driverIntervalCrossesMidnight = driver.interval.startTime > (driver.interval.endTime % 24);
+            if (driverIntervalCrossesMidnight)
+            {
+                if (driver.actualSessionEndTime == null || driver.actualSessionEndTime >= intervalStartTime)
+                {
+                    return true;
+                }
+                return false;
+            }
+            if (driver.interval.startTime >= currentTime)
+            {
+                return false;
+            }
+            return true;
+        }).ToArray();
+        for (int i = 0; i < driversActiveDuringInterval.Length; i++)
+        {
+            DriverPerson driver = driversActiveDuringInterval[i];
+
+            bool driverSessionEnded = driver.actualSessionEndTime != null;
+            foreach (Trip trip in driver.completedTrips)
+            {
+                if (trip.droppedOffData.droppedOffTime > intervalStartTime)
+                {
+                    totalGrossProfit += trip.droppedOffDriverData.grossProfit;
+                }
+            }
+            // TODO: START HERE - totalDriverTime is completely whack
+            if (!driverSessionEnded)
+            {
+                totalDriverTime += Math.Min(intervalHours, currentTime);
+            }
+            else
+            {
+                totalDriverTime += driver.actualSessionEndTime.Value - Math.Max(intervalStartTime, 0);
+            }
+
+        }
+        Debug.Log($"Total active drivers: {driversActiveDuringInterval.Length}, Total gross profit: {totalGrossProfit}, total driver time: {totalDriverTime}");
+        return totalGrossProfit / totalDriverTime;
     }
 
     public static void CreateDriverPool()
@@ -81,43 +136,43 @@ public static class DriverPool
 
         }
 
-        DriverSession[] sessions = new DriverSession[SimulationSettings.numDrivers];
+        SessionInterval[] intervals = new SessionInterval[SimulationSettings.numDrivers];
         float[] surplusValues = new float[SimulationSettings.numDrivers];
-        // First pass at creating driver sessions
+        // First pass at creating driver intervals
         float[] firstGuessTripCapacityByHour = SimulationSettings.GetFirstGuessTripCapacityByHour();
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             DriverPerson driver = drivers[i];
-            (DriverSession session, float surplusValue) = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
-            sessions[i] = session;
+            (SessionInterval interval, float surplusValue) = CalculateMostProfitableSession(driver, firstGuessTripCapacityByHour);
+            intervals[i] = interval;
             surplusValues[i] = surplusValue;
         }
 
-        // Second pass at creating driver sessions, now based upon actual supply from the first pass. Give the drivers a chance  to adjust their session slow in 4 iterations
+        // Second pass at creating driver intervals, now based upon actual supply from the first pass. Give the drivers a chance  to adjust their interval slow in 4 iterations
         for (int i = 0; i < SimulationSettings.numDrivers * 4; i++)
         {
             int driverIndex = i % SimulationSettings.numDrivers;
             DriverPerson driver = drivers[driverIndex];
-            float[] tripCapacityByHour = GetTripCapacityByHour(sessions);
-            (DriverSession session, float surplusValue) = CalculateMostProfitableSession(driver, tripCapacityByHour);
-            sessions[driverIndex] = session;
+            float[] tripCapacityByHour = GetTripCapacityByHour(intervals);
+            (SessionInterval interval, float surplusValue) = CalculateMostProfitableSession(driver, tripCapacityByHour);
+            intervals[driverIndex] = interval;
             surplusValues[driverIndex] = surplusValue;
         }
 
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             DriverPerson driver = drivers[i];
-            driver.session = sessions[i];
+            driver.interval = intervals[i];
             driver.expectedSurplusValue = surplusValues[i];
         }
 
-        int numDriversWithSessions = sessions.Where(x => x != null).Count();
-        Debug.Log($"Number of drivers with sessions: {numDriversWithSessions} out of {SimulationSettings.numDrivers} drivers");
+        int numDriversWithSessions = intervals.Where(x => x != null).Count();
+        Debug.Log($"Number of drivers with intervals: {numDriversWithSessions} out of {SimulationSettings.numDrivers} drivers");
 
         Debug.Log("Surplus values:");
         Debug.Log(string.Join(", ", surplusValues.Select(x => x.ToString()).ToArray()));
 
-        float[] secondPassTripCapacityByHour = GetTripCapacityByHour(sessions);
+        float[] secondPassTripCapacityByHour = GetTripCapacityByHour(intervals);
 
         Debug.Log("Second pass Trip capacity:");
         Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select(x => x.ToString()).ToArray()));
@@ -135,17 +190,17 @@ public static class DriverPool
         ).ToArray()));
     }
 
-    private static float[] GetTripCapacityByHour(DriverSession[] sessions)
+    private static float[] GetTripCapacityByHour(SessionInterval[] intervals)
     {
         float[] tripCapacityByHour = new float[24];
-        for (int i = 0; i < sessions.Length; i++)
+        for (int i = 0; i < intervals.Length; i++)
         {
-            DriverSession session = sessions[i];
-            if (session == null)
+            SessionInterval interval = intervals[i];
+            if (interval == null)
             {
                 continue;
             }
-            for (int j = session.startTime; j < session.endTime; j++)
+            for (int j = interval.startTime; j < interval.endTime; j++)
             {
                 tripCapacityByHour[j % 24] += SimulationSettings.driverAverageTripsPerHour;
             }
@@ -153,7 +208,7 @@ public static class DriverPool
         return tripCapacityByHour;
     }
 
-    private static (DriverSession session, float surplusValue) CalculateMostProfitableSession(DriverPerson driver, float[] tripCapacityByHour)
+    private static (SessionInterval interval, float surplusValue) CalculateMostProfitableSession(DriverPerson driver, float[] tripCapacityByHour)
     {
 
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
@@ -164,7 +219,7 @@ public static class DriverPool
             expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * driver.baseOpportunityCostPerHour);
         }
 
-        DriverSession mostProfitableSession = new DriverSession()
+        SessionInterval mostProfitableSession = new SessionInterval()
         {
             startTime = 0,
             endTime = 0,
@@ -172,10 +227,10 @@ public static class DriverPool
         float maxSurplusValue = Mathf.NegativeInfinity;
         for (int i = 1; i < 24; i++)
         {
-            (DriverSession session, float expectedUtilityValue) = CalculateMostProfitableSessionOfLength(i, driver.preferredSessionLength, expectedSurplusValueByHour, driver.baseOpportunityCostPerHour);
+            (SessionInterval interval, float expectedUtilityValue) = CalculateMostProfitableSessionOfLength(i, driver.preferredSessionLength, expectedSurplusValueByHour, driver.baseOpportunityCostPerHour);
             if (expectedUtilityValue > maxSurplusValue)
             {
-                mostProfitableSession = session;
+                mostProfitableSession = interval;
                 maxSurplusValue = expectedUtilityValue;
             }
         }
@@ -186,9 +241,9 @@ public static class DriverPool
         return (mostProfitableSession, maxSurplusValue);
     }
 
-    private static (DriverSession session, float expectedUtilityValue) CalculateMostProfitableSessionOfLength(int sessionLength, int preferredSessionLength, float[] expectedSurplusValueByHour, float baseOpportunityCostPerHour)
+    private static (SessionInterval interval, float expectedUtilityValue) CalculateMostProfitableSessionOfLength(int sessionLength, int preferredSessionLength, float[] expectedSurplusValueByHour, float baseOpportunityCostPerHour)
     {
-        DriverSession mostProfitableSession = new DriverSession()
+        SessionInterval mostProfitableSession = new SessionInterval()
         {
             startTime = 0,
             endTime = 0,
@@ -206,7 +261,7 @@ public static class DriverPool
             currentSessionSurplusSum -= expectedSurplusValueByHour[i];
             if (currentSessionSurplusSum > maxSurplusSum)
             {
-                mostProfitableSession = new DriverSession()
+                mostProfitableSession = new SessionInterval()
                 {
                     startTime = i,
                     endTime = i + sessionLength,

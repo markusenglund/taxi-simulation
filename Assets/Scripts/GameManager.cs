@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < drivers.Count; i++)
             {
                 Driver driver = drivers[i];
-                if ((driver.driverPerson.session.endTime % 24) == (currentHour % 24))
+                if ((driver.driverPerson.interval.endTime % 24) == (currentHour % 24))
                 {
                     driver.HandleEndOfSession();
                 }
