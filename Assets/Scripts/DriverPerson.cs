@@ -6,5 +6,9 @@ public class DriverPerson
 
     public DriverSession session { get; set; }
 
+    public float actualSessionEndTime { get; set; }
+
     public float expectedSurplusValue { get; set; }
+
+    public float actualSurplusValue { get; set; }
 }

@@ -156,7 +156,7 @@ public class Driver : MonoBehaviour
         currentTrip = null;
         if (isSessionOver)
         {
-            Destroy(gameObject);
+            EndSession();
         }
         else
         {
@@ -212,8 +212,14 @@ public class Driver : MonoBehaviour
         isSessionOver = true;
         if (state == TaxiState.Idling)
         {
-            Destroy(gameObject);
+            EndSession();
         }
+    }
+
+    public void EndSession()
+    {
+        Destroy(gameObject);
+        driverPerson.actualSessionEndTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
     }
 
 
