@@ -126,6 +126,44 @@ public static class DriverPool
         return (averageGrossProfitPerHour, averageSurplusValuePerHour);
     }
 
+    public static (float[] expectedAverageGrossProfitByHour, float[] expectedAverageSurplusValueByHour) CalculateExpectedAverageProfitabilityByHour()
+    {
+        // TODO: START HERE - walk through with the debugger and figure out how you caused the divide by zero glitch
+        float[] expectedAverageGrossProfitByHour = new float[24];
+        float[] expectedAverageSurplusValueByHour = new float[24];
+        for (int i = 0; i < 24; i++)
+        {
+            float totalExpectedGrossProfit = 0;
+            float totalExpectedSurplusValue = 0;
+            int numDrivers = 0;
+            foreach (DriverPerson driver in drivers)
+            {
+                if (driver.interval == null)
+                {
+                    continue;
+                }
+                bool driverIntervalCrossesMidnight = driver.interval.endTime > 24;
+
+                float actualStartTime = driverIntervalCrossesMidnight && i < driver.interval.startTime ? 0 : driver.interval.startTime;
+                float actualIntendedEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - 24 : driver.interval.endTime;
+
+                bool isCurrentHourInInterval = actualStartTime <= i && i < actualIntendedEndTime;
+                if (!isCurrentHourInInterval)
+                {
+                    continue;
+                }
+                totalExpectedGrossProfit += driver.expectedGrossProfitByHour[i];
+                totalExpectedSurplusValue += driver.expectedSurplusValueByHour[i];
+                numDrivers += 1;
+            }
+            expectedAverageGrossProfitByHour[i] = totalExpectedGrossProfit / numDrivers;
+            expectedAverageSurplusValueByHour[i] = totalExpectedSurplusValue / numDrivers;
+        }
+
+        return (expectedAverageGrossProfitByHour, expectedAverageSurplusValueByHour);
+
+    }
+
     public static void CreateDriverPool()
     {
         // Profile of a person who strongly prefers working 8-5
@@ -179,17 +217,22 @@ public static class DriverPool
         {
             int driverIndex = i % SimulationSettings.numDrivers;
             DriverPerson driver = drivers[driverIndex];
+            intervals[driverIndex] = null;
             float[] tripCapacityByHour = GetTripCapacityByHour(intervals);
             (SessionInterval interval, float surplusValue) = CalculateMostProfitableSession(driver, tripCapacityByHour);
             intervals[driverIndex] = interval;
             surplusValues[driverIndex] = surplusValue;
         }
 
+        float[] tripCapacityByHourFinal = GetTripCapacityByHour(intervals);
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             DriverPerson driver = drivers[i];
+
+            (float[] expectedSurplusValueByHour, float[] expectedGrossProfitByHour) = GetExpectedSessionProfitability(driver, tripCapacityByHourFinal);
             driver.interval = intervals[i];
-            driver.expectedSurplusValue = surplusValues[i];
+            driver.expectedSurplusValueByHour = expectedSurplusValueByHour;
+            driver.expectedGrossProfitByHour = expectedGrossProfitByHour;
         }
 
         int numDriversWithSessions = intervals.Where(x => x != null).Count();
@@ -234,16 +277,20 @@ public static class DriverPool
         return tripCapacityByHour;
     }
 
+    private static (float[] surplusValueByHour, float[] grossProfitByHour) GetExpectedSessionProfitability(DriverPerson driver, float[] tripCapacityByHour)
+    {
+        float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour, false);
+        float[] expectedSurplusValueByHour = CalculateExpectedSurplusValueByHour(driver, expectedGrossProfitByHour);
+
+        return (expectedSurplusValueByHour, expectedGrossProfitByHour);
+    }
+
+
     private static (SessionInterval interval, float surplusValue) CalculateMostProfitableSession(DriverPerson driver, float[] tripCapacityByHour)
     {
 
-        float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour);
-        float[] expectedSurplusValueByHour = new float[24];
-        for (int i = 0; i < 24; i++)
-        {
-            float opportunityCostIndex = driver.opportunityCostProfile[i];
-            expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * driver.baseOpportunityCostPerHour);
-        }
+        float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour, true);
+        float[] expectedSurplusValueByHour = CalculateExpectedSurplusValueByHour(driver, expectedGrossProfitByHour);
 
         SessionInterval mostProfitableSession = new SessionInterval()
         {
@@ -304,17 +351,30 @@ public static class DriverPool
     }
 
 
-    private static float[] CalculateExpectedGrossProfitByHour(float[] tripCapacityByHour)
+    private static float[] CalculateExpectedGrossProfitByHour(float[] tripCapacityByHour, bool shouldAddDriverCapacity)
     {
         float[] expectedGrossProfitByHour = new float[24];
         for (int i = 0; i < 24; i++)
         {
-            expectedGrossProfitByHour[i] = CalculateExpectedGrossProfitForOneHourOfWork(i, tripCapacityByHour[i]);
+            float tripCapacityIncludingDriver = shouldAddDriverCapacity ? tripCapacityByHour[i] + 1 * SimulationSettings.driverAverageTripsPerHour : tripCapacityByHour[i];
+            expectedGrossProfitByHour[i] = CalculateExpectedGrossProfitForOneHourOfWork(i, tripCapacityIncludingDriver);
         }
         return expectedGrossProfitByHour;
     }
 
-    private static float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacity)
+    private static float[] CalculateExpectedSurplusValueByHour(DriverPerson driver, float[] expectedGrossProfitByHour)
+    {
+        float[] expectedSurplusValueByHour = new float[24];
+        for (int i = 0; i < 24; i++)
+        {
+            float opportunityCostIndex = driver.opportunityCostProfile[i];
+            expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * driver.baseOpportunityCostPerHour);
+        }
+
+        return expectedSurplusValueByHour;
+    }
+
+    private static float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacityIncludingDriver)
     {
         float driverSpeed = SimulationSettings.driverSpeed;
         float perKmFare = SimulationSettings.baseFarePerKm * SimulationSettings.surgeMultiplier;
@@ -325,8 +385,6 @@ public static class DriverPool
         float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
 
         float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay % 24] + SimulationSettings.expectedPassengersByHour[(hourOfTheDay + 1) % 24]) / 2;
-
-        float expectedTripCapacityIncludingDriver = expectedTripCapacity + 1 * SimulationSettings.driverAverageTripsPerHour;
 
         // TODO: Create a method to get the estimated percentage of passengers who are willing to pay the fare
 

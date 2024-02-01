@@ -15,6 +15,9 @@ public class DriverProfitGraph : MonoBehaviour
     LineRenderer grossProfitLine;
     LineRenderer surplusValueLine;
 
+    LineRenderer expectedGrossProfitLine;
+    LineRenderer expectedSurplusValueLine;
+
     Color[] colors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
     float margin = 26f;
@@ -40,7 +43,7 @@ public class DriverProfitGraph : MonoBehaviour
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
-        InstantiateLines();
+        Invoke("InstantiateLines", 0.1f);
         StartCoroutine(UpdateGraphAtInterval());
 
     }
@@ -82,6 +85,30 @@ public class DriverProfitGraph : MonoBehaviour
         surplusValueLine.positionCount = 0;
         surplusValueLine.startColor = colors[1];
         surplusValueLine.endColor = colors[1];
+
+
+        (float[] expectedGrossProfitByHour, float[] expectedSurplusValueByHour) = DriverPool.CalculateExpectedAverageProfitabilityByHour();
+
+        expectedGrossProfitLine = Instantiate(lrPrefab, graphContainer);
+        expectedGrossProfitLine.positionCount = expectedGrossProfitByHour.Length;
+        expectedGrossProfitLine.startColor = colors[2];
+        expectedGrossProfitLine.endColor = colors[2];
+
+        expectedSurplusValueLine = Instantiate(lrPrefab, graphContainer);
+        expectedSurplusValueLine.positionCount = expectedSurplusValueByHour.Length;
+        expectedSurplusValueLine.startColor = colors[3];
+        expectedSurplusValueLine.endColor = colors[3];
+
+        for (int i = 0; i < expectedGrossProfitByHour.Length; i++)
+        {
+            Vector2 grossProfitPoint = new Vector2(i, expectedGrossProfitByHour[i]);
+            Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
+            expectedGrossProfitLine.SetPosition(i, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
+
+            Vector2 surplusValuePoint = new Vector2(i, expectedSurplusValueByHour[i]);
+            Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
+            expectedSurplusValueLine.SetPosition(i, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
+        }
     }
 
     private void CreateHeaderText()
