@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -46,6 +47,7 @@ public class Driver : MonoBehaviour
         Transform taxi = Instantiate(prefab, new Vector3(x, 0.05f, z), Quaternion.identity);
         Driver driver = taxi.GetComponent<Driver>();
         driver.driverPerson = person;
+        driver.driverPerson.isCurrentlyDriving = true;
         taxi.name = "Taxi";
         return driver;
     }
@@ -137,7 +139,7 @@ public class Driver : MonoBehaviour
             utilitySurplus = utilitySurplus
         };
 
-        Debug.Log($"Driver {id} profit: {droppedOffDriverData.grossProfit}, fare cut: {currentTrip.tripCreatedData.fare.driverCut} marginal cost: {droppedOffDriverData.marginalCostOnTrip + currentTrip.pickedUpDriverData.marginalCostEnRoute}, time spent: {timeSpentOnTrip + currentTrip.pickedUpData.timeSpentEnRoute}");
+        // Debug.Log($"Driver {id} profit: {droppedOffDriverData.grossProfit}, fare cut: {currentTrip.tripCreatedData.fare.driverCut} marginal cost: {droppedOffDriverData.marginalCostOnTrip + currentTrip.pickedUpDriverData.marginalCostEnRoute}, time spent: {timeSpentOnTrip + currentTrip.pickedUpData.timeSpentEnRoute}");
 
         currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
 
@@ -212,8 +214,10 @@ public class Driver : MonoBehaviour
 
     public void EndSession()
     {
+        driverPerson.actualSessionEndTimes.Add(TimeUtils.ConvertRealSecondsToSimulationHours(Time.time));
+        driverPerson.isCurrentlyDriving = false;
+        Debug.Log($"Driver {id} ended session at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
         Destroy(gameObject);
-        driverPerson.actualSessionEndTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
     }
 
 

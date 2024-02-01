@@ -188,9 +188,9 @@ public class Passenger : MonoBehaviour
         float valueSurplus = currentTrip.tripCreatedPassengerData.tripUtilityValue - waitingCost - currentTrip.tripCreatedData.fare.total;
 
         float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
-        Debug.Log($"Passenger {id} was picked up at {TimeUtils.ConvertSimulationHoursToTimeString(pickedUpData.pickedUpTime)}, expected pickup time was {TimeUtils.ConvertSimulationHoursToTimeString(currentTrip.tripCreatedData.expectedPickupTime)}, difference is {(pickedUpData.pickedUpTime - currentTrip.tripCreatedData.expectedPickupTime) * 60f} minutes");
+        // Debug.Log($"Passenger {id} was picked up at {TimeUtils.ConvertSimulationHoursToTimeString(pickedUpData.pickedUpTime)}, expected pickup time was {TimeUtils.ConvertSimulationHoursToTimeString(currentTrip.tripCreatedData.expectedPickupTime)}, difference is {(pickedUpData.pickedUpTime - currentTrip.tripCreatedData.expectedPickupTime) * 60f} minutes");
 
-        Debug.Log($"Surplus gained by passenger {id} is {utilitySurplus}");
+        // Debug.Log($"Surplus gained by passenger {id} is {utilitySurplus}");
 
         PickedUpPassengerData passengerPickedUpData = new PickedUpPassengerData()
         {

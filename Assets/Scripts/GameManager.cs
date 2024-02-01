@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
         float averageEnrouteTime = totalEnrouteTime / numTrips;
         float averageOnTripTime = totalOnTripTime / numTrips;
 
-        Debug.Log($"Average enroute time: {averageEnrouteTime} average on trip time: {averageOnTripTime}, based on {numTrips} trips");
+        // Debug.Log($"Average enroute time: {averageEnrouteTime} average on trip time: {averageOnTripTime}, based on {numTrips} trips");
     }
 
     private (Driver, float) GetClosestAvailableDriver(Vector3 position)

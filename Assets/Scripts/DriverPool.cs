@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -39,36 +37,48 @@ public static class DriverPool
     public static float CalculateAverageHourlyGrossProfitLastInterval(float intervalHours)
     {
         float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float intervalStartTime = currentTime - intervalHours;
-
+        float intervalStartTime = Math.Max(currentTime - intervalHours, 0);
         float totalGrossProfit = 0;
         float totalDriverTime = 0;
-        DriverPerson[] driversActiveDuringInterval = drivers.Where(driver =>
+        int numDriversCurrentlyDriving = 0;
+        int numDriversCurrentlyDriving2 = 0;
+        int numDriversWhoStoppedDrivingDuringInterval = 0;
+
+        foreach (DriverPerson driver in drivers)
         {
             if (driver.interval == null)
             {
-                return false;
+                continue;
             }
-            bool driverIntervalCrossesMidnight = driver.interval.startTime > (driver.interval.endTime % 24);
-            if (driverIntervalCrossesMidnight)
-            {
-                if (driver.actualSessionEndTime == null || driver.actualSessionEndTime >= intervalStartTime)
-                {
-                    return true;
-                }
-                return false;
-            }
-            if (driver.interval.startTime >= currentTime)
-            {
-                return false;
-            }
-            return true;
-        }).ToArray();
-        for (int i = 0; i < driversActiveDuringInterval.Length; i++)
-        {
-            DriverPerson driver = driversActiveDuringInterval[i];
 
-            bool driverSessionEnded = driver.actualSessionEndTime != null;
+            bool driverIntervalCrossesMidnight = driver.interval.endTime > 24;
+            float actualStartTime = driverIntervalCrossesMidnight && currentTime < driver.interval.startTime ? 0 : driver.interval.startTime;
+            float actualIntendedEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - 24 : driver.interval.endTime;
+            bool hasEndedSession = driver.actualSessionEndTimes.Count > 0 && driver.actualSessionEndTimes[0] < currentTime && driver.actualSessionEndTimes[0] > actualStartTime;
+            bool isCurrentlyDriving = actualStartTime <= currentTime && !hasEndedSession;
+            bool wasDrivingDuringInterval = driver.actualSessionEndTimes.Count > 0 && driver.actualSessionEndTimes[0] > intervalStartTime;
+
+            if (driver.isCurrentlyDriving != isCurrentlyDriving)
+            {
+                Debug.Log($"Driver {driver.interval.startTime} isCurrentlyDriving: {driver.isCurrentlyDriving} isCurrentlyDriving2: {isCurrentlyDriving}");
+            }
+            if (driver.isCurrentlyDriving)
+            {
+                numDriversCurrentlyDriving2 += 1;
+            }
+            if (isCurrentlyDriving)
+            {
+                numDriversCurrentlyDriving += 1;
+            }
+            else if (wasDrivingDuringInterval)
+            {
+                numDriversWhoStoppedDrivingDuringInterval += 1;
+            }
+            else
+            {
+                continue;
+            }
+
             foreach (Trip trip in driver.completedTrips)
             {
                 if (trip.droppedOffData.droppedOffTime > intervalStartTime)
@@ -76,18 +86,86 @@ public static class DriverPool
                     totalGrossProfit += trip.droppedOffDriverData.grossProfit;
                 }
             }
-            // TODO: START HERE - totalDriverTime is completely whack
-            if (!driverSessionEnded)
+            if (isCurrentlyDriving)
             {
-                totalDriverTime += Math.Min(intervalHours, currentTime);
+                float timeDrivenThisInterval = currentTime - Math.Max(intervalStartTime, actualStartTime);
+                // Debug.Log($"Driver has driven {timeDrivenThisInterval} hours this interval");
+                totalDriverTime += timeDrivenThisInterval;
+            }
+            else if (wasDrivingDuringInterval)
+            {
+                float timeDrivenThisInterval = (float)driver.actualSessionEndTimes[0] - Math.Max(intervalStartTime, actualStartTime);
+                totalDriverTime += timeDrivenThisInterval;
             }
             else
             {
-                totalDriverTime += driver.actualSessionEndTime.Value - Math.Max(intervalStartTime, 0);
+                Debug.Log("This should never happen");
             }
 
+
         }
-        Debug.Log($"Total active drivers: {driversActiveDuringInterval.Length}, Total gross profit: {totalGrossProfit}, total driver time: {totalDriverTime}");
+
+        // DriverPerson[] driversActiveDuringInterval = drivers.Where(driver =>
+        // {
+        //     if (driver.interval == null)
+        //     {
+        //         return false;
+        //     }
+
+        //     bool driverIntervalCrossesMidnight = driver.interval.endTime > 24;
+        //     float actualStartTime = driverIntervalCrossesMidnight && currentTime < driver.interval.startTime ? 0 : driver.interval.startTime;
+        //     float actualEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - 24 : driver.interval.endTime;
+        //     bool isCurrentlyDriving = actualStartTime <= currentTime && currentTime <= actualEndTime;
+        //     bool
+        //     // if (driverIntervalCrossesMidnight)
+        //     // {
+        //     //     bool isFirstSession = driver.actualSessionEndTimes.Count == 0 || driver.actualSessionEndTimes[0] >= intervalStartTime;
+        //     //     bool isSubsequentSession = driver.actualSessionEndTimes.Count > 0 && driver.
+        //     //     if (driver.actualSessionEndTimes.Count == 0 || driver.actualSessionEndTimes[0] >= intervalStartTime)
+        //     //     {
+        //     //         return true;
+        //     //     }
+        //     //     return false;
+        //     // }
+        //     if (actualStartTime < currentTime)
+        //     {
+        //         if (driver.actualSessionEndTimes.Count == 0 || driver.actualSessionEndTimes[0] >= intervalStartTime)
+        //         {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }).ToArray();
+
+        // for (int i = 0; i < driversActiveDuringInterval.Length; i++)
+        // {
+        //     DriverPerson driver = driversActiveDuringInterval[i];
+        //     bool driverIntervalCrossesMidnight = driver.interval.endTime > 24;
+        //     float actualStartTime = driverIntervalCrossesMidnight ? 0 : driver.interval.startTime;
+
+        //     bool driverSessionEnded = driver.actualSessionEndTimes.Count > 0;
+        //     foreach (Trip trip in driver.completedTrips)
+        //     {
+        //         if (trip.droppedOffData.droppedOffTime > intervalStartTime)
+        //         {
+        //             totalGrossProfit += trip.droppedOffDriverData.grossProfit;
+        //         }
+        //     }
+        //     if (!driverSessionEnded)
+        //     {
+        //         float timeDrivenThisInterval = currentTime - Math.Max(intervalStartTime, actualStartTime);
+        //         Debug.Log($"Driver {i} has driven {timeDrivenThisInterval} hours this interval");
+        //         totalDriverTime += timeDrivenThisInterval;
+        //     }
+        //     else
+        //     {
+        //         float timeDrivenThisInterval = (float)driver.actualSessionEndTimes[0] - Math.Max(intervalStartTime, actualStartTime);
+        //         totalDriverTime += timeDrivenThisInterval;
+        //     }
+
+        // }
+        Debug.Log($"Total active drivers: {numDriversCurrentlyDriving}, Drivers who stopped during interval: {numDriversWhoStoppedDrivingDuringInterval} Total gross profit: {totalGrossProfit}, total driver time: {totalDriverTime}");
+        Debug.Log($"Total active drivers2: {numDriversCurrentlyDriving2}");
         return totalGrossProfit / totalDriverTime;
     }
 
@@ -174,11 +252,11 @@ public static class DriverPool
 
         float[] secondPassTripCapacityByHour = GetTripCapacityByHour(intervals);
 
-        Debug.Log("Second pass Trip capacity:");
-        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select(x => x.ToString()).ToArray()));
+        // Debug.Log("Second pass Trip capacity:");
+        // Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select(x => x.ToString()).ToArray()));
 
-        Debug.Log("Expected passengers by hour:");
-        Debug.Log(string.Join(", ", SimulationSettings.expectedPassengersByHour.Select(x => x.ToString()).ToArray()));
+        // Debug.Log("Expected passengers by hour:");
+        // Debug.Log(string.Join(", ", SimulationSettings.expectedPassengersByHour.Select(x => x.ToString()).ToArray()));
 
         Debug.Log("Expected supply demand imbalance per hour:");
         Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % 24]) / 2).ToString()).ToArray()));
