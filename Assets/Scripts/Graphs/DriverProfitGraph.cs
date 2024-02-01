@@ -13,18 +13,19 @@ public class DriverProfitGraph : MonoBehaviour
     [SerializeField] private TMP_Text legendTextPrefab;
 
     LineRenderer grossProfitLine;
+    LineRenderer surplusValueLine;
 
     Color[] colors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
     float margin = 26f;
     float marginTop = 50f;
     float maxY = 30f;
-    float minY = 0f;
+    float minY = -10f;
     float maxX = 24f;
     float minX = 0f;
 
     // Update graph every 15 in sim minutes
-    const float timeInterval = 15f / 60f;
+    const float timeInterval = 30f / 60f;
 
     private void Awake()
     {
@@ -39,7 +40,7 @@ public class DriverProfitGraph : MonoBehaviour
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
-        InstantiateLine();
+        InstantiateLines();
         StartCoroutine(UpdateGraphAtInterval());
 
     }
@@ -57,19 +58,30 @@ public class DriverProfitGraph : MonoBehaviour
     private void UpdateGraph()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float grossProfitLastHour = DriverPool.CalculateAverageHourlyGrossProfitLastInterval(1f);
-        Vector2 point = new Vector2(simulationTime, grossProfitLastHour);
-        Vector2 graphPosition = ConvertValueToGraphPosition(point);
+        (float grossProfitLastHour, float surplusValueLastHour) = DriverPool.CalculateAverageHourlyGrossProfitLastHour();
+        Vector2 grossProfitPoint = new Vector2(simulationTime, grossProfitLastHour);
+        Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
         grossProfitLine.positionCount++;
-        grossProfitLine.SetPosition(grossProfitLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+        grossProfitLine.SetPosition(grossProfitLine.positionCount - 1, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
+
+        Vector2 surplusValuePoint = new Vector2(simulationTime, surplusValueLastHour);
+        Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
+        surplusValueLine.positionCount++;
+        surplusValueLine.SetPosition(surplusValueLine.positionCount - 1, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
+
     }
 
-    private void InstantiateLine()
+    private void InstantiateLines()
     {
         grossProfitLine = Instantiate(lrPrefab, graphContainer);
         grossProfitLine.positionCount = 0;
         grossProfitLine.startColor = colors[0];
         grossProfitLine.endColor = colors[0];
+
+        surplusValueLine = Instantiate(lrPrefab, graphContainer);
+        surplusValueLine.positionCount = 0;
+        surplusValueLine.startColor = colors[1];
+        surplusValueLine.endColor = colors[1];
     }
 
     private void CreateHeaderText()
@@ -86,8 +98,8 @@ public class DriverProfitGraph : MonoBehaviour
         // Create x axis with the line renderer
         LineRenderer xLineRenderer = Instantiate(lrPrefab, graphContainer);
         xLineRenderer.positionCount = 2;
-        Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
-        Vector2 maxXPosition = ConvertValueToGraphPosition(new Vector2(maxX, 0));
+        Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(minX, minY));
+        Vector2 maxXPosition = ConvertValueToGraphPosition(new Vector2(maxX, minY));
         xLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         xLineRenderer.SetPosition(1, new Vector3(maxXPosition.x, maxXPosition.y, 0));
 
@@ -116,7 +128,7 @@ public class DriverProfitGraph : MonoBehaviour
         for (int i = (int)minX; i <= maxX; i += step)
         {
             TMP_Text text = Instantiate(textPrefab, graphContainer);
-            Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(i, 0));
+            Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(i, minY));
             // Set pivot to top center
             text.rectTransform.pivot = new Vector2(0.5f, 1f);
             // Set textmeshpro text alignment to center
