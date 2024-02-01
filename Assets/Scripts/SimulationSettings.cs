@@ -130,7 +130,7 @@ public static class SimulationSettings
         // A log-normal distribution with mu=0, sigma=0.9, medianIncome=17. This a distribution with mean=27, median=20 and 2.3% of the population with income > 100
         float minIncome = 4f;
         float mu = 0;
-        float hourlyIncome = (passengerMedianIncome - minIncome) * StatisticsUtils.getRandomFromLogNormalDistribution(mu, passengerIncomeSigma);
+        float hourlyIncome = minIncome + (passengerMedianIncome - minIncome) * StatisticsUtils.getRandomFromLogNormalDistribution(mu, passengerIncomeSigma);
 
         return hourlyIncome;
     }
