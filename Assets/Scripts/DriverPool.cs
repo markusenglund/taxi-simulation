@@ -284,7 +284,7 @@ public static class DriverPool
         return (expectedGrossProfit, expectedSurplusValue);
     }
 
-    private static float[] GetTripCapacityByHour(SessionInterval[] intervals)
+    public static float[] GetTripCapacityByHour(SessionInterval[] intervals)
     {
         float[] tripCapacityByHour = new float[24];
         for (int i = 0; i < intervals.Length; i++)

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System;
 
 public class Fare
 {
@@ -35,6 +37,8 @@ public class GameManager : MonoBehaviour
 
     private int currentHour = 0;
 
+    public float surgeMultiplier = 1.0f;
+
 
     void Awake()
     {
@@ -55,6 +59,12 @@ public class GameManager : MonoBehaviour
     }
 
     void Update()
+    {
+        SpawnAndRemoveDrivers();
+        UpdateSurgeMultiplier();
+    }
+
+    private void SpawnAndRemoveDrivers()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         if (simulationTime > currentHour + 1)
@@ -86,6 +96,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void UpdateSurgeMultiplier()
+    {
+        // Recalculate only 4 times per hour
+        if (Time.frameCount % 900 != 0)
+        {
+            return;
+        }
+        float maxSurgeMultiplier = 5f;
+        float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour();
+        SessionInterval[] intervals = drivers.Select(driver => driver.driverPerson.interval).ToArray();
+        float[] tripCapacityByHour = DriverPool.GetTripCapacityByHour(intervals);
+
+        int numWaitingPassengers = queuedTrips.Count;
+
+        float newSurgeMultiplier = Math.Max(Mathf.Sqrt((expectedNumPassengersPerHour + numWaitingPassengers) / tripCapacityByHour[currentHour]), maxSurgeMultiplier);
+
+        Debug.Log("New surge multiplier: " + newSurgeMultiplier);
+
+        surgeMultiplier = newSurgeMultiplier;
+    }
+
 
     private void createInitialPassengers()
     {
@@ -103,12 +134,8 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-            float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-            // Get the demand index for the two hours surrounding the current time and get the weighted average of them
-            int currentHour = Mathf.FloorToInt(simulationTime);
-            float percentOfHour = simulationTime - currentHour;
-            float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
-            float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * percentOfHour + expectedPassengersByHour[(currentHour + 1) % 24] * (1 - percentOfHour);
+
+            float expectedPassengersPerHour = GetNumExpectedPassengersPerHour();
 
             float interval = 1f / 30f;
             yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(interval));
@@ -135,6 +162,17 @@ public class GameManager : MonoBehaviour
                 passengers.Add(passenger);
             }
         }
+    }
+
+    private float GetNumExpectedPassengersPerHour()
+    {
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        // Get the demand index for the two hours surrounding the current time and get the weighted average of them
+        int currentHour = Mathf.FloorToInt(simulationTime);
+        float percentOfHour = simulationTime - currentHour;
+        float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
+        float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * percentOfHour + expectedPassengersByHour[(currentHour + 1) % 24] * (1 - percentOfHour);
+        return expectedPassengersPerHour;
     }
 
     public Trip GetNextTrip()
