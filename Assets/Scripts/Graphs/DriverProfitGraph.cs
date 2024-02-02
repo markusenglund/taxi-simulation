@@ -101,11 +101,12 @@ public class DriverProfitGraph : MonoBehaviour
 
         for (int i = 0; i < expectedGrossProfitByHour.Length; i++)
         {
-            Vector2 grossProfitPoint = new Vector2(i, expectedGrossProfitByHour[i]);
+            float averageTimeInHour = i + 0.5f; // For example, 00:30 is the average time in the first hour
+            Vector2 grossProfitPoint = new Vector2(averageTimeInHour, expectedGrossProfitByHour[i]);
             Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
             expectedGrossProfitLine.SetPosition(i, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
 
-            Vector2 surplusValuePoint = new Vector2(i, expectedSurplusValueByHour[i]);
+            Vector2 surplusValuePoint = new Vector2(averageTimeInHour, expectedSurplusValueByHour[i]);
             Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
             expectedSurplusValueLine.SetPosition(i, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
         }
