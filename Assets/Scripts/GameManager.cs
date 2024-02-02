@@ -105,23 +105,19 @@ public class GameManager : MonoBehaviour
         }
         float maxSurgeMultiplier = 5f;
         float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour();
-        SessionInterval[] intervals = drivers.Select(driver => driver.driverPerson.interval).ToArray();
-        float[] tripCapacityByHour = DriverPool.GetTripCapacityByHour(intervals);
 
         int numWaitingPassengers = queuedTrips.Count;
-        int numIdleDrivers = drivers.Count(driver => driver.state == TaxiState.Idling);
-        // TODO: Get a measure of total upcoming demand and use that for the multiplier calculation
+        int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
+        float tripCapacityNextHour = Math.Max(drivers.Count * SimulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
 
         float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
-        float tripCapacity = tripCapacityByHour[currentHour];
 
-        float uncertaintyModifier = 1 / tripCapacity;
+        float uncertaintyModifier = Math.Min(1f / drivers.Count, 1f);
 
-        float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(totalExpectedPassengers / tripCapacity * (1 - uncertaintyModifier), maxSurgeMultiplier);
+        float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(totalExpectedPassengers / tripCapacityNextHour * (1 - uncertaintyModifier), maxSurgeMultiplier);
 
         float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
-
-        Debug.Log("New surge multiplier: " + newSurgeMultiplier);
+        // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
         surgeMultiplier = newSurgeMultiplier;
     }
