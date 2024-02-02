@@ -109,8 +109,17 @@ public class GameManager : MonoBehaviour
         float[] tripCapacityByHour = DriverPool.GetTripCapacityByHour(intervals);
 
         int numWaitingPassengers = queuedTrips.Count;
+        int numIdleDrivers = drivers.Count(driver => driver.state == TaxiState.Idling);
+        // TODO: Get a measure of total upcoming demand and use that for the multiplier calculation
 
-        float newSurgeMultiplier = Math.Max(Mathf.Sqrt((expectedNumPassengersPerHour + numWaitingPassengers) / tripCapacityByHour[currentHour]), maxSurgeMultiplier);
+        float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
+        float tripCapacity = tripCapacityByHour[currentHour];
+
+        float uncertaintyModifier = 1 / tripCapacity;
+
+        float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(totalExpectedPassengers / tripCapacity * (1 - uncertaintyModifier), maxSurgeMultiplier);
+
+        float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
 
         Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
@@ -149,7 +158,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < iterations; i++)
             {
                 float chanceOfCreatingPassenger = expectedPassengersInInterval / iterations;
-                if (Random.value < chanceOfCreatingPassenger)
+                if (UnityEngine.Random.value < chanceOfCreatingPassenger)
                 {
                     numPassengersToCreate += 1;
                 }
@@ -171,7 +180,7 @@ public class GameManager : MonoBehaviour
         int currentHour = Mathf.FloorToInt(simulationTime);
         float percentOfHour = simulationTime - currentHour;
         float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
-        float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * percentOfHour + expectedPassengersByHour[(currentHour + 1) % 24] * (1 - percentOfHour);
+        float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * (1 - percentOfHour) + expectedPassengersByHour[(currentHour + 1) % 24] * percentOfHour;
         return expectedPassengersPerHour;
     }
 
