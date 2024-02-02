@@ -128,7 +128,6 @@ public static class DriverPool
 
     public static (float[] expectedAverageGrossProfitByHour, float[] expectedAverageSurplusValueByHour) CalculateExpectedAverageProfitabilityByHour()
     {
-        // TODO: START HERE - walk through with the debugger and figure out how you caused the divide by zero glitch
         float[] expectedAverageGrossProfitByHour = new float[24];
         float[] expectedAverageSurplusValueByHour = new float[24];
         for (int i = 0; i < 24; i++)
@@ -156,8 +155,12 @@ public static class DriverPool
                 totalExpectedSurplusValue += driver.expectedSurplusValueByHour[i];
                 numDrivers += 1;
             }
-            expectedAverageGrossProfitByHour[i] = totalExpectedGrossProfit / numDrivers;
-            expectedAverageSurplusValueByHour[i] = totalExpectedSurplusValue / numDrivers;
+
+            if (numDrivers > 0)
+            {
+                expectedAverageGrossProfitByHour[i] = totalExpectedGrossProfit / numDrivers;
+                expectedAverageSurplusValueByHour[i] = totalExpectedSurplusValue / numDrivers;
+            }
         }
 
         return (expectedAverageGrossProfitByHour, expectedAverageSurplusValueByHour);
@@ -230,9 +233,16 @@ public static class DriverPool
             DriverPerson driver = drivers[i];
 
             (float[] expectedSurplusValueByHour, float[] expectedGrossProfitByHour) = GetExpectedSessionProfitability(driver, tripCapacityByHourFinal);
-            driver.interval = intervals[i];
+            SessionInterval interval = intervals[i];
+            driver.interval = interval;
             driver.expectedSurplusValueByHour = expectedSurplusValueByHour;
             driver.expectedGrossProfitByHour = expectedGrossProfitByHour;
+            if (interval != null)
+            {
+                (float expectedGrossProfit, float expectedSurplusValue) = GetExpectedSessionProfitability(interval, expectedGrossProfitByHour, expectedSurplusValueByHour);
+                driver.expectedSurplusValue = expectedSurplusValue;
+                driver.expectedGrossProfit = expectedGrossProfit;
+            }
         }
 
         int numDriversWithSessions = intervals.Where(x => x != null).Count();
@@ -257,6 +267,21 @@ public static class DriverPool
                 return String.Format("{0:P2}", (x - numPassengers) / numPassengers);
             }
         ).ToArray()));
+    }
+
+    private static (float expectedGrossProfit, float expectedSurplusValue) GetExpectedSessionProfitability(SessionInterval interval, float[] expectedGrossProfitByHour, float[] expectedSurplusValueByHour)
+    {
+        float expectedGrossProfit = 0;
+        float expectedSurplusValue = 0;
+        for (int i = interval.startTime; i < interval.endTime; i++)
+        {
+            int actualTime = i % 24;
+            float expectedGrossProfitForHour = expectedGrossProfitByHour[actualTime];
+            float expectedSurplusValueForHour = expectedSurplusValueByHour[actualTime];
+            expectedGrossProfit += expectedGrossProfitForHour;
+            expectedSurplusValue += expectedSurplusValueForHour;
+        }
+        return (expectedGrossProfit, expectedSurplusValue);
     }
 
     private static float[] GetTripCapacityByHour(SessionInterval[] intervals)

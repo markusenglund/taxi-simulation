@@ -15,6 +15,8 @@ public class DriverPerson
 
     public float expectedSurplusValue { get; set; }
 
+    public float expectedGrossProfit { get; set; }
+
     public float[] expectedSurplusValueByHour { get; set; }
 
     public float[] expectedGrossProfitByHour { get; set; }
@@ -34,15 +36,4 @@ public class DriverPerson
         }
         return opportunityCostPerHour;
     }
-
-    // public float GetOvertimeCostForHour(int hoursSinceSessionStart)
-    // {
-    //     int numHoursOverPreferredLength = Math.Max(hoursSinceSessionStart + 1 - preferredSessionLength, 0);
-    //     // Cost of deviatiating one additional hour, is the size of the deviation * baseOpportunityCostPerHour / 4
-    //     float overtimeCost = baseOpportunityCostPerHour * numHoursOverPreferredLength / 4;
-
-    //     return overtimeCost;
-
-    // }
-
 }
