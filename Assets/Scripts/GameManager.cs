@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
 
     public float surgeMultiplier = 1.0f;
 
+    private SurgeMultiplierGraphic surgeMultiplierGraphic;
+
 
     void Awake()
     {
@@ -56,6 +58,7 @@ public class GameManager : MonoBehaviour
         }
         // createInitialPassengers();
         StartCoroutine(createPassengers());
+        surgeMultiplierGraphic = GameObject.Find("SurgeMultiplierGraphic").GetComponent<SurgeMultiplierGraphic>();
     }
 
     void Update()
@@ -120,6 +123,7 @@ public class GameManager : MonoBehaviour
         // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
         surgeMultiplier = newSurgeMultiplier;
+        surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
     }
 
 
