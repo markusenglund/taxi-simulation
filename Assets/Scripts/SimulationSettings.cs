@@ -5,11 +5,11 @@ using UnityEngine;
 public static class SimulationSettings
 {
     public const bool useConstantSupplyMode = true;
-    public const bool useConstantSurgeMultiplier = false;
+    public const bool useConstantSurgeMultiplier = true;
 
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
-    public const float driverSpeed = 30f;
+    public const float driverSpeed = 70f;
     public const float timeSpentWaitingForPassenger = 1f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
@@ -21,8 +21,6 @@ public static class SimulationSettings
 
     // Driver economic parameters
 
-    // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
-    public const float driverAverageOpportunityCostPerHour = 9f;
     // Marginal costs include fuel + the part of maintenance, repairs, and depreciation that is proportional to the distance driven, estimated at $0.21 per mile = $0.13 per km
     public const float driverMarginalCostPerKm = 0.13f;
     public const float driverFixedCostsPerDay = 5f;
@@ -56,9 +54,6 @@ public static class SimulationSettings
         { 23, 14f},
         { 24, 12f}
     };
-
-    // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
-    public const float driverAverageTripsPerHour = 2.85f;
 
     public const int numDrivers = 5;
 
@@ -98,7 +93,10 @@ public static class SimulationSettings
         { 24, 12f}
     };
 
-    public const float demandIndexMultiplier = 15;
+    public const float demandIndexMultiplier = 5;
+
+    // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
+    public const float driverAverageTripsPerHour = 2.85f;
 
     // Computed values
     public static float[] expectedPassengersByHour = GetExpectedPassengersByHour();

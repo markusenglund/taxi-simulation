@@ -22,7 +22,7 @@ public class DriverProfitGraph : MonoBehaviour
 
     float margin = 26f;
     float marginTop = 50f;
-    float maxY = 30f;
+    float maxY = 100f;
     float minY = -10f;
     float maxX = 24f;
     float minX = 0f;
