@@ -259,6 +259,12 @@ public class GameManager : MonoBehaviour
 
     public void HandleTripCompleted(Driver driver)
     {
+        AssignDriverToNextTrip(driver);
+        LogAverageTripTime();
+    }
+
+    public void AssignDriverToNextTrip(Driver driver)
+    {
         // Assign driver to next trip if there is one
         Trip trip = GetNextTrip();
         if (trip != null)
@@ -268,9 +274,6 @@ public class GameManager : MonoBehaviour
             driver.HandleDriverAssigned(trip);
             DispatchDriver(driver, trip);
         }
-        LogAverageTripTime();
-
-
     }
 
     private void LogAverageTripTime()

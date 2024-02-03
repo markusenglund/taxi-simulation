@@ -34,6 +34,7 @@ public class Driver : MonoBehaviour
     {
         id = incrementalId;
         incrementalId += 1;
+        GameManager.Instance.AssignDriverToNextTrip(this);
     }
 
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z)
@@ -253,14 +254,10 @@ public class Driver : MonoBehaviour
         waypoints.Enqueue(taxiDestination);
     }
 
-
-
-
     void Update()
     {
         Debug.DrawLine(transform.position, destination, Color.red);
 
-        // Set a new random destination if the taxi has reached its destination but is idling
         if (waypoints.Count == 0)
         {
             if (currentTrip != null)
