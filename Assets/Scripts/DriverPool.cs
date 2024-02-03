@@ -16,8 +16,24 @@ public static class DriverPool
     const float averageOpportunityCostPerHour = 9f;
     const float opportunityCostStd = 2f;
 
+    // Profile of a person who strongly prefers working 8-5
+    static float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
+    // Profile of a person who will work at any time
+    static float[] profitMaximizerProfile = new float[24] { 1.2f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+    // Profile of a person who slightly flexible but prefers working early mornings
+    static float[] earlyBirdProfile = new float[24] { 3, 3, 3, 1.5f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.3f, 1.5f, 1.5f, 1.5f, 1.5f, 2, 3 };
+    // Profile of a person who has built his life around driving at peak late night earning hours
+    static float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 2, 2, 2, 3, 3, 3, 2, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+    // Profile of a person who is busy during 9-5, and will work only in the evenings
+    // static float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+    // Typical driver profile
+    static float[] normalDriverProfile = new float[24] { 1.4f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.3f, 1.4f, 1.4f, 1.4f };
+
+    static float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, normalDriverProfile };
+
     public static DriverPerson[] GetDriversActiveDuringMidnight()
     {
+        DriverPerson[] drivers1 = drivers;
         DriverPerson[] midnightDrivers = drivers.Where(x => x.interval != null && (x.interval.startTime == 0 || x.interval.endTime > 24)).ToArray();
 
         Debug.Log($"Drivers active during midnight: {midnightDrivers.Length} out of {SimulationSettings.numDrivers} drivers");
@@ -169,20 +185,56 @@ public static class DriverPool
 
     public static void CreateDriverPool()
     {
-        // Profile of a person who strongly prefers working 8-5
-        float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
-        // Profile of a person who will work at any time
-        float[] profitMaximizerProfile = new float[24] { 1.2f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
-        // Profile of a person who slightly flexible but prefers working early mornings
-        float[] earlyBirdProfile = new float[24] { 3, 3, 3, 1.5f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.3f, 1.5f, 1.5f, 1.5f, 1.5f, 2, 3 };
-        // Profile of a person who has built his life around driving at peak late night earning hours
-        float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 2, 2, 2, 3, 3, 3, 2, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
-        // Profile of a person who is busy during 9-5, and will work only in the evenings
-        // float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
-        // Typical driver profile
-        float[] normalDriverProfile = new float[24] { 1.4f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.3f, 1.4f, 1.4f, 1.4f };
+        if (SimulationSettings.useConstantSupplyMode)
+        {
+            CreateConstantSupplyDriverPool();
+        }
+        else
+        {
+            CreateDynamicSupplyDriverPool();
+        }
+    }
 
-        float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, normalDriverProfile };
+    private static void CreateConstantSupplyDriverPool()
+    {
+        float[] tripCapacityByHour = new float[24];
+        for (int i = 0; i < 24; i++)
+        {
+            tripCapacityByHour[i] = SimulationSettings.numDrivers * SimulationSettings.driverAverageTripsPerHour;
+        }
+        for (int i = 0; i < SimulationSettings.numDrivers; i++)
+        {
+            // Since constant supply mode doesn't realistically simulate driver preferences, we'll just use the same values for all drivers
+            float baseOpportunityCostPerHour = SimulationSettings.passengerMedianIncome / 2;
+            float[] opportunityCostProfile = (float[])normalDriverProfile.Clone();
+            int preferredSessionLength = 24;
+            SessionInterval interval = new SessionInterval()
+            {
+                startTime = 0,
+                endTime = 24,
+            };
+            DriverPerson driver = new DriverPerson()
+            {
+                opportunityCostProfile = opportunityCostProfile,
+                baseOpportunityCostPerHour = baseOpportunityCostPerHour,
+                preferredSessionLength = preferredSessionLength,
+                interval = interval,
+            };
+
+            (float[] expectedSurplusValueByHour, float[] expectedGrossProfitByHour) = GetExpectedSessionProfitabilityByHour(driver, tripCapacityByHour);
+            driver.expectedSurplusValueByHour = expectedSurplusValueByHour;
+            driver.expectedGrossProfitByHour = expectedGrossProfitByHour;
+            (float expectedGrossProfit, float expectedSurplusValue) = GetExpectedSessionProfitability(interval, expectedGrossProfitByHour, expectedSurplusValueByHour);
+            driver.expectedSurplusValue = expectedSurplusValue;
+            driver.expectedGrossProfit = expectedGrossProfit;
+            drivers[i] = driver;
+
+        }
+    }
+
+    private static void CreateDynamicSupplyDriverPool()
+    {
+
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
             float baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
@@ -232,7 +284,7 @@ public static class DriverPool
         {
             DriverPerson driver = drivers[i];
 
-            (float[] expectedSurplusValueByHour, float[] expectedGrossProfitByHour) = GetExpectedSessionProfitability(driver, tripCapacityByHourFinal);
+            (float[] expectedSurplusValueByHour, float[] expectedGrossProfitByHour) = GetExpectedSessionProfitabilityByHour(driver, tripCapacityByHourFinal);
             SessionInterval interval = intervals[i];
             driver.interval = interval;
             driver.expectedSurplusValueByHour = expectedSurplusValueByHour;
@@ -302,7 +354,7 @@ public static class DriverPool
         return tripCapacityByHour;
     }
 
-    private static (float[] surplusValueByHour, float[] grossProfitByHour) GetExpectedSessionProfitability(DriverPerson driver, float[] tripCapacityByHour)
+    private static (float[] surplusValueByHour, float[] grossProfitByHour) GetExpectedSessionProfitabilityByHour(DriverPerson driver, float[] tripCapacityByHour)
     {
         float[] expectedGrossProfitByHour = CalculateExpectedGrossProfitByHour(tripCapacityByHour, false);
         float[] expectedSurplusValueByHour = CalculateExpectedSurplusValueByHour(driver, expectedGrossProfitByHour);

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public static class SimulationSettings
 {
+    public const bool useConstantSupplyMode = true;
+
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
     public const float driverSpeed = 30f;
@@ -58,7 +60,7 @@ public static class SimulationSettings
     // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
     public const float driverAverageTripsPerHour = 2.85f;
 
-    public const int numDrivers = 50;
+    public const int numDrivers = 5;
 
 
     // Passenger economic parameters
