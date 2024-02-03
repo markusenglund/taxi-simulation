@@ -454,7 +454,9 @@ public static class DriverPool
     private static float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacityIncludingDriver)
     {
         float driverSpeed = SimulationSettings.driverSpeed;
-        float perKmFare = SimulationSettings.baseFarePerKm * SimulationSettings.surgeMultiplier;
+        // TODO: FIX ME - actually calculate the expected surge multiplier to get a realistic perKmFare - this is currenly incorrect!
+        float surgeMultiplier = 1f;
+        float perKmFare = SimulationSettings.baseFarePerKm * surgeMultiplier;
         float driverFareCutPercentage = SimulationSettings.driverFareCutPercentage;
         float marginalCostPerKm = SimulationSettings.driverMarginalCostPerKm;
 

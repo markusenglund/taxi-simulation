@@ -64,7 +64,10 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         SpawnAndRemoveDrivers();
-        UpdateSurgeMultiplier();
+        if (!SimulationSettings.useConstantSurgeMultiplier)
+        {
+            UpdateSurgeMultiplier();
+        }
     }
 
     private void SpawnAndRemoveDrivers()
@@ -115,11 +118,15 @@ public class GameManager : MonoBehaviour
 
         float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
 
+        float minMultiplier = 1f;
         float uncertaintyModifier = Math.Min(1f / drivers.Count, 1f);
 
-        float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(totalExpectedPassengers / tripCapacityNextHour * (1 - uncertaintyModifier), maxSurgeMultiplier);
+        float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
-        float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
+        float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 3, minMultiplier);
+        // float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(demandPerSupply * (1 - uncertaintyModifier), maxSurgeMultiplier);
+
+        // float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
         // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
         surgeMultiplier = newSurgeMultiplier;
@@ -343,13 +350,13 @@ public class GameManager : MonoBehaviour
     private Fare GetFare(float distance)
     {
         float baseFare = SimulationSettings.baseStartingFare + (distance * SimulationSettings.baseFarePerKm);
-        float total = baseFare * SimulationSettings.surgeMultiplier;
+        float total = baseFare * surgeMultiplier;
         float driverCut = total * SimulationSettings.driverFareCutPercentage;
         float uberCut = total * SimulationSettings.uberFareCutPercentage;
         Fare fare = new Fare()
         {
             baseFare = baseFare,
-            surgeMultiplier = SimulationSettings.surgeMultiplier,
+            surgeMultiplier = surgeMultiplier,
             total = total,
             driverCut = driverCut,
             uberCut = uberCut

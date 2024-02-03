@@ -5,6 +5,7 @@ using UnityEngine;
 public static class SimulationSettings
 {
     public const bool useConstantSupplyMode = true;
+    public const bool useConstantSurgeMultiplier = false;
 
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
@@ -14,7 +15,6 @@ public static class SimulationSettings
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
     public const float baseStartingFare = 4f;
     public const float baseFarePerKm = 1.5f;
-    public const float surgeMultiplier = 1f;
     // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
     public const float driverFareCutPercentage = 0.67f;
     public const float uberFareCutPercentage = 0.33f;
