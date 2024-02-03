@@ -30,16 +30,10 @@ public class Driver : MonoBehaviour
     public DriverPerson driverPerson;
 
 
-    // TODO: opportunity cost should vary based upon the time of day and also have a very tightly grouped random distribution around minimum wage
-    // But let's stick with a constant value for now with a normal distribution around minimum wage
-    float opportunityCostPerHour;
-    float estimatedHourlyIncome;
-
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
-        GenerateEconomicParameters();
     }
 
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z)
@@ -50,14 +44,6 @@ public class Driver : MonoBehaviour
         driver.driverPerson.isCurrentlyDriving = true;
         taxi.name = "Taxi";
         return driver;
-    }
-
-    void GenerateEconomicParameters()
-    {
-        // Ultra tight spread slightly above minimum wage, reflecting the reality that you don't drive for Uber if you're career is going great.
-        opportunityCostPerHour = StatisticsUtils.GetRandomFromNormalDistribution(SimulationSettings.driverAverageOpportunityCostPerHour, 1f);
-        // TODO: Measure actual average hourly income for drivers in the simulation and put it here, for now let's set it at 10$ per hour
-        estimatedHourlyIncome = 10f;
     }
 
     IEnumerator PickUpPassenger()
@@ -82,6 +68,7 @@ public class Driver : MonoBehaviour
             waitingTime = waitingTime
         };
 
+        float opportunityCostPerHour = driverPerson.GetOpportunityCostForHour(Mathf.FloorToInt(pickedUpTime));
         // Create driver pickup data
         PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
         {
@@ -123,12 +110,13 @@ public class Driver : MonoBehaviour
             timeSpentOnTrip = timeSpentOnTrip
 
         };
+        float opportunityCostPerHour = driverPerson.GetOpportunityCostForHour(Mathf.FloorToInt(currentTrip.pickedUpData.pickedUpTime));
 
         float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
         float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * SimulationSettings.driverMarginalCostPerKm;
         float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip - currentTrip.pickedUpDriverData.marginalCostEnRoute;
         float valueSurplus = grossProfit - timeCostOnTrip;
-        float utilitySurplus = valueSurplus / estimatedHourlyIncome;
+        float utilitySurplus = valueSurplus / driverPerson.baseOpportunityCostPerHour;
 
         DroppedOffDriverData droppedOffDriverData = new DroppedOffDriverData
         {

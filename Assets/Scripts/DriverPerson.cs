@@ -36,4 +36,9 @@ public class DriverPerson
         }
         return opportunityCostPerHour;
     }
+
+    public float GetOpportunityCostForHour(int hour)
+    {
+        return baseOpportunityCostPerHour * opportunityCostProfile[hour];
+    }
 }

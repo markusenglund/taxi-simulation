@@ -96,7 +96,7 @@ public static class SimulationSettings
         { 24, 12f}
     };
 
-    public const float demandIndexMultiplier = 5;
+    public const float demandIndexMultiplier = 15;
 
     // Computed values
     public static float[] expectedPassengersByHour = GetExpectedPassengersByHour();
