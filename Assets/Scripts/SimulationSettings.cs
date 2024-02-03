@@ -1,15 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using Random = System.Random;
 
 public static class SimulationSettings
 {
     public const bool useConstantSupplyMode = true;
     public const bool useConstantSurgeMultiplier = true;
 
+    public const int randomSeed = 1;
+
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
-    public const float driverSpeed = 70f;
+    public const float driverSpeed = 30f;
     public const float timeSpentWaitingForPassenger = 1f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
@@ -56,6 +61,8 @@ public static class SimulationSettings
     };
 
     public const int numDrivers = 5;
+
+    public static (int start, int end) sessionLengthRange = (4, 8);
 
 
     // Passenger economic parameters
@@ -124,13 +131,13 @@ public static class SimulationSettings
         return expectedTripCapacityByHour;
     }
 
-    public static float GetRandomHourlyIncome()
+    public static float GetRandomHourlyIncome(Random random)
     {
         // When agents income approach zero, their time becomes completely worthless which is not realistic, so we set a minimum income of 4$/hr
         // A log-normal distribution with mu=0, sigma=0.9, medianIncome=17. This a distribution with mean=27, median=20 and 2.3% of the population with income > 100
         float minIncome = 4f;
         float mu = 0;
-        float hourlyIncome = minIncome + (passengerMedianIncome - minIncome) * StatisticsUtils.getRandomFromLogNormalDistribution(mu, passengerIncomeSigma);
+        float hourlyIncome = minIncome + (passengerMedianIncome - minIncome) * StatisticsUtils.getRandomFromLogNormalDistribution(random, mu, passengerIncomeSigma);
 
         return hourlyIncome;
     }

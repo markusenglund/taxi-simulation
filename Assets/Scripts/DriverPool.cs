@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using UnityEngine;
 
+using Random = System.Random;
+
 public class SessionInterval
 {
     public int startTime { get; set; }
@@ -30,6 +32,8 @@ public static class DriverPool
     static float[] normalDriverProfile = new float[24] { 1.4f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.3f, 1.4f, 1.4f, 1.4f };
 
     static float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, normalDriverProfile };
+
+    static Random random = new Random(SimulationSettings.randomSeed);
 
     public static DriverPerson[] GetDriversActiveDuringMidnight()
     {
@@ -237,13 +241,13 @@ public static class DriverPool
 
         for (int i = 0; i < SimulationSettings.numDrivers; i++)
         {
-            float baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
+            float baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome(GameManager.Instance.driverSpawnRandom);
             while (baseOpportunityCostPerHour > 20)
             {
-                baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome();
+                baseOpportunityCostPerHour = SimulationSettings.GetRandomHourlyIncome(GameManager.Instance.driverSpawnRandom);
             }
 
-            int preferredSessionLength = UnityEngine.Random.Range(4, 11);
+            int preferredSessionLength = random.Next(SimulationSettings.sessionLengthRange.start, SimulationSettings.sessionLengthRange.end);
             float[] opportunityCostProfile = opportunityCostProfiles[i % opportunityCostProfiles.Length];
             DriverPerson driver = new DriverPerson()
             {

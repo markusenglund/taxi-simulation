@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System;
 
+using Random = System.Random;
+
 public class Fare
 {
     public float baseFare { get; set; }
@@ -39,11 +41,15 @@ public class GameManager : MonoBehaviour
 
     public float surgeMultiplier = 1.0f;
 
+    public Random passengerSpawnRandom = new Random(SimulationSettings.randomSeed);
+    public Random driverSpawnRandom = new Random(SimulationSettings.randomSeed);
+
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
 
     void Awake()
     {
+        // Set seed for reproducibility
         Instance = this;
 
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
@@ -52,7 +58,7 @@ public class GameManager : MonoBehaviour
         DriverPerson[] midnightDrivers = DriverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
         {
-            Vector3 randomPosition = GridUtils.GetRandomPosition();
+            Vector3 randomPosition = GridUtils.GetRandomPosition(driverSpawnRandom);
             DriverPerson driverPerson = midnightDrivers[i];
             drivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z));
         }
@@ -80,7 +86,7 @@ public class GameManager : MonoBehaviour
             DriverPerson[] driverToCreate = DriverPool.GetDriversStartingAtHour(currentHour);
             for (int i = 0; i < driverToCreate.Length; i++)
             {
-                Vector3 randomPosition = GridUtils.GetRandomPosition();
+                Vector3 randomPosition = GridUtils.GetRandomPosition(driverSpawnRandom);
                 DriverPerson driverPerson = driverToCreate[i];
 
                 nextDrivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z));
@@ -139,7 +145,7 @@ public class GameManager : MonoBehaviour
         // Create 8 passengers to start
         for (int i = 0; i < 8; i++)
         {
-            Vector3 randomPosition = GridUtils.GetRandomPosition();
+            Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
             Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
             passengers.Add(passenger);
         }
@@ -165,7 +171,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < iterations; i++)
             {
                 float chanceOfCreatingPassenger = expectedPassengersInInterval / iterations;
-                if (UnityEngine.Random.value < chanceOfCreatingPassenger)
+                if (passengerSpawnRandom.NextDouble() < chanceOfCreatingPassenger)
                 {
                     numPassengersToCreate += 1;
                 }
@@ -173,7 +179,7 @@ public class GameManager : MonoBehaviour
 
             for (int i = 0; i < numPassengersToCreate; i++)
             {
-                Vector3 randomPosition = GridUtils.GetRandomPosition();
+                Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
                 Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
                 passengers.Add(passenger);
             }

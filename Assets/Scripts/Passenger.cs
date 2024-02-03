@@ -51,7 +51,7 @@ public class Passenger : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        destination = GridUtils.GetRandomPosition();
+        destination = GridUtils.GetRandomPosition(GameManager.Instance.passengerSpawnRandom);
         GenerateEconomicParameters();
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
         utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
@@ -61,10 +61,10 @@ public class Passenger : MonoBehaviour
 
     void GenerateEconomicParameters()
     {
-        float hourlyIncome = SimulationSettings.GetRandomHourlyIncome();
+        float hourlyIncome = SimulationSettings.GetRandomHourlyIncome(GameManager.Instance.passengerSpawnRandom);
         float tripUtilityScore = GenerateTripUtilityScore();
         // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
-        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(1.5f, 0.5f, 0, 3f);
+        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(GameManager.Instance.passengerSpawnRandom, 1.5f, 0.5f, 0, 3f);
         float waitingCostPerHour = hourlyIncome * timePreference;
         // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
@@ -88,7 +88,7 @@ public class Passenger : MonoBehaviour
 
         float mu = 0;
         float sigma = 0.4f;
-        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(mu, sigma);
+        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(GameManager.Instance.passengerSpawnRandom, mu, sigma);
         // Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
         return tripUtilityScore;
     }

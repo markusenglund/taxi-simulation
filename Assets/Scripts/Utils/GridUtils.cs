@@ -1,7 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+using Random = System.Random;
 
 public class GridUtils : MonoBehaviour
 {
@@ -13,16 +13,16 @@ public class GridUtils : MonoBehaviour
     static int numTilesX = blockSize * (numXIntersections - 1) + 1;
     static int numTilesZ = blockSize * (numZIntersections - 1) + 1;
 
-    public static Vector3 GetRandomPosition()
+    public static Vector3 GetRandomPosition(Random random)
     {
-        bool onNorthFacingStreet = UnityEngine.Random.Range(0, 2) == 0;
-        int randomIntersection = UnityEngine.Random.Range(0, onNorthFacingStreet ? numXIntersections : numZIntersections) * blockSize;
+        bool onNorthFacingStreet = random.Next(0, 2) == 0;
+        int randomIntersection = random.Next(0, onNorthFacingStreet ? numXIntersections : numZIntersections) * blockSize;
 
         // Get a random position on the street grid that does not include the intersections
         float randomNonIntersection;
         do
         {
-            randomNonIntersection = (float)UnityEngine.Random.Range(0, onNorthFacingStreet ? numTilesX * 3 : numTilesZ * 3) / 3f;
+            randomNonIntersection = (float)random.Next(0, onNorthFacingStreet ? numTilesX * 3 : numTilesZ * 3) / 3f;
         } while (randomNonIntersection % blockSize == 0);
 
         float x = onNorthFacingStreet ? randomIntersection : randomNonIntersection;
