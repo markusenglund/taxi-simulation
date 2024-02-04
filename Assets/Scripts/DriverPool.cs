@@ -54,12 +54,13 @@ public static class DriverPool
         return driversStartingAtHour;
     }
 
-    public static (float hourlyGrossProfitPerDriver, float hourlySurplusValuePerDriver, float totalGrossProfit, float totalSurplusValue) CalculateAverageGrossProfitInInterval(int intervalHours)
+    public static (float hourlyGrossProfitPerDriver, float hourlySurplusValuePerDriver, float totalGrossProfit, float totalSurplusValue, float totalUberRevenue) CalculateAverageGrossProfitInInterval(int intervalHours)
     {
         float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         float intervalStartTime = Math.Max(currentTime - intervalHours, 0);
         float totalGrossProfit = 0;
         float totalSurplusValue = 0;
+        float totalUberRevenue = 0;
         float totalDriverTime = 0;
         int numDriversCurrentlyDriving = 0;
         int numDriversCurrentlyDriving2 = 0;
@@ -106,6 +107,7 @@ public static class DriverPool
                 if (trip.droppedOffData.droppedOffTime > intervalStartTime)
                 {
                     driverGrossProfit += trip.droppedOffDriverData.grossProfit;
+                    totalUberRevenue += trip.tripCreatedData.fare.uberCut;
                 }
             }
             totalGrossProfit += driverGrossProfit;
@@ -167,7 +169,7 @@ public static class DriverPool
         Debug.Log($"Total driver time: {totalDriverTime}");
         float averageGrossProfitPerHour = totalGrossProfit / totalDriverTime;
         float averageSurplusValuePerHour = totalSurplusValue / totalDriverTime;
-        return (averageGrossProfitPerHour, averageSurplusValuePerHour, totalGrossProfit, totalSurplusValue);
+        return (averageGrossProfitPerHour, averageSurplusValuePerHour, totalGrossProfit, totalSurplusValue, totalUberRevenue);
     }
 
     public static (float[] expectedAverageGrossProfitByHour, float[] expectedAverageSurplusValueByHour) CalculateExpectedAverageProfitabilityByHour()

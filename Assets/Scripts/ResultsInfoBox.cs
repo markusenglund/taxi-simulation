@@ -12,6 +12,7 @@ public class ResultsInfoBox : MonoBehaviour
 
     TMP_Text driverGrossProfitText;
     TMP_Text driverSurplusValueText;
+    TMP_Text uberRevenueText;
 
     // Start is called before the first frame update
     void Awake()
@@ -33,10 +34,12 @@ public class ResultsInfoBox : MonoBehaviour
 
     private void UpdateDriverProfitability()
     {
-        (float grossProfitLastHour, float surplusValueLastHour, float totalGrossProfit, float totalSurplusValue) = DriverPool.CalculateAverageGrossProfitInInterval(SimulationSettings.simulationLengthHours);
+        (float grossProfitLastHour, float surplusValueLastHour, float totalGrossProfit, float totalSurplusValue, float totalUberRevenue) = DriverPool.CalculateAverageGrossProfitInInterval(SimulationSettings.simulationLengthHours);
 
         driverGrossProfitText.text = $"Avg hourly gross profit: ${grossProfitLastHour:0.00}, total: ${totalGrossProfit:0.00}";
         driverSurplusValueText.text = $"Avg hourly surplus: ${surplusValueLastHour:0.00}, total: ${totalSurplusValue:0.00}";
+
+        uberRevenueText.text = $"Total Uber revenue: ${totalUberRevenue:0.00}";
     }
 
     private void InstantiateText()
@@ -55,6 +58,14 @@ public class ResultsInfoBox : MonoBehaviour
         driverSurplusValueText.rectTransform.anchoredPosition = new Vector2(0, -30);
         driverSurplusValueText.alignment = TextAlignmentOptions.Center;
         driverSurplusValueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, driverSurplusValueText.rectTransform.sizeDelta.y);
+
+
+        uberRevenueText = Instantiate(textPrefab, textContainer);
+        uberRevenueText.text = "Total Uber revenue: $0.00";
+        uberRevenueText.fontSize = 20;
+        uberRevenueText.rectTransform.anchoredPosition = new Vector2(0, -60);
+        uberRevenueText.alignment = TextAlignmentOptions.Center;
+        uberRevenueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, uberRevenueText.rectTransform.sizeDelta.y);
     }
 
 }
