@@ -70,9 +70,19 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         SpawnAndRemoveDrivers();
+        EndSimulation();
         if (!SimulationSettings.useConstantSurgeMultiplier)
         {
             UpdateSurgeMultiplier();
+        }
+    }
+
+    private void EndSimulation()
+    {
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        if (simulationTime > SimulationSettings.simulationLengthHours)
+        {
+            Time.timeScale = 0;
         }
     }
 
