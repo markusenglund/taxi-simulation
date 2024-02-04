@@ -54,10 +54,10 @@ public static class DriverPool
         return driversStartingAtHour;
     }
 
-    public static (float grossProfitPerDriver, float surplusValuePerDriver) CalculateAverageHourlyGrossProfitLastHour()
+    public static (float hourlyGrossProfitPerDriver, float hourlySurplusValuePerDriver, float totalGrossProfit, float totalSurplusValue) CalculateAverageGrossProfitInInterval(int intervalHours)
     {
         float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float intervalStartTime = Math.Max(currentTime - 1, 0);
+        float intervalStartTime = Math.Max(currentTime - intervalHours, 0);
         float totalGrossProfit = 0;
         float totalSurplusValue = 0;
         float totalDriverTime = 0;
@@ -116,13 +116,36 @@ public static class DriverPool
                 totalDriverTime += timeDrivenThisInterval;
 
                 float[] opportunityCostPerHour = driver.GetOpportunityCostPerHour();
-                int hour = Mathf.FloorToInt(currentTime);
-                int lastHour = hour - 1;
-                float timeDrivenThisHour = Math.Min(timeDrivenThisInterval, currentTime - hour);
-                float timeDrivenLastHour = timeDrivenThisInterval - timeDrivenThisHour;
-                float opportunityCostLastHour = lastHour >= 0 ? opportunityCostPerHour[lastHour] * timeDrivenLastHour : 0;
-                float opportunityCostThisHour = opportunityCostPerHour[hour] * timeDrivenThisHour;
-                float opportunityCost = opportunityCostLastHour + opportunityCostThisHour;
+                float opportunityCost = 0;
+                int firstHourOfDrivingInInterval = Mathf.FloorToInt(currentTime - timeDrivenThisInterval);
+                int lastHourOfDrivingInInterval = Mathf.FloorToInt(currentTime);
+                for (int hour = firstHourOfDrivingInInterval; hour < lastHourOfDrivingInInterval + 1; hour++)
+                {
+                    if (hour == lastHourOfDrivingInInterval)
+                    {
+                        float timeDrivenInHour = Math.Min(timeDrivenThisInterval, currentTime - hour);
+                        opportunityCost += opportunityCostPerHour[hour] * timeDrivenInHour;
+                    }
+                    else if (hour == firstHourOfDrivingInInterval)
+                    {
+                        float timeDrivenInHour = hour + 1 - (currentTime - timeDrivenThisInterval);
+                        opportunityCost += opportunityCostPerHour[hour] * timeDrivenInHour;
+                    }
+                    else
+                    {
+                        float timeDrivenInHour = 1;
+                        opportunityCost += opportunityCostPerHour[hour] * timeDrivenInHour;
+                    }
+                    // float timeDrivenThisHour = Math.Min(timeDrivenThisInterval, currentTime - hour);
+                    // opportunityCost += opportunityCostPerHour[hour] * timeDrivenThisHour;
+                }
+                // int hour = Mathf.FloorToInt(currentTime);
+                // int lastHour = hour - 1;
+                // float timeDrivenThisHour = Math.Min(timeDrivenThisInterval, currentTime - hour);
+                // float timeDrivenLastHour = timeDrivenThisInterval - timeDrivenThisHour;
+                // float opportunityCostLastHour = lastHour >= 0 ? opportunityCostPerHour[lastHour] * timeDrivenLastHour : 0;
+                // float opportunityCostThisHour = opportunityCostPerHour[hour] * timeDrivenThisHour;
+                // float opportunityCost = opportunityCostLastHour + opportunityCostThisHour;
                 // totalOpportunityCost += opportunityCost;
                 totalSurplusValue += driverGrossProfit - opportunityCost;
             }
@@ -141,9 +164,10 @@ public static class DriverPool
 
         Debug.Log($"Total active drivers: {numDriversCurrentlyDriving}, Drivers who stopped during interval: {numDriversWhoStoppedDrivingDuringInterval} Total gross profit: {totalGrossProfit}, total driver time: {totalDriverTime}");
         Debug.Log($"Total active drivers2: {numDriversCurrentlyDriving2}");
+        Debug.Log($"Total driver time: {totalDriverTime}");
         float averageGrossProfitPerHour = totalGrossProfit / totalDriverTime;
         float averageSurplusValuePerHour = totalSurplusValue / totalDriverTime;
-        return (averageGrossProfitPerHour, averageSurplusValuePerHour);
+        return (averageGrossProfitPerHour, averageSurplusValuePerHour, totalGrossProfit, totalSurplusValue);
     }
 
     public static (float[] expectedAverageGrossProfitByHour, float[] expectedAverageSurplusValueByHour) CalculateExpectedAverageProfitabilityByHour()

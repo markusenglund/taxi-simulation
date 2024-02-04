@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
     private void EndSimulation()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        if (simulationTime > SimulationSettings.simulationLengthHours)
+        if (simulationTime > SimulationSettings.simulationLengthHours + 0.1 / 60f) // Add a small buffer to make sure all data collection at the top of the hour finishes
         {
             Time.timeScale = 0;
         }
