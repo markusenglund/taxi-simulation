@@ -24,7 +24,7 @@ public class WaitingTimeGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = 0f;
-    float maxX = 24f;
+    float maxX = SimulationSettings.simulationLengthHours;
     float minX = 0f;
 
 

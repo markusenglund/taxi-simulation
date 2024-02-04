@@ -10,7 +10,9 @@ public static class SimulationSettings
     public const bool useConstantSupplyMode = true;
     public const bool useConstantSurgeMultiplier = true;
 
-    public const int randomSeed = 1;
+    public const int randomSeed = 3;
+
+    public const int simulationLengthHours = 4;
 
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
@@ -69,8 +71,17 @@ public static class SimulationSettings
     public const float passengerMedianIncome = 20;
     public const float passengerIncomeSigma = 0.9f;
 
-    // Based on real friday data, demand is indexed by as 1 being the lowest measured number
     public static readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
+        {
+            { 0, 10f },
+            { 1, 10f },
+            { 2, 2f },
+            { 3, 2f },
+            { 4, 2f }
+        };
+
+    // Based on real friday data, demand is indexed by as 1 being the lowest measured number
+    public static readonly Dictionary<int, float> demandIndexByHour2 = new Dictionary<int, float>()
     // TODO: We should add some data for start of Saturday to help drivers make an informed decision when they pick a session
     {
         { 0, 5f },
@@ -112,8 +123,10 @@ public static class SimulationSettings
 
     private static float[] GetExpectedPassengersByHour()
     {
-        float[] expectedPassengersByHour = new float[24];
-        for (int i = 0; i < 24; i++)
+        // Example: If the calculation is 24 hrs we have to calculate number of passengers for 24:00, since at any given time we take a weighted average of the previous and next top of the hour
+        int numHourToCalculate = simulationLengthHours + 1;
+        float[] expectedPassengersByHour = new float[numHourToCalculate];
+        for (int i = 0; i < numHourToCalculate; i++)
         {
             expectedPassengersByHour[i] = demandIndexByHour[i] * demandIndexMultiplier;
         }
@@ -122,8 +135,8 @@ public static class SimulationSettings
 
     public static float[] GetFirstGuessTripCapacityByHour()
     {
-        float[] expectedTripCapacityByHour = new float[24];
-        for (int i = 0; i < 24; i++)
+        float[] expectedTripCapacityByHour = new float[simulationLengthHours];
+        for (int i = 0; i < simulationLengthHours; i++)
         {
             float expectedTripCapacity = firstEstimationOfSupplyIndexByHour[i] * demandIndexMultiplier;
             expectedTripCapacityByHour[i] = expectedTripCapacity;

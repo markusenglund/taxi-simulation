@@ -148,9 +148,9 @@ public static class DriverPool
 
     public static (float[] expectedAverageGrossProfitByHour, float[] expectedAverageSurplusValueByHour) CalculateExpectedAverageProfitabilityByHour()
     {
-        float[] expectedAverageGrossProfitByHour = new float[24];
-        float[] expectedAverageSurplusValueByHour = new float[24];
-        for (int i = 0; i < 24; i++)
+        float[] expectedAverageGrossProfitByHour = new float[SimulationSettings.simulationLengthHours];
+        float[] expectedAverageSurplusValueByHour = new float[SimulationSettings.simulationLengthHours];
+        for (int i = 0; i < SimulationSettings.simulationLengthHours; i++)
         {
             float totalExpectedGrossProfit = 0;
             float totalExpectedSurplusValue = 0;
@@ -467,7 +467,7 @@ public static class DriverPool
         // Theoretical earnings ceiling per hour, assuming that the driver is always driving a passenger or on the way to a passenger who is on average startingBaseFare/baseFarePerKm kms away
         float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
 
-        float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay % 24] + SimulationSettings.expectedPassengersByHour[(hourOfTheDay + 1) % 24]) / 2;
+        float expectedNumPassengers = (SimulationSettings.expectedPassengersByHour[hourOfTheDay % SimulationSettings.simulationLengthHours] + SimulationSettings.expectedPassengersByHour[(hourOfTheDay + 1) % SimulationSettings.simulationLengthHours]) / 2;
 
         // TODO: Create a method to get the estimated percentage of passengers who are willing to pay the fare
 

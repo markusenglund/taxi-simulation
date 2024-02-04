@@ -24,10 +24,9 @@ public class DriverProfitGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = -10f;
-    float maxX = 24f;
+    float maxX = SimulationSettings.simulationLengthHours;
     float minX = 0f;
 
-    // Update graph every 15 in sim minutes
     const float timeInterval = 30f / 60f;
 
     private void Awake()
