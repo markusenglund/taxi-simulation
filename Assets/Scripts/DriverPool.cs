@@ -38,7 +38,7 @@ public static class DriverPool
     public static DriverPerson[] GetDriversActiveDuringMidnight()
     {
         DriverPerson[] drivers1 = drivers;
-        DriverPerson[] midnightDrivers = drivers.Where(x => x.interval != null && (x.interval.startTime == 0 || x.interval.endTime > 24)).ToArray();
+        DriverPerson[] midnightDrivers = drivers.Where(x => x.interval != null && (x.interval.startTime == 0 || x.interval.endTime > SimulationSettings.simulationLengthHours)).ToArray();
 
         Debug.Log($"Drivers active during midnight: {midnightDrivers.Length} out of {SimulationSettings.numDrivers} drivers");
 
@@ -73,9 +73,9 @@ public static class DriverPool
                 continue;
             }
 
-            bool driverIntervalCrossesMidnight = driver.interval.endTime > 24;
+            bool driverIntervalCrossesMidnight = driver.interval.endTime > SimulationSettings.simulationLengthHours;
             float actualStartTime = driverIntervalCrossesMidnight && currentTime < driver.interval.startTime ? 0 : driver.interval.startTime;
-            float actualIntendedEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - 24 : driver.interval.endTime;
+            float actualIntendedEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - SimulationSettings.simulationLengthHours : driver.interval.endTime;
             bool hasEndedSession = driver.actualSessionEndTimes.Count > 0 && driver.actualSessionEndTimes[0] < currentTime && driver.actualSessionEndTimes[0] > actualStartTime;
             bool isCurrentlyDriving = actualStartTime <= currentTime && !hasEndedSession;
             bool wasDrivingDuringInterval = driver.actualSessionEndTimes.Count > 0 && driver.actualSessionEndTimes[0] > intervalStartTime;
@@ -187,10 +187,10 @@ public static class DriverPool
                 {
                     continue;
                 }
-                bool driverIntervalCrossesMidnight = driver.interval.endTime > 24;
+                bool driverIntervalCrossesMidnight = driver.interval.endTime > SimulationSettings.simulationLengthHours;
 
                 float actualStartTime = driverIntervalCrossesMidnight && i < driver.interval.startTime ? 0 : driver.interval.startTime;
-                float actualIntendedEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - 24 : driver.interval.endTime;
+                float actualIntendedEndTime = actualStartTime < driver.interval.startTime ? driver.interval.endTime - SimulationSettings.simulationLengthHours : driver.interval.endTime;
 
                 bool isCurrentHourInInterval = actualStartTime <= i && i < actualIntendedEndTime;
                 if (!isCurrentHourInInterval)
@@ -227,8 +227,8 @@ public static class DriverPool
 
     private static void CreateConstantSupplyDriverPool()
     {
-        float[] tripCapacityByHour = new float[24];
-        for (int i = 0; i < 24; i++)
+        float[] tripCapacityByHour = new float[SimulationSettings.simulationLengthHours];
+        for (int i = 0; i < SimulationSettings.simulationLengthHours; i++)
         {
             tripCapacityByHour[i] = SimulationSettings.numDrivers * SimulationSettings.driverAverageTripsPerHour;
         }
@@ -237,11 +237,11 @@ public static class DriverPool
             // Since constant supply mode doesn't realistically simulate driver preferences, we'll just use the same values for all drivers
             float baseOpportunityCostPerHour = SimulationSettings.passengerMedianIncome / 2;
             float[] opportunityCostProfile = (float[])normalDriverProfile.Clone();
-            int preferredSessionLength = 24;
+            int preferredSessionLength = SimulationSettings.simulationLengthHours;
             SessionInterval interval = new SessionInterval()
             {
                 startTime = 0,
-                endTime = 24,
+                endTime = SimulationSettings.simulationLengthHours,
             };
             DriverPerson driver = new DriverPerson()
             {
@@ -342,10 +342,10 @@ public static class DriverPool
         // Debug.Log(string.Join(", ", SimulationSettings.expectedPassengersByHour.Select(x => x.ToString()).ToArray()));
 
         Debug.Log("Expected supply demand imbalance per hour:");
-        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % 24]) / 2).ToString()).ToArray()));
+        Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) => (x - (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % SimulationSettings.simulationLengthHours]) / 2).ToString()).ToArray()));
         Debug.Log(string.Join(", ", secondPassTripCapacityByHour.Select((x, i) =>
             {
-                float numPassengers = (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % 24]) / 2;
+                float numPassengers = (SimulationSettings.expectedPassengersByHour[i] + SimulationSettings.expectedPassengersByHour[(i + 1) % SimulationSettings.simulationLengthHours]) / 2;
                 return String.Format("{0:P2}", (x - numPassengers) / numPassengers);
             }
         ).ToArray()));
@@ -357,7 +357,7 @@ public static class DriverPool
         float expectedSurplusValue = 0;
         for (int i = interval.startTime; i < interval.endTime; i++)
         {
-            int actualTime = i % 24;
+            int actualTime = i % SimulationSettings.simulationLengthHours;
             float expectedGrossProfitForHour = expectedGrossProfitByHour[actualTime];
             float expectedSurplusValueForHour = expectedSurplusValueByHour[actualTime];
             expectedGrossProfit += expectedGrossProfitForHour;
@@ -368,7 +368,7 @@ public static class DriverPool
 
     public static float[] GetTripCapacityByHour(SessionInterval[] intervals)
     {
-        float[] tripCapacityByHour = new float[24];
+        float[] tripCapacityByHour = new float[SimulationSettings.simulationLengthHours];
         for (int i = 0; i < intervals.Length; i++)
         {
             SessionInterval interval = intervals[i];
@@ -378,7 +378,7 @@ public static class DriverPool
             }
             for (int j = interval.startTime; j < interval.endTime; j++)
             {
-                tripCapacityByHour[j % 24] += SimulationSettings.driverAverageTripsPerHour;
+                tripCapacityByHour[j % SimulationSettings.simulationLengthHours] += SimulationSettings.driverAverageTripsPerHour;
             }
         }
         return tripCapacityByHour;
@@ -405,7 +405,7 @@ public static class DriverPool
             endTime = 0,
         };
         float maxSurplusValue = Mathf.NegativeInfinity;
-        for (int i = 1; i < 24; i++)
+        for (int i = 1; i < SimulationSettings.maxSessionLength; i++)
         {
             (SessionInterval interval, float expectedUtilityValue) = CalculateMostProfitableSessionOfLength(i, driver.preferredSessionLength, expectedSurplusValueByHour, driver.baseOpportunityCostPerHour);
             if (expectedUtilityValue > maxSurplusValue)
@@ -434,9 +434,9 @@ public static class DriverPool
         {
             currentSessionSurplusSum += expectedSurplusValueByHour[i];
         }
-        for (int i = 0; i < 24; i++)
+        for (int i = 0; i < SimulationSettings.simulationLengthHours; i++)
         {
-            int leadingIndex = (i + sessionLength) % 24;
+            int leadingIndex = (i + sessionLength) % SimulationSettings.simulationLengthHours;
             currentSessionSurplusSum += expectedSurplusValueByHour[leadingIndex];
             currentSessionSurplusSum -= expectedSurplusValueByHour[i];
             if (currentSessionSurplusSum > maxSurplusSum)
@@ -460,8 +460,8 @@ public static class DriverPool
 
     private static float[] CalculateExpectedGrossProfitByHour(float[] tripCapacityByHour, bool shouldAddDriverCapacity)
     {
-        float[] expectedGrossProfitByHour = new float[24];
-        for (int i = 0; i < 24; i++)
+        float[] expectedGrossProfitByHour = new float[SimulationSettings.simulationLengthHours];
+        for (int i = 0; i < SimulationSettings.simulationLengthHours; i++)
         {
             float tripCapacityIncludingDriver = shouldAddDriverCapacity ? tripCapacityByHour[i] + 1 * SimulationSettings.driverAverageTripsPerHour : tripCapacityByHour[i];
             expectedGrossProfitByHour[i] = CalculateExpectedGrossProfitForOneHourOfWork(i, tripCapacityIncludingDriver);
@@ -471,8 +471,8 @@ public static class DriverPool
 
     private static float[] CalculateExpectedSurplusValueByHour(DriverPerson driver, float[] expectedGrossProfitByHour)
     {
-        float[] expectedSurplusValueByHour = new float[24];
-        for (int i = 0; i < 24; i++)
+        float[] expectedSurplusValueByHour = new float[SimulationSettings.simulationLengthHours];
+        for (int i = 0; i < SimulationSettings.simulationLengthHours; i++)
         {
             float opportunityCostIndex = driver.opportunityCostProfile[i];
             expectedSurplusValueByHour[i] = expectedGrossProfitByHour[i] - (opportunityCostIndex * driver.baseOpportunityCostPerHour);

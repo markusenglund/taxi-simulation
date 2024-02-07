@@ -7,7 +7,7 @@ using Random = System.Random;
 
 public static class SimulationSettings
 {
-    public const bool useConstantSupplyMode = true;
+    public const bool useConstantSupplyMode = false;
     public const bool useConstantSurgeMultiplier = true;
 
     public const int randomSeed = 3;
@@ -62,26 +62,28 @@ public static class SimulationSettings
         { 24, 12f}
     };
 
-    public const int numDrivers = 5;
+    public const int numDrivers = 10;
 
-    public static (int start, int end) sessionLengthRange = (4, 8);
+    // When a driver has a session length that is within an hour of the simulation length, it screws up the profitability calculations
+    public const int maxSessionLength = simulationLengthHours - 2;
+    public static (int start, int end) sessionLengthRange = (Math.Min(4, maxSessionLength - 1), Math.Min(8, maxSessionLength));
 
 
     // Passenger economic parameters
     public const float passengerMedianIncome = 20;
     public const float passengerIncomeSigma = 0.9f;
 
-    public static readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
+    public static readonly Dictionary<int, float> demandIndexByHour2 = new Dictionary<int, float>()
         {
-            { 0, 10f },
-            { 1, 10f },
-            { 2, 2f },
-            { 3, 2f },
-            { 4, 2f }
+            { 0, 2f },
+            { 1, 2f },
+            { 2, 8f },
+            { 3, 1f },
+            { 4, 1f }
         };
 
     // Based on real friday data, demand is indexed by as 1 being the lowest measured number
-    public static readonly Dictionary<int, float> demandIndexByHour2 = new Dictionary<int, float>()
+    public static readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
     // TODO: We should add some data for start of Saturday to help drivers make an informed decision when they pick a session
     {
         { 0, 5f },
