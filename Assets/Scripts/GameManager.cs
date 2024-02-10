@@ -18,6 +18,8 @@ public class Fare
 public class RideOffer
 {
     public float expectedWaitingTime { get; set; }
+
+    public float expectedTripTime { get; set; }
     public Fare fare { get; set; }
 }
 
@@ -134,7 +136,7 @@ public class GameManager : MonoBehaviour
 
         float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
 
-        float minMultiplier = 1f;
+        float minMultiplier = 0.7f;
         float uncertaintyModifier = Math.Min(1f / drivers.Count, 1f);
 
         float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
@@ -153,7 +155,7 @@ public class GameManager : MonoBehaviour
     private void createInitialPassengers()
     {
         // Create 8 passengers to start
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 1; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
             Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z);
@@ -447,10 +449,12 @@ public class GameManager : MonoBehaviour
         float tripDistance = GridUtils.GetDistance(position, destination);
         Fare fare = GetFare(tripDistance);
         float expectedWaitingTime = GetExpectedWaitingTime(position);
+        float expectedTripTime = tripDistance / SimulationSettings.driverSpeed + 0.6f / 60f;
 
         RideOffer tripOffer = new RideOffer
         {
             expectedWaitingTime = expectedWaitingTime,
+            expectedTripTime = expectedTripTime,
             fare = fare,
         };
 

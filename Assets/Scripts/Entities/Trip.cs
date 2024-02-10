@@ -19,6 +19,7 @@ public class TripCreatedData
     public Vector3 destination { get; set; }
     public float tripDistance { get; set; }
     public float expectedWaitingTime { get; set; }
+    public float expectedTripTime { get; set; }
     public Fare fare { get; set; }
     public float expectedPickupTime { get; set; }
 }
@@ -30,6 +31,8 @@ public class TripCreatedPassengerData
     public float tripUtilityValue { get; set; }
 
     public float expectedWaitingCost { get; set; }
+
+    public float expectedTripTimeCost { get; set; }
 
     public float expectedValueSurplus { get; set; }
 

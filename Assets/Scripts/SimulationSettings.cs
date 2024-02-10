@@ -8,7 +8,7 @@ using Random = System.Random;
 public static class SimulationSettings
 {
     public const bool useConstantSupplyMode = true;
-    public const bool useConstantSurgeMultiplier = true;
+    public const bool useConstantSurgeMultiplier = false;
 
     public const int randomSeed = 1;
 
@@ -17,6 +17,7 @@ public static class SimulationSettings
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
     public const float driverSpeed = 30f;
+    public const float walkingSpeed = 3.5f;
     public const float timeSpentWaitingForPassenger = 1f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below

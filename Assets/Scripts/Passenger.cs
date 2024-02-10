@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum PassengerState
@@ -6,6 +7,19 @@ public enum PassengerState
     AssignedToTrip,
     DroppedOff,
     RejectedRideOffer
+}
+
+public enum SubstituteType
+{
+    Walking,
+    PublicTransport,
+}
+public class Substitute
+{
+    public SubstituteType type { get; set; }
+    public float timeCost { get; set; }
+    public float moneyCost { get; set; }
+    public float totalCost { get; set; }
 }
 
 public class PassengerEconomicParameters
@@ -18,6 +32,8 @@ public class PassengerEconomicParameters
     // Derived values
     public float waitingCostPerHour { get; set; }
     public float tripUtilityValue { get; set; }
+
+    public Substitute bestSubstitute { get; set; }
 }
 
 public class Passenger : MonoBehaviour
@@ -53,7 +69,6 @@ public class Passenger : MonoBehaviour
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         destination = GridUtils.GetRandomPosition(GameManager.Instance.passengerSpawnRandom);
-        GenerateEconomicParameters();
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
         utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
@@ -70,14 +85,38 @@ public class Passenger : MonoBehaviour
         // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
         // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
+
+        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour);
         passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
             tripUtilityScore = tripUtilityScore,
             timePreference = timePreference,
             waitingCostPerHour = waitingCostPerHour,
-            tripUtilityValue = tripUtilityValue
+            tripUtilityValue = tripUtilityValue,
+            bestSubstitute = bestSubstitute
         };
+    }
+
+    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour)
+    {
+        float tripDistance = GridUtils.GetDistance(positionActual, destination);
+
+        // Walking
+        float walkingTime = tripDistance / SimulationSettings.walkingSpeed;
+        float timeCostOfWalking = walkingTime * waitingCostPerHour;
+        float moneyCostOfWalking = 0;
+        float utilityCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
+
+        Substitute walkingSubstitute = new Substitute()
+        {
+            type = SubstituteType.Walking,
+            timeCost = timeCostOfWalking,
+            moneyCost = moneyCostOfWalking,
+            totalCost = utilityCostOfWalking
+        };
+
+        return walkingSubstitute;
     }
 
 
@@ -96,6 +135,8 @@ public class Passenger : MonoBehaviour
     void Start()
     {
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+        GenerateEconomicParameters();
+
         Invoke("MakeTripDecision", 1f);
     }
 
@@ -115,15 +156,23 @@ public class Passenger : MonoBehaviour
             destination = destination,
             tripDistance = GridUtils.GetDistance(positionActual, destination),
             expectedWaitingTime = rideOffer.expectedWaitingTime,
+            expectedTripTime = rideOffer.expectedTripTime,
             fare = rideOffer.fare,
             expectedPickupTime = expectedPickupTime
         };
 
         float expectedWaitingCost = rideOffer.expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
+        float expectedTripTimeCost = rideOffer.expectedTripTime * passengerEconomicParameters.waitingCostPerHour;
 
-        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - expectedWaitingCost - rideOffer.fare.total;
+        float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
+
+        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - totalCost;
         float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
-        hasAcceptedRideOffer = expectedValueSurplus > 0;
+
+        float valueSurplusOfSubstitute = passengerEconomicParameters.tripUtilityValue - passengerEconomicParameters.bestSubstitute.totalCost;
+        float valueSurplusOfStayingHome = 0f;
+        Substitute substitute = passengerEconomicParameters.bestSubstitute;
+        hasAcceptedRideOffer = expectedValueSurplus > Math.Max(valueSurplusOfSubstitute, valueSurplusOfStayingHome);
 
         // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
         // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedValueSurplus);
@@ -132,6 +181,7 @@ public class Passenger : MonoBehaviour
             hasAcceptedRideOffer = hasAcceptedRideOffer,
             tripUtilityValue = passengerEconomicParameters.tripUtilityValue,
             expectedWaitingCost = expectedWaitingCost,
+            expectedTripTimeCost = expectedTripTimeCost,
             expectedValueSurplus = expectedValueSurplus,
             expectedUtilitySurplus = expectedUtilitySurplus
         };
