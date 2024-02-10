@@ -18,7 +18,7 @@ public class ResultsInfoBox : MonoBehaviour
     void Awake()
     {
         textContainer = transform.Find("TextContainer").GetComponent<RectTransform>();
-        InstantiateText();
+        Invoke("InstantiateText", 0.1f);
         StartCoroutine(UpdateValues());
     }
 
@@ -32,40 +32,54 @@ public class ResultsInfoBox : MonoBehaviour
         }
     }
 
+    private string GetTextColor(float value)
+    {
+        if (value == 0)
+        {
+            return "white";
+        }
+        else if (value < 0)
+        {
+            return "red";
+        }
+        else
+        {
+            return "green";
+        }
+    }
     private void UpdateDriverProfitability()
     {
         (float grossProfitLastHour, float surplusValueLastHour, float totalGrossProfit, float totalSurplusValue, float totalUberRevenue) = DriverPool.CalculateAverageGrossProfitInInterval(SimulationSettings.simulationLengthHours);
 
-        driverGrossProfitText.text = $"Avg hourly gross profit: ${grossProfitLastHour:0.00}, total: ${totalGrossProfit:0.00}";
-        driverSurplusValueText.text = $"Avg hourly surplus: ${surplusValueLastHour:0.00}, total: ${totalSurplusValue:0.00}";
+        driverGrossProfitText.text = $"Avg hourly gross profit: <color={GetTextColor(grossProfitLastHour)}><b>${grossProfitLastHour:0.00}</b></color>, total: <color={GetTextColor(totalGrossProfit)}><b>${totalGrossProfit:0.00}</b></color>";
+        driverSurplusValueText.text = $"Avg hourly surplus: <color={GetTextColor(surplusValueLastHour)}><b>${surplusValueLastHour:0.00}</b></color>, total: <color={GetTextColor(totalSurplusValue)}><b>${totalSurplusValue:0.00}</b></color>";
 
-        uberRevenueText.text = $"Total Uber revenue: ${totalUberRevenue:0.00}";
+        uberRevenueText.text = $"Total Uber revenue: <color={GetTextColor(totalUberRevenue)}><b>${totalUberRevenue:0.00}</b></color>";
     }
 
     private void InstantiateText()
     {
         driverGrossProfitText = Instantiate(textPrefab, textContainer);
-        driverGrossProfitText.text = "Avg hourly gross profit: $0.00";
-        driverGrossProfitText.fontSize = 20;
-        driverGrossProfitText.rectTransform.anchoredPosition = new Vector2(0, 0);
-        driverGrossProfitText.alignment = TextAlignmentOptions.Center;
+        driverGrossProfitText.fontSize = 16;
+        driverGrossProfitText.rectTransform.anchoredPosition = new Vector2(5, 100);
+        driverGrossProfitText.alignment = TextAlignmentOptions.Left;
         // Set the width to be the same as the parent container
         driverGrossProfitText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, driverGrossProfitText.rectTransform.sizeDelta.y);
 
         driverSurplusValueText = Instantiate(textPrefab, textContainer);
-        driverSurplusValueText.text = "Avg hourly surplus: $0.00";
-        driverSurplusValueText.fontSize = 20;
-        driverSurplusValueText.rectTransform.anchoredPosition = new Vector2(0, -30);
-        driverSurplusValueText.alignment = TextAlignmentOptions.Center;
+        driverSurplusValueText.fontSize = 16;
+        driverSurplusValueText.rectTransform.anchoredPosition = new Vector2(5, 80);
+        driverSurplusValueText.alignment = TextAlignmentOptions.Left;
         driverSurplusValueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, driverSurplusValueText.rectTransform.sizeDelta.y);
 
 
         uberRevenueText = Instantiate(textPrefab, textContainer);
-        uberRevenueText.text = "Total Uber revenue: $0.00";
-        uberRevenueText.fontSize = 20;
-        uberRevenueText.rectTransform.anchoredPosition = new Vector2(0, -60);
-        uberRevenueText.alignment = TextAlignmentOptions.Center;
+        uberRevenueText.fontSize = 16;
+        uberRevenueText.rectTransform.anchoredPosition = new Vector2(5, 60);
+        uberRevenueText.alignment = TextAlignmentOptions.Left;
         uberRevenueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, uberRevenueText.rectTransform.sizeDelta.y);
+
+        UpdateDriverProfitability();
     }
 
 }
