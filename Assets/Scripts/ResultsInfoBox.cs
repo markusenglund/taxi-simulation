@@ -23,6 +23,8 @@ public class ResultsInfoBox : MonoBehaviour
     TMP_Text tripText;
     TMP_Text waitingTimeText;
 
+    TMP_Text fareText;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -92,8 +94,16 @@ public class ResultsInfoBox : MonoBehaviour
 
         float averageWaitingTime = totalWaitingTime / startedOrCompletedTrips.Count;
 
+        float totalTransactionVolume = 0;
+        foreach (Trip trip in trips)
+        {
+            totalTransactionVolume += trip.tripCreatedData.fare.total;
+        }
+        float averageFare = totalTransactionVolume / trips.Count;
+
         tripText.text = $"Completed trips: {numCompletedTrips}";
         waitingTimeText.text = $"Avg waiting time: <b>{TimeUtils.ConvertSimulationHoursToTimeString(averageWaitingTime)}</b>, total: <b>{TimeUtils.ConvertSimulationHoursToTimeString(totalWaitingTime)}</b>";
+        fareText.text = $"Avg fare: <b>${averageFare:0.00}</b>, total: <b>${totalTransactionVolume:0.00}</b>";
     }
 
 
@@ -148,6 +158,12 @@ public class ResultsInfoBox : MonoBehaviour
         waitingTimeText.rectTransform.anchoredPosition = new Vector2(5, -40);
         waitingTimeText.alignment = TextAlignmentOptions.Left;
         waitingTimeText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, waitingTimeText.rectTransform.sizeDelta.y);
+
+        fareText = Instantiate(textPrefab, textContainer);
+        fareText.fontSize = 16;
+        fareText.rectTransform.anchoredPosition = new Vector2(5, -60);
+        fareText.alignment = TextAlignmentOptions.Left;
+        fareText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, fareText.rectTransform.sizeDelta.y);
 
         UpdateSurplusValues();
         UpdateTripValues();
