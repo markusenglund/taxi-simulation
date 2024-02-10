@@ -303,6 +303,11 @@ public class GameManager : MonoBehaviour
         return (totalUtilitySurplusValue, totalUtilitySurplusValuePerCapita, population, quartiledUtilitySurplusValuePerCapita, quartiledPopulation);
     }
 
+    public List<Trip> GetTrips()
+    {
+        return trips;
+    }
+
     private void DispatchDriver(Driver driver, Trip trip)
     {
         Passenger passenger = trip.tripCreatedData.passenger;
@@ -361,12 +366,12 @@ public class GameManager : MonoBehaviour
         float totalEnrouteTime = 0;
         float totalOnTripTime = 0;
         int numTrips = 0;
-        foreach (Trip _trip in trips)
+        foreach (Trip trip in trips)
         {
-            if (_trip.droppedOffData != null)
+            if (trip.droppedOffData != null)
             {
-                totalEnrouteTime += _trip.pickedUpData.timeSpentEnRoute;
-                totalOnTripTime += _trip.droppedOffData.timeSpentOnTrip;
+                totalEnrouteTime += trip.pickedUpData.timeSpentEnRoute;
+                totalOnTripTime += trip.droppedOffData.timeSpentOnTrip;
                 numTrips += 1;
             }
         }

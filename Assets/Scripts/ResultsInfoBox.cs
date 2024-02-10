@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class ResultsInfoBox : MonoBehaviour
 {
@@ -8,7 +10,7 @@ public class ResultsInfoBox : MonoBehaviour
     private RectTransform textContainer;
 
     [SerializeField] private TMP_Text textPrefab;
-    const float timeInterval = 15f / 60f;
+    const float timeInterval = 5f / 60f;
 
     TMP_Text driverGrossProfitText;
     TMP_Text driverSurplusValueText;
@@ -17,6 +19,8 @@ public class ResultsInfoBox : MonoBehaviour
     TMP_Text passengerSurplusValueText;
     TMP_Text passengerSurplusQuartileText;
     TMP_Text totalSurplusText;
+
+    TMP_Text tripText;
 
     // Start is called before the first frame update
     void Awake()
@@ -33,6 +37,7 @@ public class ResultsInfoBox : MonoBehaviour
             float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
             yield return new WaitForSeconds(intervalRealSeconds);
             UpdateSurplusValues();
+            UpdateTripValues();
         }
     }
 
@@ -68,6 +73,14 @@ public class ResultsInfoBox : MonoBehaviour
 
         float totalSurplusValue = totalDriverSurplusValue + totalUberRevenue + totalRiderUtilitySurplus;
         totalSurplusText.text = $"Total market surplus: <color={GetTextColor(totalSurplusValue)}><b>${totalSurplusValue:0.00}</b></color>";
+    }
+
+    void UpdateTripValues()
+    {
+        List<Trip> trips = GameManager.Instance.GetTrips();
+        int numCompletedTrips = trips.Where(trip => trip.state == TripState.Completed).Count();
+
+        tripText.text = $"Completed trips: {numCompletedTrips}";
     }
 
 
@@ -111,7 +124,14 @@ public class ResultsInfoBox : MonoBehaviour
         totalSurplusText.alignment = TextAlignmentOptions.Left;
         totalSurplusText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, totalSurplusText.rectTransform.sizeDelta.y);
 
+        tripText = Instantiate(textPrefab, textContainer);
+        tripText.fontSize = 16;
+        tripText.rectTransform.anchoredPosition = new Vector2(5, -20);
+        tripText.alignment = TextAlignmentOptions.Left;
+        tripText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, tripText.rectTransform.sizeDelta.y);
+
         UpdateSurplusValues();
+        UpdateTripValues();
 
     }
 
