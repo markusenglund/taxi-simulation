@@ -247,6 +247,62 @@ public class GameManager : MonoBehaviour
         return numPassengersSpawned;
     }
 
+    public (float totalUtilitySurplusValue, float totalUtilitySurplusValuePerCapita, int population, float[] quartiledUtilitySurplusValuePerCapita, int[] quartiledPopulation) CalculatePassengerUtilitySurplusData()
+    {
+        float[] quartiledUtilitySurplusValuePerCapita = new float[4];
+        float[] quartiledUtilitySurplusValue = new float[4];
+        int[] quartiledPopulation = new int[4];
+        float totalUtilitySurplusValue = 0;
+        int population = 0;
+        // FIXME: Hard-coded values for now based on mu=0.9, median 16 + 4 fixed income
+        float[] quartiledIncomeTopRange = { 12.72f, 20.0f, 33.36f, float.PositiveInfinity };
+        foreach (Passenger passenger in passengers)
+        {
+            if (passenger.state == PassengerState.Idling || (passenger.state == PassengerState.AssignedToTrip && passenger.currentTrip.pickedUpPassengerData == null))
+            {
+                // Passengers who are waiting to be picked up are not contributing to the utility surplus, so are not counted in the population either so they don't influence the per capita calculation
+                continue;
+            }
+            population++;
+            float valueSurplus = passenger.state == PassengerState.RejectedRideOffer ? 0 : passenger.currentTrip.pickedUpPassengerData.valueSurplus;
+            totalUtilitySurplusValue += valueSurplus;
+            float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;
+
+            if (hourlyIncome < quartiledIncomeTopRange[0])
+            {
+                quartiledUtilitySurplusValue[0] += valueSurplus;
+                quartiledPopulation[0]++;
+            }
+            else if (hourlyIncome < quartiledIncomeTopRange[1])
+            {
+                quartiledUtilitySurplusValue[1] += valueSurplus;
+                quartiledPopulation[1]++;
+            }
+            else if (hourlyIncome < quartiledIncomeTopRange[2])
+            {
+                quartiledUtilitySurplusValue[2] += valueSurplus;
+                quartiledPopulation[2]++;
+            }
+            else
+            {
+                quartiledUtilitySurplusValue[3] += valueSurplus;
+                quartiledPopulation[3]++;
+            }
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (quartiledPopulation[i] != 0)
+            {
+                quartiledUtilitySurplusValuePerCapita[i] = quartiledUtilitySurplusValue[i] / quartiledPopulation[i];
+            }
+        }
+
+        float totalUtilitySurplusValuePerCapita = totalUtilitySurplusValue / population;
+
+        return (totalUtilitySurplusValue, totalUtilitySurplusValuePerCapita, population, quartiledUtilitySurplusValuePerCapita, quartiledPopulation);
+    }
+
     private void DispatchDriver(Driver driver, Trip trip)
     {
         Passenger passenger = trip.tripCreatedData.passenger;

@@ -4,7 +4,8 @@ public enum PassengerState
 {
     Idling,
     AssignedToTrip,
-    DroppedOff
+    DroppedOff,
+    RejectedRideOffer
 }
 
 public class PassengerEconomicParameters
@@ -147,7 +148,7 @@ public class Passenger : MonoBehaviour
         {
             // Debug.Log("Passenger " + id + " is giving up");
             passengerSurplusGraph.AppendPassenger(this);
-
+            SetState(PassengerState.RejectedRideOffer);
             Destroy(gameObject);
         }
 

@@ -14,6 +14,8 @@ public class ResultsInfoBox : MonoBehaviour
     TMP_Text driverSurplusValueText;
     TMP_Text uberRevenueText;
 
+    TMP_Text passengerSurplusValueText;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -29,6 +31,7 @@ public class ResultsInfoBox : MonoBehaviour
             float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
             yield return new WaitForSeconds(intervalRealSeconds);
             UpdateDriverProfitability();
+            UpdatePassengerSurplus();
         }
     }
 
@@ -57,6 +60,13 @@ public class ResultsInfoBox : MonoBehaviour
         uberRevenueText.text = $"Total Uber revenue: <color={GetTextColor(totalUberRevenue)}><b>${totalUberRevenue:0.00}</b></color>";
     }
 
+    private void UpdatePassengerSurplus()
+    {
+        (float totalUtilitySurplus, float totalUtilitySurplusPerCapita, int population, float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = GameManager.Instance.CalculatePassengerUtilitySurplusData();
+
+        passengerSurplusValueText.text = $"Rider surplus per ride: <color={GetTextColor(totalUtilitySurplusPerCapita)}><b>${totalUtilitySurplusPerCapita:0.00}</b></color>, total: <color={GetTextColor(totalUtilitySurplus)}><b>${totalUtilitySurplus:0.00}</b></color>";
+    }
+
     private void InstantiateText()
     {
         driverGrossProfitText = Instantiate(textPrefab, textContainer);
@@ -79,7 +89,14 @@ public class ResultsInfoBox : MonoBehaviour
         uberRevenueText.alignment = TextAlignmentOptions.Left;
         uberRevenueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, uberRevenueText.rectTransform.sizeDelta.y);
 
+        passengerSurplusValueText = Instantiate(textPrefab, textContainer);
+        passengerSurplusValueText.fontSize = 16;
+        passengerSurplusValueText.rectTransform.anchoredPosition = new Vector2(5, 40);
+        passengerSurplusValueText.alignment = TextAlignmentOptions.Left;
+        passengerSurplusValueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, passengerSurplusValueText.rectTransform.sizeDelta.y);
+
         UpdateDriverProfitability();
+        UpdatePassengerSurplus();
     }
 
 }
