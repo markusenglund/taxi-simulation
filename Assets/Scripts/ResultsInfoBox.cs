@@ -21,6 +21,7 @@ public class ResultsInfoBox : MonoBehaviour
     TMP_Text totalSurplusText;
 
     TMP_Text tripText;
+    TMP_Text waitingTimeText;
 
     // Start is called before the first frame update
     void Awake()
@@ -78,9 +79,21 @@ public class ResultsInfoBox : MonoBehaviour
     void UpdateTripValues()
     {
         List<Trip> trips = GameManager.Instance.GetTrips();
-        int numCompletedTrips = trips.Where(trip => trip.state == TripState.Completed).Count();
+        List<Trip> completedTrips = trips.Where(trip => trip.state == TripState.Completed).ToList();
+        int numCompletedTrips = completedTrips.Count();
+
+        List<Trip> startedOrCompletedTrips = trips.Where(trip => trip.state == TripState.Completed || trip.state == TripState.OnTrip).ToList();
+
+        float totalWaitingTime = 0;
+        foreach (Trip trip in startedOrCompletedTrips)
+        {
+            totalWaitingTime += trip.pickedUpData.waitingTime;
+        }
+
+        float averageWaitingTime = totalWaitingTime / startedOrCompletedTrips.Count;
 
         tripText.text = $"Completed trips: {numCompletedTrips}";
+        waitingTimeText.text = $"Avg waiting time: <b>{TimeUtils.ConvertSimulationHoursToTimeString(averageWaitingTime)}</b>, total: <b>{TimeUtils.ConvertSimulationHoursToTimeString(totalWaitingTime)}</b>";
     }
 
 
@@ -129,6 +142,12 @@ public class ResultsInfoBox : MonoBehaviour
         tripText.rectTransform.anchoredPosition = new Vector2(5, -20);
         tripText.alignment = TextAlignmentOptions.Left;
         tripText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, tripText.rectTransform.sizeDelta.y);
+
+        waitingTimeText = Instantiate(textPrefab, textContainer);
+        waitingTimeText.fontSize = 16;
+        waitingTimeText.rectTransform.anchoredPosition = new Vector2(5, -40);
+        waitingTimeText.alignment = TextAlignmentOptions.Left;
+        waitingTimeText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, waitingTimeText.rectTransform.sizeDelta.y);
 
         UpdateSurplusValues();
         UpdateTripValues();
