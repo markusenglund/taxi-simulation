@@ -15,6 +15,7 @@ public class ResultsInfoBox : MonoBehaviour
     TMP_Text uberRevenueText;
 
     TMP_Text passengerSurplusValueText;
+    TMP_Text passengerSurplusQuartileText;
 
     // Start is called before the first frame update
     void Awake()
@@ -65,6 +66,8 @@ public class ResultsInfoBox : MonoBehaviour
         (float totalUtilitySurplus, float totalUtilitySurplusPerCapita, int population, float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = GameManager.Instance.CalculatePassengerUtilitySurplusData();
 
         passengerSurplusValueText.text = $"Rider surplus per ride: <color={GetTextColor(totalUtilitySurplusPerCapita)}><b>${totalUtilitySurplusPerCapita:0.00}</b></color>, total: <color={GetTextColor(totalUtilitySurplus)}><b>${totalUtilitySurplus:0.00}</b></color>";
+
+        passengerSurplusQuartileText.text = $"Quartiles: <color={GetTextColor(quartiledUtilitySurplusPerCapita[0])}><b>${quartiledUtilitySurplusPerCapita[0]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[1])}><b>${quartiledUtilitySurplusPerCapita[1]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[2])}><b>${quartiledUtilitySurplusPerCapita[2]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[3])}><b>${quartiledUtilitySurplusPerCapita[3]:0.00}</b></color>";
     }
 
     private void InstantiateText()
@@ -94,6 +97,12 @@ public class ResultsInfoBox : MonoBehaviour
         passengerSurplusValueText.rectTransform.anchoredPosition = new Vector2(5, 40);
         passengerSurplusValueText.alignment = TextAlignmentOptions.Left;
         passengerSurplusValueText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, passengerSurplusValueText.rectTransform.sizeDelta.y);
+
+        passengerSurplusQuartileText = Instantiate(textPrefab, textContainer);
+        passengerSurplusQuartileText.fontSize = 16;
+        passengerSurplusQuartileText.rectTransform.anchoredPosition = new Vector2(5, 20);
+        passengerSurplusQuartileText.alignment = TextAlignmentOptions.Left;
+        passengerSurplusQuartileText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, passengerSurplusQuartileText.rectTransform.sizeDelta.y);
 
         UpdateDriverProfitability();
         UpdatePassengerSurplus();
