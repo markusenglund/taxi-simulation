@@ -16,6 +16,7 @@ public class ResultsInfoBox : MonoBehaviour
 
     TMP_Text passengerSurplusValueText;
     TMP_Text passengerSurplusQuartileText;
+    TMP_Text totalSurplusText;
 
     // Start is called before the first frame update
     void Awake()
@@ -31,8 +32,7 @@ public class ResultsInfoBox : MonoBehaviour
         {
             float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
             yield return new WaitForSeconds(intervalRealSeconds);
-            UpdateDriverProfitability();
-            UpdatePassengerSurplus();
+            UpdateSurplusValues();
         }
     }
 
@@ -51,24 +51,25 @@ public class ResultsInfoBox : MonoBehaviour
             return "green";
         }
     }
-    private void UpdateDriverProfitability()
+    private void UpdateSurplusValues()
     {
-        (float grossProfitLastHour, float surplusValueLastHour, float totalGrossProfit, float totalSurplusValue, float totalUberRevenue) = DriverPool.CalculateAverageGrossProfitInInterval(SimulationSettings.simulationLengthHours);
+        (float grossProfitLastHour, float surplusValueLastHour, float totalDriverGrossProfit, float totalDriverSurplusValue, float totalUberRevenue) = DriverPool.CalculateAverageGrossProfitInInterval(SimulationSettings.simulationLengthHours);
 
-        driverGrossProfitText.text = $"Avg hourly gross profit: <color={GetTextColor(grossProfitLastHour)}><b>${grossProfitLastHour:0.00}</b></color>, total: <color={GetTextColor(totalGrossProfit)}><b>${totalGrossProfit:0.00}</b></color>";
-        driverSurplusValueText.text = $"Avg hourly surplus: <color={GetTextColor(surplusValueLastHour)}><b>${surplusValueLastHour:0.00}</b></color>, total: <color={GetTextColor(totalSurplusValue)}><b>${totalSurplusValue:0.00}</b></color>";
+        driverGrossProfitText.text = $"Avg hourly gross profit: <color={GetTextColor(grossProfitLastHour)}><b>${grossProfitLastHour:0.00}</b></color>, total: <color={GetTextColor(totalDriverGrossProfit)}><b>${totalDriverGrossProfit:0.00}</b></color>";
+        driverSurplusValueText.text = $"Avg hourly surplus: <color={GetTextColor(surplusValueLastHour)}><b>${surplusValueLastHour:0.00}</b></color>, total: <color={GetTextColor(totalDriverSurplusValue)}><b>${totalDriverSurplusValue:0.00}</b></color>";
 
         uberRevenueText.text = $"Total Uber revenue: <color={GetTextColor(totalUberRevenue)}><b>${totalUberRevenue:0.00}</b></color>";
-    }
 
-    private void UpdatePassengerSurplus()
-    {
-        (float totalUtilitySurplus, float totalUtilitySurplusPerCapita, int population, float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = GameManager.Instance.CalculatePassengerUtilitySurplusData();
+        (float totalRiderUtilitySurplus, float totalRiderUtilitySurplusPerCapita, int numRiders, float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = GameManager.Instance.CalculatePassengerUtilitySurplusData();
 
-        passengerSurplusValueText.text = $"Rider surplus per ride: <color={GetTextColor(totalUtilitySurplusPerCapita)}><b>${totalUtilitySurplusPerCapita:0.00}</b></color>, total: <color={GetTextColor(totalUtilitySurplus)}><b>${totalUtilitySurplus:0.00}</b></color>";
+        passengerSurplusValueText.text = $"Rider surplus per ride: <color={GetTextColor(totalRiderUtilitySurplusPerCapita)}><b>${totalRiderUtilitySurplusPerCapita:0.00}</b></color>, total: <color={GetTextColor(totalRiderUtilitySurplus)}><b>${totalRiderUtilitySurplus:0.00}</b></color>";
 
         passengerSurplusQuartileText.text = $"Quartiles: <color={GetTextColor(quartiledUtilitySurplusPerCapita[0])}><b>${quartiledUtilitySurplusPerCapita[0]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[1])}><b>${quartiledUtilitySurplusPerCapita[1]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[2])}><b>${quartiledUtilitySurplusPerCapita[2]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[3])}><b>${quartiledUtilitySurplusPerCapita[3]:0.00}</b></color>";
+
+        float totalSurplusValue = totalDriverSurplusValue + totalUberRevenue + totalRiderUtilitySurplus;
+        totalSurplusText.text = $"Total market surplus: <color={GetTextColor(totalSurplusValue)}><b>${totalSurplusValue:0.00}</b></color>";
     }
+
 
     private void InstantiateText()
     {
@@ -104,8 +105,14 @@ public class ResultsInfoBox : MonoBehaviour
         passengerSurplusQuartileText.alignment = TextAlignmentOptions.Left;
         passengerSurplusQuartileText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, passengerSurplusQuartileText.rectTransform.sizeDelta.y);
 
-        UpdateDriverProfitability();
-        UpdatePassengerSurplus();
+        totalSurplusText = Instantiate(textPrefab, textContainer);
+        totalSurplusText.fontSize = 16;
+        totalSurplusText.rectTransform.anchoredPosition = new Vector2(5, 0);
+        totalSurplusText.alignment = TextAlignmentOptions.Left;
+        totalSurplusText.rectTransform.sizeDelta = new Vector2(textContainer.rect.width, totalSurplusText.rectTransform.sizeDelta.y);
+
+        UpdateSurplusValues();
+
     }
 
 }
