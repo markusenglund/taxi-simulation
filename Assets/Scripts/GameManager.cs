@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
 
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
+    private bool simulationEnded = false;
+
 
     void Awake()
     {
@@ -73,7 +75,7 @@ public class GameManager : MonoBehaviour
     {
         SpawnAndRemoveDrivers();
         EndSimulation();
-        if (!SimulationSettings.useConstantSurgeMultiplier)
+        if (!SimulationSettings.useConstantSurgeMultiplier && !simulationEnded)
         {
             UpdateSurgeMultiplier();
         }
@@ -85,6 +87,7 @@ public class GameManager : MonoBehaviour
         if (simulationTime > SimulationSettings.simulationLengthHours + 0.1 / 60f) // Add a small buffer to make sure all data collection at the top of the hour finishes
         {
             Time.timeScale = 0;
+            simulationEnded = true;
         }
     }
 
@@ -166,7 +169,8 @@ public class GameManager : MonoBehaviour
     IEnumerator createPassengers()
     {
 
-        while (true)
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        while (simulationTime < SimulationSettings.simulationLengthHours)
         {
 
             float expectedPassengersPerHour = GetNumExpectedPassengersPerHour();
