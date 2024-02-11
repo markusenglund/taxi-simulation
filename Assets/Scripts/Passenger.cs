@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
 
 public enum PassengerState
 {
@@ -13,6 +15,7 @@ public enum SubstituteType
 {
     Walking,
     PublicTransport,
+    SkipTrip
 }
 public class Substitute
 {
@@ -20,6 +23,7 @@ public class Substitute
     public float timeCost { get; set; }
     public float moneyCost { get; set; }
     public float totalCost { get; set; }
+    public float netValue { get; set; }
 }
 
 public class PassengerEconomicParameters
@@ -86,7 +90,7 @@ public class Passenger : MonoBehaviour
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
         // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
 
-        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour);
+        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue);
         passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
@@ -98,7 +102,7 @@ public class Passenger : MonoBehaviour
         };
     }
 
-    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour)
+    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue)
     {
         float tripDistance = GridUtils.GetDistance(positionActual, destination);
 
@@ -113,10 +117,25 @@ public class Passenger : MonoBehaviour
             type = SubstituteType.Walking,
             timeCost = timeCostOfWalking,
             moneyCost = moneyCostOfWalking,
-            totalCost = utilityCostOfWalking
+            totalCost = utilityCostOfWalking,
+            netValue = tripUtilityValue - utilityCostOfWalking
         };
 
-        return walkingSubstitute;
+        Substitute skipTripSubstitute = new Substitute()
+        {
+            type = SubstituteType.SkipTrip,
+            timeCost = 0,
+            moneyCost = 0,
+            totalCost = 0,
+            netValue = 0
+        };
+
+        List<Substitute> substitutes = new List<Substitute> { walkingSubstitute, skipTripSubstitute };
+
+        Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
+
+
+        return bestSubstitute;
     }
 
 
@@ -166,24 +185,24 @@ public class Passenger : MonoBehaviour
 
         float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
 
-        float expectedValueSurplus = passengerEconomicParameters.tripUtilityValue - totalCost;
-        float expectedUtilitySurplus = expectedValueSurplus / passengerEconomicParameters.hourlyIncome;
+        float expectedNetValue = passengerEconomicParameters.tripUtilityValue - totalCost;
+        float expectedNetUtility = expectedNetValue / passengerEconomicParameters.hourlyIncome;
 
-        float valueSurplusOfSubstitute = passengerEconomicParameters.tripUtilityValue - passengerEconomicParameters.bestSubstitute.totalCost;
-        float valueSurplusOfStayingHome = 0f;
-        Substitute substitute = passengerEconomicParameters.bestSubstitute;
-        hasAcceptedRideOffer = expectedValueSurplus > Math.Max(valueSurplusOfSubstitute, valueSurplusOfStayingHome);
+
+        float expectedValueSurplus = expectedNetValue - passengerEconomicParameters.bestSubstitute.netValue;
+        hasAcceptedRideOffer = expectedValueSurplus > 0;
 
         // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
-        // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedValueSurplus);
+        // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedNetValue);
         TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
         {
             hasAcceptedRideOffer = hasAcceptedRideOffer,
             tripUtilityValue = passengerEconomicParameters.tripUtilityValue,
             expectedWaitingCost = expectedWaitingCost,
             expectedTripTimeCost = expectedTripTimeCost,
+            expectedNetValue = expectedNetValue,
+            expectedNetUtility = expectedNetUtility,
             expectedValueSurplus = expectedValueSurplus,
-            expectedUtilitySurplus = expectedUtilitySurplus
         };
 
         utilityIncomeScatterPlot.AppendPassenger(this);

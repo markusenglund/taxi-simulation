@@ -34,9 +34,11 @@ public class TripCreatedPassengerData
 
     public float expectedTripTimeCost { get; set; }
 
-    public float expectedValueSurplus { get; set; }
+    public float expectedNetValue { get; set; }
 
-    public float expectedUtilitySurplus { get; set; }
+    public float expectedNetUtility { get; set; }
+
+    public float expectedValueSurplus { get; set; }
 }
 
 public class DriverAssignedData
