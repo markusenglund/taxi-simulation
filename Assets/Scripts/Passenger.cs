@@ -24,6 +24,7 @@ public class Substitute
     public float moneyCost { get; set; }
     public float totalCost { get; set; }
     public float netValue { get; set; }
+    public float netUtility { get; set; }
 }
 
 public class PassengerEconomicParameters
@@ -90,7 +91,7 @@ public class Passenger : MonoBehaviour
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
         // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
 
-        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue);
+        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
         passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
@@ -102,7 +103,7 @@ public class Passenger : MonoBehaviour
         };
     }
 
-    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue)
+    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
     {
         float tripDistance = GridUtils.GetDistance(positionActual, destination);
 
@@ -111,14 +112,15 @@ public class Passenger : MonoBehaviour
         float timeCostOfWalking = walkingTime * waitingCostPerHour;
         float moneyCostOfWalking = 0;
         float utilityCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
-
+        float netValueOfWalking = tripUtilityValue - utilityCostOfWalking;
         Substitute walkingSubstitute = new Substitute()
         {
             type = SubstituteType.Walking,
             timeCost = timeCostOfWalking,
             moneyCost = moneyCostOfWalking,
             totalCost = utilityCostOfWalking,
-            netValue = tripUtilityValue - utilityCostOfWalking
+            netValue = netValueOfWalking,
+            netUtility = netValueOfWalking / hourlyIncome
         };
 
         Substitute skipTripSubstitute = new Substitute()
@@ -187,6 +189,9 @@ public class Passenger : MonoBehaviour
 
         float expectedNetValue = passengerEconomicParameters.tripUtilityValue - totalCost;
         float expectedNetUtility = expectedNetValue / passengerEconomicParameters.hourlyIncome;
+        float expectedTripTimeDisutility = expectedTripTimeCost / passengerEconomicParameters.hourlyIncome;
+        // 'expectedNetUtilityBeforeVariableCosts' represents the utility of the trip before the fare and waiting costs are taken into account - useful for comparing how much passengers of different income levels value getting a ride
+        float expectedNetUtilityBeforeVariableCosts = passengerEconomicParameters.tripUtilityScore - expectedTripTimeDisutility - passengerEconomicParameters.bestSubstitute.netUtility;
 
 
         float expectedValueSurplus = expectedNetValue - passengerEconomicParameters.bestSubstitute.netValue;
@@ -203,10 +208,11 @@ public class Passenger : MonoBehaviour
             expectedNetValue = expectedNetValue,
             expectedNetUtility = expectedNetUtility,
             expectedValueSurplus = expectedValueSurplus,
+            expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
         };
 
-        utilityIncomeScatterPlot.AppendPassenger(this);
 
+        utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
         if (hasAcceptedRideOffer)
         {
             // Debug.Log("Passenger " + id + " is hailing a taxi");

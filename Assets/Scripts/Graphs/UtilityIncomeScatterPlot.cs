@@ -35,9 +35,9 @@ public class UtilityIncomeScatterPlot : MonoBehaviour
         InstantiateGraph();
     }
 
-    public void AppendPassenger(Passenger passenger)
+    public void AppendPassenger(Passenger passenger, TripCreatedPassengerData tripCreatedPassengerData)
     {
-        Vector2 point = new Vector2(passenger.passengerEconomicParameters.hourlyIncome, passenger.passengerEconomicParameters.tripUtilityScore);
+        Vector2 point = new Vector2(passenger.passengerEconomicParameters.hourlyIncome, tripCreatedPassengerData.expectedNetUtilityBeforeVariableCosts);
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
 
         CreateDot(graphPosition, passenger.hasAcceptedRideOffer);
@@ -95,7 +95,7 @@ public class UtilityIncomeScatterPlot : MonoBehaviour
         // Create y axis label
         TMP_Text text = Instantiate(textPrefab, graphContainer);
         Vector2 textPosition = new Vector2(0f, 0f);
-        text.text = "Ride utility score";
+        text.text = "Utility of trip excl costs";
         text.rectTransform.anchoredPosition = textPosition;
         text.rectTransform.Rotate(0, 0, -90);
         float graphHeight = graphContainer.sizeDelta.y;

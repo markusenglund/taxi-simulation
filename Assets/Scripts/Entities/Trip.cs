@@ -39,6 +39,8 @@ public class TripCreatedPassengerData
     public float expectedNetUtility { get; set; }
 
     public float expectedValueSurplus { get; set; }
+
+    public float expectedNetUtilityBeforeVariableCosts { get; set; }
 }
 
 public class DriverAssignedData
