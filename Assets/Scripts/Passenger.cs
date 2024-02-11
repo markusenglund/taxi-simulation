@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using Random = System.Random;
 
 public enum PassengerState
 {
@@ -107,6 +108,26 @@ public class Passenger : MonoBehaviour
     {
         float tripDistance = GridUtils.GetDistance(positionActual, destination);
 
+        // Public transport
+        float publicTransportTime = tripDistance / SimulationSettings.publicTransportSpeed;
+        // Public transport
+        Random random = GameManager.Instance.passengerSpawnRandom;
+        // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
+        float publicTransportAdditionalTime = Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
+        float publicTransportTimeCost = (publicTransportTime + publicTransportAdditionalTime) * waitingCostPerHour;
+        float publicTransportMoneyCost = 3;
+        float publicTransportUtilityCost = publicTransportTimeCost + publicTransportMoneyCost;
+        float netValueOfPublicTransport = tripUtilityValue - publicTransportUtilityCost;
+        Substitute publicTransportSubstitute = new Substitute()
+        {
+            type = SubstituteType.PublicTransport,
+            timeCost = publicTransportTimeCost,
+            moneyCost = publicTransportMoneyCost,
+            totalCost = publicTransportUtilityCost,
+            netValue = netValueOfPublicTransport,
+            netUtility = netValueOfPublicTransport / hourlyIncome
+        };
+
         // Walking
         float walkingTime = tripDistance / SimulationSettings.walkingSpeed;
         float timeCostOfWalking = walkingTime * waitingCostPerHour;
@@ -123,6 +144,26 @@ public class Passenger : MonoBehaviour
             netUtility = netValueOfWalking / hourlyIncome
         };
 
+        // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
+        float privateVehicleTime = tripDistance / SimulationSettings.driverSpeed;
+        // Add a 5 minute waiting cost for getting into the car
+        float privateVehicleWaitingTime = 5 / 60f;
+        float privateVehicleTimeCost = (privateVehicleTime + privateVehicleWaitingTime) * waitingCostPerHour;
+        float marginalCostEnRoute = tripDistance * SimulationSettings.driverMarginalCostPerKm;
+        float privateVehicleMoneyCost = 100f + marginalCostEnRoute;
+        float privateVehicleUtilityCost = privateVehicleTimeCost + privateVehicleMoneyCost;
+        float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
+        Substitute privateVehicleSubstitute = new Substitute()
+        {
+            type = SubstituteType.SkipTrip,
+            timeCost = privateVehicleTimeCost,
+            moneyCost = privateVehicleMoneyCost,
+            totalCost = privateVehicleUtilityCost,
+            netValue = netValueOfPrivateVehicle,
+            netUtility = netValueOfPrivateVehicle / hourlyIncome
+        };
+
+        // Skip trip
         Substitute skipTripSubstitute = new Substitute()
         {
             type = SubstituteType.SkipTrip,
@@ -132,7 +173,7 @@ public class Passenger : MonoBehaviour
             netValue = 0
         };
 
-        List<Substitute> substitutes = new List<Substitute> { walkingSubstitute, skipTripSubstitute };
+        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, privateVehicleSubstitute, skipTripSubstitute };
 
         Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
 
