@@ -68,8 +68,6 @@ public class PickedUpData
 public class PickedUpPassengerData
 {
     public float waitingCost { get; set; }
-    public float valueSurplus { get; set; }
-    public float utilitySurplus { get; set; }
 }
 
 public class PickedUpDriverData
@@ -82,6 +80,16 @@ public class DroppedOffData
 {
     public float droppedOffTime { get; set; }
     public float timeSpentOnTrip { get; set; }
+
+}
+
+public class DroppedOffPassengerData
+{
+    public float tripTimeCost { get; set; }
+    public float netValue { get; set; }
+    public float netUtility { get; set; }
+    public float valueSurplus { get; set; }
+    public float utilitySurplus { get; set; }
 
 }
 
@@ -113,6 +121,7 @@ public class Trip
     public PickedUpPassengerData pickedUpPassengerData { get; set; }
     public PickedUpDriverData pickedUpDriverData { get; set; }
     public DroppedOffData droppedOffData { get; set; }
+    public DroppedOffPassengerData droppedOffPassengerData { get; set; }
     public DroppedOffDriverData droppedOffDriverData { get; set; }
 
     public Trip(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
@@ -154,12 +163,12 @@ public class Trip
         state = TripState.DriverWaiting;
     }
 
-    public void PickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData, PickedUpPassengerData pickedUpPassengerData)
+    public void PickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData)
     {
         state = TripState.OnTrip;
         this.pickedUpData = pickedUpData;
         this.pickedUpDriverData = pickedUpDriverData;
-        this.pickedUpPassengerData = pickedUpPassengerData;
+        this.pickedUpPassengerData = this.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
     }
 
     public void DropOffPassenger(DroppedOffData droppedOffData, DroppedOffDriverData droppedOffDriverData)
@@ -167,5 +176,6 @@ public class Trip
         state = TripState.Completed;
         this.droppedOffData = droppedOffData;
         this.droppedOffDriverData = droppedOffDriverData;
+        this.droppedOffPassengerData = this.tripCreatedData.passenger.HandlePassengerDroppedOff(droppedOffData);
     }
 }

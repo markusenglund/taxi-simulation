@@ -260,13 +260,13 @@ public class GameManager : MonoBehaviour
         float[] quartiledIncomeTopRange = { 12.72f, 20.0f, 33.36f, float.PositiveInfinity };
         foreach (Passenger passenger in passengers)
         {
-            if (passenger.state == PassengerState.Idling || (passenger.state == PassengerState.AssignedToTrip && passenger.currentTrip.pickedUpPassengerData == null))
+            if (passenger.state == PassengerState.Idling || passenger.state == PassengerState.AssignedToTrip)
             {
-                // Passengers who are waiting to be picked up are not contributing to the utility surplus, so are not counted in the population either so they don't influence the per capita calculation
+                // Passengers who are not dropped off yet are not contributing to surplus, so are not counted in the population either so they don't influence the per capita calculation
                 continue;
             }
             population++;
-            float valueSurplus = passenger.state == PassengerState.RejectedRideOffer ? 0 : passenger.currentTrip.pickedUpPassengerData.valueSurplus;
+            float valueSurplus = passenger.state == PassengerState.RejectedRideOffer ? 0 : passenger.currentTrip.droppedOffPassengerData.valueSurplus;
             totalUtilitySurplusValue += valueSurplus;
             float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;
 

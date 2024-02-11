@@ -8,7 +8,7 @@ using Random = System.Random;
 public static class SimulationSettings
 {
     public const bool useConstantSupplyMode = true;
-    public const bool useConstantSurgeMultiplier = false;
+    public const bool useConstantSurgeMultiplier = true;
 
     public const int randomSeed = 1;
 

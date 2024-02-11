@@ -77,9 +77,8 @@ public class Driver : MonoBehaviour
             marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * SimulationSettings.driverMarginalCostPerKm
         };
 
-        PickedUpPassengerData pickedUpPassengerData = currentTrip.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
 
-        currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData, pickedUpPassengerData);
+        currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData);
 
         SetDestination(currentTrip.tripCreatedData.destination);
         SetTaxiColor();

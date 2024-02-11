@@ -262,17 +262,38 @@ public class Passenger : MonoBehaviour
 
         // Debug.Log($"Surplus gained by passenger {id} is {utilitySurplus}");
 
-        PickedUpPassengerData passengerPickedUpData = new PickedUpPassengerData()
+        PickedUpPassengerData pickedUpPassengerData = new PickedUpPassengerData()
         {
             waitingCost = waitingCost,
+        };
+
+        waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
+
+        return pickedUpPassengerData;
+    }
+
+    public DroppedOffPassengerData HandlePassengerDroppedOff(DroppedOffData droppedOffData)
+    {
+        float tripTimeCost = droppedOffData.timeSpentOnTrip * passengerEconomicParameters.waitingCostPerHour;
+        float netValue = currentTrip.tripCreatedPassengerData.tripUtilityValue - tripTimeCost - currentTrip.pickedUpPassengerData.waitingCost - currentTrip.tripCreatedData.fare.total;
+        float netUtility = netValue / passengerEconomicParameters.hourlyIncome;
+        float valueSurplus = netValue - passengerEconomicParameters.bestSubstitute.netValue;
+        float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
+
+        DroppedOffPassengerData droppedOffPassengerData = new DroppedOffPassengerData()
+        {
+            tripTimeCost = tripTimeCost,
+            netValue = netValue,
+            netUtility = netUtility,
             valueSurplus = valueSurplus,
             utilitySurplus = utilitySurplus
         };
 
-        waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
         passengerSurplusGraph.AppendPassenger(this);
 
-        return passengerPickedUpData;
+
+        return droppedOffPassengerData;
+
     }
     public void SetState(PassengerState state)
     {
