@@ -7,10 +7,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform cityPrefab;
 
     City city1;
+    City city2;
 
     void Awake()
     {
         Instance = this;
-        city1 = City.Create(cityPrefab, 10, 10);
+        city1 = City.Create(cityPrefab, 0, 0);
+        city2 = City.Create(cityPrefab, 8, 0);
     }
 }
