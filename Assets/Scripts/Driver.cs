@@ -29,18 +29,25 @@ public class Driver : MonoBehaviour
 
     public DriverPerson driverPerson;
 
+    private City city;
+
 
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
-        GameManager.Instance.AssignDriverToNextTrip(this);
     }
 
-    public static Driver Create(DriverPerson person, Transform prefab, float x, float z)
+    void Start()
+    {
+        city.AssignDriverToNextTrip(this);
+    }
+
+    public static Driver Create(DriverPerson person, Transform prefab, float x, float z, City city)
     {
         Transform taxi = Instantiate(prefab, new Vector3(x, 0.05f, z), Quaternion.identity);
         Driver driver = taxi.GetComponent<Driver>();
+        driver.city = city;
         driver.driverPerson = person;
         driver.driverPerson.isCurrentlyDriving = true;
         taxi.name = "Taxi";
@@ -145,7 +152,7 @@ public class Driver : MonoBehaviour
         else
         {
             SetTaxiColor();
-            GameManager.Instance.HandleTripCompleted(this);
+            city.HandleTripCompleted(this);
         }
 
     }

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 83a6b349cc94646629f1d7745e599794
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - taxiPrefab: {fileID: 5080182002874875373, guid: 3e0dddc6d4b3eb342b9ab7d447b37e3a, type: 3}
+  - intersectionPrefab: {fileID: 1970304053126654784, guid: d9cd80b04b1c1dc4eb54d0dac91436f3, type: 3}
+  - streetPrefab: {fileID: 7181299878841271177, guid: b67119c1261d82d4d8a9ec815ee8f042, type: 3}
+  - passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

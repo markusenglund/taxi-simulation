@@ -1697,11 +1697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0ed72c4aac952a478037ba3a7f22899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taxiPrefab: {fileID: 5080182002874875373, guid: 3e0dddc6d4b3eb342b9ab7d447b37e3a, type: 3}
-  intersectionPrefab: {fileID: 1970304053126654784, guid: d9cd80b04b1c1dc4eb54d0dac91436f3, type: 3}
-  streetPrefab: {fileID: 7181299878841271177, guid: b67119c1261d82d4d8a9ec815ee8f042, type: 3}
-  passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
-  surgeMultiplier: 1
+  cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
 --- !u!114 &2057296553
 MonoBehaviour:
   m_ObjectHideFlags: 0

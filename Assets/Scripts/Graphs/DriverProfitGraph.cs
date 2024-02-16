@@ -53,66 +53,66 @@ public class DriverProfitGraph : MonoBehaviour
         {
             float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
             yield return new WaitForSeconds(intervalRealSeconds);
-            UpdateGraph();
+            // UpdateGraph();
         }
     }
 
-    private void UpdateGraph()
-    {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        (float grossProfitLastHour, float surplusValueLastHour, float _1, float _2, float _3) = DriverPool.CalculateAverageGrossProfitInInterval(1);
-        Vector2 grossProfitPoint = new Vector2(simulationTime, grossProfitLastHour);
-        Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
-        grossProfitLine.positionCount++;
-        grossProfitLine.SetPosition(grossProfitLine.positionCount - 1, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
+    // private void UpdateGraph()
+    // {
+    //     float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+    //     (float grossProfitLastHour, float surplusValueLastHour, float _1, float _2, float _3) = DriverPool.CalculateAverageGrossProfitInInterval(1);
+    //     Vector2 grossProfitPoint = new Vector2(simulationTime, grossProfitLastHour);
+    //     Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
+    //     grossProfitLine.positionCount++;
+    //     grossProfitLine.SetPosition(grossProfitLine.positionCount - 1, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
 
-        Vector2 surplusValuePoint = new Vector2(simulationTime, surplusValueLastHour);
-        Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
-        surplusValueLine.positionCount++;
-        surplusValueLine.SetPosition(surplusValueLine.positionCount - 1, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
+    //     Vector2 surplusValuePoint = new Vector2(simulationTime, surplusValueLastHour);
+    //     Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
+    //     surplusValueLine.positionCount++;
+    //     surplusValueLine.SetPosition(surplusValueLine.positionCount - 1, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
 
-    }
+    // }
 
-    private void InstantiateLines()
-    {
-        grossProfitLine = Instantiate(lrPrefab, graphContainer);
-        grossProfitLine.positionCount = 0;
-        grossProfitLine.startColor = colors[0];
-        grossProfitLine.endColor = colors[0];
+    // private void InstantiateLines()
+    // {
+    //     grossProfitLine = Instantiate(lrPrefab, graphContainer);
+    //     grossProfitLine.positionCount = 0;
+    //     grossProfitLine.startColor = colors[0];
+    //     grossProfitLine.endColor = colors[0];
 
-        surplusValueLine = Instantiate(lrPrefab, graphContainer);
-        surplusValueLine.positionCount = 0;
-        surplusValueLine.startColor = colors[1];
-        surplusValueLine.endColor = colors[1];
+    //     surplusValueLine = Instantiate(lrPrefab, graphContainer);
+    //     surplusValueLine.positionCount = 0;
+    //     surplusValueLine.startColor = colors[1];
+    //     surplusValueLine.endColor = colors[1];
 
 
-        (float[] expectedGrossProfitByHour, float[] expectedSurplusValueByHour) = DriverPool.CalculateExpectedAverageProfitabilityByHour();
+    //     (float[] expectedGrossProfitByHour, float[] expectedSurplusValueByHour) = DriverPool.CalculateExpectedAverageProfitabilityByHour();
 
-        expectedGrossProfitLine = Instantiate(lrPrefab, graphContainer);
-        expectedGrossProfitLine.positionCount = expectedGrossProfitByHour.Length;
-        expectedGrossProfitLine.startColor = colors[2];
-        expectedGrossProfitLine.endColor = colors[2];
+    //     expectedGrossProfitLine = Instantiate(lrPrefab, graphContainer);
+    //     expectedGrossProfitLine.positionCount = expectedGrossProfitByHour.Length;
+    //     expectedGrossProfitLine.startColor = colors[2];
+    //     expectedGrossProfitLine.endColor = colors[2];
 
-        expectedSurplusValueLine = Instantiate(lrPrefab, graphContainer);
-        expectedSurplusValueLine.positionCount = expectedSurplusValueByHour.Length;
-        expectedSurplusValueLine.startColor = colors[3];
-        expectedSurplusValueLine.endColor = colors[3];
+    //     expectedSurplusValueLine = Instantiate(lrPrefab, graphContainer);
+    //     expectedSurplusValueLine.positionCount = expectedSurplusValueByHour.Length;
+    //     expectedSurplusValueLine.startColor = colors[3];
+    //     expectedSurplusValueLine.endColor = colors[3];
 
-        for (int i = 0; i < expectedGrossProfitByHour.Length; i++)
-        {
-            float grossProfit = expectedGrossProfitByHour[i] == null ? 0 : expectedGrossProfitByHour[i];
-            float surplusValue = expectedSurplusValueByHour[i] == null ? 0 : expectedSurplusValueByHour[i];
+    //     for (int i = 0; i < expectedGrossProfitByHour.Length; i++)
+    //     {
+    //         float grossProfit = expectedGrossProfitByHour[i] == null ? 0 : expectedGrossProfitByHour[i];
+    //         float surplusValue = expectedSurplusValueByHour[i] == null ? 0 : expectedSurplusValueByHour[i];
 
-            float averageTimeInHour = i + 0.5f; // For example, 00:30 is the average time in the first hour
-            Vector2 grossProfitPoint = new Vector2(averageTimeInHour, grossProfit);
-            Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
-            expectedGrossProfitLine.SetPosition(i, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
+    //         float averageTimeInHour = i + 0.5f; // For example, 00:30 is the average time in the first hour
+    //         Vector2 grossProfitPoint = new Vector2(averageTimeInHour, grossProfit);
+    //         Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);
+    //         expectedGrossProfitLine.SetPosition(i, new Vector3(grossProfitGraphPosition.x, grossProfitGraphPosition.y, 0));
 
-            Vector2 surplusValuePoint = new Vector2(averageTimeInHour, surplusValue);
-            Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
-            expectedSurplusValueLine.SetPosition(i, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
-        }
-    }
+    //         Vector2 surplusValuePoint = new Vector2(averageTimeInHour, surplusValue);
+    //         Vector2 surplusValueGraphPosition = ConvertValueToGraphPosition(surplusValuePoint);
+    //         expectedSurplusValueLine.SetPosition(i, new Vector3(surplusValueGraphPosition.x, surplusValueGraphPosition.y, 0));
+    //     }
+    // }
 
     private void CreateHeaderText()
     {

@@ -67,6 +67,8 @@ public class Passenger : MonoBehaviour
     public bool hasAcceptedRideOffer = false;
     public Trip currentTrip;
 
+    private City city;
+
     public PassengerEconomicParameters passengerEconomicParameters;
 
     void Awake()
@@ -74,19 +76,28 @@ public class Passenger : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        destination = GridUtils.GetRandomPosition(GameManager.Instance.passengerSpawnRandom);
         waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
         utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
         passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
     }
 
+    void Start()
+    {
+        destination = GridUtils.GetRandomPosition(city.passengerSpawnRandom);
+
+        Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+        GenerateEconomicParameters();
+
+        Invoke("MakeTripDecision", 1f);
+    }
+
     void GenerateEconomicParameters()
     {
-        float hourlyIncome = SimulationSettings.GetRandomHourlyIncome(GameManager.Instance.passengerSpawnRandom);
+        float hourlyIncome = SimulationSettings.GetRandomHourlyIncome(city.passengerSpawnRandom);
         float tripUtilityScore = GenerateTripUtilityScore();
         // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
-        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(GameManager.Instance.passengerSpawnRandom, 1.5f, 0.5f, 0, 3f);
+        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(city.passengerSpawnRandom, 1.5f, 0.5f, 0, 3f);
         float waitingCostPerHour = hourlyIncome * timePreference;
         // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
@@ -107,11 +118,10 @@ public class Passenger : MonoBehaviour
     Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
     {
         float tripDistance = GridUtils.GetDistance(positionActual, destination);
+        Random random = city.passengerSpawnRandom;
 
         // Public transport
         float publicTransportTime = tripDistance / SimulationSettings.publicTransportSpeed;
-        // Public transport
-        Random random = GameManager.Instance.passengerSpawnRandom;
         // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
         float publicTransportAdditionalTime = Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
         float publicTransportTimeCost = (publicTransportTime + publicTransportAdditionalTime) * waitingCostPerHour;
@@ -190,21 +200,15 @@ public class Passenger : MonoBehaviour
 
         float mu = 0;
         float sigma = 0.4f;
-        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(GameManager.Instance.passengerSpawnRandom, mu, sigma);
+        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(city.passengerSpawnRandom, mu, sigma);
         // Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
         return tripUtilityScore;
     }
-    void Start()
-    {
-        Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
-        GenerateEconomicParameters();
 
-        Invoke("MakeTripDecision", 1f);
-    }
 
     void MakeTripDecision()
     {
-        RideOffer rideOffer = GameManager.Instance.RequestRideOffer(positionActual, destination);
+        RideOffer rideOffer = city.RequestRideOffer(positionActual, destination);
 
 
         float tripCreatedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
@@ -257,7 +261,7 @@ public class Passenger : MonoBehaviour
         if (hasAcceptedRideOffer)
         {
             // Debug.Log("Passenger " + id + " is hailing a taxi");
-            currentTrip = GameManager.Instance.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
+            currentTrip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
             SetState(PassengerState.AssignedToTrip);
         }
         else
@@ -272,7 +276,7 @@ public class Passenger : MonoBehaviour
     }
 
 
-    public static Passenger Create(Transform prefab, float x, float z)
+    public static Passenger Create(Transform prefab, float x, float z, City city)
     {
 
         Quaternion rotation = Quaternion.identity;
@@ -296,6 +300,7 @@ public class Passenger : MonoBehaviour
         passengerTransform.name = "Passenger";
         Passenger passenger = passengerTransform.GetComponent<Passenger>();
         passenger.positionActual = new Vector3(x, 0.08f, z);
+        passenger.city = city;
         return passenger;
     }
 
