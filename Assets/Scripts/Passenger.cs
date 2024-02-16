@@ -296,7 +296,9 @@ public class Passenger : MonoBehaviour
 
         }
 
-        Transform passengerTransform = Instantiate(prefab, new Vector3(xVisual, 0.08f, zVisual), rotation);
+        Transform passengerTransform = Instantiate(prefab, city.transform, false);
+        passengerTransform.rotation = rotation;
+        passengerTransform.localPosition = new Vector3(xVisual, 0.08f, zVisual);
         passengerTransform.name = "Passenger";
         Passenger passenger = passengerTransform.GetComponent<Passenger>();
         passenger.positionActual = new Vector3(x, 0.08f, z);

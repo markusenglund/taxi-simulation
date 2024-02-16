@@ -45,7 +45,8 @@ public class Driver : MonoBehaviour
 
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z, City city)
     {
-        Transform taxi = Instantiate(prefab, new Vector3(x, 0.05f, z), Quaternion.identity);
+        Transform taxi = Instantiate(prefab, city.transform, false);
+        taxi.localPosition = new Vector3(x, 0.05f, z);
         Driver driver = taxi.GetComponent<Driver>();
         driver.city = city;
         driver.driverPerson = person;
@@ -228,7 +229,7 @@ public class Driver : MonoBehaviour
         waypoints.Clear();
 
         // Set up the waypoints
-        Vector3 taxiPosition = transform.position;
+        Vector3 taxiPosition = transform.localPosition;
         Vector3 taxiDestination = destination;
 
         Vector3 taxiDirection = taxiDestination - taxiPosition;
@@ -290,7 +291,7 @@ public class Driver : MonoBehaviour
             // Read the first waypoint from the queue without dequeuing it
             Vector3 waypoint = waypoints.Peek();
 
-            Vector3 direction = waypoint - transform.position;
+            Vector3 direction = waypoint - transform.localPosition;
             if (direction != Vector3.zero)
             {
                 transform.rotation = Quaternion.LookRotation(direction);
@@ -302,15 +303,15 @@ public class Driver : MonoBehaviour
             float distanceDelta = realSpeed * Time.deltaTime;
 
             // If the taxi is very close to the destination, drive slower
-            if ((destination - transform.position).magnitude < 0.15f)
+            if ((destination - transform.localPosition).magnitude < 0.15f)
             {
                 distanceDelta = distanceDelta / 3;
             }
 
-            transform.position = Vector3.MoveTowards(transform.position, waypoint, distanceDelta);
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, waypoint, distanceDelta);
 
             // If the taxi has reached the first waypoint, remove the first endpoint from the endpoints array
-            if (transform.position == waypoint)
+            if (transform.localPosition == waypoint)
             {
                 waypoints.Dequeue();
 

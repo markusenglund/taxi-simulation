@@ -11,6 +11,6 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        city1 = City.Create(cityPrefab, 0, 0);
+        city1 = City.Create(cityPrefab, 10, 10);
     }
 }

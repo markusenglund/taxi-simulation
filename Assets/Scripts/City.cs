@@ -60,7 +60,7 @@ public class City : MonoBehaviour
 
     void Awake()
     {
-        GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab);
+        GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
         // Create taxis in random places
         driverPool = new DriverPool(this);
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
@@ -321,7 +321,7 @@ public class City : MonoBehaviour
     private void DispatchDriver(Driver driver, Trip trip)
     {
         Passenger passenger = trip.tripCreatedData.passenger;
-        trip.DispatchDriver(driver.transform.position);
+        trip.DispatchDriver(driver.transform.localPosition);
         driver.HandleDriverDispatched(trip);
         // Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
     }
@@ -363,7 +363,7 @@ public class City : MonoBehaviour
         Trip trip = GetNextTrip();
         if (trip != null)
         {
-            float enRouteDistance = GridUtils.GetDistance(driver.transform.position, trip.tripCreatedData.passenger.positionActual);
+            float enRouteDistance = GridUtils.GetDistance(driver.transform.localPosition, trip.tripCreatedData.passenger.positionActual);
             trip.AssignDriver(driver, enRouteDistance);
             driver.HandleDriverAssigned(trip);
             DispatchDriver(driver, trip);
@@ -403,7 +403,7 @@ public class City : MonoBehaviour
             {
                 continue;
             }
-            float distance = GridUtils.GetDistance(driver.transform.position, position);
+            float distance = GridUtils.GetDistance(driver.transform.localPosition, position);
             if (distance < closestTaxiDistance)
             {
                 closestTaxiDistance = distance;

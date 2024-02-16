@@ -36,7 +36,7 @@ public class GridUtils : MonoBehaviour
         return Math.Abs(position1.x - position2.x) + Math.Abs(position1.z - position2.z);
     }
 
-    public static void GenerateStreetGrid(Transform intersectionPrefab, Transform streetPrefab)
+    public static void GenerateStreetGrid(Transform intersectionPrefab, Transform streetPrefab, City city)
     {
         // Generate the street grid
         for (int x = 0; x < numTilesX; x++)
@@ -45,18 +45,22 @@ public class GridUtils : MonoBehaviour
             {
                 if (x % (blockSize) == 0 && z % (blockSize) == 0)
                 {
-                    Transform intersection = Instantiate(intersectionPrefab, new Vector3(x, 0, z), Quaternion.identity);
+                    Transform intersection = Instantiate(intersectionPrefab, city.transform, false);
+                    intersection.localPosition = new Vector3(x, 0, z);
                     intersection.name = "Intersection (" + x + ", " + z + ")";
                 }
                 else if (x % (blockSize) == 0)
                 {
                     // Rotate the street 90 degrees in the y direction
-                    Transform street = Instantiate(streetPrefab, new Vector3(x, 0, z), Quaternion.Euler(0, 90, 0));
+                    Transform street = Instantiate(streetPrefab, city.transform, false);
+                    street.localPosition = new Vector3(x, 0, z);
+                    street.rotation = Quaternion.Euler(0, 90, 0);
                     street.name = "Street (" + x + ", " + z + ")";
                 }
                 else if (z % (blockSize) == 0)
                 {
-                    Transform street = Instantiate(streetPrefab, new Vector3(x, 0, z), Quaternion.identity);
+                    Transform street = Instantiate(streetPrefab, city.transform);
+                    street.localPosition = new Vector3(x, 0, z);
                     street.name = "Street (" + x + ", " + z + ")";
                 }
             }
