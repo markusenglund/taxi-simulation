@@ -108,9 +108,9 @@ public class Passenger : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
+        // utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
-        passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
+        // passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
     }
 
     void Start()
@@ -288,7 +288,7 @@ public class Passenger : MonoBehaviour
         };
 
 
-        utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
+        // utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
         if (hasAcceptedRideOffer)
         {
             // Debug.Log("Passenger " + id + " is hailing a taxi");
@@ -298,7 +298,7 @@ public class Passenger : MonoBehaviour
         else
         {
             // Debug.Log("Passenger " + id + " is giving up");
-            passengerSurplusGraph.AppendPassenger(this);
+            // passengerSurplusGraph.AppendPassenger(this);
             SetState(PassengerState.RejectedRideOffer);
             Destroy(gameObject);
         }
@@ -345,7 +345,7 @@ public class Passenger : MonoBehaviour
             utilitySurplus = utilitySurplus
         };
 
-        passengerSurplusGraph.AppendPassenger(this);
+        // passengerSurplusGraph.AppendPassenger(this);
 
 
         return droppedOffPassengerData;

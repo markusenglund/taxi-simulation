@@ -30,6 +30,12 @@ public class City : MonoBehaviour
     [SerializeField] public Transform streetPrefab;
     [SerializeField] public Transform passengerPrefab;
     [SerializeField] public Transform WaitingTimeGraphPrefab;
+    [SerializeField] public Transform DriverProfitGraphPrefab;
+    [SerializeField] public Transform SupplyDemandGraphPrefab;
+    [SerializeField] public Transform PassengerSurplusGraphPrefab;
+    [SerializeField] public Transform UtilityIncomeScatterPlotPrefab;
+    [SerializeField] public Transform ResultsInfoBoxPrefab;
+    [SerializeField] public Transform SurgeMultiplierGraphicPrefab;
 
     private List<Driver> drivers = new List<Driver>();
     private Queue<Trip> queuedTrips = new Queue<Trip>();
@@ -48,6 +54,7 @@ public class City : MonoBehaviour
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
     private WaitingTimeGraph waitingTimeGraph;
+    private DriverProfitGraph driverProfitGraph;
 
     private bool simulationEnded = false;
 
@@ -69,12 +76,13 @@ public class City : MonoBehaviour
 
     void Start()
     {
-        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
         // Create taxis in random places
         driverPool = new DriverPool(this);
+        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
+        driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
         {
@@ -84,7 +92,7 @@ public class City : MonoBehaviour
         }
         // createInitialPassengers();
         StartCoroutine(createPassengers());
-        surgeMultiplierGraphic = GameObject.Find("SurgeMultiplierGraphic").GetComponent<SurgeMultiplierGraphic>();
+        // surgeMultiplierGraphic = GameObject.Find("SurgeMultiplierGraphic").GetComponent<SurgeMultiplierGraphic>();
     }
 
     void Update()
@@ -167,7 +175,7 @@ public class City : MonoBehaviour
         // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
         surgeMultiplier = newSurgeMultiplier;
-        surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
+        // surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
     }
 
 

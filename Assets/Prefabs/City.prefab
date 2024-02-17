@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8656776186715745561}
-  - component: {fileID: 83153334833719256}
+  - component: {fileID: 3347504248338883973}
   m_Layer: 0
   m_Name: City
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &83153334833719256
+--- !u!114 &3347504248338883973
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49,5 +49,12 @@ MonoBehaviour:
   streetPrefab: {fileID: 7181299878841271177, guid: b67119c1261d82d4d8a9ec815ee8f042, type: 3}
   passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
   WaitingTimeGraphPrefab: {fileID: 5372275232407353875, guid: c11db59e93cb242628c7037de08f6630, type: 3}
+  DriverProfitGraphPrefab: {fileID: 2543086480804735505, guid: fc05f94fb80ed4e4a859d579ea6c6ecb, type: 3}
+  SupplyDemandGraphPrefab: {fileID: 3936727528733972511, guid: 80e4c1eea23f64856ab16ef01e5a1172, type: 3}
+  PassengerSurplusGraphPrefab: {fileID: 8346213859251771231, guid: ff6804e117f9048b7bcf7f30f4849dff, type: 3}
+  UtilityIncomeScatterPlotPrefab: {fileID: 2398649129132778600, guid: 58570930bf57443818e5333589a6d4b0, type: 3}
+  ResultsInfoBoxPrefab: {fileID: 3770816022950029054, guid: 63987159bb75146b2ba5c568ab664132, type: 3}
+  SurgeMultiplierGraphicPrefab: {fileID: 5964872919997189104, guid: 8e5ed687f16f44b54b11967e66937a9c, type: 3}
   surgeMultiplier: 1
   simulationSettings: {fileID: 0}
+  graphSettings: {fileID: 0}
