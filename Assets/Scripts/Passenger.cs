@@ -72,7 +72,7 @@ public class Passenger : MonoBehaviour
     public PassengerEconomicParameters passengerEconomicParameters;
 
 
-    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph)
+    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot)
     {
 
         Quaternion rotation = Quaternion.identity;
@@ -101,6 +101,7 @@ public class Passenger : MonoBehaviour
         passenger.city = city;
         passenger.waitingTimeGraph = waitingTimeGraph;
         passenger.passengerSurplusGraph = passengerSurplusGraph;
+        passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
         return passenger;
     }
 
@@ -109,7 +110,6 @@ public class Passenger : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        // utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
     }
 
@@ -288,7 +288,7 @@ public class Passenger : MonoBehaviour
         };
 
 
-        // utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
+        utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
         if (hasAcceptedRideOffer)
         {
             // Debug.Log("Passenger " + id + " is hailing a taxi");

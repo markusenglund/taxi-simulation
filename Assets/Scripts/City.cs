@@ -56,6 +56,7 @@ public class City : MonoBehaviour
     private WaitingTimeGraph waitingTimeGraph;
     private DriverProfitGraph driverProfitGraph;
     private PassengerSurplusGraph passengerSurplusGraph;
+    private UtilityIncomeScatterPlot utilityIncomeScatterPlot;
 
     private bool simulationEnded = false;
 
@@ -86,6 +87,8 @@ public class City : MonoBehaviour
         driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
         SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
         passengerSurplusGraph = PassengerSurplusGraph.Create(PassengerSurplusGraphPrefab, graphSettings.passengerSurplusGraphPos, simulationSettings);
+        utilityIncomeScatterPlot = UtilityIncomeScatterPlot.Create(UtilityIncomeScatterPlotPrefab, graphSettings.passengerScatterPlotPos);
+
 
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
@@ -189,7 +192,7 @@ public class City : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph);
+            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
             passengers.Add(passenger);
         }
     }
@@ -224,7 +227,7 @@ public class City : MonoBehaviour
             for (int i = 0; i < numPassengersToCreate; i++)
             {
                 Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph);
+                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
                 passengers.Add(passenger);
             }
         }

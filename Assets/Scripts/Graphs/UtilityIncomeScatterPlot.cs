@@ -29,7 +29,17 @@ public class UtilityIncomeScatterPlot : MonoBehaviour
     float minIncome = 0f;
 
 
-    private void Awake()
+    public static UtilityIncomeScatterPlot Create(Transform prefab, Vector3 screenPos)
+    {
+        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform graphTransform = Instantiate(prefab, canvas);
+        RectTransform graphRectTransform = graphTransform.GetComponent<RectTransform>();
+
+        graphRectTransform.anchoredPosition = screenPos;
+        UtilityIncomeScatterPlot graph = graphTransform.GetComponent<UtilityIncomeScatterPlot>();
+        return graph;
+    }
+    private void Start()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         InstantiateGraph();
