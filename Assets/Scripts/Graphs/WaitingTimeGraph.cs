@@ -24,11 +24,11 @@ public class WaitingTimeGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = 0f;
-    float maxX = 4; // TODO: SimulationSettings.simulationLengthHours;
+    float maxX;
     float minX = 0f;
 
 
-    public static WaitingTimeGraph Create(Transform prefab, Vector3 screenPos)
+    public static WaitingTimeGraph Create(Transform prefab, Vector3 screenPos, SimulationSettings simSettings)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform graphTransform = Instantiate(prefab, canvas);
@@ -36,9 +36,10 @@ public class WaitingTimeGraph : MonoBehaviour
 
         graphRectTransform.anchoredPosition = screenPos;
         WaitingTimeGraph graph = graphTransform.GetComponent<WaitingTimeGraph>();
+        graph.maxX = simSettings.simulationLengthHours;
         return graph;
     }
-    private void Awake()
+    private void Start()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         InstantiateGraph();

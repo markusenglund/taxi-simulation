@@ -69,7 +69,7 @@ public class City : MonoBehaviour
 
     void Start()
     {
-        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos);
+        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
