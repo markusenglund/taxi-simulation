@@ -57,7 +57,7 @@ public class Driver : MonoBehaviour
 
     IEnumerator PickUpPassenger()
     {
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(SimulationSettings.timeSpentWaitingForPassenger));
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
         // Put the passenger on top of the taxi cab
         Passenger passenger = currentTrip.tripCreatedData.passenger;
         passenger.transform.SetParent(transform);
@@ -82,7 +82,7 @@ public class Driver : MonoBehaviour
         PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
         {
             timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
-            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * SimulationSettings.driverMarginalCostPerKm
+            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * city.simulationSettings.driverMarginalCostPerKm
         };
 
 
@@ -121,7 +121,7 @@ public class Driver : MonoBehaviour
         float opportunityCostPerHour = driverPerson.GetOpportunityCostForHour(Mathf.FloorToInt(currentTrip.pickedUpData.pickedUpTime));
 
         float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
-        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * SimulationSettings.driverMarginalCostPerKm;
+        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * city.simulationSettings.driverMarginalCostPerKm;
         float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip - currentTrip.pickedUpDriverData.marginalCostEnRoute;
         float valueSurplus = grossProfit - timeCostOnTrip;
         float utilitySurplus = valueSurplus / driverPerson.baseOpportunityCostPerHour;
@@ -298,7 +298,7 @@ public class Driver : MonoBehaviour
             }
 
             // Distance delta should be lower if the taxi is close to the destination
-            float realSpeed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(SimulationSettings.driverSpeed);
+            float realSpeed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(city.simulationSettings.driverSpeed);
 
             float distanceDelta = realSpeed * Time.deltaTime;
 

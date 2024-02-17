@@ -24,7 +24,7 @@ public class DriverProfitGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = -10f;
-    float maxX = SimulationSettings.simulationLengthHours;
+    float maxX = 4;// TODO: FIXME: SimulationSettings.simulationLengthHours;
     float minX = 0f;
 
     const float timeInterval = 30f / 60f;

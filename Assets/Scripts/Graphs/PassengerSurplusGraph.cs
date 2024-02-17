@@ -29,7 +29,7 @@ public class PassengerSurplusGraph : MonoBehaviour
   float marginTop = 50f;
   float maxY = 3f;
   float minY = 0f;
-  float maxX = SimulationSettings.simulationLengthHours;
+  float maxX = 4; // TODO: SimulationSettings.simulationLengthHours;
   float minX = 0f;
   Color[] quartileColors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 

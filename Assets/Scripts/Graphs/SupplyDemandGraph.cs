@@ -21,7 +21,7 @@ public class SupplyDemandGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = 0f;
-    float maxX = SimulationSettings.simulationLengthHours;
+    float maxX = 4; // TODO: SimulationSettings.simulationLengthHours;
     float minX = 0f;
 
     float timeInterval = 20f / 60f;

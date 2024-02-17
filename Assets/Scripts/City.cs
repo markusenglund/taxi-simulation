@@ -41,8 +41,8 @@ public class City : MonoBehaviour
 
     public float surgeMultiplier = 1.0f;
 
-    public Random passengerSpawnRandom = new Random(SimulationSettings.randomSeed);
-    public Random driverSpawnRandom = new Random(SimulationSettings.randomSeed);
+    public Random passengerSpawnRandom;
+    public Random driverSpawnRandom;
 
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
@@ -57,9 +57,13 @@ public class City : MonoBehaviour
         return city;
     }
 
+    public SimulationSettings simulationSettings = new SimulationSettings();
+
 
     void Awake()
     {
+        passengerSpawnRandom = new Random(simulationSettings.randomSeed);
+        driverSpawnRandom = new Random(simulationSettings.randomSeed);
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
         // Create taxis in random places
         driverPool = new DriverPool(this);
@@ -79,7 +83,7 @@ public class City : MonoBehaviour
     {
         SpawnAndRemoveDrivers();
         EndSimulation();
-        if (!SimulationSettings.useConstantSurgeMultiplier && !simulationEnded)
+        if (!simulationSettings.useConstantSurgeMultiplier && !simulationEnded)
         {
             UpdateSurgeMultiplier();
         }
@@ -88,7 +92,7 @@ public class City : MonoBehaviour
     private void EndSimulation()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        if (simulationTime > SimulationSettings.simulationLengthHours + 0.1 / 60f) // Add a small buffer to make sure all data collection at the top of the hour finishes
+        if (simulationTime > simulationSettings.simulationLengthHours + 0.1 / 60f) // Add a small buffer to make sure all data collection at the top of the hour finishes
         {
             Time.timeScale = 0;
             simulationEnded = true;
@@ -139,7 +143,7 @@ public class City : MonoBehaviour
 
         int numWaitingPassengers = queuedTrips.Count;
         int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
-        float tripCapacityNextHour = Math.Max(drivers.Count * SimulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
+        float tripCapacityNextHour = Math.Max(drivers.Count * simulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
 
         float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
 
@@ -151,7 +155,7 @@ public class City : MonoBehaviour
         float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 3, minMultiplier);
         // float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(demandPerSupply * (1 - uncertaintyModifier), maxSurgeMultiplier);
 
-        // float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
+        // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
         // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
         surgeMultiplier = newSurgeMultiplier;
@@ -174,7 +178,7 @@ public class City : MonoBehaviour
     {
 
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        while (simulationTime < SimulationSettings.simulationLengthHours)
+        while (simulationTime < simulationSettings.simulationLengthHours)
         {
 
             float expectedPassengersPerHour = GetNumExpectedPassengersPerHour();
@@ -212,7 +216,7 @@ public class City : MonoBehaviour
         // Get the demand index for the two hours surrounding the current time and get the weighted average of them
         int currentHour = Mathf.FloorToInt(simulationTime);
         float percentOfHour = simulationTime - currentHour;
-        float[] expectedPassengersByHour = SimulationSettings.expectedPassengersByHour;
+        float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
         float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * (1 - percentOfHour) + expectedPassengersByHour[(currentHour + 1) % 24] * percentOfHour;
         return expectedPassengersPerHour;
     }
@@ -418,8 +422,8 @@ public class City : MonoBehaviour
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
         if (closestTaxi != null)
         {
-            float extraPickUpTime = SimulationSettings.timeSpentWaitingForPassenger + 0.6f / 60f;
-            float expectedWaitingTime = (closestTaxiDistance / SimulationSettings.driverSpeed) + extraPickUpTime;
+            float extraPickUpTime = simulationSettings.timeSpentWaitingForPassenger + 0.6f / 60f;
+            float expectedWaitingTime = (closestTaxiDistance / simulationSettings.driverSpeed) + extraPickUpTime;
             return expectedWaitingTime;
         }
 
@@ -436,10 +440,10 @@ public class City : MonoBehaviour
 
     private Fare GetFare(float distance)
     {
-        float baseFare = SimulationSettings.baseStartingFare + (distance * SimulationSettings.baseFarePerKm);
+        float baseFare = simulationSettings.baseStartingFare + (distance * simulationSettings.baseFarePerKm);
         float total = baseFare * surgeMultiplier;
-        float driverCut = total * SimulationSettings.driverFareCutPercentage;
-        float uberCut = total * SimulationSettings.uberFareCutPercentage;
+        float driverCut = total * simulationSettings.driverFareCutPercentage;
+        float uberCut = total * simulationSettings.uberFareCutPercentage;
         Fare fare = new Fare()
         {
             baseFare = baseFare,
@@ -457,7 +461,7 @@ public class City : MonoBehaviour
         float tripDistance = GridUtils.GetDistance(position, destination);
         Fare fare = GetFare(tripDistance);
         float expectedWaitingTime = GetExpectedWaitingTime(position);
-        float expectedTripTime = tripDistance / SimulationSettings.driverSpeed + 0.6f / 60f;
+        float expectedTripTime = tripDistance / simulationSettings.driverSpeed + 0.6f / 60f;
 
         RideOffer tripOffer = new RideOffer
         {

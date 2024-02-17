@@ -5,37 +5,37 @@ using UnityEngine;
 
 using Random = System.Random;
 
-public static class SimulationSettings
+public class SimulationSettings
 {
-    public const bool useConstantSupplyMode = true;
-    public const bool useConstantSurgeMultiplier = true;
+    public readonly bool useConstantSupplyMode = true;
+    public readonly bool useConstantSurgeMultiplier = true;
 
-    public const int randomSeed = 1;
+    public readonly int randomSeed = 1;
 
-    public const int simulationLengthHours = 4;
+    public readonly int simulationLengthHours = 4;
 
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
-    public const float driverSpeed = 30f;
-    public const float walkingSpeed = 3.5f;
-    public const float publicTransportSpeed = 25f;
-    public const float timeSpentWaitingForPassenger = 1f / 60f;
+    public readonly float driverSpeed = 30f;
+    public readonly float walkingSpeed = 3.5f;
+    public readonly float publicTransportSpeed = 25f;
+    public readonly float timeSpentWaitingForPassenger = 1f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
-    public const float baseStartingFare = 4f;
-    public const float baseFarePerKm = 1.5f;
+    public readonly float baseStartingFare = 4f;
+    public readonly float baseFarePerKm = 1.5f;
     // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
-    public const float driverFareCutPercentage = 0.67f;
-    public const float uberFareCutPercentage = 0.33f;
+    public readonly float driverFareCutPercentage = 0.67f;
+    public readonly float uberFareCutPercentage = 0.33f;
 
     // Driver economic parameters
 
     // Marginal costs include fuel + the part of maintenance, repairs, and depreciation that is proportional to the distance driven, estimated at $0.21 per mile = $0.13 per km
-    public const float driverMarginalCostPerKm = 0.13f;
-    public const float driverFixedCostsPerDay = 5f;
+    public readonly float driverMarginalCostPerKm = 0.13f;
+    public readonly float driverFixedCostsPerDay = 5f;
 
     // This value is supposed to be directly comparable to the demand index. If the demand index is 1 and the supply index is 2, then the expected number of passengers is 2x the expected number of maximum trip capacity for that hour
-    public static readonly Dictionary<int, float> firstEstimationOfSupplyIndexByHour = new Dictionary<int, float>()
+    public readonly Dictionary<int, float> firstEstimationOfSupplyIndexByHour = new Dictionary<int, float>()
     {
         { 0, 5f },
         { 1, 3f },
@@ -64,18 +64,18 @@ public static class SimulationSettings
         { 24, 12f}
     };
 
-    public const int numDrivers = 5;
+    public readonly int numDrivers = 5;
 
     // When a driver has a session length that is within an hour of the simulation length, it screws up the profitability calculations
-    public const int maxSessionLength = simulationLengthHours - 2;
-    public static (int start, int end) sessionLengthRange = (Math.Min(4, maxSessionLength - 1), Math.Min(8, maxSessionLength));
+    public readonly int maxSessionLength;
+    public (int start, int end) sessionLengthRange;
 
 
     // Passenger economic parameters
-    public const float passengerMedianIncome = 20;
-    public const float passengerIncomeSigma = 0.9f;
+    public readonly float passengerMedianIncome = 20;
+    public readonly float passengerIncomeSigma = 0.9f;
 
-    public static readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
+    public readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
         {
             { 0, 2f },
             { 1, 2f },
@@ -85,7 +85,7 @@ public static class SimulationSettings
         };
 
     // Based on real friday data, demand is indexed by as 1 being the lowest measured number
-    public static readonly Dictionary<int, float> demandIndexByHour2 = new Dictionary<int, float>()
+    public readonly Dictionary<int, float> demandIndexByHour2 = new Dictionary<int, float>()
     // TODO: We should add some data for start of Saturday to help drivers make an informed decision when they pick a session
     {
         { 0, 5f },
@@ -115,17 +115,17 @@ public static class SimulationSettings
         { 24, 12f}
     };
 
-    public const float demandIndexMultiplier = 5;
+    public readonly float demandIndexMultiplier = 5;
 
     // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
-    public const float driverAverageTripsPerHour = 2.85f;
+    public readonly float driverAverageTripsPerHour = 2.85f;
 
     // Computed values
-    public static float[] expectedPassengersByHour = GetExpectedPassengersByHour();
+    public float[] expectedPassengersByHour;
 
 
 
-    private static float[] GetExpectedPassengersByHour()
+    private float[] GetExpectedPassengersByHour()
     {
         // Example: If the calculation is 24 hrs we have to calculate number of passengers for 24:00, since at any given time we take a weighted average of the previous and next top of the hour
         int numHourToCalculate = simulationLengthHours + 1;
@@ -137,7 +137,7 @@ public static class SimulationSettings
         return expectedPassengersByHour;
     }
 
-    public static float[] GetFirstGuessTripCapacityByHour()
+    public float[] GetFirstGuessTripCapacityByHour()
     {
         float[] expectedTripCapacityByHour = new float[simulationLengthHours];
         for (int i = 0; i < simulationLengthHours; i++)
@@ -148,7 +148,7 @@ public static class SimulationSettings
         return expectedTripCapacityByHour;
     }
 
-    public static float GetRandomHourlyIncome(Random random)
+    public float GetRandomHourlyIncome(Random random)
     {
         // When agents income approach zero, their time becomes completely worthless which is not realistic, so we set a minimum income of 4$/hr
         // A log-normal distribution with mu=0, sigma=0.9, medianIncome=17. This a distribution with mean=27, median=20 and 2.3% of the population with income > 100
@@ -157,6 +157,13 @@ public static class SimulationSettings
         float hourlyIncome = minIncome + (passengerMedianIncome - minIncome) * StatisticsUtils.getRandomFromLogNormalDistribution(random, mu, passengerIncomeSigma);
 
         return hourlyIncome;
+    }
+
+    public SimulationSettings()
+    {
+        expectedPassengersByHour = GetExpectedPassengersByHour();
+        maxSessionLength = simulationLengthHours - 2;
+        sessionLengthRange = (Math.Min(4, maxSessionLength - 1), Math.Min(8, maxSessionLength));
     }
 
 }

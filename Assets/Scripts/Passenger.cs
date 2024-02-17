@@ -94,7 +94,7 @@ public class Passenger : MonoBehaviour
 
     void GenerateEconomicParameters()
     {
-        float hourlyIncome = SimulationSettings.GetRandomHourlyIncome(city.passengerSpawnRandom);
+        float hourlyIncome = city.simulationSettings.GetRandomHourlyIncome(city.passengerSpawnRandom);
         float tripUtilityScore = GenerateTripUtilityScore();
         // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
         float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(city.passengerSpawnRandom, 1.5f, 0.5f, 0, 3f);
@@ -121,7 +121,7 @@ public class Passenger : MonoBehaviour
         Random random = city.passengerSpawnRandom;
 
         // Public transport
-        float publicTransportTime = tripDistance / SimulationSettings.publicTransportSpeed;
+        float publicTransportTime = tripDistance / city.simulationSettings.publicTransportSpeed;
         // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
         float publicTransportAdditionalTime = Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
         float publicTransportTimeCost = (publicTransportTime + publicTransportAdditionalTime) * waitingCostPerHour;
@@ -139,7 +139,7 @@ public class Passenger : MonoBehaviour
         };
 
         // Walking
-        float walkingTime = tripDistance / SimulationSettings.walkingSpeed;
+        float walkingTime = tripDistance / city.simulationSettings.walkingSpeed;
         float timeCostOfWalking = walkingTime * waitingCostPerHour;
         float moneyCostOfWalking = 0;
         float utilityCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
@@ -155,11 +155,11 @@ public class Passenger : MonoBehaviour
         };
 
         // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
-        float privateVehicleTime = tripDistance / SimulationSettings.driverSpeed;
+        float privateVehicleTime = tripDistance / city.simulationSettings.driverSpeed;
         // Add a 5 minute waiting cost for getting into the car
         float privateVehicleWaitingTime = 5 / 60f;
         float privateVehicleTimeCost = (privateVehicleTime + privateVehicleWaitingTime) * waitingCostPerHour;
-        float marginalCostEnRoute = tripDistance * SimulationSettings.driverMarginalCostPerKm;
+        float marginalCostEnRoute = tripDistance * city.simulationSettings.driverMarginalCostPerKm;
         float privateVehicleMoneyCost = 100f + marginalCostEnRoute;
         float privateVehicleUtilityCost = privateVehicleTimeCost + privateVehicleMoneyCost;
         float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
