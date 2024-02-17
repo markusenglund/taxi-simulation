@@ -28,6 +28,16 @@ public class WaitingTimeGraph : MonoBehaviour
     float minX = 0f;
 
 
+    public static WaitingTimeGraph Create(Transform prefab, Vector3 screenPos)
+    {
+        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform graphTransform = Instantiate(prefab, canvas);
+        RectTransform graphRectTransform = graphTransform.GetComponent<RectTransform>();
+
+        graphRectTransform.anchoredPosition = screenPos;
+        WaitingTimeGraph graph = graphTransform.GetComponent<WaitingTimeGraph>();
+        return graph;
+    }
     private void Awake()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();

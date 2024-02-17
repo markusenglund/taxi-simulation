@@ -29,6 +29,7 @@ public class City : MonoBehaviour
     [SerializeField] public Transform intersectionPrefab;
     [SerializeField] public Transform streetPrefab;
     [SerializeField] public Transform passengerPrefab;
+    [SerializeField] public Transform WaitingTimeGraphPrefab;
 
     private List<Driver> drivers = new List<Driver>();
     private Queue<Trip> queuedTrips = new Queue<Trip>();
@@ -46,17 +47,21 @@ public class City : MonoBehaviour
 
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
+    private WaitingTimeGraph waitingTimeGraph;
+
     private bool simulationEnded = false;
 
     private DriverPool driverPool;
 
     public SimulationSettings simulationSettings;
-    public static City Create(Transform cityPrefab, float x, float z, SimulationSettings simulationSettings)
+    public GraphSettings graphSettings;
+    public static City Create(Transform cityPrefab, float x, float z, SimulationSettings simulationSettings, GraphSettings graphSettings)
 
     {
         Transform cityTransform = Instantiate(cityPrefab, new Vector3(x, 0, z), Quaternion.identity);
         City city = cityTransform.GetComponent<City>();
         city.simulationSettings = simulationSettings;
+        city.graphSettings = graphSettings;
         return city;
     }
 
@@ -64,6 +69,7 @@ public class City : MonoBehaviour
 
     void Start()
     {
+        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos);
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
@@ -171,7 +177,7 @@ public class City : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this);
+            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph);
             passengers.Add(passenger);
         }
     }
@@ -206,7 +212,7 @@ public class City : MonoBehaviour
             for (int i = 0; i < numPassengersToCreate; i++)
             {
                 Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this);
+                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph);
                 passengers.Add(passenger);
             }
         }

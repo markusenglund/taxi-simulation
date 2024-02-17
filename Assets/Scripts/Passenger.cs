@@ -71,12 +71,43 @@ public class Passenger : MonoBehaviour
 
     public PassengerEconomicParameters passengerEconomicParameters;
 
+
+    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph)
+    {
+
+        Quaternion rotation = Quaternion.identity;
+
+        float xVisual = x;
+        float zVisual = z;
+
+        if (x % GridUtils.blockSize == 0)
+        {
+            xVisual = x + .23f;
+            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
+        }
+        if (z % GridUtils.blockSize == 0)
+        {
+            zVisual = z + .23f;
+            rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
+
+        }
+
+        Transform passengerTransform = Instantiate(prefab, city.transform, false);
+        passengerTransform.rotation = rotation;
+        passengerTransform.localPosition = new Vector3(xVisual, 0.08f, zVisual);
+        passengerTransform.name = "Passenger";
+        Passenger passenger = passengerTransform.GetComponent<Passenger>();
+        passenger.positionActual = new Vector3(x, 0.08f, z);
+        passenger.city = city;
+        passenger.waitingTimeGraph = waitingTimeGraph;
+        return passenger;
+    }
+
     void Awake()
     {
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        waitingTimeGraph = GameObject.Find("WaitingTimeGraph").GetComponent<WaitingTimeGraph>();
         utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
         passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
@@ -276,35 +307,6 @@ public class Passenger : MonoBehaviour
     }
 
 
-    public static Passenger Create(Transform prefab, float x, float z, City city)
-    {
-
-        Quaternion rotation = Quaternion.identity;
-
-        float xVisual = x;
-        float zVisual = z;
-
-        if (x % GridUtils.blockSize == 0)
-        {
-            xVisual = x + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
-        }
-        if (z % GridUtils.blockSize == 0)
-        {
-            zVisual = z + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
-
-        }
-
-        Transform passengerTransform = Instantiate(prefab, city.transform, false);
-        passengerTransform.rotation = rotation;
-        passengerTransform.localPosition = new Vector3(xVisual, 0.08f, zVisual);
-        passengerTransform.name = "Passenger";
-        Passenger passenger = passengerTransform.GetComponent<Passenger>();
-        passenger.positionActual = new Vector3(x, 0.08f, z);
-        passenger.city = city;
-        return passenger;
-    }
 
     public PickedUpPassengerData HandlePassengerPickedUp(PickedUpData pickedUpData)
     {

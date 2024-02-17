@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform cityPrefab;
     [SerializeField] public SimulationSettings sim1Settings;
     [SerializeField] public SimulationSettings sim2Settings;
+    [SerializeField] public GraphSettings sim1graphSettings;
+    [SerializeField] public GraphSettings sim2graphSettings;
 
     City city1;
     City city2;
@@ -14,7 +16,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        city1 = City.Create(cityPrefab, 0, 0, sim1Settings);
-        city2 = City.Create(cityPrefab, 8, 0, sim2Settings);
+        city1 = City.Create(cityPrefab, 0, 0, sim1Settings, sim1graphSettings);
+        city2 = City.Create(cityPrefab, 8, 0, sim2Settings, sim2graphSettings);
     }
 }

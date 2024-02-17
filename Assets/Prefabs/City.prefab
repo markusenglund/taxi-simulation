@@ -48,4 +48,6 @@ MonoBehaviour:
   intersectionPrefab: {fileID: 1970304053126654784, guid: d9cd80b04b1c1dc4eb54d0dac91436f3, type: 3}
   streetPrefab: {fileID: 7181299878841271177, guid: b67119c1261d82d4d8a9ec815ee8f042, type: 3}
   passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
+  WaitingTimeGraphPrefab: {fileID: 5372275232407353875, guid: c11db59e93cb242628c7037de08f6630, type: 3}
   surgeMultiplier: 1
+  simulationSettings: {fileID: 0}
