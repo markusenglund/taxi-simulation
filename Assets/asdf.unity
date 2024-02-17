@@ -1698,6 +1698,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
+  sim1Settings: {fileID: 11400000, guid: 019e238a4fa93471b82673b97cf3bd06, type: 2}
+  sim2Settings: {fileID: 11400000, guid: a941fc96683c4437a8176fca248470c2, type: 2}
 --- !u!114 &2057296553
 MonoBehaviour:
   m_ObjectHideFlags: 0

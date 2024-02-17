@@ -5,33 +5,34 @@ using UnityEngine;
 
 using Random = System.Random;
 
-public class SimulationSettings
+[CreateAssetMenu(fileName = "SimulationSettings", menuName = "SimulationSettings")]
+public class SimulationSettings : ScriptableObject
 {
-    public readonly bool useConstantSupplyMode = true;
-    public readonly bool useConstantSurgeMultiplier = true;
+    public bool useConstantSupplyMode = true;
+    public bool useConstantSurgeMultiplier = true;
 
-    public readonly int randomSeed = 1;
+    public int randomSeed = 1;
 
-    public readonly int simulationLengthHours = 4;
+    public int simulationLengthHours = 4;
 
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc)
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
-    public readonly float driverSpeed = 30f;
-    public readonly float walkingSpeed = 3.5f;
-    public readonly float publicTransportSpeed = 25f;
+    public float driverSpeed = 30f;
+    public float walkingSpeed = 3.5f;
+    public float publicTransportSpeed = 25f;
     public readonly float timeSpentWaitingForPassenger = 1f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
-    public readonly float baseStartingFare = 4f;
-    public readonly float baseFarePerKm = 1.5f;
+    public float baseStartingFare = 4f;
+    public float baseFarePerKm = 1.5f;
     // Cut percentages are not public for Uber but hover around 33% for Lyft according to both official statements and third-party analysis https://therideshareguy.com/how-much-is-lyft-really-taking-from-your-pay/
-    public readonly float driverFareCutPercentage = 0.67f;
-    public readonly float uberFareCutPercentage = 0.33f;
+    public float driverFareCutPercentage = 0.67f;
+    public readonly float uberFareCutPercentage;
 
     // Driver economic parameters
 
     // Marginal costs include fuel + the part of maintenance, repairs, and depreciation that is proportional to the distance driven, estimated at $0.21 per mile = $0.13 per km
-    public readonly float driverMarginalCostPerKm = 0.13f;
+    public float driverMarginalCostPerKm = 0.13f;
     public readonly float driverFixedCostsPerDay = 5f;
 
     // This value is supposed to be directly comparable to the demand index. If the demand index is 1 and the supply index is 2, then the expected number of passengers is 2x the expected number of maximum trip capacity for that hour
@@ -64,16 +65,17 @@ public class SimulationSettings
         { 24, 12f}
     };
 
-    public readonly int numDrivers = 5;
+    public int numDrivers = 5;
 
     // When a driver has a session length that is within an hour of the simulation length, it screws up the profitability calculations
-    public readonly int maxSessionLength;
+    public int maxSessionLength;
+    // TODO: Change structure of sessionLengthRange so it can show up in the inspector
     public (int start, int end) sessionLengthRange;
 
 
     // Passenger economic parameters
-    public readonly float passengerMedianIncome = 20;
-    public readonly float passengerIncomeSigma = 0.9f;
+    public float passengerMedianIncome = 20;
+    public float passengerIncomeSigma = 0.9f;
 
     public readonly Dictionary<int, float> demandIndexByHour = new Dictionary<int, float>()
         {
@@ -115,7 +117,7 @@ public class SimulationSettings
         { 24, 12f}
     };
 
-    public readonly float demandIndexMultiplier = 5;
+    public float demandIndexMultiplier = 5;
 
     // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
     public readonly float driverAverageTripsPerHour = 2.85f;
@@ -164,6 +166,7 @@ public class SimulationSettings
         expectedPassengersByHour = GetExpectedPassengersByHour();
         maxSessionLength = simulationLengthHours - 2;
         sessionLengthRange = (Math.Min(4, maxSessionLength - 1), Math.Min(8, maxSessionLength));
+        uberFareCutPercentage = 1 - driverFareCutPercentage;
     }
 
 }

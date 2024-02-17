@@ -50,17 +50,19 @@ public class City : MonoBehaviour
 
     private DriverPool driverPool;
 
-    public static City Create(Transform cityPrefab, float x, float z)
+    public SimulationSettings simulationSettings;
+    public static City Create(Transform cityPrefab, float x, float z, SimulationSettings simulationSettings)
+
     {
         Transform cityTransform = Instantiate(cityPrefab, new Vector3(x, 0, z), Quaternion.identity);
         City city = cityTransform.GetComponent<City>();
+        city.simulationSettings = simulationSettings;
         return city;
     }
 
-    public SimulationSettings simulationSettings = new SimulationSettings();
 
 
-    void Awake()
+    void Start()
     {
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
