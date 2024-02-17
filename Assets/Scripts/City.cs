@@ -55,6 +55,7 @@ public class City : MonoBehaviour
 
     private WaitingTimeGraph waitingTimeGraph;
     private DriverProfitGraph driverProfitGraph;
+    private PassengerSurplusGraph passengerSurplusGraph;
 
     private bool simulationEnded = false;
 
@@ -84,6 +85,7 @@ public class City : MonoBehaviour
         waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
         driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
         SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
+        passengerSurplusGraph = PassengerSurplusGraph.Create(PassengerSurplusGraphPrefab, graphSettings.passengerSurplusGraphPos, simulationSettings);
 
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
@@ -187,7 +189,7 @@ public class City : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph);
+            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph);
             passengers.Add(passenger);
         }
     }
@@ -222,7 +224,7 @@ public class City : MonoBehaviour
             for (int i = 0; i < numPassengersToCreate; i++)
             {
                 Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph);
+                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph);
                 passengers.Add(passenger);
             }
         }

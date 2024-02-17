@@ -29,14 +29,25 @@ public class PassengerSurplusGraph : MonoBehaviour
   float marginTop = 50f;
   float maxY = 3f;
   float minY = 0f;
-  float maxX = 4; // TODO: SimulationSettings.simulationLengthHours;
+  float maxX;
   float minX = 0f;
   Color[] quartileColors = { new Color(1.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f), new Color(0.0f, 0.0f, 1.0f, 1.0f), new Color(0.5f, 0.0f, 0.5f, 1.0f) };
 
   const float timeInterval = 2f;
 
+  public static PassengerSurplusGraph Create(Transform prefab, Vector3 screenPos, SimulationSettings simSettings)
+  {
+    Transform canvas = GameObject.Find("Canvas").transform;
+    Transform graphTransform = Instantiate(prefab, canvas);
+    RectTransform graphRectTransform = graphTransform.GetComponent<RectTransform>();
 
-  private void Awake()
+    graphRectTransform.anchoredPosition = screenPos;
+    PassengerSurplusGraph graph = graphTransform.GetComponent<PassengerSurplusGraph>();
+    graph.maxX = simSettings.simulationLengthHours;
+    return graph;
+  }
+
+  private void Start()
   {
     graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
     InstantiateGraph();

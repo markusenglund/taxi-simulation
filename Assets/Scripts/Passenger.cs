@@ -72,7 +72,7 @@ public class Passenger : MonoBehaviour
     public PassengerEconomicParameters passengerEconomicParameters;
 
 
-    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph)
+    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph)
     {
 
         Quaternion rotation = Quaternion.identity;
@@ -100,6 +100,7 @@ public class Passenger : MonoBehaviour
         passenger.positionActual = new Vector3(x, 0.08f, z);
         passenger.city = city;
         passenger.waitingTimeGraph = waitingTimeGraph;
+        passenger.passengerSurplusGraph = passengerSurplusGraph;
         return passenger;
     }
 
@@ -110,7 +111,6 @@ public class Passenger : MonoBehaviour
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         // utilityIncomeScatterPlot = GameObject.Find("UtilityIncomeScatterPlot").GetComponent<UtilityIncomeScatterPlot>();
 
-        // passengerSurplusGraph = GameObject.Find("PassengerSurplusGraph").GetComponent<PassengerSurplusGraph>();
     }
 
     void Start()
@@ -298,7 +298,7 @@ public class Passenger : MonoBehaviour
         else
         {
             // Debug.Log("Passenger " + id + " is giving up");
-            // passengerSurplusGraph.AppendPassenger(this);
+            passengerSurplusGraph.AppendPassenger(this);
             SetState(PassengerState.RejectedRideOffer);
             Destroy(gameObject);
         }
@@ -345,7 +345,7 @@ public class Passenger : MonoBehaviour
             utilitySurplus = utilitySurplus
         };
 
-        // passengerSurplusGraph.AppendPassenger(this);
+        passengerSurplusGraph.AppendPassenger(this);
 
 
         return droppedOffPassengerData;
