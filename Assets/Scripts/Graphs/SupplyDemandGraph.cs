@@ -21,51 +21,66 @@ public class SupplyDemandGraph : MonoBehaviour
     float marginTop = 50f;
     float maxY = 100f;
     float minY = 0f;
-    float maxX = 4; // TODO: SimulationSettings.simulationLengthHours;
+    float maxX;
     float minX = 0f;
 
     float timeInterval = 20f / 60f;
+
+    City city;
 
     Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
     Color passengersLineColor = new Color(0.2f, 0.6f, 1.0f, 1.0f);
 
 
-    private void Awake()
+    public static SupplyDemandGraph Create(Transform prefab, Vector3 screenPos, City city)
+    {
+        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform graphTransform = Instantiate(prefab, canvas);
+        RectTransform graphRectTransform = graphTransform.GetComponent<RectTransform>();
+
+        graphRectTransform.anchoredPosition = screenPos;
+        SupplyDemandGraph graph = graphTransform.GetComponent<SupplyDemandGraph>();
+        graph.maxX = city.simulationSettings.simulationLengthHours;
+        graph.city = city;
+        return graph;
+    }
+
+    private void Start()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         InstantiateGraph();
 
-        // StartCoroutine(UpdateGraphAtInterval());
+        StartCoroutine(UpdateGraphAtInterval());
     }
 
-    // IEnumerator UpdateGraphAtInterval()
-    // {
-    //     while (true)
-    //     {
-    //         yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval));
-    //         UpdateGraph();
-    //     }
-    // }
+    IEnumerator UpdateGraphAtInterval()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval));
+            UpdateGraph();
+        }
+    }
 
 
-    // private void UpdateGraph()
-    // {
-    //     float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+    private void UpdateGraph()
+    {
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
 
-    //     // Update passengers line
-    //     passengersLine.positionCount += 1;
-    //     int numPassengersSpawnedPerHour = GameManager.Instance.CalculateNumPassengersSpawnedInLastInterval(1);
+        // Update passengers line
+        passengersLine.positionCount += 1;
+        int numPassengersSpawnedPerHour = city.CalculateNumPassengersSpawnedInLastInterval(1);
 
-    //     Vector2 passengersPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numPassengersSpawnedPerHour));
-    //     passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(passengersPosition.x, passengersPosition.y, 0));
+        Vector2 passengersPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numPassengersSpawnedPerHour));
+        passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(passengersPosition.x, passengersPosition.y, 0));
 
-    //     // Update trips line
-    //     tripsLine.positionCount += 1;
-    //     int numTripsStartedPerHour = GameManager.Instance.CalculateNumStartedTripsInLastInterval(1);
+        // Update trips line
+        tripsLine.positionCount += 1;
+        int numTripsStartedPerHour = city.CalculateNumStartedTripsInLastInterval(1);
 
-    //     Vector2 tripsPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numTripsStartedPerHour));
-    //     tripsLine.SetPosition(tripsLine.positionCount - 1, new Vector3(tripsPosition.x, tripsPosition.y, 0));
-    // }
+        Vector2 tripsPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numTripsStartedPerHour));
+        tripsLine.SetPosition(tripsLine.positionCount - 1, new Vector3(tripsPosition.x, tripsPosition.y, 0));
+    }
 
 
     private void CreateAxes()

@@ -79,10 +79,12 @@ public class City : MonoBehaviour
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
         GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
-        // Create taxis in random places
         driverPool = new DriverPool(this);
+
         waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
         driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
+        SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
+
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
         {
