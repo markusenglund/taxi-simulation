@@ -26,8 +26,6 @@ public class RideOffer
 public class City : MonoBehaviour
 {
     [SerializeField] public Transform taxiPrefab;
-    [SerializeField] public Transform intersectionPrefab;
-    [SerializeField] public Transform streetPrefab;
     [SerializeField] public Transform passengerPrefab;
     [SerializeField] public Transform WaitingTimeGraphPrefab;
     [SerializeField] public Transform DriverProfitGraphPrefab;
@@ -81,7 +79,7 @@ public class City : MonoBehaviour
     {
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
-        GridUtils.GenerateStreetGrid(intersectionPrefab, streetPrefab, this);
+        GridUtils.GenerateStreetGrid(this.transform);
         driverPool = new DriverPool(this);
 
         waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
