@@ -51,16 +51,17 @@ public class City : MonoBehaviour
     public Random passengerSpawnRandom;
     public Random driverSpawnRandom;
 
-    private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
     private WaitingTimeGraph waitingTimeGraph;
     private DriverProfitGraph driverProfitGraph;
     private PassengerSurplusGraph passengerSurplusGraph;
     private UtilityIncomeScatterPlot utilityIncomeScatterPlot;
+    private ResultsInfoBox resultsInfoBox;
+    private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
     private bool simulationEnded = false;
 
-    private DriverPool driverPool;
+    public DriverPool driverPool;
 
     public SimulationSettings simulationSettings;
     public GraphSettings graphSettings;
@@ -88,7 +89,8 @@ public class City : MonoBehaviour
         SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
         passengerSurplusGraph = PassengerSurplusGraph.Create(PassengerSurplusGraphPrefab, graphSettings.passengerSurplusGraphPos, simulationSettings);
         utilityIncomeScatterPlot = UtilityIncomeScatterPlot.Create(UtilityIncomeScatterPlotPrefab, graphSettings.passengerScatterPlotPos);
-
+        resultsInfoBox = ResultsInfoBox.Create(ResultsInfoBoxPrefab, graphSettings.resultsInfoPos, this);
+        surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
 
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
@@ -99,14 +101,13 @@ public class City : MonoBehaviour
         }
         // createInitialPassengers();
         StartCoroutine(createPassengers());
-        // surgeMultiplierGraphic = GameObject.Find("SurgeMultiplierGraphic").GetComponent<SurgeMultiplierGraphic>();
     }
 
     void Update()
     {
         SpawnAndRemoveDrivers();
         EndSimulation();
-        if (!simulationSettings.useConstantSurgeMultiplier && !simulationEnded)
+        if (!simulationEnded)
         {
             UpdateSurgeMultiplier();
         }
@@ -161,6 +162,12 @@ public class City : MonoBehaviour
         {
             return;
         }
+        if (simulationSettings.useConstantSurgeMultiplier)
+        {
+            surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
+
+            return;
+        }
         float maxSurgeMultiplier = 5f;
         float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour();
 
@@ -176,13 +183,12 @@ public class City : MonoBehaviour
         float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
         float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 3, minMultiplier);
-        // float newSurgeMultiplier = 1f * uncertaintyModifier + Math.Min(demandPerSupply * (1 - uncertaintyModifier), maxSurgeMultiplier);
 
         // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
         // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
         surgeMultiplier = newSurgeMultiplier;
-        // surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
+        surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
     }
 
 

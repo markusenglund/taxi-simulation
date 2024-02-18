@@ -12,5 +12,6 @@ public class GraphSettings : ScriptableObject
     public Vector3 passengerSurplusGraphPos;
     public Vector3 passengerScatterPlotPos;
     public Vector3 resultsInfoPos;
+    public Vector3 surgeMultiplierGraphicPos;
 
 }

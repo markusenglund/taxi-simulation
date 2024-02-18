@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee78c84bdfe5f40aaaa1fdc8005ffb77, type: 3}
   m_Name: Sim1Graphs
   m_EditorClassIdentifier: 
-  waitingTimeGraphPos: {x: 200, y: -154, z: 0}
-  supplyDemandGraphPos: {x: 200, y: -360, z: 0}
-  driverProfitGraphPos: {x: 200, y: -565, z: 0}
-  passengerSurplusGraphPos: {x: 200, y: -770, z: 0}
-  passengerScatterPlotPos: {x: 557, y: -154, z: 0}
-  resultsInfoPos: {x: 200, y: -1000, z: 0}
+  waitingTimeGraphPos: {x: 200, y: -100, z: 0}
+  supplyDemandGraphPos: {x: 200, y: -305, z: 0}
+  driverProfitGraphPos: {x: 200, y: -510, z: 0}
+  passengerSurplusGraphPos: {x: 200, y: -715, z: 0}
+  passengerScatterPlotPos: {x: 557, y: -150, z: 0}
+  resultsInfoPos: {x: 560, y: -420, z: 0}
+  surgeMultiplierGraphicPos: {x: 60, y: -30, z: 0}

@@ -10,8 +10,18 @@ public class SurgeMultiplierGraphic : MonoBehaviour
 
     TMP_Text text;
 
-    // Start is called before the first frame update
-    void Awake()
+    public static SurgeMultiplierGraphic Create(Transform prefab, Vector3 screenPos)
+    {
+        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform transform = Instantiate(prefab, canvas);
+
+        RectTransform rectTransform = transform.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = screenPos;
+        SurgeMultiplierGraphic surgeMultiplierGraphic = transform.GetComponent<SurgeMultiplierGraphic>();
+        return surgeMultiplierGraphic;
+    }
+
+    void Start()
     {
         textContainer = transform.Find("TextContainer").GetComponent<RectTransform>();
         InstantiateText();

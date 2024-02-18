@@ -25,24 +25,38 @@ public class ResultsInfoBox : MonoBehaviour
 
     TMP_Text fareText;
 
-    // Start is called before the first frame update
-    void Awake()
+    City city;
+
+
+    public static ResultsInfoBox Create(Transform prefab, Vector3 screenPos, City city)
+    {
+        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform transform = Instantiate(prefab, canvas);
+
+        RectTransform rectTransform = transform.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = screenPos;
+        ResultsInfoBox resultsInfoBox = transform.GetComponent<ResultsInfoBox>();
+        resultsInfoBox.city = city;
+        return resultsInfoBox;
+    }
+
+    void Start()
     {
         textContainer = transform.Find("TextContainer").GetComponent<RectTransform>();
         Invoke("InstantiateText", 0.1f);
-        // StartCoroutine(UpdateValues());
+        StartCoroutine(UpdateValues());
     }
 
-    // IEnumerator UpdateValues()
-    // {
-    //     while (true)
-    //     {
-    //         float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
-    //         yield return new WaitForSeconds(intervalRealSeconds);
-    //         UpdateSurplusValues();
-    //         UpdateTripValues();
-    //     }
-    // }
+    IEnumerator UpdateValues()
+    {
+        while (true)
+        {
+            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
+            yield return new WaitForSeconds(intervalRealSeconds);
+            UpdateSurplusValues();
+            UpdateTripValues();
+        }
+    }
 
     private string GetTextColor(float value)
     {
@@ -59,52 +73,52 @@ public class ResultsInfoBox : MonoBehaviour
             return "green";
         }
     }
-    // private void UpdateSurplusValues()
-    // {
-    //     (float grossProfitLastHour, float surplusValueLastHour, float totalDriverGrossProfit, float totalDriverSurplusValue, float totalUberRevenue) = DriverPool.CalculateAverageGrossProfitInInterval(SimulationSettings.simulationLengthHours);
+    private void UpdateSurplusValues()
+    {
+        (float grossProfitLastHour, float surplusValueLastHour, float totalDriverGrossProfit, float totalDriverSurplusValue, float totalUberRevenue) = city.driverPool.CalculateAverageGrossProfitInInterval(city.simulationSettings.simulationLengthHours);
 
-    //     driverGrossProfitText.text = $"Avg hourly gross profit: <color={GetTextColor(grossProfitLastHour)}><b>${grossProfitLastHour:0.00}</b></color>, total: <color={GetTextColor(totalDriverGrossProfit)}><b>${totalDriverGrossProfit:0.00}</b></color>";
-    //     driverSurplusValueText.text = $"Avg hourly surplus: <color={GetTextColor(surplusValueLastHour)}><b>${surplusValueLastHour:0.00}</b></color>, total: <color={GetTextColor(totalDriverSurplusValue)}><b>${totalDriverSurplusValue:0.00}</b></color>";
+        driverGrossProfitText.text = $"Avg hourly gross profit: <color={GetTextColor(grossProfitLastHour)}><b>${grossProfitLastHour:0.00}</b></color>, total: <color={GetTextColor(totalDriverGrossProfit)}><b>${totalDriverGrossProfit:0.00}</b></color>";
+        driverSurplusValueText.text = $"Avg hourly surplus: <color={GetTextColor(surplusValueLastHour)}><b>${surplusValueLastHour:0.00}</b></color>, total: <color={GetTextColor(totalDriverSurplusValue)}><b>${totalDriverSurplusValue:0.00}</b></color>";
 
-    //     uberRevenueText.text = $"Total Uber revenue: <color={GetTextColor(totalUberRevenue)}><b>${totalUberRevenue:0.00}</b></color>";
+        uberRevenueText.text = $"Total Uber revenue: <color={GetTextColor(totalUberRevenue)}><b>${totalUberRevenue:0.00}</b></color>";
 
-    //     (float totalRiderUtilitySurplus, float totalRiderUtilitySurplusPerCapita, int numRiders, float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = GameManager.Instance.CalculatePassengerUtilitySurplusData();
+        (float totalRiderUtilitySurplus, float totalRiderUtilitySurplusPerCapita, int numRiders, float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = city.CalculatePassengerUtilitySurplusData();
 
-    //     passengerSurplusValueText.text = $"Rider surplus per ride: <color={GetTextColor(totalRiderUtilitySurplusPerCapita)}><b>${totalRiderUtilitySurplusPerCapita:0.00}</b></color>, total: <color={GetTextColor(totalRiderUtilitySurplus)}><b>${totalRiderUtilitySurplus:0.00}</b></color>";
+        passengerSurplusValueText.text = $"Rider surplus per ride: <color={GetTextColor(totalRiderUtilitySurplusPerCapita)}><b>${totalRiderUtilitySurplusPerCapita:0.00}</b></color>, total: <color={GetTextColor(totalRiderUtilitySurplus)}><b>${totalRiderUtilitySurplus:0.00}</b></color>";
 
-    //     passengerSurplusQuartileText.text = $"Quartiles: <color={GetTextColor(quartiledUtilitySurplusPerCapita[0])}><b>${quartiledUtilitySurplusPerCapita[0]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[1])}><b>${quartiledUtilitySurplusPerCapita[1]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[2])}><b>${quartiledUtilitySurplusPerCapita[2]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[3])}><b>${quartiledUtilitySurplusPerCapita[3]:0.00}</b></color>";
+        passengerSurplusQuartileText.text = $"Quartiles: <color={GetTextColor(quartiledUtilitySurplusPerCapita[0])}><b>${quartiledUtilitySurplusPerCapita[0]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[1])}><b>${quartiledUtilitySurplusPerCapita[1]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[2])}><b>${quartiledUtilitySurplusPerCapita[2]:0.00}</b></color>, <color={GetTextColor(quartiledUtilitySurplusPerCapita[3])}><b>${quartiledUtilitySurplusPerCapita[3]:0.00}</b></color>";
 
-    //     float totalSurplusValue = totalDriverSurplusValue + totalUberRevenue + totalRiderUtilitySurplus;
-    //     totalSurplusText.text = $"Total market surplus: <color={GetTextColor(totalSurplusValue)}><b>${totalSurplusValue:0.00}</b></color>";
-    // }
+        float totalSurplusValue = totalDriverSurplusValue + totalUberRevenue + totalRiderUtilitySurplus;
+        totalSurplusText.text = $"Total market surplus: <color={GetTextColor(totalSurplusValue)}><b>${totalSurplusValue:0.00}</b></color>";
+    }
 
-    // void UpdateTripValues()
-    // {
-    //     List<Trip> trips = GameManager.Instance.GetTrips();
-    //     List<Trip> completedTrips = trips.Where(trip => trip.state == TripState.Completed).ToList();
-    //     int numCompletedTrips = completedTrips.Count();
+    void UpdateTripValues()
+    {
+        List<Trip> trips = city.GetTrips();
+        List<Trip> completedTrips = trips.Where(trip => trip.state == TripState.Completed).ToList();
+        int numCompletedTrips = completedTrips.Count();
 
-    //     List<Trip> startedOrCompletedTrips = trips.Where(trip => trip.state == TripState.Completed || trip.state == TripState.OnTrip).ToList();
+        List<Trip> startedOrCompletedTrips = trips.Where(trip => trip.state == TripState.Completed || trip.state == TripState.OnTrip).ToList();
 
-    //     float totalWaitingTime = 0;
-    //     foreach (Trip trip in startedOrCompletedTrips)
-    //     {
-    //         totalWaitingTime += trip.pickedUpData.waitingTime;
-    //     }
+        float totalWaitingTime = 0;
+        foreach (Trip trip in startedOrCompletedTrips)
+        {
+            totalWaitingTime += trip.pickedUpData.waitingTime;
+        }
 
-    //     float averageWaitingTime = totalWaitingTime / startedOrCompletedTrips.Count;
+        float averageWaitingTime = totalWaitingTime / startedOrCompletedTrips.Count;
 
-    //     float totalTransactionVolume = 0;
-    //     foreach (Trip trip in trips)
-    //     {
-    //         totalTransactionVolume += trip.tripCreatedData.fare.total;
-    //     }
-    //     float averageFare = totalTransactionVolume / trips.Count;
+        float totalTransactionVolume = 0;
+        foreach (Trip trip in trips)
+        {
+            totalTransactionVolume += trip.tripCreatedData.fare.total;
+        }
+        float averageFare = totalTransactionVolume / trips.Count;
 
-    //     tripText.text = $"Completed trips: {numCompletedTrips}";
-    //     waitingTimeText.text = $"Avg waiting time: <b>{TimeUtils.ConvertSimulationHoursToTimeString(averageWaitingTime)}</b>, total: <b>{TimeUtils.ConvertSimulationHoursToTimeString(totalWaitingTime)}</b>";
-    //     fareText.text = $"Avg fare: <b>${averageFare:0.00}</b>, total: <b>${totalTransactionVolume:0.00}</b>";
-    // }
+        tripText.text = $"Completed trips: {numCompletedTrips}";
+        waitingTimeText.text = $"Avg waiting time: <b>{TimeUtils.ConvertSimulationHoursToTimeString(averageWaitingTime)}</b>, total: <b>{TimeUtils.ConvertSimulationHoursToTimeString(totalWaitingTime)}</b>";
+        fareText.text = $"Avg fare: <b>${averageFare:0.00}</b>, total: <b>${totalTransactionVolume:0.00}</b>";
+    }
 
 
     private void InstantiateText()
