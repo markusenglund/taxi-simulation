@@ -182,7 +182,7 @@ public class City : MonoBehaviour
 
         float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
-        float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 3, minMultiplier);
+        float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.8f, minMultiplier);
 
         // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
         // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
