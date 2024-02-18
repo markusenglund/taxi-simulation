@@ -12,7 +12,7 @@ public class SessionInterval
 
 public class DriverPool
 {
-    public static DriverPerson[] drivers;
+    private DriverPerson[] drivers;
 
     // Minimum wage in Houston is $7.25 per hour, so let's say that drivers have an opportunity cost of a little higher than that
     const float averageOpportunityCostPerHour = 9f;
