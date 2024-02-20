@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +42,7 @@ public class TestSceneDirector : MonoBehaviour
             // Figure out the direction we want to move in
             Vector3 direction = -Camera.main.transform.forward;
             // Calculate the new position based t * the distance between the start and end position
+            t = EaseInOutCubic(t);
             Vector3 newPosition = startPosition + direction * distance * t;
             // Set the camera's position to the new position
             Camera.main.transform.position = newPosition;
@@ -51,11 +53,28 @@ public class TestSceneDirector : MonoBehaviour
     IEnumerator RotateCamera(float angle, float duration)
     {
         float startTime = Time.time;
+        float prevT = 0;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            Camera.main.transform.RotateAround(passengerPosition, Vector3.up, angle * Time.deltaTime / duration);
+            t = EaseInOutCubic(t);
+            Camera.main.transform.RotateAround(passengerPosition, Vector3.up, angle * (t - prevT));
+            prevT = t;
             yield return null;
         }
+    }
+
+    float EaseInOutCubic(float t)
+    {
+        float t2;
+        if (t <= 0.5f)
+        {
+            t2 = Mathf.Pow(t * 2, 3) / 2;
+        }
+        else
+        {
+            t2 = (2 - Mathf.Pow((1 - t) * 2, 3)) / 2;
+        }
+        return t2;
     }
 }
