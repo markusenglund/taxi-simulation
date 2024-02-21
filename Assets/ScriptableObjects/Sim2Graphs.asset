@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee78c84bdfe5f40aaaa1fdc8005ffb77, type: 3}
   m_Name: Sim2Graphs
   m_EditorClassIdentifier: 
+  showGraphs: 1
   waitingTimeGraphPos: {x: 1320, y: -100, z: 0}
   supplyDemandGraphPos: {x: 1320, y: -305, z: 0}
   driverProfitGraphPos: {x: 1320, y: -510, z: 0}
