@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEditor;
 
 public class TestSceneDirector : MonoBehaviour
 {
@@ -29,6 +27,8 @@ public class TestSceneDirector : MonoBehaviour
         StartCoroutine(RotateCamera(360, 2));
         yield return new WaitForSeconds(2);
         StartCoroutine(DestroyPassenger(1));
+        yield return new WaitForSeconds(1);
+        EditorApplication.isPlaying = false;
 
     }
 
