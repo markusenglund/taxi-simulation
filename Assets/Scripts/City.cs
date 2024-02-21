@@ -82,13 +82,10 @@ public class City : MonoBehaviour
         GridUtils.GenerateStreetGrid(this.transform);
         driverPool = new DriverPool(this);
 
-        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
-        driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
-        SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
-        passengerSurplusGraph = PassengerSurplusGraph.Create(PassengerSurplusGraphPrefab, graphSettings.passengerSurplusGraphPos, simulationSettings);
-        utilityIncomeScatterPlot = UtilityIncomeScatterPlot.Create(UtilityIncomeScatterPlotPrefab, graphSettings.passengerScatterPlotPos);
-        resultsInfoBox = ResultsInfoBox.Create(ResultsInfoBoxPrefab, graphSettings.resultsInfoPos, this);
-        surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
+        if (graphSettings.showGraphs)
+        {
+            InstantiateGraphs();
+        }
 
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
@@ -109,6 +106,17 @@ public class City : MonoBehaviour
         {
             UpdateSurgeMultiplier();
         }
+    }
+
+    void InstantiateGraphs()
+    {
+        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
+        driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
+        SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
+        passengerSurplusGraph = PassengerSurplusGraph.Create(PassengerSurplusGraphPrefab, graphSettings.passengerSurplusGraphPos, simulationSettings);
+        utilityIncomeScatterPlot = UtilityIncomeScatterPlot.Create(UtilityIncomeScatterPlotPrefab, graphSettings.passengerScatterPlotPos);
+        resultsInfoBox = ResultsInfoBox.Create(ResultsInfoBoxPrefab, graphSettings.resultsInfoPos, this);
+        surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
     }
 
     private void EndSimulation()
@@ -160,33 +168,34 @@ public class City : MonoBehaviour
         {
             return;
         }
-        if (simulationSettings.useConstantSurgeMultiplier)
+        if (!simulationSettings.useConstantSurgeMultiplier)
+        {
+            float maxSurgeMultiplier = 5f;
+            float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour();
+
+            int numWaitingPassengers = queuedTrips.Count;
+            int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
+            float tripCapacityNextHour = Math.Max(drivers.Count * simulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
+
+            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
+
+            float minMultiplier = 0.7f;
+            float uncertaintyModifier = Math.Min(1f / drivers.Count, 1f);
+
+            float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
+
+            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.8f, minMultiplier);
+
+            // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
+            // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
+
+            surgeMultiplier = newSurgeMultiplier;
+
+        }
+        if (graphSettings.showGraphs)
         {
             surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
-
-            return;
         }
-        float maxSurgeMultiplier = 5f;
-        float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour();
-
-        int numWaitingPassengers = queuedTrips.Count;
-        int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
-        float tripCapacityNextHour = Math.Max(drivers.Count * simulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
-
-        float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
-
-        float minMultiplier = 0.7f;
-        float uncertaintyModifier = Math.Min(1f / drivers.Count, 1f);
-
-        float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
-
-        float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.8f, minMultiplier);
-
-        // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
-        // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
-
-        surgeMultiplier = newSurgeMultiplier;
-        surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
     }
 
 

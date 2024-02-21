@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class GraphSettings : ScriptableObject
 {
+    public bool showGraphs;
     public Vector3 waitingTimeGraphPos;
     public Vector3 supplyDemandGraphPos;
     public Vector3 driverProfitGraphPos;

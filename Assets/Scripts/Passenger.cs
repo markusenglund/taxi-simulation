@@ -287,8 +287,10 @@ public class Passenger : MonoBehaviour
             expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
         };
 
-
-        utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
+        if (utilityIncomeScatterPlot != null)
+        {
+            utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
+        }
         if (hasAcceptedRideOffer)
         {
             // Debug.Log("Passenger " + id + " is hailing a taxi");
@@ -298,7 +300,10 @@ public class Passenger : MonoBehaviour
         else
         {
             // Debug.Log("Passenger " + id + " is giving up");
-            passengerSurplusGraph.AppendPassenger(this);
+            if (passengerSurplusGraph != null)
+            {
+                passengerSurplusGraph.AppendPassenger(this);
+            }
             SetState(PassengerState.RejectedRideOffer);
             Destroy(gameObject);
         }
@@ -323,7 +328,10 @@ public class Passenger : MonoBehaviour
             waitingCost = waitingCost,
         };
 
-        waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
+        if (waitingTimeGraph != null)
+        {
+            waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
+        }
 
         return pickedUpPassengerData;
     }
@@ -345,7 +353,10 @@ public class Passenger : MonoBehaviour
             utilitySurplus = utilitySurplus
         };
 
-        passengerSurplusGraph.AppendPassenger(this);
+        if (passengerSurplusGraph != null)
+        {
+            passengerSurplusGraph.AppendPassenger(this);
+        }
 
 
         return droppedOffPassengerData;
