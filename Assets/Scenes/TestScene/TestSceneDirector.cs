@@ -10,6 +10,8 @@ public class TestSceneDirector : MonoBehaviour
     [SerializeField] public Transform passengerPrefab;
     Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0.22f);
 
+    Transform passenger;
+
     void Start()
     {
         Camera.main.transform.LookAt(passengerPosition);
@@ -19,17 +21,48 @@ public class TestSceneDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
+        StartCoroutine(SpawnPassenger(1));
         yield return new WaitForSeconds(1);
-        Transform passenger = Instantiate(passengerPrefab, passengerPosition, Quaternion.identity);
-        Vector3 lookAt = Camera.main.transform.position;
-        lookAt.y = passenger.position.y;
-        passenger.LookAt(lookAt);
-        yield return new WaitForSeconds(1);
-        // Zoom out
+        // Pan out
         StartCoroutine(MoveAway(1, 1));
         yield return new WaitForSeconds(1);
         StartCoroutine(RotateCamera(360, 2));
+        yield return new WaitForSeconds(2);
+        StartCoroutine(DestroyPassenger(1));
 
+    }
+
+    IEnumerator SpawnPassenger(float duration)
+    {
+        passenger = Instantiate(passengerPrefab, passengerPosition, Quaternion.identity);
+        Vector3 lookAt = Camera.main.transform.position;
+        lookAt.y = passenger.position.y;
+        passenger.LookAt(lookAt);
+        passenger.transform.localScale = Vector3.zero;
+
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseInOutCubic(t);
+            passenger.transform.localScale = Vector3.one * t;
+            yield return null;
+        }
+        passenger.transform.localScale = Vector3.one;
+
+    }
+
+    IEnumerator DestroyPassenger(float duration)
+    {
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseInOutCubic(t);
+            passenger.transform.localScale = Vector3.one * (1 - t);
+            yield return null;
+        }
+        Destroy(passenger.gameObject);
     }
 
     IEnumerator MoveAway(float distance, float duration)
