@@ -246,6 +246,11 @@ public class City : MonoBehaviour
         }
     }
 
+    public List<Passenger> GetPassengers()
+    {
+        return passengers;
+    }
+
     private float GetNumExpectedPassengersPerHour()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
