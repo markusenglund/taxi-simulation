@@ -6,10 +6,12 @@ using UnityEditor;
 
 public class PassengerIntroSceneDirector : MonoBehaviour
 {
+    [SerializeField] public Transform spawnAnimationPrefab;
     [SerializeField] public Transform passengerPrefab;
     Transform passenger;
     Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0.22f);
     Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
+
 
 
 
@@ -26,14 +28,16 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
-        StartCoroutine(SpawnPassenger(1));
+        StartCoroutine(SpawnPassenger(1.5f));
         StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
     }
 
     IEnumerator SpawnPassenger(float duration)
     {
         passenger = Instantiate(passengerPrefab, passengerPosition, Quaternion.identity);
-        Vector3 lookAt = Camera.main.transform.position;
+        Instantiate(spawnAnimationPrefab, passengerPosition, Quaternion.identity);
+
+        Vector3 lookAt = closeUpCameraPosition;
         lookAt.y = passenger.position.y;
         passenger.LookAt(lookAt);
         passenger.transform.localScale = Vector3.zero;

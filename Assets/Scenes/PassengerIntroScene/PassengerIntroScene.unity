@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d4044555ca7dd249a2c8ff477e70973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnAnimationPrefab: {fileID: 4805017702919070, guid: 6634ac450e36fea418cebc0a02264d7f, type: 3}
   passengerPrefab: {fileID: 2793057743256562329, guid: e05db4ef04d0dc64aa9f5b9a7ad45e46, type: 3}
 --- !u!4 &46887370
 Transform:
