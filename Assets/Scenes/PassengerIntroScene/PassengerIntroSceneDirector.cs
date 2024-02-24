@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PassengerIntroSceneDirector : MonoBehaviour
@@ -46,19 +47,18 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         }
         float startTime = Time.time;
 
-        // Sort renderers by distance to Vector3(3,0,3)
+        Vector3 spawnAround = new Vector3(3, 0, 6);
         System.Array.Sort(renderers, (a, b) =>
         {
-            float distanceA = Vector3.Distance(a.transform.position, new Vector3(3, 0, 3));
-            float distanceB = Vector3.Distance(b.transform.position, new Vector3(3, 0, 3));
+            float distanceA = Vector3.Distance(a.transform.position, spawnAround);
+            float distanceB = Vector3.Distance(b.transform.position, spawnAround);
             return distanceA.CompareTo(distanceB);
         });
 
         foreach (Renderer renderer in renderers)
         {
-            yield return new WaitForSeconds(0.02f);
-            renderer.enabled = true;
-            StartCoroutine(SpawnGridTile(renderer.transform, duration = 0.5f));
+            yield return new WaitForSeconds(0.015f);
+            StartCoroutine(SpawnGridTile(renderer, duration = 0.5f));
 
         }
         // while (Time.time < startTime + duration)
@@ -70,8 +70,25 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         // }
     }
 
-    IEnumerator SpawnGridTile(Transform tile, float duration)
+    IEnumerator SpawnGridTile(Renderer tileRenderer, float duration)
     {
+        tileRenderer.enabled = true;
+
+        Material[] originalMaterials = tileRenderer.materials;
+        for (int i = 0; i < tileRenderer.materials.Count(); i++)
+        {
+            tileRenderer.materials[i] = new Material(tileRenderer.materials[i]);
+        }
+        Color[] finalColors = tileRenderer.materials.Select(material => material.color).ToArray();
+        Color[] startColors = finalColors.Select(color => new Color(color.r, color.g, color.b, 0)).ToArray();
+
+        foreach (Material material in tileRenderer.materials)
+        {
+            material.color = new Color(material.color.r, material.color.g, material.color.b, 0);
+        }
+
+
+        Transform tile = tileRenderer.transform;
         tile.localScale = Vector3.zero;
         Vector3 finalPosition = tile.position;
         Vector3 startPosition = new Vector3(finalPosition.x, finalPosition.y - 5, finalPosition.z);
@@ -81,12 +98,21 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         {
             float t = (Time.time - startTime) / duration;
             float scaleFactor = EaseOutCubic(t);
+            float transparencyFactor = EaseInCubic(t);
             tile.localScale = Vector3.one * scaleFactor;
             tile.position = Vector3.Lerp(startPosition, finalPosition, scaleFactor);
+            for (int i = 0; i < tileRenderer.materials.Count(); i++)
+            {
+                tileRenderer.materials[i].color = Color.Lerp(startColors[i], finalColors[i], t * 1.5f);
+            }
             yield return null;
         }
         tile.localScale = Vector3.one;
         tile.position = finalPosition;
+        for (int i = 0; i < tileRenderer.materials.Count(); i++)
+        {
+            tileRenderer.materials[i].color = finalColors[i];
+        }
     }
 
     float EaseInOutCubic(float t)
