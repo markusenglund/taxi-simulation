@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
 
 public class PassengerIntroSceneDirector : MonoBehaviour
 {
@@ -11,33 +12,18 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         Camera.main.transform.position = new Vector3(3, 3, -3);
         Camera.main.transform.rotation = Quaternion.Euler(35, 0, 0);
-        Debug.Log("Hello from PassengerIntroSceneDirector!");
         StartCoroutine(Scene());
 
     }
 
     IEnumerator Scene()
     {
-        StartCoroutine(SpawnGrid(duration: 1));
+        StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
+        // StartCoroutine(SpawnPassenger(1));
     }
 
-    // IEnumerator SpawnGrid(float duration)
-    // {
-    //     Transform grid = GridUtils.GenerateStreetGrid(null);
-    //     grid.localScale = Vector3.zero;
-
-    //     float startTime = Time.time;
-    //     while (Time.time < startTime + duration)
-    //     {
-    //         float t = (Time.time - startTime) / duration;
-    //         float scaleFactor = EaseOutCubic(t);
-    //         grid.localScale = Vector3.one * scaleFactor;
-    //         yield return null;
-    //     }
-    // }
-
-    IEnumerator SpawnGrid(float duration)
+    IEnumerator SpawnGrid()
     {
         Transform grid = GridUtils.GenerateStreetGrid(null);
         Renderer[] renderers = grid.GetComponentsInChildren<Renderer>();
@@ -58,16 +44,9 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         foreach (Renderer renderer in renderers)
         {
             yield return new WaitForSeconds(0.015f);
-            StartCoroutine(SpawnGridTile(renderer, duration = 0.5f));
+            StartCoroutine(SpawnGridTile(renderer, duration: 0.5f));
 
         }
-        // while (Time.time < startTime + duration)
-        // {
-        //     float t = (Time.time - startTime) / duration;
-        //     float scaleFactor = EaseOutCubic(t);
-        //     grid.localScale = Vector3.one * scaleFactor;
-        //     yield return null;
-        // }
     }
 
     IEnumerator SpawnGridTile(Renderer tileRenderer, float duration)
@@ -78,6 +57,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         for (int i = 0; i < tileRenderer.materials.Count(); i++)
         {
             tileRenderer.materials[i] = new Material(tileRenderer.materials[i]);
+            SetupMaterialWithBlendMode(tileRenderer.materials[i], BlendMode.Transparent);
         }
         Color[] finalColors = tileRenderer.materials.Select(material => material.color).ToArray();
         Color[] startColors = finalColors.Select(color => new Color(color.r, color.g, color.b, 0)).ToArray();
@@ -112,7 +92,10 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         for (int i = 0; i < tileRenderer.materials.Count(); i++)
         {
             tileRenderer.materials[i].color = finalColors[i];
+            SetupMaterialWithBlendMode(tileRenderer.materials[i], BlendMode.Opaque);
+
         }
+        yield return null;
     }
 
     float EaseInOutCubic(float t)
@@ -138,6 +121,77 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         return Mathf.Pow(t, 3);
     }
+
+    public enum BlendMode
+    {
+        Opaque,
+        Cutout,
+        Fade,        // Old school alpha-blending mode, fresnel does not affect amount of transparency
+        Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
+    }
+
+    // https://forum.unity.com/threads/standard-material-shader-ignoring-setfloat-property-_mode.344557/
+    public void SetupMaterialWithBlendMode(Material material, BlendMode blendMode)
+    {
+        switch (blendMode)
+        {
+            case BlendMode.Opaque:
+                material.SetOverrideTag("RenderType", "");
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetInt("_ZWrite", 1);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.DisableKeyword("_ALPHABLEND_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = -1;
+                break;
+            case BlendMode.Cutout:
+                material.SetOverrideTag("RenderType", "TransparentCutout");
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetInt("_ZWrite", 1);
+                material.EnableKeyword("_ALPHATEST_ON");
+                material.DisableKeyword("_ALPHABLEND_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = 2450;
+                break;
+            case BlendMode.Fade:
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.EnableKeyword("_ALPHABLEND_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = 3000;
+                break;
+            case BlendMode.Transparent:
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.DisableKeyword("_ALPHABLEND_ON");
+                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = 3000;
+                break;
+        }
+    }
+
+    // IEnumerator SpawnGrid(float duration)
+    // {
+    //     Transform grid = GridUtils.GenerateStreetGrid(null);
+    //     grid.localScale = Vector3.zero;
+
+    //     float startTime = Time.time;
+    //     while (Time.time < startTime + duration)
+    //     {
+    //         float t = (Time.time - startTime) / duration;
+    //         float scaleFactor = EaseOutCubic(t);
+    //         grid.localScale = Vector3.one * scaleFactor;
+    //         yield return null;
+    //     }
+    // }
 
 
 }
