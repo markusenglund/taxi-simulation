@@ -7,6 +7,12 @@ using UnityEditor;
 public class PassengerIntroSceneDirector : MonoBehaviour
 {
     [SerializeField] public Transform passengerPrefab;
+    Transform passenger;
+    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0.22f);
+    Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +26,42 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
-        // StartCoroutine(SpawnPassenger(1));
+        StartCoroutine(SpawnPassenger(1));
+        StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
+    }
+
+    IEnumerator SpawnPassenger(float duration)
+    {
+        passenger = Instantiate(passengerPrefab, passengerPosition, Quaternion.identity);
+        Vector3 lookAt = Camera.main.transform.position;
+        lookAt.y = passenger.position.y;
+        passenger.LookAt(lookAt);
+        passenger.transform.localScale = Vector3.zero;
+
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseInOutCubic(t);
+            passenger.transform.localScale = Vector3.one * t;
+            yield return null;
+        }
+        passenger.transform.localScale = Vector3.one;
+
+    }
+
+    IEnumerator MoveCamera(Vector3 finalPosition, float duration)
+    {
+        Vector3 startPosition = Camera.main.transform.position;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseInOutCubic(t);
+            Camera.main.transform.position = Vector3.Lerp(startPosition, finalPosition, t);
+            yield return null;
+        }
+        Camera.main.transform.position = finalPosition;
     }
 
     IEnumerator SpawnGrid()
