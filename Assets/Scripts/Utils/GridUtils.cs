@@ -36,8 +36,12 @@ public class GridUtils : MonoBehaviour
         return Math.Abs(position1.x - position2.x) + Math.Abs(position1.z - position2.z);
     }
 
-    public static void GenerateStreetGrid(Transform parent)
+    public static Transform GenerateStreetGrid(Transform parent)
     {
+        // Create an empty game object to hold the street grid
+        Transform grid = new GameObject("StreetGrid").transform;
+        grid.parent = parent;
+        grid.localPosition = new Vector3(3, 0, 3);
         Transform intersectionPrefab = Resources.Load<Transform>("Intersection");
         Transform streetPrefab = Resources.Load<Transform>("Street");
         // Generate the street grid
@@ -47,26 +51,28 @@ public class GridUtils : MonoBehaviour
             {
                 if (x % (blockSize) == 0 && z % (blockSize) == 0)
                 {
-                    Transform intersection = Instantiate(intersectionPrefab, parent, false);
-                    intersection.localPosition = new Vector3(x, 0, z);
+                    Transform intersection = Instantiate(intersectionPrefab, grid, false);
+                    intersection.localPosition = new Vector3(x - 3, 0, z - 3);
                     intersection.name = "Intersection (" + x + ", " + z + ")";
                 }
                 else if (x % (blockSize) == 0)
                 {
                     // Rotate the street 90 degrees in the y direction
-                    Transform street = Instantiate(streetPrefab, parent, false);
-                    street.localPosition = new Vector3(x, 0, z);
+                    Transform street = Instantiate(streetPrefab, grid, false);
+                    street.localPosition = new Vector3(x - 3, 0, z - 3);
                     street.rotation = Quaternion.Euler(0, 90, 0);
                     street.name = "Street (" + x + ", " + z + ")";
                 }
                 else if (z % (blockSize) == 0)
                 {
-                    Transform street = Instantiate(streetPrefab, parent);
-                    street.localPosition = new Vector3(x, 0, z);
+                    Transform street = Instantiate(streetPrefab, grid);
+                    street.localPosition = new Vector3(x - 3, 0, z - 3);
                     street.name = "Street (" + x + ", " + z + ")";
                 }
             }
         }
+
+        return grid;
 
     }
 }
