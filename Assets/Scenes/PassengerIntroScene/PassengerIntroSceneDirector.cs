@@ -28,30 +28,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
-        StartCoroutine(SpawnPassenger(1.5f));
+        PassengerBase.Create(passengerPrefab, passengerPosition, closeUpCameraPosition, 1.5f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
-    }
-
-    IEnumerator SpawnPassenger(float duration)
-    {
-        passenger = Instantiate(passengerPrefab, passengerPosition, Quaternion.identity);
-        Instantiate(spawnAnimationPrefab, passengerPosition, Quaternion.identity);
-
-        Vector3 lookAt = closeUpCameraPosition;
-        lookAt.y = passenger.position.y;
-        passenger.LookAt(lookAt);
-        passenger.transform.localScale = Vector3.zero;
-
-        float startTime = Time.time;
-        while (Time.time < startTime + duration)
-        {
-            float t = (Time.time - startTime) / duration;
-            t = EaseInOutCubic(t);
-            passenger.transform.localScale = Vector3.one * t;
-            yield return null;
-        }
-        passenger.transform.localScale = Vector3.one;
-
     }
 
     IEnumerator MoveCamera(Vector3 finalPosition, float duration)
