@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using Random = System.Random;
 
 public class PassengerIntroSceneDirector : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
     [SerializeField] public Transform passengerPrefab;
+    [SerializeField] public SimulationSettings simSettings;
+
     Transform passenger;
-    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0.22f);
-    Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
+    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0);
+    // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
+    public Random passengerSpawnRandom;
 
 
 
@@ -18,6 +22,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        passengerSpawnRandom = new Random(1);
+
         Camera.main.transform.position = new Vector3(3, 3, -3);
         Camera.main.transform.rotation = Quaternion.Euler(35, 0, 0);
         StartCoroutine(Scene());
@@ -28,7 +34,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
-        PassengerBase.Create(passengerPrefab, passengerPosition, closeUpCameraPosition, 1.5f);
+        PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, 1.5f, passengerSpawnRandom, simSettings);
+        Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.4f, passenger.transform.position.z - 0.4f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
     }
 

@@ -4,47 +4,9 @@ using System.Linq;
 using System.Collections.Generic;
 using Random = System.Random;
 
-public enum PassengerState
-{
-    Idling,
-    AssignedToTrip,
-    DroppedOff,
-    RejectedRideOffer
-}
-
-public enum SubstituteType
-{
-    Walking,
-    PublicTransport,
-    SkipTrip
-}
-public class Substitute
-{
-    public SubstituteType type { get; set; }
-    public float timeCost { get; set; }
-    public float moneyCost { get; set; }
-    public float totalCost { get; set; }
-    public float netValue { get; set; }
-    public float netUtility { get; set; }
-}
-
-public class PassengerEconomicParameters
-{
-    // Base values
-    public float hourlyIncome { get; set; }
-    public float tripUtilityScore { get; set; }
-    public float timePreference { get; set; }
-
-    // Derived values
-    public float waitingCostPerHour { get; set; }
-    public float tripUtilityValue { get; set; }
-
-    public Substitute bestSubstitute { get; set; }
-}
 
 public class Passenger : MonoBehaviour
 {
-
     [SerializeField] public Transform spawnAnimationPrefab;
     public Vector3 positionActual;
 
