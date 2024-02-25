@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Random = System.Random;
+using System;
 
 public enum PassengerState
 {
@@ -18,28 +19,31 @@ public enum SubstituteType
     PublicTransport,
     SkipTrip
 }
+
+[Serializable]
 public class Substitute
 {
-    public SubstituteType type { get; set; }
-    public float timeCost { get; set; }
-    public float moneyCost { get; set; }
-    public float totalCost { get; set; }
-    public float netValue { get; set; }
-    public float netUtility { get; set; }
+    [field: SerializeField] public SubstituteType type { get; set; }
+    [field: SerializeField] public float timeCost { get; set; }
+    [field: SerializeField] public float moneyCost { get; set; }
+    [field: SerializeField] public float totalCost { get; set; }
+    [field: SerializeField] public float netValue { get; set; }
+    [field: SerializeField] public float netUtility { get; set; }
 }
 
+[Serializable]
 public class PassengerEconomicParameters
 {
     // Base values
-    public float hourlyIncome { get; set; }
-    public float tripUtilityScore { get; set; }
-    public float timePreference { get; set; }
+    [field: SerializeField] public float hourlyIncome { get; set; }
+    [field: SerializeField] public float tripUtilityScore { get; set; }
+    [field: SerializeField] public float timePreference { get; set; }
 
     // Derived values
-    public float waitingCostPerHour { get; set; }
-    public float tripUtilityValue { get; set; }
+    [field: SerializeField] public float waitingCostPerHour { get; set; }
+    [field: SerializeField] public float tripUtilityValue { get; set; }
 
-    public Substitute bestSubstitute { get; set; }
+    [field: SerializeField] public Substitute bestSubstitute { get; set; }
 }
 
 
@@ -52,12 +56,12 @@ public class PassengerBase : MonoBehaviour
 
     public Random passengerSpawnRandom;
 
-    public Vector3 destination;
     public bool hasAcceptedRideOffer = false;
     public PassengerEconomicParameters passengerEconomicParameters;
-    public float timeCreated;
+    private float timeCreated;
 
     public Vector3 pickUpPosition;
+    public Vector3 destination;
 
     public SimulationSettings simulationSettings;
 
@@ -107,7 +111,16 @@ public class PassengerBase : MonoBehaviour
 
     void Start()
     {
+        destination = GridUtils.GetRandomPosition(passengerSpawnRandom);
+        GenerateEconomicParameters();
+
+        StartCoroutine(ScheduleActions());
+    }
+
+    IEnumerator ScheduleActions()
+    {
         StartCoroutine(SpawnPassenger());
+        yield return new WaitForSeconds(2);
     }
 
     IEnumerator SpawnPassenger()
