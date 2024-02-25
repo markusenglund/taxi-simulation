@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnAnimationPrefab: {fileID: 4805017702919070, guid: 6634ac450e36fea418cebc0a02264d7f, type: 3}
   passengerPrefab: {fileID: 2793057743256562329, guid: e05db4ef04d0dc64aa9f5b9a7ad45e46, type: 3}
+  simSettings: {fileID: 11400000, guid: 019e238a4fa93471b82673b97cf3bd06, type: 2}
 --- !u!4 &46887370
 Transform:
   m_ObjectHideFlags: 0
@@ -320,7 +321,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0

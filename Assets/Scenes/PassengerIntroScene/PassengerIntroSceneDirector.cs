@@ -35,19 +35,22 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, 1.5f, passengerSpawnRandom, simSettings);
-        Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.4f, passenger.transform.position.z - 0.4f);
+        Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
     }
 
     IEnumerator MoveCamera(Vector3 finalPosition, float duration)
     {
         Vector3 startPosition = Camera.main.transform.position;
+        Quaternion startRotation = Camera.main.transform.rotation;
+        Quaternion finalRotation = Quaternion.Euler(15, 0, 0);
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
             t = EaseInOutCubic(t);
             Camera.main.transform.position = Vector3.Lerp(startPosition, finalPosition, t);
+            Camera.main.transform.rotation = Quaternion.Lerp(startRotation, finalRotation, t);
             yield return null;
         }
         Camera.main.transform.position = finalPosition;
