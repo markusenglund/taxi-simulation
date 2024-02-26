@@ -9,6 +9,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
     [SerializeField] public Transform passengerPrefab;
+    [SerializeField] public Transform passengerStatsPrefab;
     [SerializeField] public SimulationSettings simSettings;
 
     Transform passenger;
@@ -37,6 +38,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, 1.5f, passengerSpawnRandom, simSettings);
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(SpawnPassengerStats(passenger));
     }
 
     IEnumerator MoveCamera(Vector3 finalPosition, float duration)
@@ -129,6 +132,26 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
         }
         yield return null;
+    }
+
+    IEnumerator SpawnPassengerStats(PassengerBase passenger)
+    {
+        Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
+        Quaternion rotation = Quaternion.Euler(0, 20, 0);
+        // Transform passengerStats = Instantiate(passengerStatsPrefab, position, rotation);
+        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, position, rotation, passenger);
+        yield return null;
+        // passengerStats.GetComponent<PassengerStats>().SetPassenger(passenger);
+        // passengerStats.localScale = Vector3.zero;
+        // float startTime = Time.time;
+        // while (Time.time < startTime + 1)
+        // {
+        //     float t = (Time.time - startTime) / 1;
+        //     float scaleFactor = EaseOutCubic(t);
+        //     passengerStats.localScale = Vector3.one * scaleFactor;
+        //     yield return null;
+        // }
+        // passengerStats.localScale = Vector3.one;
     }
 
     float EaseInOutCubic(float t)
