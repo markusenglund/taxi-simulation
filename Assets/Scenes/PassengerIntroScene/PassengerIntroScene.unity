@@ -305,7 +305,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174282235}
   m_CullTransparentMesh: 1
---- !u!21 &285170841
+--- !u!21 &279739593
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
@@ -342,7 +342,7 @@ Material:
     - _StencilWriteMask: 255
     - _UseUIAlphaClip: 0
     m_Colors:
-    - _WidthHeightRadius: {r: 120, g: 100, b: 20, a: 0}
+    - _WidthHeightRadius: {r: 120, g: 100, b: 16, a: 0}
   m_BuildTextureStacks: []
 --- !u!1 &425592609
 GameObject:
@@ -1155,7 +1155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 285170841}
+  m_Material: {fileID: 279739593}
   m_Color: {r: 0, g: 0.11457735, b: 0.27058825, a: 0.80784315}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1193,7 +1193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adb30198aa32dd140b5750692dd48104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 10
+  radius: 8
   image: {fileID: 761015029}
 --- !u!114 &761015032
 MonoBehaviour:
@@ -1207,8 +1207,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0.51324224, b: 1, a: 0.5}
-  m_EffectDistance: {x: 0, y: 0}
+  m_EffectColor: {r: 0, g: 0.51324224, b: 1, a: 1}
+  m_EffectDistance: {x: 0.5, y: 0.5}
   m_UseGraphicAlpha: 1
 --- !u!1 &960014556
 GameObject:
