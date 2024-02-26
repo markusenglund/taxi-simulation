@@ -35,18 +35,22 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
-        PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, 1.5f, passengerSpawnRandom, simSettings);
+        PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
-        StartCoroutine(MoveCamera(closeUpCameraPosition, 1));
-        yield return new WaitForSeconds(1);
+        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1));
+        yield return new WaitForSeconds(3);
+        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 20, 0), 5));
+
+        yield return new WaitForSeconds(2);
         StartCoroutine(SpawnPassengerStats(passenger));
+        yield return new WaitForSeconds(2);
+        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -20, duration: 10));
     }
 
-    IEnumerator MoveCamera(Vector3 finalPosition, float duration)
+    IEnumerator MoveCamera(Vector3 finalPosition, Quaternion finalRotation, float duration)
     {
         Vector3 startPosition = Camera.main.transform.position;
         Quaternion startRotation = Camera.main.transform.rotation;
-        Quaternion finalRotation = Quaternion.Euler(15, 0, 0);
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
@@ -57,6 +61,20 @@ public class PassengerIntroSceneDirector : MonoBehaviour
             yield return null;
         }
         Camera.main.transform.position = finalPosition;
+    }
+
+    IEnumerator RotateCameraAround(Vector3 point, Vector3 axis, float angle, float duration)
+    {
+        float startTime = Time.time;
+        float prevT = 0;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseInOutCubic(t);
+            Camera.main.transform.RotateAround(point, axis, angle * (t - prevT));
+            prevT = t;
+            yield return null;
+        }
     }
 
     IEnumerator SpawnGrid()
@@ -138,20 +156,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        // Transform passengerStats = Instantiate(passengerStatsPrefab, position, rotation);
         PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, position, rotation, passenger);
         yield return null;
-        // passengerStats.GetComponent<PassengerStats>().SetPassenger(passenger);
-        // passengerStats.localScale = Vector3.zero;
-        // float startTime = Time.time;
-        // while (Time.time < startTime + 1)
-        // {
-        //     float t = (Time.time - startTime) / 1;
-        //     float scaleFactor = EaseOutCubic(t);
-        //     passengerStats.localScale = Vector3.one * scaleFactor;
-        //     yield return null;
-        // }
-        // passengerStats.localScale = Vector3.one;
     }
 
     float EaseInOutCubic(float t)
