@@ -17,6 +17,8 @@ public class PassengerStats : MonoBehaviour
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
+        Transform heading = passengerStatsSheet.Find("Heading");
+        heading.GetComponent<TextMeshProUGUI>().text = $"Passenger {passenger.id} Stats";
         Stat incomeStat = new Stat()
         {
             name = "Income",
@@ -39,7 +41,27 @@ public class PassengerStats : MonoBehaviour
         InstantiateStat(passengerStatsSheet, incomeStat, 0);
         InstantiateStat(passengerStatsSheet, tripValueStat, 1);
         InstantiateStat(passengerStatsSheet, timeCostStat, 2);
+        StartCoroutine(ScheduleActions());
+    }
 
+    private IEnumerator ScheduleActions()
+    {
+        yield return StartCoroutine(SpawnCard(duration: 1f));
+    }
+
+    private IEnumerator SpawnCard(float duration)
+    {
+        Vector3 startScale = new Vector3(0.0005f, 0f, 0.001f);
+        Vector3 finalScale = Vector3.one * 0.001f;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scaleFactor = EaseInOutCubic(t);
+            transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
+            yield return null;
+        }
+        transform.localScale = finalScale;
     }
 
     private void InstantiateStat(Transform passengerStatsSheet, Stat stat, int index)
@@ -57,17 +79,27 @@ public class PassengerStats : MonoBehaviour
         barValueRect.sizeDelta = new Vector2(stat.barValue, 1.5f);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public static PassengerStats Create(Transform passengerStatsPrefab, Vector3 position, Quaternion rotation, PassengerBase passenger)
     {
         Transform passengerStatsTransform = Instantiate(passengerStatsPrefab, position, rotation);
         PassengerStats passengerStats = passengerStatsTransform.GetComponent<PassengerStats>();
         passengerStats.passenger = passenger;
+        passengerStatsTransform.localScale = Vector3.zero;
         return passengerStats;
     }
+
+    float EaseInOutCubic(float t)
+    {
+        float t2;
+        if (t <= 0.5f)
+        {
+            t2 = Mathf.Pow(t * 2, 3) / 2;
+        }
+        else
+        {
+            t2 = (2 - Mathf.Pow((1 - t) * 2, 3)) / 2;
+        }
+        return t2;
+    }
 }
+
