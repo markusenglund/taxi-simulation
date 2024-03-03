@@ -15,6 +15,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     Transform passenger;
     Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0);
     // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
+    Animator passengerAnimator;
     public Random passengerSpawnRandom;
 
 
@@ -36,15 +37,22 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         StartCoroutine(SpawnGrid());
         yield return new WaitForSeconds(1);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
+        passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1));
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(0.2f);
+        passengerAnimator.SetTrigger("Wave");
+        yield return new WaitForSeconds(2.8f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 20, 0), 5));
 
         yield return new WaitForSeconds(2);
         StartCoroutine(SpawnPassengerStats(passenger));
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        // passengerAnimator.SetTrigger("GestureLeft");
+        yield return new WaitForSeconds(1);
         StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -20, duration: 10));
+        yield return new WaitForSeconds(8);
+        passengerAnimator.SetTrigger("LookAtPhone");
     }
 
     IEnumerator MoveCamera(Vector3 finalPosition, Quaternion finalRotation, float duration)

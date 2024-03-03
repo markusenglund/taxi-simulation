@@ -132,6 +132,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GirlWithBones
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 9efa00b6cd236c544937a6d21ec39081, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 7b6902304247b47409b3f48ccde83282, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
