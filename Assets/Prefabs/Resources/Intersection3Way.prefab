@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1948541103045650221}
   m_Layer: 0
-  m_Name: Street_3Way
+  m_Name: Intersection3Way
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7653192921962406343}
   m_Layer: 0
-  m_Name: EmptyStreetTile
+  m_Name: GrassTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1637473015097463356}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 255717827969743465}
@@ -87,7 +87,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: d21fd0e0cd95a6d48982b54aa6c7a633, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: -5243988174349660497, guid: 4988bad3b0d67564da227b5e5a39ae2a, type: 3}
+      objectReference: {fileID: 2100000, guid: 9904cd0f6245e884999431c0bdf22fef, type: 2}
     - target: {fileID: 919132149155446097, guid: d21fd0e0cd95a6d48982b54aa6c7a633, type: 3}
       propertyPath: m_Name
       value: empty-street-tile
