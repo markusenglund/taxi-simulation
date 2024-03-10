@@ -41,7 +41,7 @@ public class GridUtils : MonoBehaviour
     // Create an empty game object to hold the street grid
     Transform grid = new GameObject("StreetGrid").transform;
     grid.parent = parent;
-    grid.localPosition = new Vector3(3, 0, 3);
+    grid.localPosition = new Vector3(4.5f, 0, 4.5f);
     Transform intersectionPrefab = Resources.Load<Transform>("Intersection");
     Transform streetPrefab = Resources.Load<Transform>("Street");
     Transform grassTilePrefab = Resources.Load<Transform>("GrassTile");
@@ -52,6 +52,7 @@ public class GridUtils : MonoBehaviour
 
     Transform tiles = new GameObject("Tiles").transform;
     tiles.parent = grid;
+    tiles.localPosition = Vector3.zero;
 
     // Generate the street grid
     for (int x = 0; x < numTilesX; x++)
@@ -67,7 +68,7 @@ public class GridUtils : MonoBehaviour
           if (isCorner)
           {
             Transform curveStreet = Instantiate(streetCurvePrefab, tiles, false);
-            curveStreet.localPosition = new Vector3(x - 3, 0, z - 3);
+            curveStreet.localPosition = new Vector3(x - 4.5f, 0, z - 4.5f);
             curveStreet.name = "StreetCurve (" + x + ", " + z + ")";
             if (x == 0 && z == numTilesZ - 1)
             {
@@ -85,7 +86,7 @@ public class GridUtils : MonoBehaviour
           else if (is3Way)
           {
             Transform intersection = Instantiate(intersection3WayPrefab, tiles, false);
-            intersection.localPosition = new Vector3(x - 3, 0, z - 3);
+            intersection.localPosition = new Vector3(x - 4.5f, 0, z - 4.5f);
             intersection.name = "Intersection3Way (" + x + ", " + z + ")";
             if (x == 0)
             {
@@ -107,7 +108,7 @@ public class GridUtils : MonoBehaviour
           else
           {
             Transform intersection = Instantiate(intersectionPrefab, tiles, false);
-            intersection.localPosition = new Vector3(x - 3, 0, z - 3);
+            intersection.localPosition = new Vector3(x - 4.5f, 0, z - 4.5f);
             intersection.name = "Intersection (" + x + ", " + z + ")";
           }
 
@@ -137,20 +138,20 @@ public class GridUtils : MonoBehaviour
         {
           // Rotate the street 90 degrees in the y direction
           Transform street = Instantiate(streetPrefab, tiles, false);
-          street.localPosition = new Vector3(x - 3, 0, z - 3);
+          street.localPosition = new Vector3(x - 4.5f, 0, z - 4.5f);
           street.rotation = Quaternion.Euler(0, 90, 0);
           street.name = "Street (" + x + ", " + z + ")";
         }
         else if (z % (blockSize) == 0)
         {
           Transform street = Instantiate(streetPrefab, tiles);
-          street.localPosition = new Vector3(x - 3, 0, z - 3);
+          street.localPosition = new Vector3(x - 4.5f, 0, z - 4.5f);
           street.name = "Street (" + x + ", " + z + ")";
         }
         else
         {
           Transform grassTile = Instantiate(grassTilePrefab, tiles);
-          grassTile.localPosition = new Vector3(x - 3, 0, z - 3);
+          grassTile.localPosition = new Vector3(x - 4.5f, 0, z - 4.5f);
           grassTile.name = "GrassTile (" + x + ", " + z + ")";
         }
       }

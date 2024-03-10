@@ -13,7 +13,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     [SerializeField] public SimulationSettings simSettings;
 
     Transform passenger;
-    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0);
+    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0f);
     // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
     Animator passengerAnimator;
     public Random passengerSpawnRandom;
@@ -26,7 +26,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         passengerSpawnRandom = new Random(1);
 
-        Camera.main.transform.position = new Vector3(3, 3, -3);
+        Camera.main.transform.position = new Vector3(4.5f, 4, -4);
         Camera.main.transform.rotation = Quaternion.Euler(35, 0, 0);
         StartCoroutine(Scene());
 
@@ -35,7 +35,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SpawnGrid());
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
@@ -97,7 +97,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         }
         float startTime = Time.time;
 
-        Vector3 spawnAround = new Vector3(3, 0, 6);
+        Vector3 spawnAround = new Vector3(4.5f, 0, 9);
         System.Array.Sort(renderers, (a, b) =>
         {
             float distanceA = Vector3.Distance(a.transform.position, spawnAround);
@@ -107,7 +107,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
         foreach (Renderer renderer in renderers)
         {
-            yield return new WaitForSeconds(0.015f);
+            yield return new WaitForSeconds(0.005f);
             StartCoroutine(SpawnGridTile(renderer, duration: 0.5f));
 
         }
