@@ -35,11 +35,11 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SpawnGrid());
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2f);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
-        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1));
+        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1.5f));
         yield return new WaitForSeconds(0.2f);
         passengerAnimator.SetTrigger("Wave");
         yield return new WaitForSeconds(2.8f);
@@ -88,32 +88,75 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     IEnumerator SpawnGrid()
     {
         Transform grid = GridUtils.GenerateStreetGrid(null);
-        // Get the child called "Tiles"
         Transform tiles = grid.Find("Tiles");
-        Renderer[] renderers = tiles.GetComponentsInChildren<Renderer>();
-        foreach (Renderer renderer in renderers)
+        Renderer[] tileRenderers = tiles.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in tileRenderers)
+        {
+            renderer.enabled = false;
+        }
+
+        Transform buildingBlocks = grid.Find("BuildingBlocks");
+        Renderer[] buildingBlockRenderers = buildingBlocks.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in buildingBlockRenderers)
         {
             renderer.enabled = false;
         }
         float startTime = Time.time;
 
         Vector3 spawnAround = new Vector3(4.5f, 0, 9);
-        System.Array.Sort(renderers, (a, b) =>
+        System.Array.Sort(tileRenderers, (a, b) =>
+        {
+            float distanceA = Vector3.Distance(a.transform.position, spawnAround);
+            float distanceB = Vector3.Distance(b.transform.position, spawnAround);
+            return distanceA.CompareTo(distanceB);
+        });
+        System.Array.Sort(buildingBlockRenderers, (a, b) =>
         {
             float distanceA = Vector3.Distance(a.transform.position, spawnAround);
             float distanceB = Vector3.Distance(b.transform.position, spawnAround);
             return distanceA.CompareTo(distanceB);
         });
 
-        foreach (Renderer renderer in renderers)
+        int tileChunkSize = 3;
+        for (int i = 0; i < tileRenderers.Count(); i += tileChunkSize)
         {
-            yield return new WaitForSeconds(0.005f);
-            StartCoroutine(SpawnGridTile(renderer, duration: 0.5f));
+            yield return new WaitForSeconds(0.02f);
+            for (int j = 0; j < tileChunkSize; j++)
+            {
+                if (i + j < tileRenderers.Count())
+                {
+                    StartCoroutine(SpawnGridTile(tileRenderers[i + j], duration: 0.5f, spawnPositionOffset: Vector3.up * -5));
+                }
+            }
+
+        }
+        // foreach (Renderer renderer in tileRenderers)
+        // {
+        //     yield return new WaitForSeconds(0);
+        //     StartCoroutine(SpawnGridTile(renderer, duration: 0.5f, spawnPositionOffset: Vector3.up * -5));
+
+        // }
+        // yield return new WaitForSeconds(0.2f);
+
+
+
+        int buildingChunkSize = 5;
+        for (int i = 0; i < buildingBlockRenderers.Count(); i += buildingChunkSize)
+        {
+            yield return new WaitForSeconds(0.02f);
+            for (int j = 0; j < buildingChunkSize; j++)
+            {
+                if (i + j < buildingBlockRenderers.Count())
+                {
+                    StartCoroutine(SpawnBuilding(buildingBlockRenderers[i + j], duration: 0.5f, spawnPositionOffset: Vector3.up * -1));
+                }
+            }
 
         }
     }
 
-    IEnumerator SpawnGridTile(Renderer tileRenderer, float duration)
+
+    IEnumerator SpawnGridTile(Renderer tileRenderer, float duration, Vector3 spawnPositionOffset)
     {
         tileRenderer.enabled = true;
 
@@ -136,8 +179,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         Vector3 originalScale = tile.localScale;
         tile.localScale = Vector3.zero;
         Vector3 finalPosition = tile.position;
-        Vector3 startPosition = new Vector3(finalPosition.x, finalPosition.y - 5, finalPosition.z);
-        yield return new WaitForSeconds(0.02f);
+        Vector3 startPosition = finalPosition + spawnPositionOffset;
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
@@ -162,6 +204,31 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         }
         yield return null;
     }
+
+    IEnumerator SpawnBuilding(Renderer tileRenderer, float duration, Vector3 spawnPositionOffset)
+    {
+        tileRenderer.enabled = true;
+
+        Transform tile = tileRenderer.transform;
+        Vector3 originalScale = tile.localScale;
+        tile.localScale = Vector3.zero;
+        Vector3 finalPosition = tile.position;
+        Vector3 startPosition = finalPosition + spawnPositionOffset;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scaleFactor = EaseOutCubic(t);
+            tile.localScale = originalScale * scaleFactor;
+            tile.position = Vector3.Lerp(startPosition, finalPosition, scaleFactor);
+
+            yield return null;
+        }
+        tile.localScale = originalScale;
+        tile.position = finalPosition;
+        yield return null;
+    }
+
 
     IEnumerator SpawnPassengerStats(PassengerBase passenger)
     {

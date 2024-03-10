@@ -51,8 +51,11 @@ public class GridUtils : MonoBehaviour
     Transform streetCurvePrefab = Resources.Load<Transform>("StreetCurve");
 
     Transform tiles = new GameObject("Tiles").transform;
+    Transform buildingBlocks = new GameObject("BuildingBlocks").transform;
     tiles.parent = grid;
     tiles.localPosition = Vector3.zero;
+    buildingBlocks.parent = grid;
+    buildingBlocks.localPosition = Vector3.zero;
 
     // Generate the street grid
     for (int x = 0; x < numTilesX; x++)
@@ -115,23 +118,23 @@ public class GridUtils : MonoBehaviour
           if (x < numTilesX - 1 && z < numTilesZ - 1)
 
           {
-            // if (x == 3 && z == 3)
-            // {
-            //   Transform centerBuildingBlock = Instantiate(centerBuildingBlockPrefab, grid);
-            //   centerBuildingBlock.localPosition = new Vector3(x - blockSize * 0.5f, 0, z - blockSize * 0.5f);
-            // }
-            // else
-            // {
-            //   // Create a building block at the intersection (except for the center intersection)
-            //   Transform buildingBlock = Instantiate(buildingBlockPrefab, grid);
-            //   buildingBlock.localPosition = new Vector3(x - blockSize * 0.5f, 0, z - blockSize * 0.5f);
-            //   buildingBlock.name = "BuildingBlock (" + x + ", " + z + ")";
-            //   if (x / blockSize == 1 || z / blockSize == 1)
-            //   {
-            //     buildingBlock.localScale = new Vector3(-1, 1, 1);
-            //   }
-            //   buildingBlock.rotation = Quaternion.Euler(0, 90 * (x / blockSize + z / blockSize), 0);
-            // }
+            if (x == 3 && z == 3)
+            {
+              Transform centerBuildingBlock = Instantiate(centerBuildingBlockPrefab, buildingBlocks, false);
+              centerBuildingBlock.localPosition = new Vector3(x - blockSize, 0, z - blockSize);
+            }
+            else
+            {
+              // Create a building block at the intersection (except for the center intersection)
+              Transform buildingBlock = Instantiate(buildingBlockPrefab, buildingBlocks, false);
+              buildingBlock.localPosition = new Vector3(x - blockSize, 0, z - blockSize);
+              buildingBlock.name = "BuildingBlock (" + x + ", " + z + ")";
+              if (x / blockSize == 1 || z / blockSize == 1)
+              {
+                buildingBlock.localScale = new Vector3(-1, 1, 1);
+              }
+              buildingBlock.rotation = Quaternion.Euler(0, 90 * (x / blockSize + z / blockSize), 0);
+            }
           }
         }
         else if (x % (blockSize) == 0)
