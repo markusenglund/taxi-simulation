@@ -49,6 +49,10 @@ public class GridUtils : MonoBehaviour
     Transform centerBuildingBlockPrefab = Resources.Load<Transform>("CenterBuildingBlock");
     Transform intersection3WayPrefab = Resources.Load<Transform>("Intersection3Way");
     Transform streetCurvePrefab = Resources.Load<Transform>("StreetCurve");
+
+    Transform tiles = new GameObject("Tiles").transform;
+    tiles.parent = grid;
+
     // Generate the street grid
     for (int x = 0; x < numTilesX; x++)
     {
@@ -62,7 +66,7 @@ public class GridUtils : MonoBehaviour
           bool is3Way = (isXEdge && !isZEdge) || (!isXEdge && isZEdge);
           if (isCorner)
           {
-            Transform curveStreet = Instantiate(streetCurvePrefab, grid, false);
+            Transform curveStreet = Instantiate(streetCurvePrefab, tiles, false);
             curveStreet.localPosition = new Vector3(x - 3, 0, z - 3);
             curveStreet.name = "StreetCurve (" + x + ", " + z + ")";
             if (x == 0 && z == numTilesZ - 1)
@@ -80,7 +84,7 @@ public class GridUtils : MonoBehaviour
           }
           else if (is3Way)
           {
-            Transform intersection = Instantiate(intersection3WayPrefab, grid, false);
+            Transform intersection = Instantiate(intersection3WayPrefab, tiles, false);
             intersection.localPosition = new Vector3(x - 3, 0, z - 3);
             intersection.name = "Intersection3Way (" + x + ", " + z + ")";
             if (x == 0)
@@ -102,7 +106,7 @@ public class GridUtils : MonoBehaviour
           }
           else
           {
-            Transform intersection = Instantiate(intersectionPrefab, grid, false);
+            Transform intersection = Instantiate(intersectionPrefab, tiles, false);
             intersection.localPosition = new Vector3(x - 3, 0, z - 3);
             intersection.name = "Intersection (" + x + ", " + z + ")";
           }
@@ -110,42 +114,42 @@ public class GridUtils : MonoBehaviour
           if (x < numTilesX - 1 && z < numTilesZ - 1)
 
           {
-            if (x == 3 && z == 3)
-            {
-              Transform centerBuildingBlock = Instantiate(centerBuildingBlockPrefab, grid);
-              centerBuildingBlock.localPosition = new Vector3(x - blockSize * 0.5f, 0, z - blockSize * 0.5f);
-            }
-            else
-            {
-              // Create a building block at the intersection (except for the center intersection)
-              Transform buildingBlock = Instantiate(buildingBlockPrefab, grid);
-              buildingBlock.localPosition = new Vector3(x - blockSize * 0.5f, 0, z - blockSize * 0.5f);
-              buildingBlock.name = "BuildingBlock (" + x + ", " + z + ")";
-              if (x / blockSize == 1 || z / blockSize == 1)
-              {
-                buildingBlock.localScale = new Vector3(-1, 1, 1);
-              }
-              buildingBlock.rotation = Quaternion.Euler(0, 90 * (x / blockSize + z / blockSize), 0);
-            }
+            // if (x == 3 && z == 3)
+            // {
+            //   Transform centerBuildingBlock = Instantiate(centerBuildingBlockPrefab, grid);
+            //   centerBuildingBlock.localPosition = new Vector3(x - blockSize * 0.5f, 0, z - blockSize * 0.5f);
+            // }
+            // else
+            // {
+            //   // Create a building block at the intersection (except for the center intersection)
+            //   Transform buildingBlock = Instantiate(buildingBlockPrefab, grid);
+            //   buildingBlock.localPosition = new Vector3(x - blockSize * 0.5f, 0, z - blockSize * 0.5f);
+            //   buildingBlock.name = "BuildingBlock (" + x + ", " + z + ")";
+            //   if (x / blockSize == 1 || z / blockSize == 1)
+            //   {
+            //     buildingBlock.localScale = new Vector3(-1, 1, 1);
+            //   }
+            //   buildingBlock.rotation = Quaternion.Euler(0, 90 * (x / blockSize + z / blockSize), 0);
+            // }
           }
         }
         else if (x % (blockSize) == 0)
         {
           // Rotate the street 90 degrees in the y direction
-          Transform street = Instantiate(streetPrefab, grid, false);
+          Transform street = Instantiate(streetPrefab, tiles, false);
           street.localPosition = new Vector3(x - 3, 0, z - 3);
           street.rotation = Quaternion.Euler(0, 90, 0);
           street.name = "Street (" + x + ", " + z + ")";
         }
         else if (z % (blockSize) == 0)
         {
-          Transform street = Instantiate(streetPrefab, grid);
+          Transform street = Instantiate(streetPrefab, tiles);
           street.localPosition = new Vector3(x - 3, 0, z - 3);
           street.name = "Street (" + x + ", " + z + ")";
         }
         else
         {
-          Transform grassTile = Instantiate(grassTilePrefab, grid);
+          Transform grassTile = Instantiate(grassTilePrefab, tiles);
           grassTile.localPosition = new Vector3(x - 3, 0, z - 3);
           grassTile.name = "GrassTile (" + x + ", " + z + ")";
         }

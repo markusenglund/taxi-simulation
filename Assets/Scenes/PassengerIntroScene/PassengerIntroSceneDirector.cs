@@ -88,7 +88,9 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     IEnumerator SpawnGrid()
     {
         Transform grid = GridUtils.GenerateStreetGrid(null);
-        Renderer[] renderers = grid.GetComponentsInChildren<Renderer>();
+        // Get the child called "Tiles"
+        Transform tiles = grid.Find("Tiles");
+        Renderer[] renderers = tiles.GetComponentsInChildren<Renderer>();
         foreach (Renderer renderer in renderers)
         {
             renderer.enabled = false;
@@ -131,6 +133,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
 
         Transform tile = tileRenderer.transform;
+        Vector3 originalScale = tile.localScale;
         tile.localScale = Vector3.zero;
         Vector3 finalPosition = tile.position;
         Vector3 startPosition = new Vector3(finalPosition.x, finalPosition.y - 5, finalPosition.z);
@@ -141,7 +144,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
             float t = (Time.time - startTime) / duration;
             float scaleFactor = EaseOutCubic(t);
             float transparencyFactor = EaseInCubic(t);
-            tile.localScale = Vector3.one * scaleFactor;
+            tile.localScale = originalScale * scaleFactor;
             tile.position = Vector3.Lerp(startPosition, finalPosition, scaleFactor);
             for (int i = 0; i < tileRenderer.materials.Count(); i++)
             {
@@ -149,7 +152,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
             }
             yield return null;
         }
-        tile.localScale = Vector3.one;
+        tile.localScale = originalScale;
         tile.position = finalPosition;
         for (int i = 0; i < tileRenderer.materials.Count(); i++)
         {
