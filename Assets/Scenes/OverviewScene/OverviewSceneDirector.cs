@@ -54,7 +54,7 @@ public class OverviewSceneDirector : MonoBehaviour
 
     IEnumerator FollowObject(Transform target, float duration)
     {
-        Camera.main.transform.position = target.position + target.forward * 0.5f + target.up * 1f;
+        Camera.main.transform.position = target.position + target.up * 1f;
         Camera.main.transform.rotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
         float startTime = Time.time;
         while (Time.time < startTime + duration && target != null)
@@ -63,7 +63,7 @@ public class OverviewSceneDirector : MonoBehaviour
             Vector3 middlePosition = target.position - normalizedTargetDirection * 0.8f;
             Vector3 desiredPosition = new Vector3(middlePosition.x, 1.5f, middlePosition.z);
             Quaternion desiredRotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, desiredPosition, 0.02f);
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, desiredPosition, 0.1f);
             Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, desiredRotation, 0.003f);
             yield return null;
         }
