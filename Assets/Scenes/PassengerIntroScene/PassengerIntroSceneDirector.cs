@@ -34,8 +34,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        StartCoroutine(SpawnGrid());
-        yield return new WaitForSeconds(2f);
+        StartCoroutine(SpawnCity());
+        yield return new WaitForSeconds(1.8f);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
@@ -85,7 +85,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnGrid()
+    IEnumerator SpawnCity()
     {
         Transform grid = GridUtils.GenerateStreetGrid(null);
         Transform tiles = grid.Find("Tiles");
@@ -117,27 +117,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
             return distanceA.CompareTo(distanceB);
         });
 
-        int tileChunkSize = 3;
-        for (int i = 0; i < tileRenderers.Count(); i += tileChunkSize)
-        {
-            yield return new WaitForSeconds(0.02f);
-            for (int j = 0; j < tileChunkSize; j++)
-            {
-                if (i + j < tileRenderers.Count())
-                {
-                    StartCoroutine(SpawnGridTile(tileRenderers[i + j], duration: 0.5f, spawnPositionOffset: Vector3.up * -5));
-                }
-            }
-
-        }
-        // foreach (Renderer renderer in tileRenderers)
-        // {
-        //     yield return new WaitForSeconds(0);
-        //     StartCoroutine(SpawnGridTile(renderer, duration: 0.5f, spawnPositionOffset: Vector3.up * -5));
-
-        // }
-        // yield return new WaitForSeconds(0.2f);
-
+        StartCoroutine(SpawnGridTiles(tileRenderers));
+        yield return new WaitForSeconds(0.8f);
 
 
         int buildingChunkSize = 5;
@@ -148,7 +129,24 @@ public class PassengerIntroSceneDirector : MonoBehaviour
             {
                 if (i + j < buildingBlockRenderers.Count())
                 {
-                    StartCoroutine(SpawnBuilding(buildingBlockRenderers[i + j], duration: 0.5f, spawnPositionOffset: Vector3.up * -1));
+                    StartCoroutine(SpawnBuilding(buildingBlockRenderers[i + j], duration: 1, spawnPositionOffset: Vector3.up * -1));
+                }
+            }
+
+        }
+    }
+
+    IEnumerator SpawnGridTiles(Renderer[] tileRenderers)
+    {
+        int tileChunkSize = 3;
+        for (int i = 0; i < tileRenderers.Count(); i += tileChunkSize)
+        {
+            yield return new WaitForSeconds(0.02f);
+            for (int j = 0; j < tileChunkSize; j++)
+            {
+                if (i + j < tileRenderers.Count())
+                {
+                    StartCoroutine(SpawnGridTile(tileRenderers[i + j], duration: 0.5f, spawnPositionOffset: Vector3.up * -5));
                 }
             }
 
@@ -318,7 +316,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         }
     }
 
-    // IEnumerator SpawnGrid(float duration)
+    // IEnumerator SpawnCity(float duration)
     // {
     //     Transform grid = GridUtils.GenerateStreetGrid(null);
     //     grid.localScale = Vector3.zero;
