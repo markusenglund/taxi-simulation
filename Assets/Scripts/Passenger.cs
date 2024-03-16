@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using Random = System.Random;
 
@@ -12,6 +13,8 @@ public class Passenger : MonoBehaviour
 
     static int incrementalId = 1;
     public int id;
+
+    private float spawnDuration = 1;
 
     public float timeCreated;
 
@@ -30,6 +33,9 @@ public class Passenger : MonoBehaviour
     public Trip currentTrip;
 
     private City city;
+
+    Animator passengerAnimator;
+
 
     public PassengerEconomicParameters passengerEconomicParameters;
 
@@ -72,17 +78,41 @@ public class Passenger : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        passengerAnimator = this.GetComponentInChildren<Animator>();
+
 
     }
 
     void Start()
     {
         destination = GridUtils.GetRandomPosition(city.passengerSpawnRandom);
-
-        Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
         GenerateEconomicParameters();
+        StartCoroutine(ScheduleActions());
+    }
 
-        Invoke("MakeTripDecision", 1f);
+    IEnumerator ScheduleActions()
+    {
+        StartCoroutine(SpawnPassenger());
+        yield return new WaitForSeconds(1);
+        MakeTripDecision();
+        yield return null;
+    }
+
+    IEnumerator SpawnPassenger()
+    {
+        Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+
+        transform.localScale = Vector3.zero;
+        float startTime = Time.time;
+        passengerAnimator.SetTrigger("LookAtPhone");
+        while (Time.time < startTime + spawnDuration)
+        {
+            float t = (Time.time - startTime) / spawnDuration;
+            t = EaseUtils.EaseInOutCubic(t);
+            transform.localScale = Vector3.one * t;
+            yield return null;
+        }
+        transform.localScale = Vector3.one;
     }
 
     void GenerateEconomicParameters()
