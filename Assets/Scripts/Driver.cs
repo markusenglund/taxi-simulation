@@ -25,6 +25,8 @@ public class Driver : MonoBehaviour
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
+    const float y = 0.13f;
+
     private bool isEndingSession = false;
 
     public DriverPerson driverPerson;
@@ -46,7 +48,7 @@ public class Driver : MonoBehaviour
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z, City city)
     {
         Transform taxi = Instantiate(prefab, city.transform, false);
-        taxi.localPosition = new Vector3(x, 0.05f, z);
+        taxi.localPosition = new Vector3(x, y, z);
         Driver driver = taxi.GetComponent<Driver>();
         driver.city = city;
         driver.driverPerson = person;
@@ -89,7 +91,7 @@ public class Driver : MonoBehaviour
         currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData);
 
         SetDestination(currentTrip.tripCreatedData.destination);
-        SetTaxiColor();
+        // SetTaxiColor();
     }
 
 
@@ -104,7 +106,7 @@ public class Driver : MonoBehaviour
         currentTrip = trip;
         nextTrip = null;
         SetDestination(trip.tripCreatedData.passenger.positionActual);
-        SetTaxiColor();
+        // SetTaxiColor();
     }
 
     private void DropOffPassenger()
@@ -152,7 +154,7 @@ public class Driver : MonoBehaviour
         }
         else
         {
-            SetTaxiColor();
+            // SetTaxiColor();
             city.HandleTripCompleted(this);
         }
 
@@ -177,27 +179,27 @@ public class Driver : MonoBehaviour
         this.state = newState;
     }
 
-    private void SetTaxiColor()
-    {
-        // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer
+    // private void SetTaxiColor()
+    // {
+    //     // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer
 
-        Transform taxiVisual = transform.Find("TaxiVisual");
-        Transform taxi = taxiVisual.Find("Taxi");
-        MeshRenderer meshRenderer = taxi.GetComponent<MeshRenderer>();
-        Material[] materials = meshRenderer.materials;
-        if (currentTrip == null || currentTrip.state == TripState.Queued)
-        {
-            materials[1].color = Color.black;
-        }
-        else if (currentTrip.state == TripState.DriverEnRoute)
-        {
-            materials[1].color = Color.red;
-        }
-        else if (currentTrip.state == TripState.OnTrip)
-        {
-            materials[1].color = Color.green;
-        }
-    }
+    //     Transform taxiVisual = transform.Find("TaxiVisual");
+    //     Transform taxi = taxiVisual.Find("Taxi");
+    //     MeshRenderer meshRenderer = taxi.GetComponent<MeshRenderer>();
+    //     Material[] materials = meshRenderer.materials;
+    //     if (currentTrip == null || currentTrip.state == TripState.Queued)
+    //     {
+    //         materials[1].color = Color.black;
+    //     }
+    //     else if (currentTrip.state == TripState.DriverEnRoute)
+    //     {
+    //         materials[1].color = Color.red;
+    //     }
+    //     else if (currentTrip.state == TripState.OnTrip)
+    //     {
+    //         materials[1].color = Color.green;
+    //     }
+    // }
 
     public void HandleEndOfSession()
     {
@@ -241,21 +243,21 @@ public class Driver : MonoBehaviour
         if (taxiPosition.x % GridUtils.blockSize != 0)
         {
             float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize;
-            waypoints.Enqueue(new Vector3(bestFirstIntersectionX, 0.05f, taxiPosition.z));
+            waypoints.Enqueue(new Vector3(bestFirstIntersectionX, y, taxiPosition.z));
             if (taxiDestination.x % GridUtils.blockSize != 0)
             {
                 float bestSecondIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize;
-                waypoints.Enqueue(new Vector3(bestFirstIntersectionX, 0.05f, bestSecondIntersectionZ));
+                waypoints.Enqueue(new Vector3(bestFirstIntersectionX, y, bestSecondIntersectionZ));
             }
         }
         else
         {
             float bestFirstIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize;
-            waypoints.Enqueue(new Vector3(taxiPosition.x, 0.05f, bestFirstIntersectionZ));
+            waypoints.Enqueue(new Vector3(taxiPosition.x, y, bestFirstIntersectionZ));
             if (taxiDestination.z % GridUtils.blockSize != 0)
             {
                 float bestSecondIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize;
-                waypoints.Enqueue(new Vector3(bestSecondIntersectionX, 0.05f, bestFirstIntersectionZ));
+                waypoints.Enqueue(new Vector3(bestSecondIntersectionX, y, bestFirstIntersectionZ));
             }
         }
         waypoints.Enqueue(taxiDestination);

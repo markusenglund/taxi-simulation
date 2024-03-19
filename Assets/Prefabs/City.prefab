@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3347504248338883973
 MonoBehaviour:
@@ -44,9 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a6b349cc94646629f1d7745e599794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taxiPrefab: {fileID: 5080182002874875373, guid: 3e0dddc6d4b3eb342b9ab7d447b37e3a, type: 3}
-  intersectionPrefab: {fileID: 1970304053126654784, guid: d9cd80b04b1c1dc4eb54d0dac91436f3, type: 3}
-  streetPrefab: {fileID: 7181299878841271177, guid: b67119c1261d82d4d8a9ec815ee8f042, type: 3}
+  taxiPrefab: {fileID: 2149938672200620344, guid: e94b5b37cd46c3d4f9daacf47ef390db, type: 3}
   passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
   WaitingTimeGraphPrefab: {fileID: 5372275232407353875, guid: c11db59e93cb242628c7037de08f6630, type: 3}
   DriverProfitGraphPrefab: {fileID: 2543086480804735505, guid: fc05f94fb80ed4e4a859d579ea6c6ecb, type: 3}
