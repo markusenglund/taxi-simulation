@@ -15,8 +15,8 @@ public class Driver : MonoBehaviour
 
 
 
-    private Queue<Vector3> waypoints = new Queue<Vector3>();
-    private Vector3 destination;
+    [SerializeField] private Queue<Vector3> waypoints = new Queue<Vector3>();
+    [SerializeField] private Vector3 destination;
     public TaxiState state = TaxiState.Idling;
 
     static int incrementalId = 1;
@@ -25,7 +25,7 @@ public class Driver : MonoBehaviour
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
-    const float y = 0.13f;
+    const float y = 0.05f;
 
     private bool isEndingSession = false;
 
@@ -64,7 +64,7 @@ public class Driver : MonoBehaviour
         Passenger passenger = currentTrip.tripCreatedData.passenger;
         passenger.transform.SetParent(transform);
         float middleTaxiX = 0.09f;
-        float topTaxiY = 0.08f;
+        float topTaxiY = 1.44f;
         passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
         passenger.transform.localRotation = Quaternion.identity;
 
@@ -222,6 +222,7 @@ public class Driver : MonoBehaviour
 
     public void SetDestination(Vector3 destination)
     {
+
         this.destination = destination;
         SetWaypoints();
     }

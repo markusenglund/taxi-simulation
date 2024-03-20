@@ -59,7 +59,7 @@ public class Passenger : MonoBehaviour
         passengerTransform.localPosition = new Vector3(xVisual, 0.08f, zVisual);
         passengerTransform.name = "Passenger";
         Passenger passenger = passengerTransform.GetComponent<Passenger>();
-        passenger.positionActual = new Vector3(x, 0.08f, z);
+        passenger.positionActual = new Vector3(x, 0.05f, z);
         passenger.city = city;
         passenger.waitingTimeGraph = waitingTimeGraph;
         passenger.passengerSurplusGraph = passengerSurplusGraph;
