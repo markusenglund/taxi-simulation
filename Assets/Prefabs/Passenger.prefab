@@ -51,6 +51,7 @@ MonoBehaviour:
   timeCreated: 0
   state: 0
   destination: {x: 0, y: 0, z: 0}
+  agentStatusTextPrefab: {fileID: 7420584253704279518, guid: 899bd1bc7108dcf4184794d900c5ba7b, type: 3}
   hasAcceptedRideOffer: 0
   passengerEconomicParameters:
     <hourlyIncome>k__BackingField: 0

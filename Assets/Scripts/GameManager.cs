@@ -17,6 +17,6 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         city1 = City.Create(cityPrefab, 0, 0, sim1Settings, sim1graphSettings);
-        city2 = City.Create(cityPrefab, 8, 0, sim2Settings, sim2graphSettings);
+        city2 = City.Create(cityPrefab, 12, 0, sim2Settings, sim2graphSettings);
     }
 }

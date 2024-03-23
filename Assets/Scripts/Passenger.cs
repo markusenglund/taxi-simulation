@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Random = System.Random;
+using JetBrains.Annotations;
 
 
 public class Passenger : MonoBehaviour
@@ -21,6 +22,9 @@ public class Passenger : MonoBehaviour
     public PassengerState state = PassengerState.Idling;
 
     public Vector3 destination;
+
+    [SerializeField] public Transform agentStatusTextPrefab;
+
 
     private WaitingTimeGraph waitingTimeGraph;
 
@@ -324,6 +328,8 @@ public class Passenger : MonoBehaviour
         {
             waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
         }
+
+        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.5f, $"-${currentTrip.tripCreatedData.fare.total.ToString("F2")}");
 
         return pickedUpPassengerData;
     }
