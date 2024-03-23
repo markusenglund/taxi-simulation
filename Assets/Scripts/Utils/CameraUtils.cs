@@ -24,6 +24,42 @@ public class CameraUtils : MonoBehaviour
         Camera.main.transform.position = toPosition;
     }
 
+    public static IEnumerator MoveCameraLocal(Vector3 toPosition, float duration, Ease ease)
+    {
+        float startTime = Time.time;
+        Vector3 startPosition = Camera.main.transform.localPosition;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            if (ease == Ease.Cubic)
+            {
+                t = EaseUtils.EaseInOutCubic(t);
+            }
+            else if (ease == Ease.Linear)
+            {
+            }
+            Camera.main.transform.localPosition = Vector3.Lerp(startPosition, toPosition, t);
+            yield return null;
+        }
+        Camera.main.transform.localPosition = toPosition;
+    }
+
+    public static IEnumerator MoveAndRotateCameraLocal(Vector3 finalPosition, Quaternion finalRotation, float duration)
+    {
+        Vector3 startPosition = Camera.main.transform.localPosition;
+        Quaternion startRotation = Camera.main.transform.localRotation;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseUtils.EaseInOutCubic(t);
+            Camera.main.transform.localPosition = Vector3.Lerp(startPosition, finalPosition, t);
+            Camera.main.transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, t);
+            yield return null;
+        }
+        Camera.main.transform.localPosition = finalPosition;
+    }
+
     public static IEnumerator RotateCameraAround(Vector3 point, Vector3 axis, float angle, float duration)
     {
         float startTime = Time.time;
@@ -33,6 +69,21 @@ public class CameraUtils : MonoBehaviour
             float t = (Time.time - startTime) / duration;
             t = EaseUtils.EaseInOutCubic(t);
             Camera.main.transform.RotateAround(point, axis, angle * (t - prevT));
+            prevT = t;
+            yield return null;
+        }
+    }
+
+    public static IEnumerator RotateCameraAroundMovingObject(Transform target, float distance, Vector3 axis, float angle, float duration)
+    {
+        float startTime = Time.time;
+        float prevT = 0;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseUtils.EaseInOutCubic(t);
+            Camera.main.transform.position = target.position + (Camera.main.transform.position - target.position).normalized * distance;
+            Camera.main.transform.RotateAround(target.position, axis, angle * (t - prevT));
             prevT = t;
             yield return null;
         }
