@@ -28,22 +28,32 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
     {
         Camera.main.transform.position = new Vector3(-1f, 0.7f, 3f);
         Camera.main.transform.rotation = Quaternion.Euler(10, 90, 0);
-        StartCoroutine(CameraUtils.MoveCamera(toPosition: new Vector3(6f, 1, 3f), duration: 6, ease: Ease.Linear));
+        StartCoroutine(CameraUtils.MoveCamera(toPosition: new Vector3(8f, 1, 3f), duration: 6, ease: Ease.Linear));
         yield return new WaitForSeconds(0.3f);
         DriverPerson driverPerson = CreateGenericDriverPerson();
         city.CreateDriver(driverPerson, new Vector3(6, 0, 6));
         // PassengerBase.CreateRaw(passengerPrefab, new Vector3(2, 0.08f, 2.77f), Quaternion.identity, spawnDuration: 1, passengerSpawnRandom, simSettings);
         city.CreatePassenger(new Vector3(2, 0.08f, 3f));
         yield return new WaitForSeconds(0.7f);
-        PassengerBase.CreateRaw(passengerPrefab, new Vector3(5, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)), spawnDuration: 1, passengerSpawnRandom, simSettings);
-        PassengerBase.CreateRaw(passengerPrefab, new Vector3(7f, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)), spawnDuration: 1, passengerSpawnRandom, simSettings);
-        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(30, 90, 0), duration: 5, ease: Ease.QuadraticIn));
+        SpawnPassenger(new Vector3(5, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)));
+        SpawnPassenger(new Vector3(7f, 0.08f, 2.77f), Quaternion.LookRotation(new Vector3(0, 0, 1)));
+        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(40, 90, 0), duration: 5, ease: Ease.QuadraticIn));
         yield return new WaitForSeconds(1.5f);
-        PassengerBase.CreateRaw(passengerPrefab, new Vector3(6.23f, 0.08f, 2.5f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)), spawnDuration: 1, passengerSpawnRandom, simSettings);
+
+        SpawnPassenger(new Vector3(9.23f, 0.08f, 6f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)));
+        SpawnPassenger(new Vector3(6.23f, 0.08f, 2.5f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)));
         yield return new WaitForSeconds(1);
-        PassengerBase.CreateRaw(passengerPrefab, new Vector3(9.23f, 0.08f, 2.77f), Quaternion.LookRotation(new Vector3(1, 0, 0f)), spawnDuration: 1, passengerSpawnRandom, simSettings);
+        SpawnPassenger(new Vector3(9.23f, 0.08f, 2.77f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)));
         yield return new WaitForSeconds(50);
         EditorApplication.isPlaying = false;
+    }
+
+    void SpawnPassenger(Vector3 position, Quaternion rotation)
+    {
+        PassengerBase passenger = PassengerBase.CreateRaw(passengerPrefab, position, rotation, spawnDuration: 1, passengerSpawnRandom, simSettings);
+        // Animator animator = passenger.GetComponentInChildren<Animator>();
+        // animator.SetTrigger("LookAtPhone");
+
     }
 
     DriverPerson CreateGenericDriverPerson()
