@@ -19,17 +19,17 @@ public class DriverPool
     const float opportunityCostStd = 2f;
 
     // Profile of a person who strongly prefers working 8-5
-    static float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
+    public static float[] workLifeBalanceProfile = new float[24] { 4, 5, 5, 4, 3, 1.8f, 1.3f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.2f, 1.5f, 2, 3, 4, 4, 4 };
     // Profile of a person who will work at any time
-    static float[] profitMaximizerProfile = new float[24] { 1.2f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+    public static float[] profitMaximizerProfile = new float[24] { 1.2f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.1f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
     // Profile of a person who slightly flexible but prefers working early mornings
-    static float[] earlyBirdProfile = new float[24] { 3, 3, 3, 1.5f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.3f, 1.5f, 1.5f, 1.5f, 1.5f, 2, 3 };
+    public static float[] earlyBirdProfile = new float[24] { 3, 3, 3, 1.5f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.3f, 1.5f, 1.5f, 1.5f, 1.5f, 2, 3 };
     // Profile of a person who has built his life around driving at peak late night earning hours
-    static float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 2, 2, 2, 3, 3, 3, 2, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+    public static float[] lateSleeperProfile = new float[24] { 1.2f, 1.2f, 1.3f, 1.5f, 2, 2, 2, 3, 3, 3, 2, 2, 1.5f, 1.2f, 1.1f, 1, 1, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
     // Profile of a person who is busy during 9-5, and will work only in the evenings
-    // static float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
+    // public static float[] worksTwoJobsProfile = new float[24] { 1.3f, 1.5f, 2, 3, 4, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 1, 1.1f, 1.1f, 1.2f, 1.2f };
     // Typical driver profile
-    static float[] normalDriverProfile = new float[24] { 1.4f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.3f, 1.4f, 1.4f, 1.4f };
+    public static float[] normalDriverProfile = new float[24] { 1.4f, 1.5f, 1.8f, 2, 2, 1.5f, 1.2f, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.1f, 1.2f, 1.3f, 1.4f, 1.4f, 1.4f };
 
     float[][] opportunityCostProfiles = new float[5][] { workLifeBalanceProfile, profitMaximizerProfile, earlyBirdProfile, lateSleeperProfile, normalDriverProfile };
 

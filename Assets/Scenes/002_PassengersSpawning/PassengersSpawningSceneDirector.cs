@@ -30,7 +30,10 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         Camera.main.transform.rotation = Quaternion.Euler(10, 90, 0);
         StartCoroutine(CameraUtils.MoveCamera(toPosition: new Vector3(6f, 1, 3f), duration: 6, ease: Ease.Linear));
         yield return new WaitForSeconds(0.3f);
-        PassengerBase.CreateRaw(passengerPrefab, new Vector3(2, 0.08f, 2.77f), Quaternion.identity, spawnDuration: 1, passengerSpawnRandom, simSettings);
+        DriverPerson driverPerson = CreateGenericDriverPerson();
+        city.CreateDriver(driverPerson, new Vector3(6, 0, 6));
+        // PassengerBase.CreateRaw(passengerPrefab, new Vector3(2, 0.08f, 2.77f), Quaternion.identity, spawnDuration: 1, passengerSpawnRandom, simSettings);
+        city.CreatePassenger(new Vector3(2, 0.08f, 3f));
         yield return new WaitForSeconds(0.7f);
         PassengerBase.CreateRaw(passengerPrefab, new Vector3(5, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)), spawnDuration: 1, passengerSpawnRandom, simSettings);
         PassengerBase.CreateRaw(passengerPrefab, new Vector3(7f, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)), spawnDuration: 1, passengerSpawnRandom, simSettings);
@@ -39,13 +42,22 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         PassengerBase.CreateRaw(passengerPrefab, new Vector3(6.23f, 0.08f, 2.5f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)), spawnDuration: 1, passengerSpawnRandom, simSettings);
         yield return new WaitForSeconds(1);
         PassengerBase.CreateRaw(passengerPrefab, new Vector3(9.23f, 0.08f, 2.77f), Quaternion.LookRotation(new Vector3(1, 0, 0f)), spawnDuration: 1, passengerSpawnRandom, simSettings);
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(50);
         EditorApplication.isPlaying = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    DriverPerson CreateGenericDriverPerson()
     {
-
+        return new DriverPerson()
+        {
+            opportunityCostProfile = DriverPool.normalDriverProfile,
+            baseOpportunityCostPerHour = 10,
+            preferredSessionLength = 4,
+            interval = new SessionInterval()
+            {
+                startTime = 0,
+                endTime = 4
+            }
+        };
     }
 }
