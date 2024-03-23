@@ -67,6 +67,16 @@ public class PassengerBase : MonoBehaviour
 
 
 
+    public static PassengerBase CreateRaw(Transform prefab, Vector3 position, Quaternion rotation, float spawnDuration, Random passengerSpawnRandom, SimulationSettings simSettings)
+    {
+        Transform passengerTransform = Instantiate(prefab, position, rotation);
+        PassengerBase passenger = passengerTransform.GetComponent<PassengerBase>();
+        passenger.spawnDuration = spawnDuration;
+        passenger.passengerSpawnRandom = passengerSpawnRandom;
+        passenger.simulationSettings = simSettings;
+        passenger.pickUpPosition = position;
+        return passenger;
+    }
 
     public static PassengerBase Create(Transform prefab, Vector3 position, float spawnDuration, Random passengerSpawnRandom, SimulationSettings simSettings)
     {
@@ -91,7 +101,6 @@ public class PassengerBase : MonoBehaviour
         Quaternion transformRotation = rotation;
 
         Transform passengerTransform = Instantiate(prefab, transformPosition, transformRotation);
-        // passengerTransform.LookAt(lookAt);
         PassengerBase passenger = passengerTransform.GetComponent<PassengerBase>();
         passenger.spawnDuration = spawnDuration;
         passenger.passengerSpawnRandom = passengerSpawnRandom;

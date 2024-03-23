@@ -240,10 +240,16 @@ public class City : MonoBehaviour
             for (int i = 0; i < numPassengersToCreate; i++)
             {
                 Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-                Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
-                passengers.Add(passenger);
+                createPassenger(randomPosition, Quaternion.identity);
             }
         }
+    }
+
+    public Passenger createPassenger(Vector3 position, Quaternion rotation)
+    {
+        Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
+        passengers.Add(passenger);
+        return passenger;
     }
 
     public List<Passenger> GetPassengers()
