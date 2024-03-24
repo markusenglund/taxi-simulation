@@ -12,9 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c895f3cd3ce74493b83c995efd1ee3bb, type: 3}
   m_Name: SimSettings
   m_EditorClassIdentifier: 
+  useConstantSupplyMode: 1
+  useConstantSurgeMultiplier: 1
+  randomSeed: 1
+  simulationLengthHours: 6
+  driverSpeed: 30
+  walkingSpeed: 3.5
+  publicTransportSpeed: 25
+  privateVehicleCost: 100
+  baseStartingFare: 4
+  baseFarePerKm: 1.5
+  driverFareCutPercentage: 0.67
+  driverMarginalCostPerKm: 0.13
+  numDrivers: 5
+  maxSessionLength: 2
+  passengerMedianIncome: 20
+  passengerIncomeSigma: 0.9
+  demandIndexMultiplier: 5
   expectedPassengersByHour:
   - 10
-  - 10
+  - 20
   - 35
-  - 5
-  - 5
+  - 15
+  - 15
+  - 15
+  - 15
