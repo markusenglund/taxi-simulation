@@ -23,6 +23,11 @@ public class EaseUtils : MonoBehaviour
         return t * t;
     }
 
+    public static float EaseOutQuadratic(float t)
+    {
+        return 1 - Mathf.Pow(1 - t, 2);
+    }
+
     public static float EaseOutCubic(float t)
     {
         return 1 - Mathf.Pow(1 - t, 3);

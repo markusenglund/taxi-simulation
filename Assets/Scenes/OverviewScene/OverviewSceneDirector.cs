@@ -8,6 +8,7 @@ public enum Ease
 {
     Cubic,
     QuadraticIn,
+    QuadraticOut,
     Linear
 }
 

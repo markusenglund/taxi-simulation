@@ -15,6 +15,10 @@ public class CameraUtils : MonoBehaviour
             {
                 t = EaseUtils.EaseInOutCubic(t);
             }
+            else if (ease == Ease.QuadraticOut)
+            {
+                t = EaseUtils.EaseOutQuadratic(t);
+            }
             else if (ease == Ease.Linear)
             {
             }
@@ -44,7 +48,7 @@ public class CameraUtils : MonoBehaviour
         Camera.main.transform.localPosition = toPosition;
     }
 
-    public static IEnumerator MoveAndRotateCameraLocal(Vector3 finalPosition, Quaternion finalRotation, float duration)
+    public static IEnumerator MoveAndRotateCameraLocal(Vector3 finalPosition, Quaternion finalRotation, float duration, Ease ease = Ease.Cubic)
     {
         Vector3 startPosition = Camera.main.transform.localPosition;
         Quaternion startRotation = Camera.main.transform.localRotation;
@@ -52,7 +56,14 @@ public class CameraUtils : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            t = EaseUtils.EaseInOutCubic(t);
+            if (ease == Ease.Cubic)
+            {
+                t = EaseUtils.EaseInOutCubic(t);
+            }
+            else if (ease == Ease.QuadraticOut)
+            {
+                t = EaseUtils.EaseOutQuadratic(t);
+            }
             Camera.main.transform.localPosition = Vector3.Lerp(startPosition, finalPosition, t);
             Camera.main.transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, t);
             yield return null;
