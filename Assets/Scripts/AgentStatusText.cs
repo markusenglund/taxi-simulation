@@ -20,16 +20,14 @@ public class AgentStatusText : MonoBehaviour
 
     void Update()
     {
-        // transform.LookAt(Camera.main.transform);
         transform.rotation = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y + 180, 0);
     }
 
     private IEnumerator ScheduleActions()
     {
-        StartCoroutine(SpawnCard(duration: 0.1f));
-        yield return new WaitForSeconds(0.3f);
-        StartCoroutine(FadeIntoTheSky(duration: 1f));
-        yield return new WaitForSeconds(2f);
+        StartCoroutine(SpawnCard(duration: 0.3f));
+        yield return new WaitForSeconds(0.8f);
+        yield return StartCoroutine(FadeIntoTheSky(duration: 1.3f));
     }
 
     private IEnumerator SpawnCard(float duration)

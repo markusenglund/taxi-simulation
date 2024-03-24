@@ -20,7 +20,7 @@ public class SimulationSettings : ScriptableObject
     public float driverSpeed = 30f;
     public float walkingSpeed = 3.5f;
     public float publicTransportSpeed = 25f;
-    public readonly float timeSpentWaitingForPassenger = 1f / 60f;
+    public readonly float timeSpentWaitingForPassenger = 2f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below
     public float baseStartingFare = 4f;
