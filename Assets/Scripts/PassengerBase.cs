@@ -228,7 +228,7 @@ public class PassengerBase : MonoBehaviour
         float privateVehicleWaitingTime = 5 / 60f;
         float privateVehicleTimeCost = (privateVehicleTime + privateVehicleWaitingTime) * waitingCostPerHour;
         float marginalCostEnRoute = tripDistance * simulationSettings.driverMarginalCostPerKm;
-        float privateVehicleMoneyCost = 100f + marginalCostEnRoute;
+        float privateVehicleMoneyCost = simulationSettings.privateVehicleCost + marginalCostEnRoute;
         float privateVehicleUtilityCost = privateVehicleTimeCost + privateVehicleMoneyCost;
         float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
         Substitute privateVehicleSubstitute = new Substitute()
