@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ecff223658d8549a7b49f3fb725a1d7d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - cityPrefab: {instanceID: 0}
+  - simSettings: {fileID: 11400000, guid: 019e238a4fa93471b82673b97cf3bd06, type: 2}
+  - graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

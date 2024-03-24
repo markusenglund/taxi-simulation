@@ -14,19 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
-  simulationSecondsPerRealSecond: 300
   randomSeed: 1
   simulationLengthHours: 4
   driverSpeed: 30
   walkingSpeed: 3.5
   publicTransportSpeed: 25
-  baseStartingFare: 4
-  baseFarePerKm: 1.5
+  privateVehicleCost: 300
+  baseStartingFare: 12
+  baseFarePerKm: 4.5
   driverFareCutPercentage: 0.67
   driverMarginalCostPerKm: 0.13
   numDrivers: 0
   maxSessionLength: 4
-  passengerMedianIncome: 200
+  passengerMedianIncome: 2000
   passengerIncomeSigma: 0.9
   demandIndexMultiplier: 5
   expectedPassengersByHour:

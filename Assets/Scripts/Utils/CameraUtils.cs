@@ -60,14 +60,20 @@ public class CameraUtils : MonoBehaviour
         Camera.main.transform.localPosition = finalPosition;
     }
 
-    public static IEnumerator RotateCameraAround(Vector3 point, Vector3 axis, float angle, float duration)
+    public static IEnumerator RotateCameraAround(Vector3 point, Vector3 axis, float angle, float duration, Ease ease)
     {
         float startTime = Time.time;
         float prevT = 0;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            t = EaseUtils.EaseInOutCubic(t);
+            if (ease == Ease.Cubic)
+            {
+                t = EaseUtils.EaseInOutCubic(t);
+            }
+            else if (ease == Ease.Linear)
+            {
+            }
             Camera.main.transform.RotateAround(point, axis, angle * (t - prevT));
             prevT = t;
             yield return null;

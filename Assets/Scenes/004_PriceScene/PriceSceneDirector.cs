@@ -34,7 +34,7 @@ public class PriceSceneDirector : MonoBehaviour
         Camera.main.transform.position = new Vector3(7, 1, 6);
         Camera.main.transform.LookAt(new Vector3(9, 0.3f, 6));
         yield return new WaitForSeconds(0.4f);
-        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 180, 3f));
+        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 180, 3f, Ease.Cubic));
         yield return new WaitForSeconds(5);
         EditorApplication.isPlaying = false;
     }
