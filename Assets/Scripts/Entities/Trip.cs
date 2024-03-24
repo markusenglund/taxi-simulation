@@ -163,6 +163,7 @@ public class Trip
     public void HandleDriverArrivedAtPickUp()
     {
         state = TripState.DriverWaiting;
+        this.tripCreatedData.passenger.HandleDriverArrivedAtPickUp();
     }
 
     public void PickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData)

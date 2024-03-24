@@ -46,8 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac85157f5c3993a479dea55f5f8f8140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destination: {x: 0, y: 0, z: 0}
   state: 0
   id: 0
+  agentStatusTextPrefab: {fileID: 7420584253704279518, guid: 899bd1bc7108dcf4184794d900c5ba7b, type: 3}
 --- !u!1001 &4157536786783111175
 PrefabInstance:
   m_ObjectHideFlags: 0

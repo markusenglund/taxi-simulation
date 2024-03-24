@@ -33,6 +33,8 @@ public class Driver : MonoBehaviour
 
     private City city;
 
+    [SerializeField] public Transform agentStatusTextPrefab;
+
 
     void Awake()
     {
@@ -59,15 +61,6 @@ public class Driver : MonoBehaviour
 
     IEnumerator PickUpPassenger()
     {
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
-        // Put the passenger on top of the taxi cab
-        Passenger passenger = currentTrip.tripCreatedData.passenger;
-        passenger.transform.SetParent(transform);
-        float middleTaxiX = 0.09f;
-        float topTaxiY = 1.44f;
-        passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
-        passenger.transform.localRotation = Quaternion.identity;
-
         // Calculate trip pickup data
         float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         float timeSpentEnRoute = pickedUpTime - currentTrip.driverDispatchedData.driverDispatchedTime;
@@ -88,10 +81,20 @@ public class Driver : MonoBehaviour
         };
 
 
+        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.65f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
+
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
+        // Put the passenger on top of the taxi cab
+        Passenger passenger = currentTrip.tripCreatedData.passenger;
+        passenger.transform.SetParent(transform);
+        float middleTaxiX = 0.09f;
+        float topTaxiY = 1.44f;
+        passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
+        passenger.transform.localRotation = Quaternion.identity;
+
         currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData);
 
         SetDestination(currentTrip.tripCreatedData.destination);
-        // SetTaxiColor();
     }
 
 
@@ -106,7 +109,6 @@ public class Driver : MonoBehaviour
         currentTrip = trip;
         nextTrip = null;
         SetDestination(trip.tripCreatedData.passenger.positionActual);
-        // SetTaxiColor();
     }
 
     private void DropOffPassenger()

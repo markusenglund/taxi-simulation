@@ -308,6 +308,11 @@ public class Passenger : MonoBehaviour
     }
 
 
+    public void HandleDriverArrivedAtPickUp()
+    {
+        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.5f, $"-${currentTrip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+
+    }
 
     public PickedUpPassengerData HandlePassengerPickedUp(PickedUpData pickedUpData)
     {
@@ -329,7 +334,6 @@ public class Passenger : MonoBehaviour
             waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
         }
 
-        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.5f, $"-${currentTrip.tripCreatedData.fare.total.ToString("F2")}");
 
         return pickedUpPassengerData;
     }

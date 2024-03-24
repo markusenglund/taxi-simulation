@@ -6,32 +6,36 @@ public class AgentStatusText : MonoBehaviour
 {
     [SerializeField] public Transform statTextPrefab;
     TextMeshProUGUI textMeshPro;
+    Color color;
     string text;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
         Transform textComponent = passengerStatsSheet.Find("Text");
         textMeshPro = textComponent.GetComponent<TextMeshProUGUI>();
-        textMeshPro.color = Color.red;
+        textMeshPro.color = color;
         textMeshPro.text = text;
         StartCoroutine(ScheduleActions());
     }
 
     void Update()
     {
-        transform.LookAt(Camera.main.transform);
+        // transform.LookAt(Camera.main.transform);
+        transform.rotation = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y + 180, 0);
     }
 
     private IEnumerator ScheduleActions()
     {
-        // StartCoroutine(SpawnCard(duration: 1f));
-        yield return new WaitForSeconds(1f);
+        StartCoroutine(SpawnCard(duration: 0.1f));
+        yield return new WaitForSeconds(0.3f);
+        StartCoroutine(FadeIntoTheSky(duration: 1f));
+        yield return new WaitForSeconds(2f);
     }
 
     private IEnumerator SpawnCard(float duration)
     {
-        Vector3 startScale = new Vector3(0.0005f, 0f, 0.001f);
-        Vector3 finalScale = Vector3.one * 0.001f;
+        Vector3 startScale = Vector3.zero;
+        Vector3 finalScale = transform.localScale;
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
@@ -43,51 +47,27 @@ public class AgentStatusText : MonoBehaviour
         transform.localScale = finalScale;
     }
 
-    // private IEnumerator FadeInText(TextMeshProUGUI text, float duration)
-    // {
-    //     float startTime = Time.time;
-    //     while (Time.time < startTime + duration)
-    //     {
-    //         float t = (Time.time - startTime) / duration;
-    //         text.color = new Color(text.color.r, text.color.g, text.color.b, t);
-    //         yield return null;
-    //     }
-    //     text.color = new Color(text.color.r, text.color.g, text.color.b, 1);
-    // }
-
-
-    // private IEnumerator InstantiateStat(Transform passengerStatsSheet, Stat stat, int index, float duration)
-    // {
-    //     Transform statText = Instantiate(statTextPrefab, passengerStatsSheet, true);
-    //     statText.localPosition = new Vector3(0, -4 - index * 20, 0);
-    //     Transform statName = statText.Find("StatName");
-    //     TextMeshProUGUI statNameText = statName.GetComponent<TextMeshProUGUI>();
-    //     statNameText.text = stat.name;
-    //     Transform statValue = statText.Find("StatValue");
-    //     TextMeshProUGUI statValueText = statValue.GetComponent<TextMeshProUGUI>();
-    //     statValueText.text = stat.value;
-    //     Transform barValue = statText.Find("Bar").Find("BarValue");
-    //     RectTransform barValueRect = barValue.GetComponent<RectTransform>();
-    //     barValueRect.sizeDelta = new Vector2(stat.barValue, 1.5f);
-    //     // statTexts.Add(statNameText)
-
-    //     CanvasGroup canvasGroup = statText.GetComponent<CanvasGroup>();
-    //     float startTime = Time.time;
-    //     while (Time.time < startTime + duration)
-    //     {
-    //         float t = (Time.time - startTime) / duration;
-    //         canvasGroup.alpha = t;
-    //         yield return null;
-    //     }
-
-    // }
-
-    public static AgentStatusText Create(Transform prefab, Transform parent, Vector3 position, string text)
+    private IEnumerator FadeIntoTheSky(float duration)
     {
-        Transform agentStatusText = Instantiate(prefab, parent, false);
+        float startTime = Time.time;
+        Vector3 startPosition = transform.localPosition;
+        Vector3 finalPosition = transform.localPosition + Vector3.up * 3;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            textMeshPro.color = new Color(textMeshPro.color.r, textMeshPro.color.g, textMeshPro.color.b, 1 - t);
+            transform.localPosition = Vector3.Lerp(startPosition, finalPosition, EaseUtils.EaseInCubic(t));
+            yield return null;
+        }
+        Destroy(this.gameObject);
+    }
+
+    public static AgentStatusText Create(Transform prefab, Transform parent, Vector3 positionOffset, string text, Color color)
+    {
+        Transform agentStatusText = Instantiate(prefab, parent.position + positionOffset, Quaternion.identity);
         AgentStatusText agentStatusTextComponent = agentStatusText.GetComponent<AgentStatusText>();
         agentStatusTextComponent.text = text;
-        // agentStatusText.localScale = Vector3.zero;
+        agentStatusTextComponent.color = color;
         return agentStatusTextComponent;
     }
 }

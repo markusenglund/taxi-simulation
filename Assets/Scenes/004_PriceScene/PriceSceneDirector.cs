@@ -26,12 +26,15 @@ public class PriceSceneDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        Time.timeScale = 0.4f;
+        Time.timeScale = 0.3f;
         DriverPerson driverPerson = CreateGenericDriverPerson();
         Driver driver = city.CreateDriver(driverPerson, new Vector3(9, 0, 4));
-        city.CreatePassenger(new Vector3(9, 0.08f, 6));
-        Camera.main.transform.position = new Vector3(10, 1, 6);
-        Camera.main.transform.LookAt(new Vector3(9, 0, 6));
+        Vector3 passengerPosition = new Vector3(9, 0.08f, 6);
+        city.CreatePassenger(passengerPosition);
+        Camera.main.transform.position = new Vector3(9, 1, 7);
+        Camera.main.transform.LookAt(new Vector3(9, 0.3f, 6));
+        yield return new WaitForSeconds(1.7f);
+        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 90, 2f));
         yield return new WaitForSeconds(5);
         EditorApplication.isPlaying = false;
     }
