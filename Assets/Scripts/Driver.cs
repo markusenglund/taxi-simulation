@@ -81,7 +81,7 @@ public class Driver : MonoBehaviour
         };
 
 
-        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.65f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
+        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
 
         yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
         // Put the passenger on top of the taxi cab
