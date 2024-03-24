@@ -5,7 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - cityPrefab: {instanceID: 0}
-  - simSettings: {fileID: 11400000, guid: 019e238a4fa93471b82673b97cf3bd06, type: 2}
+  - simSettings: {fileID: 11400000, guid: 60ba035f17fce42efa57ff1399bf8a13, type: 2}
   - graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
