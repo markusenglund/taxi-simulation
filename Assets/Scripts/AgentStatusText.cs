@@ -20,7 +20,7 @@ public class AgentStatusText : MonoBehaviour
 
     void Update()
     {
-        transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x - 90, Camera.main.transform.rotation.eulerAngles.y + 180, Camera.main.transform.rotation.eulerAngles.z);
+        transform.rotation = Quaternion.Euler(-Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y + 180, Camera.main.transform.rotation.eulerAngles.z);
     }
 
     private IEnumerator ScheduleActions()
@@ -49,7 +49,7 @@ public class AgentStatusText : MonoBehaviour
     {
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
-        Vector3 finalPosition = transform.localPosition + Vector3.up * 1.5f;
+        Vector3 finalPosition = transform.localPosition + Vector3.up * 0.6f;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;

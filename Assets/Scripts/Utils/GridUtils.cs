@@ -22,7 +22,7 @@ public class GridUtils : MonoBehaviour
     float randomNonIntersection;
     do
     {
-      randomNonIntersection = (float)random.Next(0, onNorthFacingStreet ? numTilesX * 3 : numTilesZ * 3) / 3f;
+      randomNonIntersection = (float)random.Next(0, onNorthFacingStreet ? numTilesX * 3 : numTilesZ * 3 - 1) / 3f;
     } while (randomNonIntersection % blockSize == 0);
 
     float x = onNorthFacingStreet ? randomIntersection : randomNonIntersection;
