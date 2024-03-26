@@ -79,3 +79,8 @@ crashlytics-build.properties
 .vscode/
 
 Plugins
+
+
+# Manim
+manim/media
+manim/__pycache__
