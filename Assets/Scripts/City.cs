@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -260,6 +261,13 @@ public class City : MonoBehaviour
     public Passenger CreatePassenger(Vector3 position)
     {
         Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
+        passengers.Add(passenger);
+        return passenger;
+    }
+
+    public Passenger CreatePassenger(Vector3 position, PassengerEconomicParameters economicParameters)
+    {
+        Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, economicParameters);
         passengers.Add(passenger);
         return passenger;
     }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Random = System.Random;
 using JetBrains.Annotations;
 
-
+#nullable enable
 public class Passenger : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
@@ -26,11 +26,11 @@ public class Passenger : MonoBehaviour
     [SerializeField] public Transform agentStatusTextPrefab;
 
 
-    private WaitingTimeGraph waitingTimeGraph;
+    private WaitingTimeGraph? waitingTimeGraph;
 
-    private UtilityIncomeScatterPlot utilityIncomeScatterPlot;
+    private UtilityIncomeScatterPlot? utilityIncomeScatterPlot;
 
-    private PassengerSurplusGraph passengerSurplusGraph;
+    private PassengerSurplusGraph? passengerSurplusGraph;
 
 
     public bool hasAcceptedRideOffer = false;
@@ -44,7 +44,7 @@ public class Passenger : MonoBehaviour
     public PassengerEconomicParameters passengerEconomicParameters;
 
 
-    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot)
+    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, PassengerEconomicParameters? passengerEconomicParameters = null)
     {
 
         Quaternion rotation = Quaternion.identity;
@@ -74,6 +74,10 @@ public class Passenger : MonoBehaviour
         passenger.waitingTimeGraph = waitingTimeGraph;
         passenger.passengerSurplusGraph = passengerSurplusGraph;
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
+        if (passengerEconomicParameters != null)
+        {
+            passenger.passengerEconomicParameters = passengerEconomicParameters;
+        }
         return passenger;
     }
 
@@ -90,7 +94,10 @@ public class Passenger : MonoBehaviour
     void Start()
     {
         destination = GridUtils.GetRandomPosition(city.passengerSpawnRandom);
-        GenerateEconomicParameters();
+        if (passengerEconomicParameters == null)
+        {
+            GenerateEconomicParameters();
+        }
         StartCoroutine(ScheduleActions());
     }
 
