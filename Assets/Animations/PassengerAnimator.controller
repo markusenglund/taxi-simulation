@@ -214,7 +214,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: InPlaceJump
-  m_Speed: 1
+  m_Speed: 1.8
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 2410960334265652580}
@@ -488,7 +488,7 @@ AnimatorStateMachine:
     m_Position: {x: 720, y: 120, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6504269827806333639}
-    m_Position: {x: 670, y: 220, z: 0}
+    m_Position: {x: 730, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2321343462808153122}
     m_Position: {x: 690, y: 290, z: 0}

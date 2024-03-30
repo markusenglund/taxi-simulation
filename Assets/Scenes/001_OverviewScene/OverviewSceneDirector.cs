@@ -58,8 +58,8 @@ public class OverviewSceneDirector : MonoBehaviour
 
     IEnumerator FollowObject(Transform target, float duration)
     {
-        Camera.main.transform.position = target.position + target.up * 1f;
-        Camera.main.transform.rotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
+        // Camera.main.transform.position = target.position + target.up * 1f;
+        // Camera.main.transform.rotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
         float startTime = Time.time;
         while (Time.time < startTime + duration && target != null)
         {
