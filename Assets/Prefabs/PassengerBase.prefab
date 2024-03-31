@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   spawnAnimationPrefab: {fileID: 4805017702919070, guid: 6634ac450e36fea418cebc0a02264d7f, type: 3}
+  despawnAnimationPrefab: {fileID: 4805017702919070, guid: ee893bbd932c11e46b202226b4fa76a8, type: 3}
   hasAcceptedRideOffer: 0
   passengerEconomicParameters:
     <hourlyIncome>k__BackingField: 0

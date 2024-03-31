@@ -52,13 +52,17 @@ public class PassengerBase : MonoBehaviour
     static int incrementalId = 1;
     public int id;
     private float spawnDuration;
+    private float despawnDuration = 1.5f;
     [SerializeField] public Transform spawnAnimationPrefab;
+    [SerializeField] public Transform despawnAnimationPrefab;
 
     public Random passengerSpawnRandom;
 
     public bool hasAcceptedRideOffer = false;
     public PassengerEconomicParameters passengerEconomicParameters;
     private float timeCreated;
+
+    Animator passengerAnimator;
 
     public Vector3 pickUpPosition;
     public Vector3 destination;
@@ -115,7 +119,7 @@ public class PassengerBase : MonoBehaviour
         id = incrementalId;
         incrementalId += 1;
         timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-
+        passengerAnimator = this.GetComponentInChildren<Animator>();
     }
 
     void Start()
@@ -135,7 +139,6 @@ public class PassengerBase : MonoBehaviour
     IEnumerator SpawnPassenger()
     {
         Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
-
         transform.localScale = Vector3.zero;
         float startTime = Time.time;
         while (Time.time < startTime + spawnDuration)
@@ -146,6 +149,28 @@ public class PassengerBase : MonoBehaviour
             yield return null;
         }
         transform.localScale = Vector3.one;
+    }
+
+    public IEnumerator DespawnPassenger()
+    {
+        Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
+        passengerAnimator.SetTrigger("Celebrate");
+        yield return new WaitForSeconds(0.5f);
+        Quaternion startRotation = transform.localRotation;
+        float endRotationY = 360 * 5;
+
+        float startTime = Time.time;
+        while (Time.time < startTime + despawnDuration)
+        {
+            float t = (Time.time - startTime) / despawnDuration;
+            float shrinkFactor = EaseInOutCubic(t);
+            float spinFactor = EaseUtils.EaseInCubic(t);
+            transform.localScale = Vector3.one * (1 - shrinkFactor);
+            Quaternion newRotation = Quaternion.AngleAxis(startRotation.eulerAngles.y + endRotationY * spinFactor, Vector3.up);
+            transform.localRotation = newRotation;
+            yield return null;
+        }
+        Destroy(gameObject);
     }
 
     void GenerateEconomicParameters()

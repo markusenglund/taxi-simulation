@@ -30,25 +30,6 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        PassengerEconomicParameters economicParameters = new PassengerEconomicParameters()
-        {
-            hourlyIncome = 10.80f,
-            tripUtilityScore = 4,
-            timePreference = 3.5f,
-            waitingCostPerHour = 37.40f,
-            tripUtilityValue = 43.40f,
-            bestSubstitute = new Substitute()
-            {
-                type = SubstituteType.SkipTrip,
-                timeCost = 0,
-                moneyCost = 0,
-                totalCost = 0,
-                netValue = 0,
-                netUtility = 0
-            }
-
-        };
-
         DriverPerson driverPerson = CreateGenericDriverPerson();
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
         // Passenger passenger = city.CreatePassenger(passengerPosition, economicParameters);
@@ -61,6 +42,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         // Transform passengerChild = passenger.transform.GetChild(0);
         // passengerChild.localScale = new Vector3(0.04f, 0.04f, 0.04f);
         yield return new WaitForSeconds(3);
+
         // Pan camera towards the incoming taxi
         // StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(15, 60, 0), 1.5f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passenger.transform.position + new Vector3(0, 0.2f, -0.3f), Quaternion.Euler(15, 70, 0), 3f, Ease.Cubic));
@@ -70,8 +52,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         yield return new WaitForSeconds(1.2f);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(1.7f, 1.3f, 0), Quaternion.Euler(90, 0, 0), 3f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveCamera(Camera.main.transform.position + new Vector3(-0.2f, 0.2f, 0f), 3f, Ease.Cubic));
-        passengerAnimator.SetTrigger("EnterTaxi");
-        yield return new WaitForSeconds(3.4f);
+        yield return new WaitForSeconds(2f);
         StartCoroutine(MoveToCarRoof(passenger, 0.8f));
         StartCoroutine(FollowObject(driver.transform, duration: 5));
         yield return new WaitForSeconds(0.8f);
@@ -81,12 +62,16 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         StartCoroutine(MoveOffCarRoof(passenger, 0.8f));
         yield return new WaitForSeconds(0.8f);
         driver.SetDestination(new Vector3(0, 0, 0));
+        StartCoroutine(passenger.DespawnPassenger());
         // Animate passenger to the sidewalk
 
     }
 
     IEnumerator MoveToCarRoof(PassengerBase passenger, float duration)
     {
+        passengerAnimator.SetTrigger("EnterTaxi");
+        yield return new WaitForSeconds(0.3f);
+
         passenger.transform.SetParent(driver.transform);
         float startTime = Time.time;
         Vector3 startPosition = passenger.transform.localPosition;
