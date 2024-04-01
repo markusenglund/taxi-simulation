@@ -10,12 +10,19 @@ public class Stat
     public string value;
     public float barValue;
 }
+
+public enum PassengerStatMode
+{
+    Fast,
+    Slow
+}
 public class PassengerStats : MonoBehaviour
 {
     [SerializeField] public Transform statTextPrefab;
     public PassengerBase passenger;
     TextMeshProUGUI headingText;
     List<TextMeshProUGUI> statTexts = new List<TextMeshProUGUI>();
+    PassengerStatMode mode;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
@@ -49,6 +56,22 @@ public class PassengerStats : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
+    }
+
+    public IEnumerator DespawnCard()
+    {
+        float duration = 1f;
+        float startTime = Time.time;
+        Vector3 startScale = transform.localScale;
+        Vector3 finalScale = new Vector3(0f, 0f, 0f);
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scaleFactor = EaseInOutCubic(t);
+            transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
+            yield return null;
+        }
+        Destroy(gameObject);
     }
 
     private IEnumerator FadeInText(TextMeshProUGUI text, float duration)
@@ -87,9 +110,15 @@ public class PassengerStats : MonoBehaviour
         };
 
         StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 0, duration: 1));
-        yield return new WaitForSeconds(5f);
+        if (mode == PassengerStatMode.Slow)
+        {
+            yield return new WaitForSeconds(5f);
+        }
         StartCoroutine(InstantiateStat(passengerStatsSheet, tripValueStat, index: 1, duration: 1));
-        yield return new WaitForSeconds(5f);
+        if (mode == PassengerStatMode.Slow)
+        {
+            yield return new WaitForSeconds(5f);
+        }
         StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 2, duration: 1));
         yield return null;
         // InstantiateStat(passengerStatsSheet, tripValueStat, 1);
@@ -122,12 +151,13 @@ public class PassengerStats : MonoBehaviour
 
     }
 
-    public static PassengerStats Create(Transform passengerStatsPrefab, Vector3 position, Quaternion rotation, PassengerBase passenger)
+    public static PassengerStats Create(Transform passengerStatsPrefab, Vector3 position, Quaternion rotation, PassengerBase passenger, PassengerStatMode mode = PassengerStatMode.Fast)
     {
         Transform passengerStatsTransform = Instantiate(passengerStatsPrefab, position, rotation);
         PassengerStats passengerStats = passengerStatsTransform.GetComponent<PassengerStats>();
         passengerStats.passenger = passenger;
         passengerStatsTransform.localScale = Vector3.zero;
+        passengerStats.mode = mode;
         return passengerStats;
     }
 

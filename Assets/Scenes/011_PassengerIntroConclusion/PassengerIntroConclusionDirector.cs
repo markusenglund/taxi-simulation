@@ -9,6 +9,8 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
     [SerializeField] private Transform cityPrefab;
     [SerializeField] public SimulationSettings simSettings;
     [SerializeField] public GraphSettings graphSettings;
+    [SerializeField] public Transform passengerStatsPrefab;
+
     [SerializeField] public Transform passengerPrefab;
     public Random passengerSpawnRandom;
     Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0f);
@@ -30,23 +32,26 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
+
         DriverPerson driverPerson = CreateGenericDriverPerson();
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
         // Passenger passenger = city.CreatePassenger(passengerPosition, economicParameters);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
+        PassengerStats passengerStats = SpawnPassengerStats(passenger);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
 
-        Camera.main.transform.position = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
-        Camera.main.transform.rotation = Quaternion.Euler(15, 0, 0);
+        Camera.main.transform.position = new Vector3(1.75f, 0.148f, 0);
+        Camera.main.transform.rotation = Quaternion.Euler(1.3f, 5.4f, 0f);
         // Get child component of passenger
         // Transform passengerChild = passenger.transform.GetChild(0);
         // passengerChild.localScale = new Vector3(0.04f, 0.04f, 0.04f);
         yield return new WaitForSeconds(3);
 
+        StartCoroutine(passengerStats.DespawnCard());
         // Pan camera towards the incoming taxi
         // StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(15, 60, 0), 1.5f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passenger.transform.position + new Vector3(0, 0.2f, -0.3f), Quaternion.Euler(15, 70, 0), 3f, Ease.Cubic));
-        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position + new Vector3(0, 0, -0.1f), Vector3.up, 70, 2f, Ease.Cubic));
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position + new Vector3(0, 0, 0f), Vector3.up, 70, 2f, Ease.Cubic));
         yield return new WaitForSeconds(0.8f);
         driver.SetDestination(new Vector3(1.7f, 0, 0));
         yield return new WaitForSeconds(1.2f);
@@ -133,7 +138,13 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         }
     }
 
-
+    PassengerStats SpawnPassengerStats(PassengerBase passenger)
+    {
+        Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
+        Quaternion rotation = Quaternion.Euler(0, 20, 0);
+        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, position, rotation, passenger);
+        return passengerStats;
+    }
     DriverPerson CreateGenericDriverPerson()
     {
         return new DriverPerson()
