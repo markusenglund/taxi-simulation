@@ -49,8 +49,11 @@ public class Driver : MonoBehaviour
 
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z, City city)
     {
+        Quaternion rotation = x % GridUtils.blockSize == 0 ? Quaternion.identity : Quaternion.Euler(0, 90, 0);
+
         Transform taxi = Instantiate(prefab, city.transform, false);
         taxi.localPosition = new Vector3(x, y, z);
+        taxi.localRotation = rotation;
         Driver driver = taxi.GetComponent<Driver>();
         driver.city = city;
         driver.driverPerson = person;

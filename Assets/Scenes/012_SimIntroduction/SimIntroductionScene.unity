@@ -164,12 +164,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 538386554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b8a4f4653b294847b6262e384bd2883, type: 3}
+  m_Script: {fileID: 11500000, guid: 04c51d4e08e3d8a44aff231a4087f3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
-  simSettings: {fileID: 11400000, guid: b60a7f5d665d50141a72b49b5cce4dcd, type: 2}
+  simSettings: {fileID: 11400000, guid: 281bd10f7b3169b468b37360bc6a5b90, type: 2}
   graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
+  passengerStatsPrefab: {fileID: 7420584253704279518, guid: 6316bdce544ade54c96b77ed55fcd97d, type: 3}
+  passengerPrefab: {fileID: 257660041485958409, guid: 8926daef5d2d88b458c75c7b1118906e, type: 3}
 --- !u!1 &1527207258
 GameObject:
   m_ObjectHideFlags: 0
