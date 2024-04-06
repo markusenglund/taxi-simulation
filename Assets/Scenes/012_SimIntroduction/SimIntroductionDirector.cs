@@ -45,7 +45,7 @@ public class SimIntroductionDirector : MonoBehaviour
                 Vector3 randomPosition = GridUtils.GetRandomPosition(driverSpawnRandom);
                 DriverPerson driverPerson = CreateGenericDriverPerson();
                 city.CreateDriver(driverPerson, randomPosition);
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(2f / (i + 1));
             }
         }
         yield return new WaitForSeconds(0.5f);

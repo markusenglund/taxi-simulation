@@ -22,6 +22,8 @@ public class Driver : MonoBehaviour
     static int incrementalId = 1;
     public int id;
 
+    private float spawnDuration = 1;
+
     private Trip currentTrip = null;
     private Trip nextTrip = null;
 
@@ -44,7 +46,7 @@ public class Driver : MonoBehaviour
 
     void Start()
     {
-        city.AssignDriverToNextTrip(this);
+        StartCoroutine(SpawnDriver());
     }
 
     public static Driver Create(DriverPerson person, Transform prefab, float x, float z, City city)
@@ -60,6 +62,25 @@ public class Driver : MonoBehaviour
         driver.driverPerson.isCurrentlyDriving = true;
         taxi.name = "Taxi";
         return driver;
+    }
+
+    IEnumerator SpawnDriver()
+    {
+        Transform spawnAnimationPrefab = Resources.Load<Transform>("RespawnAnimation");
+        Transform animation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+        animation.localScale = Vector3.one * 7f;
+        Vector3 finalScale = transform.localScale;
+        transform.localScale = Vector3.zero;
+        float startTime = Time.time;
+        while (Time.time < startTime + spawnDuration)
+        {
+            float t = (Time.time - startTime) / spawnDuration;
+            t = EaseUtils.EaseInOutCubic(t);
+            transform.localScale = finalScale * t;
+            yield return null;
+        }
+        transform.localScale = finalScale;
+        city.AssignDriverToNextTrip(this);
     }
 
     IEnumerator PickUpPassenger()
