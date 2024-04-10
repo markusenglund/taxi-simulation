@@ -18,6 +18,34 @@ public class EaseUtils : MonoBehaviour
         return t2;
     }
 
+    public static float EaseOutCubic(float t)
+    {
+        return 1 - Mathf.Pow(1 - t, 3);
+    }
+
+    public static float EaseInCubic(float t)
+    {
+        return Mathf.Pow(t, 3);
+    }
+
+    public static float EaseInOutQuadratic(float t)
+    {
+        float t2;
+        if (t >= 1)
+        {
+            return 1;
+        }
+        if (t <= 0.5f)
+        {
+            t2 = Mathf.Pow(t * 2, 2) / 2;
+        }
+        else
+        {
+            t2 = (2 - Mathf.Pow((1 - t) * 2, 2)) / 2;
+        }
+        return t2;
+    }
+
     public static float EaseInQuadratic(float t)
     {
         return t * t;
@@ -28,13 +56,5 @@ public class EaseUtils : MonoBehaviour
         return 1 - Mathf.Pow(1 - t, 2);
     }
 
-    public static float EaseOutCubic(float t)
-    {
-        return 1 - Mathf.Pow(1 - t, 3);
-    }
 
-    public static float EaseInCubic(float t)
-    {
-        return Mathf.Pow(t, 3);
-    }
 }

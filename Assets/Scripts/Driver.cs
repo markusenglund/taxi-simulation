@@ -326,20 +326,12 @@ public class Driver : MonoBehaviour
             float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(rawTime);
 
             float waypointT = (currentTime - currentWaypointSegment.startTime) / currentWaypointSegment.duration;
+            float positionPercentage = EaseUtils.EaseInOutQuadratic(waypointT);
 
-            Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, currentWaypointSegment.endPosition, waypointT);
+            Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, currentWaypointSegment.endPosition, positionPercentage);
 
             transform.localPosition = newPosition;
 
-            // float distanceDelta = realSpeed * Time.deltaTime;
-
-            // // If the taxi is very close to the destination, drive slower
-            // if ((destination - transform.localPosition).magnitude < 0.15f)
-            // {
-            //     distanceDelta = distanceDelta / 3;
-            // }
-
-            // transform.localPosition = Vector3.MoveTowards(transform.localPosition, waypoint, distanceDelta);
 
             // If the taxi has reached the first waypoint, remove the first endpoint from the endpoints array
             if (transform.localPosition == waypoint)
