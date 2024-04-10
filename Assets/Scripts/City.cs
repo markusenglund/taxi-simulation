@@ -430,6 +430,7 @@ public class City : MonoBehaviour
 
     public void AssignDriverToNextTrip(Driver driver)
     {
+        Debug.Log("Assigning driver to next trip");
         // Assign driver to next trip if there is one
         Trip trip = GetNextTrip();
         if (trip != null)

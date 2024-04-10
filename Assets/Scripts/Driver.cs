@@ -10,6 +10,16 @@ public enum TaxiState
     AssignedToTrip
 }
 
+public class WaypointSegment
+{
+    public float startTime;
+    public float distance;
+    public float duration;
+    public Vector3 startPosition;
+
+    public Vector3 endPosition;
+}
+
 public class Driver : MonoBehaviour
 {
 
@@ -34,6 +44,8 @@ public class Driver : MonoBehaviour
     public DriverPerson driverPerson;
 
     private City city;
+
+    private WaypointSegment currentWaypointSegment;
 
     [SerializeField] public Transform agentStatusTextPrefab;
 
@@ -126,6 +138,7 @@ public class Driver : MonoBehaviour
     {
         nextTrip = trip;
         SetState(TaxiState.AssignedToTrip);
+        Debug.Log($"Driver {id} assigned to trip at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
     }
 
     public void HandleDriverDispatched(Trip trip)
@@ -133,6 +146,7 @@ public class Driver : MonoBehaviour
         currentTrip = trip;
         nextTrip = null;
         SetDestination(trip.tripCreatedData.passenger.positionActual);
+        Debug.Log($"Driver {id} dispatched at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
     }
 
     private void DropOffPassenger()
@@ -180,8 +194,8 @@ public class Driver : MonoBehaviour
         }
         else
         {
-            // SetTaxiColor();
             city.HandleTripCompleted(this);
+            Debug.Log($"Driver {id} completed trip at {droppedOffTime}");
         }
 
     }
@@ -204,28 +218,6 @@ public class Driver : MonoBehaviour
     {
         this.state = newState;
     }
-
-    // private void SetTaxiColor()
-    // {
-    //     // Change the color of the taxi by going into its child called "TaxiVisual" which has a child called "Taxi" and switch the second material in the mesh renderer
-
-    //     Transform taxiVisual = transform.Find("TaxiVisual");
-    //     Transform taxi = taxiVisual.Find("Taxi");
-    //     MeshRenderer meshRenderer = taxi.GetComponent<MeshRenderer>();
-    //     Material[] materials = meshRenderer.materials;
-    //     if (currentTrip == null || currentTrip.state == TripState.Queued)
-    //     {
-    //         materials[1].color = Color.black;
-    //     }
-    //     else if (currentTrip.state == TripState.DriverEnRoute)
-    //     {
-    //         materials[1].color = Color.red;
-    //     }
-    //     else if (currentTrip.state == TripState.OnTrip)
-    //     {
-    //         materials[1].color = Color.green;
-    //     }
-    // }
 
     public void HandleEndOfSession()
     {
@@ -251,6 +243,7 @@ public class Driver : MonoBehaviour
 
         this.destination = destination;
         SetWaypoints();
+        Debug.Log($"Driver {id} set destination to {destination}");
     }
 
     public void SetWaypoints()
@@ -265,6 +258,7 @@ public class Driver : MonoBehaviour
         if ((taxiPosition.x % GridUtils.blockSize == 0 && taxiDirection.x == 0) || (taxiPosition.z % GridUtils.blockSize == 0 && taxiDirection.z == 0))
         {
             waypoints.Enqueue(taxiDestination);
+            SetNewEndpoint();
             return;
         }
         if (taxiPosition.x % GridUtils.blockSize != 0)
@@ -288,6 +282,7 @@ public class Driver : MonoBehaviour
             }
         }
         waypoints.Enqueue(taxiDestination);
+        SetNewEndpoint();
     }
 
     void Update()
@@ -319,35 +314,60 @@ public class Driver : MonoBehaviour
 
             // Read the first waypoint from the queue without dequeuing it
             Vector3 waypoint = waypoints.Peek();
+            Vector3 currentPosition = transform.localPosition;
 
-            Vector3 direction = waypoint - transform.localPosition;
+            Vector3 direction = waypoint - currentPosition;
             if (direction != Vector3.zero)
             {
                 transform.rotation = Quaternion.LookRotation(direction);
             }
 
-            // Distance delta should be lower if the taxi is close to the destination
-            float realSpeed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(city.simulationSettings.driverSpeed);
+            float rawTime = Time.time;
+            float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(rawTime);
 
-            float distanceDelta = realSpeed * Time.deltaTime;
+            float waypointT = (currentTime - currentWaypointSegment.startTime) / currentWaypointSegment.duration;
 
-            // If the taxi is very close to the destination, drive slower
-            if ((destination - transform.localPosition).magnitude < 0.15f)
-            {
-                distanceDelta = distanceDelta / 3;
-            }
+            Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, currentWaypointSegment.endPosition, waypointT);
 
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, waypoint, distanceDelta);
+            transform.localPosition = newPosition;
+
+            // float distanceDelta = realSpeed * Time.deltaTime;
+
+            // // If the taxi is very close to the destination, drive slower
+            // if ((destination - transform.localPosition).magnitude < 0.15f)
+            // {
+            //     distanceDelta = distanceDelta / 3;
+            // }
+
+            // transform.localPosition = Vector3.MoveTowards(transform.localPosition, waypoint, distanceDelta);
 
             // If the taxi has reached the first waypoint, remove the first endpoint from the endpoints array
             if (transform.localPosition == waypoint)
             {
                 waypoints.Dequeue();
-
+                SetNewEndpoint();
             }
         }
 
 
+    }
+
+    private void SetNewEndpoint()
+    {
+        if (waypoints.Count == 0)
+        {
+            return;
+        }
+        Vector3 nextWaypoint = waypoints.Peek();
+        float distance = (nextWaypoint - transform.localPosition).magnitude;
+        currentWaypointSegment = new WaypointSegment
+        {
+            startTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time),
+            distance = distance,
+            duration = distance / city.simulationSettings.driverSpeed,
+            startPosition = transform.localPosition,
+            endPosition = nextWaypoint
+        };
     }
 
 

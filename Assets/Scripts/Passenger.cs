@@ -74,7 +74,7 @@ public class Passenger : MonoBehaviour
         passenger.waitingTimeGraph = waitingTimeGraph;
         passenger.passengerSurplusGraph = passengerSurplusGraph;
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
-        if (passengerEconomicParameters != null)
+        if (passengerEconomicParameters == null)
         {
             passenger.passengerEconomicParameters = passengerEconomicParameters;
         }
