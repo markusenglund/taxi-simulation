@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,9 @@ public class WaypointSegment
 {
     public float startTime;
     public float distance;
+    public float accelerationDistance;
     public float duration;
+    public float accelerationDuration;
     public Vector3 startPosition;
 
     public Vector3 endPosition;
@@ -44,6 +47,9 @@ public class Driver : MonoBehaviour
     public DriverPerson driverPerson;
 
     private City city;
+
+    private float acceleration = 1000;
+    private float maxSpeed = 40;
 
     private WaypointSegment currentWaypointSegment;
 
@@ -322,11 +328,11 @@ public class Driver : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(direction);
             }
 
-            float rawTime = Time.time;
-            float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(rawTime);
+            // float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
 
-            float waypointT = (currentTime - currentWaypointSegment.startTime) / currentWaypointSegment.duration;
-            float positionPercentage = EaseUtils.EaseInOutQuadratic(waypointT);
+            // float waypointT = (currentTime - currentWaypointSegment.startTime) / currentWaypointSegment.duration;
+            // float positionPercentage = EaseUtils.EaseInOutQuadratic(waypointT);
+            float positionPercentage = CalculatePercentageTravelled();
 
             Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, currentWaypointSegment.endPosition, positionPercentage);
 
@@ -340,7 +346,34 @@ public class Driver : MonoBehaviour
                 SetNewEndpoint();
             }
         }
+    }
 
+    private float CalculatePercentageTravelled()
+    {
+        float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+
+        float distanceTravelled;
+        float accelerationEndTime = currentWaypointSegment.startTime + currentWaypointSegment.accelerationDuration;
+        float decelerationStartTime = currentWaypointSegment.startTime + currentWaypointSegment.duration - currentWaypointSegment.accelerationDuration;
+        float time = currentTime - currentWaypointSegment.startTime;
+        if (currentTime < accelerationEndTime)
+        {
+            distanceTravelled = 0.5f * acceleration * Mathf.Pow(currentTime - currentWaypointSegment.startTime, 2);
+        }
+        else if (currentTime < decelerationStartTime)
+        {
+            distanceTravelled = currentWaypointSegment.accelerationDistance + maxSpeed * (currentTime - accelerationEndTime);
+        }
+        else if (currentTime < currentWaypointSegment.startTime + currentWaypointSegment.duration)
+        {
+            distanceTravelled = currentWaypointSegment.distance - 0.5f * acceleration * Mathf.Pow(currentWaypointSegment.duration - time, 2);
+        }
+        else
+        {
+            distanceTravelled = currentWaypointSegment.distance;
+        }
+
+        return distanceTravelled / currentWaypointSegment.distance;
 
     }
 
@@ -352,11 +385,24 @@ public class Driver : MonoBehaviour
         }
         Vector3 nextWaypoint = waypoints.Peek();
         float distance = (nextWaypoint - transform.localPosition).magnitude;
+
+        float accelerationDistance = Mathf.Min(0.5f * acceleration * Mathf.Pow(maxSpeed / acceleration, 2), distance / 2);
+        float maxSpeedDistance = distance - 2 * accelerationDistance;
+        float maxSpeedDuration = maxSpeedDistance / maxSpeed;
+
+        float accelerationDuration = Mathf.Sqrt(2 * accelerationDistance / acceleration);
+        // float topSpeed = accelerationDistance
+        // float accelerationDuration = maxSpeed / acceleration;
+        // float decelerationDuration = accelerationDuration;
+        float totalDuration = 2 * accelerationDuration + maxSpeedDuration;
+
         currentWaypointSegment = new WaypointSegment
         {
             startTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time),
             distance = distance,
-            duration = distance / city.simulationSettings.driverSpeed,
+            accelerationDistance = accelerationDistance,
+            duration = totalDuration,
+            accelerationDuration = accelerationDuration,
             startPosition = transform.localPosition,
             endPosition = nextWaypoint
         };
