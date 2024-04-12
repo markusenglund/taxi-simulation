@@ -322,10 +322,12 @@ public class Driver : MonoBehaviour
             Vector3 waypoint = waypoints.Peek();
             Vector3 currentPosition = transform.localPosition;
 
-            Vector3 direction = waypoint - currentPosition;
-            if (direction != Vector3.zero)
+            Vector3 goalDirection = waypoint - currentPosition;
+            float turnDuration = 0.1f;
+            if (goalDirection != Vector3.zero)
             {
-                transform.rotation = Quaternion.LookRotation(direction);
+                Vector3 newDirection = Vector3.RotateTowards(transform.forward, goalDirection, Time.deltaTime / turnDuration, 0.0f);
+                transform.rotation = Quaternion.LookRotation(newDirection);
             }
 
             float positionPercentage = CalculatePercentageTravelled();
