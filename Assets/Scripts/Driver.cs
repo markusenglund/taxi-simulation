@@ -328,10 +328,6 @@ public class Driver : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(direction);
             }
 
-            // float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-
-            // float waypointT = (currentTime - currentWaypointSegment.startTime) / currentWaypointSegment.duration;
-            // float positionPercentage = EaseUtils.EaseInOutQuadratic(waypointT);
             float positionPercentage = CalculatePercentageTravelled();
 
             Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, currentWaypointSegment.endPosition, positionPercentage);
@@ -391,9 +387,7 @@ public class Driver : MonoBehaviour
         float maxSpeedDuration = maxSpeedDistance / maxSpeed;
 
         float accelerationDuration = Mathf.Sqrt(2 * accelerationDistance / acceleration);
-        // float topSpeed = accelerationDistance
-        // float accelerationDuration = maxSpeed / acceleration;
-        // float decelerationDuration = accelerationDuration;
+
         float totalDuration = 2 * accelerationDuration + maxSpeedDuration;
 
         currentWaypointSegment = new WaypointSegment

@@ -24,7 +24,7 @@ MonoBehaviour:
   baseFarePerKm: 1.5
   driverFareCutPercentage: 0.67
   driverMarginalCostPerKm: 0.13
-  numDrivers: 5
+  numDrivers: 1
   maxSessionLength: 2
   passengerMedianIncome: 20
   passengerIncomeSigma: 0.9
