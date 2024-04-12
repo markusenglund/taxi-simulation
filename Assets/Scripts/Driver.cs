@@ -264,7 +264,7 @@ public class Driver : MonoBehaviour
         if ((taxiPosition.x % GridUtils.blockSize == 0 && taxiDirection.x == 0) || (taxiPosition.z % GridUtils.blockSize == 0 && taxiDirection.z == 0))
         {
             waypoints.Enqueue(taxiDestination);
-            SetNewEndpoint();
+            SetNewSegment();
             return;
         }
         if (taxiPosition.x % GridUtils.blockSize != 0)
@@ -288,7 +288,7 @@ public class Driver : MonoBehaviour
             }
         }
         waypoints.Enqueue(taxiDestination);
-        SetNewEndpoint();
+        SetNewSegment();
     }
 
     void Update()
@@ -323,16 +323,18 @@ public class Driver : MonoBehaviour
             Vector3 currentPosition = transform.localPosition;
 
             Vector3 goalDirection = waypoint - currentPosition;
-            float turnDuration = 0.1f;
+            float turningSpeed = 10f;
             if (goalDirection != Vector3.zero)
             {
-                Vector3 newDirection = Vector3.RotateTowards(transform.forward, goalDirection, Time.deltaTime / turnDuration, 0.0f);
+                Vector3 newDirection = Vector3.RotateTowards(transform.forward, goalDirection, turningSpeed * Time.deltaTime, 0.0f);
                 transform.rotation = Quaternion.LookRotation(newDirection);
             }
 
-            float positionPercentage = CalculatePercentageTravelled();
+            float speed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(CalculateSpeed());
 
-            Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, currentWaypointSegment.endPosition, positionPercentage);
+            // Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, waypoint, positionPercentage);
+            Debug.Log(speed);
+            Vector3 newPosition = Vector3.MoveTowards(transform.localPosition, waypoint, Mathf.Max(speed * Time.deltaTime, 0.01f));
 
             transform.localPosition = newPosition;
 
@@ -341,48 +343,38 @@ public class Driver : MonoBehaviour
             if (transform.localPosition == waypoint)
             {
                 waypoints.Dequeue();
-                SetNewEndpoint();
             }
         }
     }
 
-    private float CalculatePercentageTravelled()
+    private float CalculateSpeed()
     {
         float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-
-        float distanceTravelled;
-        float accelerationEndTime = currentWaypointSegment.startTime + currentWaypointSegment.accelerationDuration;
-        float decelerationStartTime = currentWaypointSegment.startTime + currentWaypointSegment.duration - currentWaypointSegment.accelerationDuration;
         float time = currentTime - currentWaypointSegment.startTime;
-        if (currentTime < accelerationEndTime)
+        if (currentTime < currentWaypointSegment.startTime + currentWaypointSegment.accelerationDuration)
         {
-            distanceTravelled = 0.5f * acceleration * Mathf.Pow(currentTime - currentWaypointSegment.startTime, 2);
+            return acceleration * time;
         }
-        else if (currentTime < decelerationStartTime)
+        else if (currentTime < currentWaypointSegment.startTime + currentWaypointSegment.duration - currentWaypointSegment.accelerationDuration)
         {
-            distanceTravelled = currentWaypointSegment.accelerationDistance + maxSpeed * (currentTime - accelerationEndTime);
-        }
-        else if (currentTime < currentWaypointSegment.startTime + currentWaypointSegment.duration)
-        {
-            distanceTravelled = currentWaypointSegment.distance - 0.5f * acceleration * Mathf.Pow(currentWaypointSegment.duration - time, 2);
+            return maxSpeed;
         }
         else
         {
-            distanceTravelled = currentWaypointSegment.distance;
+            return maxSpeed - acceleration * (currentTime - currentWaypointSegment.startTime - currentWaypointSegment.duration + currentWaypointSegment.accelerationDuration);
         }
-
-        return distanceTravelled / currentWaypointSegment.distance;
-
     }
 
-    private void SetNewEndpoint()
+    private void SetNewSegment()
     {
         if (waypoints.Count == 0)
         {
             return;
         }
-        Vector3 nextWaypoint = waypoints.Peek();
-        float distance = (nextWaypoint - transform.localPosition).magnitude;
+        // Get last element from waypoints queue
+        Vector3 lastWaypoint = waypoints.Last();
+        // float distance = (nextWaypoint - transform.localPosition).magnitude;
+        float distance = GridUtils.GetDistance(transform.localPosition, lastWaypoint);
 
         float accelerationDistance = Mathf.Min(0.5f * acceleration * Mathf.Pow(maxSpeed / acceleration, 2), distance / 2);
         float maxSpeedDistance = distance - 2 * accelerationDistance;
@@ -400,7 +392,7 @@ public class Driver : MonoBehaviour
             duration = totalDuration,
             accelerationDuration = accelerationDuration,
             startPosition = transform.localPosition,
-            endPosition = nextWaypoint
+            endPosition = lastWaypoint
         };
     }
 
