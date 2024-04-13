@@ -10,6 +10,7 @@ public class SimIntroductionDirector : MonoBehaviour
     [SerializeField] public GraphSettings graphSettings;
 
     Vector3 cityMiddlePosition = new Vector3(4.5f, -3.5f, 4.5f);
+    // Vector3 lookAtPosition = new Vector3()
     City city;
     public Random driverSpawnRandom;
 
@@ -22,22 +23,20 @@ public class SimIntroductionDirector : MonoBehaviour
     {
         driverSpawnRandom = new Random(simSettings.randomSeed);
 
-        Camera.main.transform.position = new Vector3(0f, 11f, 0f);
+        Camera.main.transform.position = new Vector3(0f, 11f, 4.5f);
         Camera.main.transform.LookAt(cityMiddlePosition);
         StartCoroutine(Scene());
     }
 
     IEnumerator Scene()
     {
+        StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition, Vector3.up, -90, 12, Ease.Linear));
 
-        // DriverPerson driverPerson = CreateGenericDriverPerson();
-        // driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
+        yield return new WaitForSeconds(11.5f);
+        StartCoroutine(MoveCity(new Vector3(-4.5f, 0, 0f), 0.9f));
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition + new Vector3(-4.5f, 0, 0f), Vector3.up, -360, 48, Ease.Linear));
 
-        StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition, Vector3.up, -405, 100, Ease.Linear));
-        yield return new WaitForSeconds(3);
-
-        // DriverPerson driverPerson = CreateGenericDriverPerson();
-        // city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
         int numDrivers = 6;
         for (int i = 0; i < numDrivers; i++)
         {
@@ -49,6 +48,20 @@ public class SimIntroductionDirector : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(0.5f);
+    }
+
+    IEnumerator MoveCity(Vector3 finalPosition, float duration)
+    {
+        float startTime = Time.time;
+        Vector3 startPosition = city.transform.position;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            t = EaseUtils.EaseInOutCubic(t);
+            city.transform.position = Vector3.Lerp(startPosition, finalPosition, t);
+            yield return null;
+        }
+        city.transform.position = finalPosition;
     }
 
     DriverPerson CreateGenericDriverPerson()
