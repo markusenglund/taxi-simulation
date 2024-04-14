@@ -26,6 +26,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     float maxX;
     float minX = 0f;
 
+    string headingText = "Passenger spawn rate";
+
     City city;
 
     Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
@@ -73,6 +75,15 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         yLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         yLineRenderer.SetPosition(1, new Vector3(maxYPosition.x, maxYPosition.y, 0));
 
+        // Set order in layer to 1
+        xLineRenderer.sortingOrder = 1;
+        yLineRenderer.sortingOrder = 1;
+        // Set end cap vertices to one
+        xLineRenderer.numCapVertices = 1;
+        yLineRenderer.numCapVertices = 1;
+
+
+
     }
 
     private void CreateAxisValues()
@@ -105,8 +116,11 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     private void CreateHeaderText()
     {
         TMP_Text text = Instantiate(headerTextPrefab, graphContainer);
-        Vector2 textPosition = new Vector2(-52f, 70f);
-        text.text = "Supply & Demand";
+        RectTransform textRectTransform = text.rectTransform;
+        textRectTransform.sizeDelta = graphSize;
+        text.fontSize = 90;
+        Vector2 textPosition = new Vector2(0f, graphSize.y / 2 - 100f);
+        text.text = headingText;
         text.rectTransform.anchoredPosition = textPosition;
     }
 
