@@ -90,7 +90,10 @@ public class City : MonoBehaviour
 
         SpawnInitialDrivers();
         // createInitialPassengers();
-        StartCoroutine(createPassengers());
+        if (simulationSettings.isActive)
+        {
+            StartCoroutine(createPassengers());
+        }
     }
 
     void Update()
@@ -184,7 +187,7 @@ public class City : MonoBehaviour
         if (!simulationSettings.useConstantSurgeMultiplier)
         {
             float maxSurgeMultiplier = 5f;
-            float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour();
+            float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsToSimulationHours(Time.time));
 
             int numWaitingPassengers = queuedTrips.Count;
             int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
@@ -230,7 +233,7 @@ public class City : MonoBehaviour
         while (simulationTime < simulationSettings.simulationLengthHours)
         {
 
-            float expectedPassengersPerHour = GetNumExpectedPassengersPerHour();
+            float expectedPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsToSimulationHours(Time.time));
 
             float interval = 1f / 30f;
             yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(interval));
@@ -277,9 +280,9 @@ public class City : MonoBehaviour
         return passengers;
     }
 
-    private float GetNumExpectedPassengersPerHour()
+
+    public float GetNumExpectedPassengersPerHour(float simulationTime)
     {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         // Get the demand index for the two hours surrounding the current time and get the weighted average of them
         int currentHour = Mathf.FloorToInt(simulationTime);
         float percentOfHour = simulationTime - currentHour;

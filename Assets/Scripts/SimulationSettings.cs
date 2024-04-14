@@ -11,6 +11,8 @@ public class SimulationSettings : ScriptableObject
     public bool useConstantSupplyMode = true;
     public bool useConstantSurgeMultiplier = true;
 
+    public bool isActive = true;
+
     public int randomSeed = 1;
 
     public int simulationLengthHours = 4;

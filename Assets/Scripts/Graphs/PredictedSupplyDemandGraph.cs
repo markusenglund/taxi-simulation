@@ -57,6 +57,25 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
         InstantiateGraph();
+        CreatePassengerCurve();
+    }
+
+    private void CreatePassengerCurve()
+    {
+        int numPositions = city.simulationSettings.simulationLengthHours * 2 + 1;
+        List<Vector2> values = new List<Vector2>();
+        for (int i = 0; i < numPositions; i++)
+        {
+            float time = i / 2f;
+            float passengersPerHour = city.GetNumExpectedPassengersPerHour(time);
+            values.Add(new Vector2(time, passengersPerHour));
+        }
+        for (int i = 0; i < values.Count; i++)
+        {
+            Vector2 graphPosition = ConvertValueToGraphPosition(values[i]);
+            passengersLine.positionCount = i + 1;
+            passengersLine.SetPosition(i, new Vector3(graphPosition.x, graphPosition.y, 0));
+        }
     }
 
     private void CreateAxes()
@@ -76,9 +95,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         yLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         yLineRenderer.SetPosition(1, new Vector3(maxYPosition.x, maxYPosition.y, 0));
 
-        // Set order in layer to 1
-        xLineRenderer.sortingOrder = 1;
-        yLineRenderer.sortingOrder = 1;
+        xLineRenderer.sortingOrder = 2;
+        yLineRenderer.sortingOrder = 2;
         // Set end cap vertices to one
         xLineRenderer.numCapVertices = 1;
         yLineRenderer.numCapVertices = 1;
@@ -178,11 +196,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.positionCount = 0;
         passengersLine.startColor = passengersLineColor;
         passengersLine.endColor = passengersLineColor;
-
-        tripsLine = Instantiate(lrPrefab, graphContainer);
-        tripsLine.positionCount = 0;
-        tripsLine.startColor = tripsLineColor;
-        tripsLine.endColor = tripsLineColor;
+        passengersLine.sortingOrder = 1;
+        passengersLine.numCornerVertices = 10;
     }
 
     private void InstantiateGraph()
