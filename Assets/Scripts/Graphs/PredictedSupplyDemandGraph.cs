@@ -21,6 +21,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     Vector3 graphPosition = new Vector3(2500, 700);
     float margin = 100f;
     float marginTop = 180f;
+    float marginBottom = 140f;
     float maxY = 60f;
     float minY = 0f;
     float maxX;
@@ -31,7 +32,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     City city;
 
     Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    Color passengersLineColor = new Color(0.2f, 0.6f, 1.0f, 1.0f);
+    Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
 
 
     public static PredictedSupplyDemandGraph Create(City city)
@@ -113,7 +114,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             text.alignment = TextAlignmentOptions.Center;
             text.text = TimeUtils.ConvertSimulationHoursToTimeString(i);
             text.rectTransform.anchoredPosition = textPosition;
-            text.rectTransform.sizeDelta = new Vector2(100, 80);
+            text.rectTransform.sizeDelta = new Vector2(200, 80);
             text.fontSize = 42;
         }
     }
@@ -132,37 +133,43 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     private void CreateLegend()
     {
-        TMP_Text text1 = Instantiate(legendTextPrefab, graphContainer);
-        Vector2 textPosition1 = new Vector2(140, 74f);
-        text1.text = "Potential riders/hr";
-        text1.rectTransform.anchoredPosition = textPosition1;
-        text1.rectTransform.sizeDelta = new Vector2(130, 30);
+
 
         // Create a tiny green line with the line renderer
-        LineRenderer passengersLegendLine = Instantiate(lrPrefab, graphContainer);
+        // Create empty legend game object inside the graph container with scale 1
+        GameObject legend = new GameObject("Legend", typeof(RectTransform));
+        legend.transform.SetParent(graphContainer);
+        legend.transform.localScale = new Vector3(1, 1, 1);
+        legend.transform.localRotation = Quaternion.identity;
+        // Set pivot to bottom left
+        RectTransform legendRectTransform = legend.GetComponent<RectTransform>();
+        legendRectTransform.pivot = new Vector2(0, 0);
+        legendRectTransform.anchorMin = new Vector2(0, 0);
+        legendRectTransform.anchorMax = new Vector2(0, 0);
+
+        // Set size delta of the legend
+        float legendHeight = 42;
+        float legendWidth = 600;
+        legend.transform.localPosition = new Vector3(-legendWidth + margin, (-graphSize.y) / 2 + 0.15f * marginBottom, 0);
+        legendRectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
+
+        LineRenderer passengersLegendLine = Instantiate(lrPrefab, legend.transform);
         passengersLegendLine.positionCount = 2;
-        Vector2 greenLinePosition1 = new Vector2(255, 181);
-        Vector2 greenLinePosition2 = new Vector2(265, 181);
-        passengersLegendLine.SetPosition(0, new Vector3(greenLinePosition1.x, greenLinePosition1.y, 0));
-        passengersLegendLine.SetPosition(1, new Vector3(greenLinePosition2.x, greenLinePosition2.y, 0));
+        // Offset with 6 px to get it properly centered
+        Vector2 passengerLinePosition1 = new Vector2(0, legendHeight / 2 - 6);
+        Vector2 passengerLinePosition2 = passengerLinePosition1 + new Vector2(1, 0);
+        passengersLegendLine.SetPosition(0, new Vector3(passengerLinePosition1.x, passengerLinePosition1.y, 0));
+        passengersLegendLine.SetPosition(1, new Vector3(passengerLinePosition2.x, passengerLinePosition2.y, 0));
         passengersLegendLine.startColor = passengersLineColor;
         passengersLegendLine.endColor = passengersLineColor;
+        passengersLegendLine.widthCurve = AnimationCurve.Constant(0, 1, 1.4f);
 
-        TMP_Text text2 = Instantiate(legendTextPrefab, graphContainer);
-        Vector2 textPosition2 = new Vector2(140, 54f);
-        text2.text = "Trips started/hr";
-        text2.rectTransform.anchoredPosition = textPosition2;
-        text2.rectTransform.sizeDelta = new Vector2(130, 30);
-
-        // Create a tiny red line with the line renderer
-        LineRenderer tripsLegendLine = Instantiate(lrPrefab, graphContainer);
-        tripsLegendLine.positionCount = 2;
-        Vector2 redLinePosition1 = new Vector2(255, 162);
-        Vector2 redLinePosition2 = new Vector2(265, 162);
-        tripsLegendLine.SetPosition(0, new Vector3(redLinePosition1.x, redLinePosition1.y, 0));
-        tripsLegendLine.SetPosition(1, new Vector3(redLinePosition2.x, redLinePosition2.y, 0));
-        tripsLegendLine.startColor = tripsLineColor;
-        tripsLegendLine.endColor = tripsLineColor;
+        TMP_Text text1 = Instantiate(legendTextPrefab, legend.transform);
+        Vector2 textPosition1 = new Vector2(30, 0);
+        text1.text = "Number of passengers/hr";
+        text1.rectTransform.anchoredPosition = textPosition1;
+        text1.rectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
+        text1.fontSize = legendHeight;
     }
 
     private void InstantiateLines()
@@ -193,7 +200,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         float graphHeight = graphContainer.sizeDelta.y;
         float graphWidth = graphContainer.sizeDelta.x;
 
-        float y = Mathf.Lerp(margin, graphHeight - marginTop, (vector.y - minY) / (maxY - minY));
+        float y = Mathf.Lerp(marginBottom, graphHeight - marginTop, (vector.y - minY) / (maxY - minY));
         float x = Mathf.Lerp(margin, graphWidth - margin, (vector.x - minX) / (maxX - minX));
 
         return new Vector2(x, y);
