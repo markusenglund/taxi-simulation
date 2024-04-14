@@ -287,7 +287,10 @@ public class City : MonoBehaviour
         int currentHour = Mathf.FloorToInt(simulationTime);
         float percentOfHour = simulationTime - currentHour;
         float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
-        float expectedPassengersPerHour = expectedPassengersByHour[currentHour] * (1 - percentOfHour) + expectedPassengersByHour[(currentHour + 1) % 24] * percentOfHour;
+
+        // Hacky way to smooth out the curve by weighting the average
+        float weighting = EaseUtils.EaseInOutQuadratic(percentOfHour);
+        float expectedPassengersPerHour = Mathf.Lerp(expectedPassengersByHour[currentHour], expectedPassengersByHour[(currentHour + 1) % 24], weighting);
         return expectedPassengersPerHour;
     }
 

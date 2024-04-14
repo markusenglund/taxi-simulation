@@ -22,7 +22,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     float margin = 100f;
     float marginTop = 180f;
     float marginBottom = 140f;
-    float maxY = 60f;
+    float maxY = 50f;
     float minY = 0f;
     float maxX;
     float minX = 0f;
@@ -62,11 +62,12 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     private void CreatePassengerCurve()
     {
-        int numPositions = city.simulationSettings.simulationLengthHours * 2 + 1;
+        int numPositionsPerHour = 20;
+        int numPositions = city.simulationSettings.simulationLengthHours * numPositionsPerHour + 1;
         List<Vector2> values = new List<Vector2>();
         for (int i = 0; i < numPositions; i++)
         {
-            float time = i / 2f;
+            float time = (float)i / numPositionsPerHour;
             float passengersPerHour = city.GetNumExpectedPassengersPerHour(time);
             values.Add(new Vector2(time, passengersPerHour));
         }
