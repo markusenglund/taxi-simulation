@@ -17,14 +17,14 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     LineRenderer tripsLine;
 
 
-    float margin = 26f;
-    float marginTop = 50f;
-    float maxY = 100f;
+    Vector2 graphSize = new Vector2(1200, 800);
+    Vector3 graphPosition = new Vector3(2500, 700);
+    float margin = 100f;
+    float marginTop = 180f;
+    float maxY = 60f;
     float minY = 0f;
     float maxX;
     float minX = 0f;
-
-    float timeInterval = 20f / 60f;
 
     City city;
 
@@ -32,14 +32,12 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     Color passengersLineColor = new Color(0.2f, 0.6f, 1.0f, 1.0f);
 
 
-    public static PredictedSupplyDemandGraph Create(Vector3 screenPos, City city)
+    public static PredictedSupplyDemandGraph Create(City city)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform graphPrefab = Resources.Load<Transform>("Graphs/PredictedSupplyDemandGraph");
         Transform graphTransform = Instantiate(graphPrefab, canvas);
-        RectTransform graphRectTransform = graphTransform.GetComponent<RectTransform>();
 
-        graphRectTransform.anchoredPosition = screenPos;
         PredictedSupplyDemandGraph graph = graphTransform.GetComponent<PredictedSupplyDemandGraph>();
         graph.maxX = city.simulationSettings.simulationLengthHours;
         graph.city = city;
@@ -48,7 +46,13 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     private void Start()
     {
+        // Set size delta of the graph (not the container, the graph itself)
+        RectTransform graphRectTransform = transform.GetComponent<RectTransform>();
+        graphRectTransform.sizeDelta = graphSize;
+        graphRectTransform.anchoredPosition = graphPosition;
+
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
+        graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
         InstantiateGraph();
     }
 

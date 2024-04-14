@@ -30,13 +30,14 @@ public class SimIntroductionDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
+        // Should be 20 seconds in the end
         float preMoveDuration = 1f;
         StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition, Vector3.up, -90, preMoveDuration, Ease.Linear));
         yield return new WaitForSeconds(preMoveDuration - 0.5f);
         StartCoroutine(MoveCity(new Vector3(-4.5f, 0, 0f), 0.9f));
         yield return new WaitForSeconds(0.5f);
-        PredictedSupplyDemandGraph.Create(new Vector3(3200, -500), city);
-        StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition + new Vector3(-4.5f, 0, 0f), Vector3.up, -360, 48, Ease.Linear));
+        PredictedSupplyDemandGraph.Create(city);
+        StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition + new Vector3(-4.5f, 0, 0f), Vector3.up, -360, 80, Ease.Linear));
 
         int numDrivers = 6;
         for (int i = 0; i < numDrivers; i++)
