@@ -96,6 +96,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(0, i));
             text.text = i.ToString();
             text.rectTransform.anchoredPosition = textPosition;
+            text.rectTransform.sizeDelta = new Vector2(200, 30);
+            text.fontSize = 42;
+
         }
 
         // Create x axis values
@@ -110,6 +113,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             text.alignment = TextAlignmentOptions.Center;
             text.text = TimeUtils.ConvertSimulationHoursToTimeString(i);
             text.rectTransform.anchoredPosition = textPosition;
+            text.rectTransform.sizeDelta = new Vector2(100, 80);
+            text.fontSize = 42;
         }
     }
 
@@ -121,6 +126,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         text.fontSize = 90;
         Vector2 textPosition = new Vector2(0f, graphSize.y / 2 - 100f);
         text.text = headingText;
+
         text.rectTransform.anchoredPosition = textPosition;
     }
 
