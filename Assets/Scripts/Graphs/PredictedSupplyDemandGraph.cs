@@ -35,6 +35,10 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
 
     LineRenderer passengersLegendLine;
+    LineRenderer xLineRenderer;
+    LineRenderer yLineRenderer;
+
+    Color axisColor = new Color(192f / 255f, 192f / 255f, 192f / 255f, 1f);
 
     CanvasGroup canvasGroup;
 
@@ -69,7 +73,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     private IEnumerator ScheduleActions()
     {
         InstantiateGraph();
-        StartCoroutine(SpawnCard(2f));
+        StartCoroutine(SpawnCard(1f));
         yield return new WaitForSeconds(1);
 
 
@@ -97,11 +101,18 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float alpha = Mathf.Lerp(startAlpha, finalAlpha, t);
+            float percentage = EaseUtils.EaseInQuadratic(t);
+            float alpha = Mathf.Lerp(startAlpha, finalAlpha, percentage);
             canvasGroup.alpha = alpha;
             Color passengersLineColor = new Color(passengersLegendLine.startColor.r, passengersLegendLine.startColor.g, passengersLegendLine.startColor.b, alpha);
             passengersLegendLine.startColor = passengersLineColor;
             passengersLegendLine.endColor = passengersLineColor;
+
+            Color axisLineColor = new Color(axisColor.r, axisColor.g, axisColor.b, alpha);
+            xLineRenderer.startColor = axisLineColor;
+            xLineRenderer.endColor = axisLineColor;
+            yLineRenderer.startColor = axisLineColor;
+            yLineRenderer.endColor = axisLineColor;
 
             yield return null;
         }
@@ -138,7 +149,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     private void CreateAxes()
     {
         // Create x axis with the line renderer
-        LineRenderer xLineRenderer = Instantiate(lrPrefab, graphContainer);
+        xLineRenderer = Instantiate(lrPrefab, graphContainer);
         xLineRenderer.positionCount = 2;
         Vector2 zeroPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         Vector2 maxXPosition = ConvertValueToGraphPosition(new Vector2(maxX, 0));
@@ -146,7 +157,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         xLineRenderer.SetPosition(1, new Vector3(maxXPosition.x, maxXPosition.y, 0));
 
         // Create y axis with the line renderer
-        LineRenderer yLineRenderer = Instantiate(lrPrefab, graphContainer);
+        yLineRenderer = Instantiate(lrPrefab, graphContainer);
         yLineRenderer.positionCount = 2;
         Vector2 maxYPosition = ConvertValueToGraphPosition(new Vector2(0, maxY));
         yLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
