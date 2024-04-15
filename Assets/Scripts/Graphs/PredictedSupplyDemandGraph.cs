@@ -57,7 +57,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
         InstantiateGraph();
-        StartCoroutine(CreatePassengerCurve(duration: 5));
+        StartCoroutine(CreatePassengerCurve(duration: 6));
     }
 
     private IEnumerator CreatePassengerCurve(float duration)
@@ -75,8 +75,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         {
             // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
             float t = (Time.time - startTime) / duration;
-            float percentage = EaseUtils.EaseInOutCubic(t);
-            float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, percentage);
+            float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
             float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
             Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
             if (t * numPositions >= i)
@@ -208,7 +207,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.startColor = passengersLineColor;
         passengersLine.endColor = passengersLineColor;
         passengersLine.sortingOrder = 1;
-        passengersLine.numCornerVertices = 10;
+        passengersLine.numCornerVertices = 1;
     }
 
     private void InstantiateGraph()
