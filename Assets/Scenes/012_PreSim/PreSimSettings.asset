@@ -31,7 +31,7 @@ MonoBehaviour:
   passengerIncomeSigma: 0.9
   demandIndexMultiplier: 5
   expectedPassengersByHour:
-  - 9
+  - 10
   - 8
   - 40
   - 35

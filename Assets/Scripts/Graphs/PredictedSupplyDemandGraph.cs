@@ -18,7 +18,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
 
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(2500, 700);
+    Vector3 graphPosition = new Vector3(3100, 1100);
     float margin = 100f;
     float marginTop = 180f;
     float marginBottom = 140f;
@@ -33,6 +33,10 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
     Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
+
+    LineRenderer passengersLegendLine;
+
+    CanvasGroup canvasGroup;
 
 
     public static PredictedSupplyDemandGraph Create(City city)
@@ -54,10 +58,53 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         graphRectTransform.sizeDelta = graphSize;
         graphRectTransform.anchoredPosition = graphPosition;
 
+        // Add canvas group to graph
+        canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
+        StartCoroutine(ScheduleActions());
+    }
+
+    private IEnumerator ScheduleActions()
+    {
         InstantiateGraph();
+        StartCoroutine(SpawnCard(2f));
+        yield return new WaitForSeconds(1);
+
+
         StartCoroutine(CreatePassengerCurve(duration: 6));
+
+    }
+
+    private IEnumerator SpawnCard(float duration)
+    {
+        // Vector3 startScale = new Vector3(0.0005f, 0f, 0.001f);
+        // Vector3 finalScale = transform.localScale;
+        // float startTime = Time.time;
+        // while (Time.time < startTime + duration)
+        // {
+        //     float t = (Time.time - startTime) / duration;
+        //     float scaleFactor = EaseUtils.EaseInOutCubic(t);
+        //     transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
+        //     yield return null;
+        // }
+        // transform.localScale = finalScale;
+
+        float startTime = Time.time;
+        float startAlpha = 0;
+        float finalAlpha = 1;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float alpha = Mathf.Lerp(startAlpha, finalAlpha, t);
+            canvasGroup.alpha = alpha;
+            Color passengersLineColor = new Color(passengersLegendLine.startColor.r, passengersLegendLine.startColor.g, passengersLegendLine.startColor.b, alpha);
+            passengersLegendLine.startColor = passengersLineColor;
+            passengersLegendLine.endColor = passengersLineColor;
+
+            yield return null;
+        }
     }
 
     private IEnumerator CreatePassengerCurve(float duration)
@@ -166,6 +213,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         // Create a tiny green line with the line renderer
         // Create empty legend game object inside the graph container with scale 1
         GameObject legend = new GameObject("Legend", typeof(RectTransform));
+        // Add canvasgroup to legend
         legend.transform.SetParent(graphContainer);
         legend.transform.localScale = new Vector3(1, 1, 1);
         legend.transform.localRotation = Quaternion.identity;
@@ -181,7 +229,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         legend.transform.localPosition = new Vector3(-legendWidth + margin, (-graphSize.y) / 2 + 0.15f * marginBottom, 0);
         legendRectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
 
-        LineRenderer passengersLegendLine = Instantiate(lrPrefab, legend.transform);
+        passengersLegendLine = Instantiate(lrPrefab, legend.transform);
         passengersLegendLine.positionCount = 2;
         // Offset with 6 px to get it properly centered
         Vector2 passengerLinePosition1 = new Vector2(0, legendHeight / 2 - 6);
