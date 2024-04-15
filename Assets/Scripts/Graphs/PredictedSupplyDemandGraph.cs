@@ -57,25 +57,35 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
         InstantiateGraph();
-        CreatePassengerCurve();
+        StartCoroutine(CreatePassengerCurve(duration: 5));
     }
 
-    private void CreatePassengerCurve()
+    private IEnumerator CreatePassengerCurve(float duration)
     {
-        int numPositionsPerHour = 20;
-        int numPositions = city.simulationSettings.simulationLengthHours * numPositionsPerHour + 1;
-        List<Vector2> values = new List<Vector2>();
-        for (int i = 0; i < numPositions; i++)
+        float startTime = Time.time;
+        // float previousTime = Time.time;
+        float numPositions = 200;
+        Vector2 firstGraphPosition = ConvertValueToGraphPosition(new Vector2(0, city.GetNumExpectedPassengersPerHour(0)));
+
+        passengersLine.positionCount = 1;
+        passengersLine.SetPosition(0, new Vector3(firstGraphPosition.x, firstGraphPosition.y, 0));
+        float i = 0;
+
+        while (Time.time - startTime < duration)
         {
-            float time = (float)i / numPositionsPerHour;
-            float passengersPerHour = city.GetNumExpectedPassengersPerHour(time);
-            values.Add(new Vector2(time, passengersPerHour));
-        }
-        for (int i = 0; i < values.Count; i++)
-        {
-            Vector2 graphPosition = ConvertValueToGraphPosition(values[i]);
-            passengersLine.positionCount = i + 1;
-            passengersLine.SetPosition(i, new Vector3(graphPosition.x, graphPosition.y, 0));
+            // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            float t = (Time.time - startTime) / duration;
+            float percentage = EaseUtils.EaseInOutCubic(t);
+            float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, percentage);
+            float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
+            Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
+            if (t * numPositions >= i)
+            {
+                passengersLine.positionCount++;
+                i++;
+            }
+            passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+            yield return null;
         }
     }
 
