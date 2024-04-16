@@ -19,7 +19,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     List<LineRenderer> separatorLines = new List<LineRenderer>();
 
-
+    int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
     Vector3 graphPosition = new Vector3(3100, 1100);
     float margin = 100f;
@@ -222,13 +222,14 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         step = Mathf.RoundToInt((maxX - minX) / 6f);
         for (int i = (int)minX; i <= maxX; i += step)
         {
+            int hour = i + startHour;
             TMP_Text text = Instantiate(textPrefab, graphContainer);
             Vector2 textPosition = ConvertValueToGraphPosition(new Vector2(i, 0));
             // Set pivot to top center
             text.rectTransform.pivot = new Vector2(0.5f, 1f);
             // Set textmeshpro text alignment to center
             text.alignment = TextAlignmentOptions.Center;
-            text.text = TimeUtils.ConvertSimulationHoursToTimeString(i);
+            text.text = TimeUtils.ConvertSimulationHoursToTimeString(hour);
             text.rectTransform.anchoredPosition = textPosition;
             text.rectTransform.sizeDelta = new Vector2(200, 80);
             text.fontSize = 42;
