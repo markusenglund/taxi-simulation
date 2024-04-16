@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class PredictedSupplyDemandGraph : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     LineRenderer passengersLine;
     LineRenderer tripsLine;
+
+    List<LineRenderer> separatorLines = new List<LineRenderer>();
 
 
     Vector2 graphSize = new Vector2(1200, 800);
@@ -33,6 +36,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
     Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
+
+    Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
+
 
     LineRenderer passengersLegendLine;
     LineRenderer xLineRenderer;
@@ -114,6 +120,13 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             yLineRenderer.startColor = axisLineColor;
             yLineRenderer.endColor = axisLineColor;
 
+            Color separatorLineColor = new Color(separatorColor.r, separatorColor.g, separatorColor.b, separatorColor.a * t);
+            foreach (LineRenderer line in separatorLines)
+            {
+                line.startColor = separatorLineColor;
+                line.endColor = separatorLineColor;
+            }
+
             yield return null;
         }
     }
@@ -186,6 +199,23 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             text.rectTransform.sizeDelta = new Vector2(200, 30);
             text.fontSize = 42;
 
+        }
+
+        // Create y axis separator lines
+        for (int i = (int)minY + step; i <= maxY; i += step)
+        {
+            LineRenderer line = Instantiate(lrPrefab, graphContainer);
+            line.startColor = separatorColor;
+            line.endColor = separatorColor;
+            line.widthCurve = AnimationCurve.Constant(0, 1, 0.1f);
+            line.positionCount = 2;
+            Vector2 linePosition1 = ConvertValueToGraphPosition(new Vector2(0, i));
+            Vector2 linePosition2 = ConvertValueToGraphPosition(new Vector2(maxX, i));
+            line.SetPosition(0, new Vector3(linePosition1.x, linePosition1.y, 0));
+            line.SetPosition(1, new Vector3(linePosition2.x, linePosition2.y, 0));
+            line.sortingOrder = 1;
+
+            separatorLines.Add(line);
         }
 
         // Create x axis values
