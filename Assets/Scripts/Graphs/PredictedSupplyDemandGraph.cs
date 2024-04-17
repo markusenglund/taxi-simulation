@@ -298,6 +298,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.endColor = passengersLineColor;
         passengersLine.sortingOrder = 1;
         passengersLine.numCornerVertices = 1;
+        passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 0.3f);
     }
 
     private void InstantiateGraph()

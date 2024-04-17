@@ -48,10 +48,11 @@ public class CameraUtils : MonoBehaviour
         Camera.main.transform.localPosition = toPosition;
     }
 
-    public static IEnumerator MoveAndRotateCameraLocal(Vector3 finalPosition, Quaternion finalRotation, float duration, Ease ease = Ease.Cubic)
+    public static IEnumerator MoveAndRotateCameraLocal(Vector3 finalPosition, Quaternion finalRotation, float duration, Ease ease = Ease.Cubic, float finalFov = 60)
     {
         Vector3 startPosition = Camera.main.transform.localPosition;
         Quaternion startRotation = Camera.main.transform.localRotation;
+        float startFov = Camera.main.fieldOfView;
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
@@ -66,6 +67,7 @@ public class CameraUtils : MonoBehaviour
             }
             Camera.main.transform.localPosition = Vector3.Lerp(startPosition, finalPosition, t);
             Camera.main.transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, t);
+            Camera.main.fieldOfView = Mathf.Lerp(startFov, finalFov, t);
             yield return null;
         }
         Camera.main.transform.localPosition = finalPosition;
