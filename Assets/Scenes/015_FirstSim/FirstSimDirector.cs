@@ -37,7 +37,7 @@ public class FirstSimDirector : MonoBehaviour
         Vector3 finalCameraPosition = new Vector3(14, 16, cityRightEdge);
         Vector3 newLookAtPosition = new Vector3(5.5f, 5.7f, cityRightEdge);
         Quaternion finalCameraRotation = Quaternion.LookRotation(newLookAtPosition - finalCameraPosition, Vector3.up);
-        PredictedSupplyDemandGraph.Create(city);
+        PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Sim);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, 8, Ease.Cubic, 30));
         yield return new WaitForSeconds(4);
         // StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition, Vector3.up, -360, 80, Ease.Linear));

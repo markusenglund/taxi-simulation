@@ -4,6 +4,13 @@ using UnityEngine;
 using TMPro;
 using System;
 
+
+public enum PassengerSpawnGraphMode
+{
+    PreSim,
+    Sim
+}
+
 public class PredictedSupplyDemandGraph : MonoBehaviour
 {
     private RectTransform graphContainer;
@@ -34,6 +41,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     City city;
 
+    PassengerSpawnGraphMode mode;
+
     Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
     Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
 
@@ -49,7 +58,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     CanvasGroup canvasGroup;
 
 
-    public static PredictedSupplyDemandGraph Create(City city)
+    public static PredictedSupplyDemandGraph Create(City city, PassengerSpawnGraphMode mode)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform graphPrefab = Resources.Load<Transform>("Graphs/PredictedSupplyDemandGraph");
@@ -58,6 +67,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         PredictedSupplyDemandGraph graph = graphTransform.GetComponent<PredictedSupplyDemandGraph>();
         graph.maxX = city.simulationSettings.simulationLengthHours;
         graph.city = city;
+        graph.mode = mode;
         return graph;
     }
 
@@ -73,12 +83,20 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
-        StartCoroutine(ScheduleActions());
+        InstantiateGraph();
+
+        if (mode == PassengerSpawnGraphMode.PreSim)
+        {
+            StartCoroutine(PreSimSchedule());
+        }
+        else
+        {
+            StartCoroutine(SimSchedule());
+        }
     }
 
-    private IEnumerator ScheduleActions()
+    private IEnumerator PreSimSchedule()
     {
-        InstantiateGraph();
         StartCoroutine(SpawnCard(1f));
         yield return new WaitForSeconds(1);
 
@@ -87,20 +105,14 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     }
 
+    private IEnumerator SimSchedule()
+    {
+        StartCoroutine(CreatePassengerCurve(duration: 0));
+        yield return null;
+    }
+
     private IEnumerator SpawnCard(float duration)
     {
-        // Vector3 startScale = new Vector3(0.0005f, 0f, 0.001f);
-        // Vector3 finalScale = transform.localScale;
-        // float startTime = Time.time;
-        // while (Time.time < startTime + duration)
-        // {
-        //     float t = (Time.time - startTime) / duration;
-        //     float scaleFactor = EaseUtils.EaseInOutCubic(t);
-        //     transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
-        //     yield return null;
-        // }
-        // transform.localScale = finalScale;
-
         float startTime = Time.time;
         float startAlpha = 0;
         float finalAlpha = 1;
@@ -141,20 +153,36 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.positionCount = 1;
         passengersLine.SetPosition(0, new Vector3(firstGraphPosition.x, firstGraphPosition.y, 0));
         float i = 0;
-
-        while (Time.time - startTime < duration)
+        if (duration > 0)
         {
-            // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-            float t = (Time.time - startTime) / duration;
-            float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
-            float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
-            Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
-            if (t * numPositions >= i)
+            while (Time.time - startTime < duration)
             {
+                // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+                float t = (Time.time - startTime) / duration;
+                float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
+                float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
+                Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
+                if (t * numPositions >= i)
+                {
+                    passengersLine.positionCount++;
+                    i++;
+                }
+                passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+                yield return null;
+            }
+        }
+        else
+        {
+            while (i < numPositions)
+            {
+                float t = (float)i / numPositions;
+                float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
+                float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
+                Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
                 passengersLine.positionCount++;
+                passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
                 i++;
             }
-            passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
             yield return null;
         }
     }

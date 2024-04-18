@@ -36,7 +36,7 @@ public class SimIntroductionDirector : MonoBehaviour
         yield return new WaitForSeconds(preMoveDuration - 0.5f);
         StartCoroutine(MoveCity(new Vector3(-4.5f, 0, 0f), 0.9f));
         yield return new WaitForSeconds(0.5f);
-        PredictedSupplyDemandGraph.Create(city);
+        PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.PreSim);
         StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePosition + new Vector3(-4.5f, 0, 0f), Vector3.up, -360, 80, Ease.Linear));
 
         int numDrivers = 6;
