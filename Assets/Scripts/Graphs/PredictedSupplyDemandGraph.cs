@@ -207,7 +207,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             LineRenderer line = Instantiate(lrPrefab, graphContainer);
             line.startColor = separatorColor;
             line.endColor = separatorColor;
-            line.widthCurve = AnimationCurve.Constant(0, 1, 0.1f);
+            line.widthCurve = AnimationCurve.Constant(0, 1, 0.2f);
             line.positionCount = 2;
             Vector2 linePosition1 = ConvertValueToGraphPosition(new Vector2(0, i));
             Vector2 linePosition2 = ConvertValueToGraphPosition(new Vector2(maxX, i));
@@ -280,7 +280,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLegendLine.SetPosition(1, new Vector3(passengerLinePosition2.x, passengerLinePosition2.y, 0));
         passengersLegendLine.startColor = passengersLineColor;
         passengersLegendLine.endColor = passengersLineColor;
-        passengersLegendLine.widthCurve = AnimationCurve.Constant(0, 1, 1.4f);
+        passengersLegendLine.widthCurve = AnimationCurve.Constant(0, 1, 4f);
 
         TMP_Text text1 = Instantiate(legendTextPrefab, legend.transform);
         Vector2 textPosition1 = new Vector2(30, 0);
@@ -298,7 +298,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.endColor = passengersLineColor;
         passengersLine.sortingOrder = 1;
         passengersLine.numCornerVertices = 1;
-        passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 0.3f);
+        passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 0.6f);
     }
 
     private void InstantiateGraph()

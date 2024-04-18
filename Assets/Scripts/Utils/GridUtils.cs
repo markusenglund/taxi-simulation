@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 using Random = System.Random;
 
@@ -33,7 +34,52 @@ public class GridUtils : MonoBehaviour
 
   public static float GetDistance(Vector3 position1, Vector3 position2)
   {
-    return Math.Abs(position1.x - position2.x) + Math.Abs(position1.z - position2.z);
+    Queue<Vector3> waypoints = GetWaypoints(position1, position2);
+    // Add up the distances between each waypoint
+    float distance = 0;
+    Vector3 previousWaypoint = position1;
+    while (waypoints.Count > 0)
+    {
+      Vector3 currentWaypoint = waypoints.Dequeue();
+      distance += Vector3.Distance(previousWaypoint, currentWaypoint);
+      previousWaypoint = currentWaypoint;
+    }
+
+    return distance;
+  }
+
+  public static Queue<Vector3> GetWaypoints(Vector3 pos1, Vector3 pos2)
+  {
+    Queue<Vector3> waypoints = new Queue<Vector3>();
+    float y = pos1.y;
+    Vector3 taxiDirection = pos2 - pos1;
+    if ((pos1.x % GridUtils.blockSize == 0 && taxiDirection.x == 0) || (pos1.z % GridUtils.blockSize == 0 && taxiDirection.z == 0))
+    {
+      waypoints.Enqueue(pos2);
+      return waypoints;
+    }
+    if (pos1.x % blockSize != 0)
+    {
+      float bestFirstIntersectionX = pos1.x > pos2.x ? Mathf.Ceil(pos2.x / blockSize) * blockSize : Mathf.Floor(pos2.x / blockSize) * blockSize;
+      waypoints.Enqueue(new Vector3(bestFirstIntersectionX, y, pos1.z));
+      if (pos2.x % blockSize != 0)
+      {
+        float bestSecondIntersectionZ = pos1.z > pos2.z ? Mathf.Ceil(pos2.z / blockSize) * blockSize : Mathf.Floor(pos2.z / blockSize) * blockSize;
+        waypoints.Enqueue(new Vector3(bestFirstIntersectionX, y, bestSecondIntersectionZ));
+      }
+    }
+    else
+    {
+      float bestFirstIntersectionZ = pos1.z > pos2.z ? Mathf.Ceil(pos2.z / blockSize) * blockSize : Mathf.Floor(pos2.z / blockSize) * blockSize;
+      waypoints.Enqueue(new Vector3(pos1.x, y, bestFirstIntersectionZ));
+      if (pos2.z % blockSize != 0)
+      {
+        float bestSecondIntersectionX = pos1.x > pos2.x ? Mathf.Ceil(pos2.x / blockSize) * blockSize : Mathf.Floor(pos2.x / blockSize) * blockSize;
+        waypoints.Enqueue(new Vector3(bestSecondIntersectionX, y, bestFirstIntersectionZ));
+      }
+    }
+    waypoints.Enqueue(pos2);
+    return waypoints;
   }
 
   public static Transform GenerateStreetGrid(Transform parent)

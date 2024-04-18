@@ -254,40 +254,7 @@ public class Driver : MonoBehaviour
 
     public void SetWaypoints()
     {
-        waypoints.Clear();
-
-        // Set up the waypoints
-        Vector3 taxiPosition = transform.localPosition;
-        Vector3 taxiDestination = destination;
-
-        Vector3 taxiDirection = taxiDestination - taxiPosition;
-        if ((taxiPosition.x % GridUtils.blockSize == 0 && taxiDirection.x == 0) || (taxiPosition.z % GridUtils.blockSize == 0 && taxiDirection.z == 0))
-        {
-            waypoints.Enqueue(taxiDestination);
-            SetNewSegment();
-            return;
-        }
-        if (taxiPosition.x % GridUtils.blockSize != 0)
-        {
-            float bestFirstIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize;
-            waypoints.Enqueue(new Vector3(bestFirstIntersectionX, y, taxiPosition.z));
-            if (taxiDestination.x % GridUtils.blockSize != 0)
-            {
-                float bestSecondIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize;
-                waypoints.Enqueue(new Vector3(bestFirstIntersectionX, y, bestSecondIntersectionZ));
-            }
-        }
-        else
-        {
-            float bestFirstIntersectionZ = taxiPosition.z > taxiDestination.z ? Mathf.Ceil(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.z / GridUtils.blockSize) * GridUtils.blockSize;
-            waypoints.Enqueue(new Vector3(taxiPosition.x, y, bestFirstIntersectionZ));
-            if (taxiDestination.z % GridUtils.blockSize != 0)
-            {
-                float bestSecondIntersectionX = taxiPosition.x > taxiDestination.x ? Mathf.Ceil(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Floor(taxiDestination.x / GridUtils.blockSize) * GridUtils.blockSize;
-                waypoints.Enqueue(new Vector3(bestSecondIntersectionX, y, bestFirstIntersectionZ));
-            }
-        }
-        waypoints.Enqueue(taxiDestination);
+        waypoints = GridUtils.GetWaypoints(transform.localPosition, destination);
         SetNewSegment();
     }
 
