@@ -22,7 +22,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
 
     LineRenderer passengersLine;
-    LineRenderer tripsLine;
+    LineRenderer actualPassengersLine;
 
     List<LineRenderer> separatorLines = new List<LineRenderer>();
 
@@ -43,13 +43,14 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     PassengerSpawnGraphMode mode;
 
-    Color tripsLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+    Color actualPassengersLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
     Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
 
     Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
 
 
     LineRenderer passengersLegendLine;
+    LineRenderer actualPassengersLegendLine;
     LineRenderer xLineRenderer;
     LineRenderer yLineRenderer;
 
@@ -108,6 +109,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     private IEnumerator SimSchedule()
     {
         StartCoroutine(CreatePassengerCurve(duration: 0));
+        StartCoroutine(UpdateActualPassengerCurve());
         yield return null;
     }
 
@@ -183,6 +185,31 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
                 passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
                 i++;
             }
+            yield return null;
+        }
+    }
+
+    private IEnumerator UpdateActualPassengerCurve()
+    {
+        float numPositions = 40;
+        float i = 0;
+        float timeResolution = 0.5f;
+        // Queue<float> lastFewValues = new Queue<float>();
+        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        while (simulationTime < city.simulationSettings.simulationLengthHours)
+        {
+            simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            float t = simulationTime / city.simulationSettings.simulationLengthHours;
+            int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
+            int numPassengersPerHour = numPassengersSpawnedPerTimeResolutionInterval * (int)(1 / timeResolution);
+
+            if (t * numPositions >= i)
+            {
+                actualPassengersLine.positionCount++;
+                i++;
+            }
+            Vector2 passengersPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numPassengersPerHour));
+            actualPassengersLine.SetPosition(actualPassengersLine.positionCount - 1, new Vector3(passengersPosition.x, passengersPosition.y, 0));
             yield return null;
         }
     }
@@ -327,6 +354,14 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.sortingOrder = 1;
         passengersLine.numCornerVertices = 1;
         passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 0.6f);
+
+        actualPassengersLine = Instantiate(lrPrefab, graphContainer);
+        actualPassengersLine.positionCount = 0;
+        actualPassengersLine.startColor = actualPassengersLineColor;
+        actualPassengersLine.endColor = actualPassengersLineColor;
+        actualPassengersLine.sortingOrder = 2;
+        actualPassengersLine.numCornerVertices = 1;
+        actualPassengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1f);
     }
 
     private void InstantiateGraph()
