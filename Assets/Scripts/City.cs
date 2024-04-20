@@ -298,17 +298,15 @@ public class City : MonoBehaviour
 
     public int CalculateNumPassengersSpawnedInLastInterval(float intervalHours)
     {
-        float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
-        int numPassengersSpawned = 0;
-        foreach (PassengerPerson passengerPerson in passengerAgents)
-        {
-            if (passengerPerson.timeSpawned > intervalStartTime)
-            {
-                numPassengersSpawned += 1;
-            }
-        }
+        PassengerPerson[] passengersSpawnedInLastInterval = GetPassengersSpawnedInLastInterval(intervalHours);
 
-        return numPassengersSpawned;
+        return passengersSpawnedInLastInterval.Length;
+    }
+
+    public PassengerPerson[] GetPassengersSpawnedInLastInterval(float intervalHours)
+    {
+        float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+        return passengerAgents.Where(passenger => passenger.timeSpawned > intervalStartTime).ToArray();
     }
 
     public (float totalUtilitySurplusValue, float totalUtilitySurplusValuePerCapita, int population, float[] quartiledUtilitySurplusValuePerCapita, int[] quartiledPopulation) CalculatePassengerUtilitySurplusData()
