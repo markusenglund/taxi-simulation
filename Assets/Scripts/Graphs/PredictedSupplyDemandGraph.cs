@@ -33,7 +33,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     float margin = 100f;
     float marginTop = 180f;
     float marginBottom = 140f;
-    float maxY = 50f;
+    float maxY = 60f;
     float minY = 0f;
     float maxX;
     float minX = 0f;
@@ -61,6 +61,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     TMP_Text actualPassengersText;
 
+    float defaultLineWidth;
+
 
     public static PredictedSupplyDemandGraph Create(City city, PassengerSpawnGraphMode mode)
     {
@@ -87,7 +89,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
+        defaultLineWidth = lrPrefab.widthMultiplier;
         InstantiateGraph();
+
 
         if (mode == PassengerSpawnGraphMode.PreSim)
         {
@@ -96,6 +100,16 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         else
         {
             StartCoroutine(SimSchedule());
+        }
+    }
+
+    private void Update()
+    {
+        // Scale all line renderers to camera.main.fov / 60
+        float scale = defaultLineWidth * Camera.main.fieldOfView / 60;
+        foreach (LineRenderer line in GetComponentsInChildren<LineRenderer>())
+        {
+            line.widthMultiplier = scale;
         }
     }
 
@@ -217,7 +231,6 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             }
             float smoothedNumPassengersPerHour = lastFewValues.Average(x => x.value);
             float timeInterval = lastFewValues.Last().time - lastFewValues.First().time;
-            Debug.Log("§" + smoothedNumPassengersPerHour);
             // Offset the time axis to the average time of the values that were used to calculate the spawn rate
             float graphTime = simulationTime - timeResolution / 2 - timeInterval / 2;
             Vector3 passengersPosition = ConvertValueToGraphPosition(new Vector3(graphTime, smoothedNumPassengersPerHour, 0));
@@ -233,6 +246,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     private void CreateAxes()
     {
+        AnimationCurve axisLineWidthCurve = AnimationCurve.Constant(0, 1, 2);
         // Create x axis with the line renderer
         xLineRenderer = Instantiate(lrPrefab, graphContainer);
         xLineRenderer.positionCount = 2;
@@ -240,6 +254,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         Vector2 maxXPosition = ConvertValueToGraphPosition(new Vector2(maxX, 0));
         xLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         xLineRenderer.SetPosition(1, new Vector3(maxXPosition.x, maxXPosition.y, 0));
+        xLineRenderer.widthCurve = axisLineWidthCurve;
 
         // Create y axis with the line renderer
         yLineRenderer = Instantiate(lrPrefab, graphContainer);
@@ -247,6 +262,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         Vector2 maxYPosition = ConvertValueToGraphPosition(new Vector2(0, maxY));
         yLineRenderer.SetPosition(0, new Vector3(zeroPosition.x, zeroPosition.y, 0));
         yLineRenderer.SetPosition(1, new Vector3(maxYPosition.x, maxYPosition.y, 0));
+        yLineRenderer.widthCurve = axisLineWidthCurve;
 
         xLineRenderer.sortingOrder = 2;
         yLineRenderer.sortingOrder = 2;
@@ -261,7 +277,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     private void CreateAxisValues()
     {
         // Create y axis values
-        int step = Mathf.RoundToInt((maxY - minY) / 5f);
+        int step = 10;
         for (int i = (int)minY; i <= maxY; i += step)
         {
             TMP_Text text = Instantiate(textPrefab, graphContainer);
@@ -279,7 +295,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             LineRenderer line = Instantiate(lrPrefab, graphContainer);
             line.startColor = separatorColor;
             line.endColor = separatorColor;
-            line.widthCurve = AnimationCurve.Constant(0, 1, 0.2f);
+            line.widthCurve = AnimationCurve.Constant(0, 1, 0.3f);
             line.positionCount = 2;
             Vector2 linePosition1 = ConvertValueToGraphPosition(new Vector2(0, i));
             Vector2 linePosition2 = ConvertValueToGraphPosition(new Vector2(maxX, i));
@@ -351,7 +367,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLegendLine.SetPosition(1, passengerLegendLinePosition);
         passengersLegendLine.startColor = passengersLineColor;
         passengersLegendLine.endColor = passengersLineColor;
-        passengersLegendLine.widthCurve = AnimationCurve.Constant(0, 1, 4f);
+        passengersLegendLine.widthCurve = AnimationCurve.Constant(0, 1, 6f);
 
         TMP_Text text1 = Instantiate(legendTextPrefab, legend.transform);
         Vector2 textPosition1 = new Vector2(30, 0);
@@ -383,7 +399,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.endColor = passengersLineColor;
         passengersLine.sortingOrder = 1;
         passengersLine.numCornerVertices = 1;
-        passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 0.6f);
+        passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 0.9f);
 
         actualPassengersLine = Instantiate(lrPrefab, graphContainer);
         actualPassengersLine.positionCount = 0;
@@ -391,13 +407,13 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         actualPassengersLine.endColor = actualPassengersLineColor;
         actualPassengersLine.sortingOrder = 2;
         actualPassengersLine.numCornerVertices = 1;
-        actualPassengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1f);
+        actualPassengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
 
         actualPassengersLineDot = Instantiate(lrPrefab, graphContainer);
         actualPassengersLineDot.positionCount = 2;
         actualPassengersLineDot.startColor = actualPassengersLineColor;
         actualPassengersLineDot.endColor = actualPassengersLineColor;
-        actualPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 4f);
+        actualPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
         actualPassengersLineDot.sortingOrder = 3;
     }
 
