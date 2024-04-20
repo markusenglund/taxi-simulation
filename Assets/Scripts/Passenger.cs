@@ -130,7 +130,8 @@ public class Passenger : MonoBehaviour
 
 
         float expectedValueSurplus = expectedNetValue - person.economicParameters.bestSubstitute.netValue;
-        hasAcceptedRideOffer = expectedValueSurplus > 0;
+        TripType tripTypeChosen = expectedValueSurplus > 0 ? TripType.Uber : person.economicParameters.bestSubstitute.type;
+        hasAcceptedRideOffer = tripTypeChosen == TripType.Uber;
 
         // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
         // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedNetValue);
@@ -145,6 +146,8 @@ public class Passenger : MonoBehaviour
             expectedValueSurplus = expectedValueSurplus,
             expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
         };
+
+        person.tripTypeChosen = tripTypeChosen;
 
         if (utilityIncomeScatterPlot != null)
         {

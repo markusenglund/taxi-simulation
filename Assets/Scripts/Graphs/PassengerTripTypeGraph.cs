@@ -5,13 +5,7 @@ using TMPro;
 using System.Linq;
 
 
-public enum PassengerSpawnGraphMode
-{
-    PreSim,
-    Sim
-}
-
-public class PredictedSupplyDemandGraph : MonoBehaviour
+public class PassengerTripTypeGraph : MonoBehaviour
 {
     private RectTransform graphContainer;
     [SerializeField] private LineRenderer lrPrefab;
@@ -21,16 +15,16 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
 
 
-    LineRenderer passengersLine;
-    LineRenderer predictedPassengersLineDot;
-    LineRenderer actualPassengersLine;
-    LineRenderer actualPassengersLineDot;
+    LineRenderer uberLine;
+    LineRenderer uberLineDot;
+    LineRenderer substituteLine;
+    LineRenderer substituteLineDot;
 
     List<LineRenderer> separatorLines = new List<LineRenderer>();
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(3100, 1600);
+    Vector3 graphPosition = new Vector3(3100, 600);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
@@ -39,20 +33,18 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     float maxX;
     float minX = 0f;
 
-    string headingText = "Passenger spawn rate";
+    string headingText = "Passenger decision";
 
     City city;
 
-    PassengerSpawnGraphMode mode;
-
-    Color actualPassengersLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    Color passengersLineColor = new Color(0.2f, 0.9f, 1.0f, 1.0f);
+    Color substituteLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
+    Color uberLineColor = new Color(0.2f, 0.9f, 1.0f, 1.0f);
 
     Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
 
 
-    LineRenderer passengersLegendLine;
-    LineRenderer actualPassengersLegendLine;
+    LineRenderer uberLegendLine;
+    LineRenderer substituteLegendLine;
     LineRenderer xLineRenderer;
     LineRenderer yLineRenderer;
 
@@ -60,21 +52,20 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     CanvasGroup canvasGroup;
 
-    TMP_Text actualPassengersNumberText;
+    TMP_Text substituteNumberText;
 
     float defaultLineWidth;
 
 
-    public static PredictedSupplyDemandGraph Create(City city, PassengerSpawnGraphMode mode)
+    public static PassengerTripTypeGraph Create(City city, PassengerSpawnGraphMode mode)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
-        Transform graphPrefab = Resources.Load<Transform>("Graphs/PredictedSupplyDemandGraph");
+        Transform graphPrefab = Resources.Load<Transform>("Graphs/PassengerTripTypeGraph");
         Transform graphTransform = Instantiate(graphPrefab, canvas);
 
-        PredictedSupplyDemandGraph graph = graphTransform.GetComponent<PredictedSupplyDemandGraph>();
+        PassengerTripTypeGraph graph = graphTransform.GetComponent<PassengerTripTypeGraph>();
         graph.maxX = city.simulationSettings.simulationLengthHours;
         graph.city = city;
-        graph.mode = mode;
         return graph;
     }
 
@@ -94,14 +85,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         InstantiateGraph();
 
 
-        if (mode == PassengerSpawnGraphMode.PreSim)
-        {
-            StartCoroutine(PreSimSchedule());
-        }
-        else
-        {
-            StartCoroutine(SimSchedule());
-        }
+
+        StartCoroutine(Schedule());
+
     }
 
     private void Update()
@@ -114,20 +100,11 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         }
     }
 
-    private IEnumerator PreSimSchedule()
+    private IEnumerator Schedule()
     {
-        StartCoroutine(SpawnCard(1f));
+        StartCoroutine(SpawnCard(duration: 1));
         yield return new WaitForSeconds(1);
-
-
-        StartCoroutine(CreatePassengerCurve(duration: 6));
-
-    }
-
-    private IEnumerator SimSchedule()
-    {
-        StartCoroutine(CreatePassengerCurve(duration: 0));
-        StartCoroutine(UpdateActualPassengerCurve());
+        StartCoroutine(UpdateCurves());
         yield return null;
     }
 
@@ -142,9 +119,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             float percentage = EaseUtils.EaseInQuadratic(t);
             float alpha = Mathf.Lerp(startAlpha, finalAlpha, percentage);
             canvasGroup.alpha = alpha;
-            Color passengersLineColor = new Color(passengersLegendLine.startColor.r, passengersLegendLine.startColor.g, passengersLegendLine.startColor.b, alpha);
-            passengersLegendLine.startColor = passengersLineColor;
-            passengersLegendLine.endColor = passengersLineColor;
+            Color uberLineColor = new Color(uberLegendLine.startColor.r, uberLegendLine.startColor.g, uberLegendLine.startColor.b, alpha);
+            uberLegendLine.startColor = uberLineColor;
+            uberLegendLine.endColor = uberLineColor;
 
             Color axisLineColor = new Color(axisColor.r, axisColor.g, axisColor.b, alpha);
             xLineRenderer.startColor = axisLineColor;
@@ -171,83 +148,120 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         float numPositions = 200;
         Vector2 firstGraphPosition = ConvertValueToGraphPosition(new Vector2(0, city.GetNumExpectedPassengersPerHour(0)));
 
-        passengersLine.positionCount = 1;
-        passengersLine.SetPosition(0, new Vector3(firstGraphPosition.x, firstGraphPosition.y, 0));
+        uberLine.positionCount = 1;
+        uberLine.SetPosition(0, new Vector3(firstGraphPosition.x, firstGraphPosition.y, 0));
         float i = 0;
-        if (duration > 0)
-        {
-            predictedPassengersLineDot.positionCount = 2;
+        uberLineDot.positionCount = 2;
 
-            while (Time.time - startTime < duration)
-            {
-                // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-                float t = (Time.time - startTime) / duration;
-                float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
-                float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
-                Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
-                Vector3 passengersPosition = new Vector3(graphPosition.x, graphPosition.y, 0);
-                if (t * numPositions >= i)
-                {
-                    passengersLine.positionCount++;
-                    i++;
-                }
-                passengersLine.SetPosition(passengersLine.positionCount - 1, passengersPosition);
-                predictedPassengersLineDot.SetPosition(0, passengersPosition);
-                predictedPassengersLineDot.SetPosition(1, passengersPosition);
-                yield return null;
-            }
-        }
-        else
+        while (Time.time - startTime < duration)
         {
-            while (i < numPositions)
+            // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            float t = (Time.time - startTime) / duration;
+            float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
+            float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
+            Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
+            Vector3 passengersPosition = new Vector3(graphPosition.x, graphPosition.y, 0);
+            if (t * numPositions >= i)
             {
-                float t = (float)i / numPositions;
-                float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
-                float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
-                Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
-                passengersLine.positionCount++;
-                passengersLine.SetPosition(passengersLine.positionCount - 1, new Vector3(graphPosition.x, graphPosition.y, 0));
+                uberLine.positionCount++;
                 i++;
             }
+            uberLine.SetPosition(uberLine.positionCount - 1, passengersPosition);
+            uberLineDot.SetPosition(0, passengersPosition);
+            uberLineDot.SetPosition(1, passengersPosition);
             yield return null;
         }
     }
 
-    private IEnumerator UpdateActualPassengerCurve()
+    private IEnumerator UpdateCurves()
     {
         float numPositions = 200;
         float i = 0;
         float timeResolution = 0.5f;
-        Queue<(float value, float time)> lastFewValues = new Queue<(float value, float time)>();
+        substituteLineDot.positionCount = 2;
+        uberLineDot.positionCount = 2;
+
+        Queue<(float value, float time)> lastSubstituteValues = new Queue<(float value, float time)>();
+        Queue<(float value, float time)> lastUberValues = new Queue<(float value, float time)>();
+        Queue<(float value, float time)> lastSkippedTripValues = new Queue<(float value, float time)>();
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         Vector2 zeroGraphPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         while (simulationTime < city.simulationSettings.simulationLengthHours)
         {
             simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
             float t = simulationTime / city.simulationSettings.simulationLengthHours;
-            int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
-            float numPassengersPerHour = numPassengersSpawnedPerTimeResolutionInterval * (1 / timeResolution);
-            lastFewValues.Enqueue((numPassengersPerHour, simulationTime));
+            // int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
+            PassengerPerson[] passengers = city.GetPassengersSpawnedInLastInterval(timeResolution);
+            // Count the number of passengers that chose uber, a substitute and those who chose to stay at home
+            // float numSubstitutePassengers = passengers.Count(x => x.tripTypeChosen == TripType.Walking || x.tripTypeChosen == TripType.PublicTransport || x.tripTypeChosen == TripType.RentalCar);
+            int numSubstitutePassengers = 0;
+            int numUberPassengers = 0;
+            int numSkippedTrip = 0;
+
+            foreach (PassengerPerson passenger in passengers)
+            {
+                if (passenger.tripTypeChosen == TripType.Uber)
+                {
+                    numUberPassengers++;
+                }
+                else if (passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport || passenger.tripTypeChosen == TripType.RentalCar)
+                {
+                    numSubstitutePassengers++;
+                }
+                else if (passenger.tripTypeChosen == TripType.SkipTrip)
+                {
+                    numSkippedTrip++;
+                }
+            }
+
+
+            float numSubstitutePassengersPerHour = numSubstitutePassengers * (1 / timeResolution);
+            lastSubstituteValues.Enqueue((numSubstitutePassengersPerHour, simulationTime));
             if (t * numPositions >= i)
             {
-                actualPassengersLine.positionCount++;
+                substituteLine.positionCount++;
                 i++;
             }
-            if (lastFewValues.Count > 100)
+            if (lastSubstituteValues.Count > 100)
             {
-                lastFewValues.Dequeue();
+                lastSubstituteValues.Dequeue();
             }
-            float smoothedNumPassengersPerHour = lastFewValues.Average(x => x.value);
-            float timeInterval = lastFewValues.Last().time - lastFewValues.First().time;
+            float smoothedNumPassengersPerHour = lastSubstituteValues.Average(x => x.value);
+            float timeInterval = lastSubstituteValues.Last().time - lastSubstituteValues.First().time;
             // Offset the time axis to the average time of the values that were used to calculate the spawn rate
             float graphTime = simulationTime - timeResolution / 2 - timeInterval / 2;
             Vector3 passengersPosition = ConvertValueToGraphPosition(new Vector3(graphTime, smoothedNumPassengersPerHour, 0));
-            actualPassengersLine.SetPosition(actualPassengersLine.positionCount - 1, passengersPosition);
-            actualPassengersLineDot.SetPosition(0, passengersPosition);
-            actualPassengersLineDot.SetPosition(1, passengersPosition);
+            substituteLine.SetPosition(substituteLine.positionCount - 1, passengersPosition);
+            substituteLineDot.SetPosition(0, passengersPosition);
+            substituteLineDot.SetPosition(1, passengersPosition);
             Vector3 passengersTextPosition = new Vector3(passengersPosition.x + 18, Mathf.Max(passengersPosition.y - 5, zeroGraphPosition.y + 15), 0);
-            actualPassengersNumberText.rectTransform.anchoredPosition = passengersTextPosition;
-            actualPassengersNumberText.text = smoothedNumPassengersPerHour.ToString("n0");
+            substituteNumberText.rectTransform.anchoredPosition = passengersTextPosition;
+            substituteNumberText.text = smoothedNumPassengersPerHour.ToString("n0");
+
+            // TODO - START HERE, fix the weird curve behavior
+            // Uber passengers
+            float numUberPassengersPerHour = numSubstitutePassengers * (1 / timeResolution);
+            lastUberValues.Enqueue((numUberPassengersPerHour, simulationTime));
+            if (t * numPositions >= i)
+            {
+                uberLine.positionCount++;
+                i++;
+            }
+            if (lastUberValues.Count > 100)
+            {
+                lastUberValues.Dequeue();
+            }
+            float smoothedNumUberPassengersPerHour = lastUberValues.Average(x => x.value);
+            float uberTimeInterval = lastUberValues.Last().time - lastUberValues.First().time;
+            // Offset the time axis to the average time of the values that were used to calculate the spawn rate
+            float uberGraphTime = simulationTime - timeResolution / 2 - timeInterval / 2;
+            Vector3 uberLinePosition = ConvertValueToGraphPosition(new Vector3(graphTime, smoothedNumUberPassengersPerHour, 0));
+            uberLine.SetPosition(uberLine.positionCount - 1, uberLinePosition);
+            uberLineDot.SetPosition(0, uberLinePosition);
+            uberLineDot.SetPosition(1, uberLinePosition);
+            // Vector3 passengersTextPosition = new Vector3(uberLinePosition.x + 18, Mathf.Max(uberLinePosition.y - 5, zeroGraphPosition.y + 15), 0);
+            // substituteNumberText.rectTransform.anchoredPosition = passengersTextPosition;
+            // substituteNumberText.text = smoothedNumUberPassengersPerHour.ToString("n0");
             yield return null;
         }
     }
@@ -346,18 +360,13 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     private void CreateLegends()
     {
-        passengersLegendLine = Instantiate(lrPrefab);
-        actualPassengersLegendLine = Instantiate(lrPrefab);
+        uberLegendLine = Instantiate(lrPrefab);
+        substituteLegendLine = Instantiate(lrPrefab);
 
-        if (mode == PassengerSpawnGraphMode.Sim)
-        {
-            CreateLegend(x: 0, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
-            CreateLegend(x: 540, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
-        }
-        else
-        {
-            CreateLegend(x: 280, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
-        }
+
+        CreateLegend(x: 0, uberLegendLine, uberLineColor, "Uber passengers");
+        CreateLegend(x: 540, substituteLegendLine, substituteLineColor, "Substitute passengers");
+
     }
 
     private void CreateLegend(float x, LineRenderer legendDot, Color color, string text)
@@ -403,59 +412,50 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         legendText.fontSize = legendHeight;
         legendText.color = color;
 
-        // Set text to lower left corner by default by setting anchor min and max to 0, 0
-
-
     }
 
     private void InstantiateLines()
     {
-        passengersLine = Instantiate(lrPrefab, graphContainer);
-        passengersLine.positionCount = 0;
-        passengersLine.startColor = passengersLineColor;
-        passengersLine.endColor = passengersLineColor;
-        passengersLine.sortingOrder = 1;
-        passengersLine.numCornerVertices = 1;
-        passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.2f);
+        uberLine = Instantiate(lrPrefab, graphContainer);
+        uberLine.positionCount = 0;
+        uberLine.startColor = uberLineColor;
+        uberLine.endColor = uberLineColor;
+        uberLine.sortingOrder = 1;
+        uberLine.numCornerVertices = 1;
+        uberLine.widthCurve = AnimationCurve.Constant(0, 1, 1.2f);
 
-        if (mode == PassengerSpawnGraphMode.PreSim)
-        {
-            predictedPassengersLineDot = Instantiate(lrPrefab, graphContainer);
-            predictedPassengersLineDot.positionCount = 0;
-            predictedPassengersLineDot.startColor = passengersLineColor;
-            predictedPassengersLineDot.endColor = passengersLineColor;
-            predictedPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
-            predictedPassengersLineDot.sortingOrder = 3;
-        }
+        substituteLine = Instantiate(lrPrefab, graphContainer);
+        substituteLine.positionCount = 0;
+        substituteLine.startColor = substituteLineColor;
+        substituteLine.endColor = substituteLineColor;
+        substituteLine.sortingOrder = 2;
+        substituteLine.numCornerVertices = 1;
+        substituteLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
 
-        if (mode == PassengerSpawnGraphMode.Sim)
-        {
-            actualPassengersLine = Instantiate(lrPrefab, graphContainer);
-            actualPassengersLine.positionCount = 0;
-            actualPassengersLine.startColor = actualPassengersLineColor;
-            actualPassengersLine.endColor = actualPassengersLineColor;
-            actualPassengersLine.sortingOrder = 2;
-            actualPassengersLine.numCornerVertices = 1;
-            actualPassengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
+        substituteLineDot = Instantiate(lrPrefab, graphContainer);
+        substituteLineDot.positionCount = 0;
+        substituteLineDot.startColor = substituteLineColor;
+        substituteLineDot.endColor = substituteLineColor;
+        substituteLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
+        substituteLineDot.sortingOrder = 3;
 
-            actualPassengersLineDot = Instantiate(lrPrefab, graphContainer);
-            actualPassengersLineDot.positionCount = 2;
-            actualPassengersLineDot.startColor = actualPassengersLineColor;
-            actualPassengersLineDot.endColor = actualPassengersLineColor;
-            actualPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
-            actualPassengersLineDot.sortingOrder = 3;
+        uberLineDot = Instantiate(lrPrefab, graphContainer);
+        uberLineDot.positionCount = 0;
+        uberLineDot.startColor = uberLineColor;
+        uberLineDot.endColor = uberLineColor;
+        uberLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
+        uberLineDot.sortingOrder = 3;
 
 
-            actualPassengersNumberText = Instantiate(legendTextPrefab, graphContainer);
-            actualPassengersNumberText.rectTransform.pivot = new Vector2(0, 0);
-            actualPassengersNumberText.rectTransform.anchorMin = new Vector2(0, 0);
-            actualPassengersNumberText.rectTransform.anchorMax = new Vector2(0, 0);
-            actualPassengersNumberText.text = "Actual rate";
-            actualPassengersNumberText.rectTransform.sizeDelta = new Vector2(300, 30);
-            actualPassengersNumberText.fontSize = 42;
-            actualPassengersNumberText.color = actualPassengersLineColor;
-            actualPassengersNumberText.fontStyle = FontStyles.Bold;
-        }
+        substituteNumberText = Instantiate(legendTextPrefab, graphContainer);
+        substituteNumberText.rectTransform.pivot = new Vector2(0, 0);
+        substituteNumberText.rectTransform.anchorMin = new Vector2(0, 0);
+        substituteNumberText.rectTransform.anchorMax = new Vector2(0, 0);
+        substituteNumberText.text = "";
+        substituteNumberText.rectTransform.sizeDelta = new Vector2(300, 30);
+        substituteNumberText.fontSize = 42;
+        substituteNumberText.color = substituteLineColor;
+        substituteNumberText.fontStyle = FontStyles.Bold;
 
     }
 
