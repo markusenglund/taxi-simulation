@@ -3,48 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Random = System.Random;
-using System;
-
-public enum PassengerState
-{
-    Idling,
-    AssignedToTrip,
-    DroppedOff,
-    RejectedRideOffer
-}
-
-public enum SubstituteType
-{
-    Walking,
-    PublicTransport,
-    SkipTrip
-}
-
-[Serializable]
-public class Substitute
-{
-    [field: SerializeField] public SubstituteType type { get; set; }
-    [field: SerializeField] public float timeCost { get; set; }
-    [field: SerializeField] public float moneyCost { get; set; }
-    [field: SerializeField] public float totalCost { get; set; }
-    [field: SerializeField] public float netValue { get; set; }
-    [field: SerializeField] public float netUtility { get; set; }
-}
-
-[Serializable]
-public class PassengerEconomicParameters
-{
-    // Base values
-    [field: SerializeField] public float hourlyIncome { get; set; }
-    [field: SerializeField] public float tripUtilityScore { get; set; }
-    [field: SerializeField] public float timePreference { get; set; }
-
-    // Derived values
-    [field: SerializeField] public float waitingCostPerHour { get; set; }
-    [field: SerializeField] public float tripUtilityValue { get; set; }
-
-    [field: SerializeField] public Substitute bestSubstitute { get; set; }
-}
 
 
 public class PassengerBase : MonoBehaviour
@@ -223,7 +181,7 @@ public class PassengerBase : MonoBehaviour
         float netValueOfPublicTransport = tripUtilityValue - publicTransportUtilityCost;
         Substitute publicTransportSubstitute = new Substitute()
         {
-            type = SubstituteType.PublicTransport,
+            type = TripType.PublicTransport,
             timeCost = publicTransportTimeCost,
             moneyCost = publicTransportMoneyCost,
             totalCost = publicTransportUtilityCost,
@@ -239,7 +197,7 @@ public class PassengerBase : MonoBehaviour
         float netValueOfWalking = tripUtilityValue - utilityCostOfWalking;
         Substitute walkingSubstitute = new Substitute()
         {
-            type = SubstituteType.Walking,
+            type = TripType.Walking,
             timeCost = timeCostOfWalking,
             moneyCost = moneyCostOfWalking,
             totalCost = utilityCostOfWalking,
@@ -258,7 +216,7 @@ public class PassengerBase : MonoBehaviour
         float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
         Substitute privateVehicleSubstitute = new Substitute()
         {
-            type = SubstituteType.SkipTrip,
+            type = TripType.SkipTrip,
             timeCost = privateVehicleTimeCost,
             moneyCost = privateVehicleMoneyCost,
             totalCost = privateVehicleUtilityCost,
@@ -269,7 +227,7 @@ public class PassengerBase : MonoBehaviour
         // Skip trip
         Substitute skipTripSubstitute = new Substitute()
         {
-            type = SubstituteType.SkipTrip,
+            type = TripType.SkipTrip,
             timeCost = 0,
             moneyCost = 0,
             totalCost = 0,

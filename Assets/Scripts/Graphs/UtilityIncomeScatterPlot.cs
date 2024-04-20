@@ -47,7 +47,7 @@ public class UtilityIncomeScatterPlot : MonoBehaviour
 
     public void AppendPassenger(Passenger passenger, TripCreatedPassengerData tripCreatedPassengerData)
     {
-        Vector2 point = new Vector2(passenger.passengerEconomicParameters.hourlyIncome, tripCreatedPassengerData.expectedNetUtilityBeforeVariableCosts);
+        Vector2 point = new Vector2(passenger.person.economicParameters.hourlyIncome, tripCreatedPassengerData.expectedNetUtilityBeforeVariableCosts);
         Vector2 graphPosition = ConvertValueToGraphPosition(point);
 
         CreateDot(graphPosition, passenger.hasAcceptedRideOffer);

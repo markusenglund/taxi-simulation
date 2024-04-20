@@ -151,7 +151,7 @@ public class Driver : MonoBehaviour
     {
         currentTrip = trip;
         nextTrip = null;
-        SetDestination(trip.tripCreatedData.passenger.positionActual);
+        SetDestination(trip.tripCreatedData.pickUpPosition);
         Debug.Log($"Driver {id} dispatched at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
     }
 

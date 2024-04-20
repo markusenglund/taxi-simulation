@@ -39,20 +39,6 @@ public class OverviewSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(2);
         StartCoroutine(RotateCameraAround(new Vector3(5.5f, 1, 5.5f), new Vector3(1, 0, 0), -70, 3));
         yield return new WaitForSeconds(10);
-        // Camera.main.transform.position = new Vector3(1, 1, -0.5f);
-        // Camera.main.transform.rotation = Quaternion.Euler(8, 45, 0);
-        // StartCoroutine(MoveCamera(toPosition: new Vector3(6, 1, 4.5f), duration: 6, ease: Ease.Linear));
-        // yield return new WaitForSeconds(2);
-
-        // StartCoroutine(RotateCamera(Quaternion.Euler(30, 45, 0), duration: 4, ease: Ease.QuadraticIn));
-
-        // yield return new WaitForSeconds(4);
-        // List<Passenger> passengers = city.GetPassengers();
-        // // Pick the last passenger from the list
-        // Passenger passenger = passengers[passengers.Count - 1];
-        // // Time.timeScale = 0.5f;
-        // StartCoroutine(FollowObject(passenger.transform, duration: 5));
-        // yield return new WaitForSeconds(5);
         EditorApplication.isPlaying = false;
     }
 

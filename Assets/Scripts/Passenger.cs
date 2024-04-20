@@ -1,27 +1,13 @@
-using System;
 using UnityEngine;
-using System.Linq;
 using System.Collections;
-using System.Collections.Generic;
-using Random = System.Random;
-using JetBrains.Annotations;
 
 #nullable enable
 public class Passenger : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
-    public Vector3 positionActual;
-
-    static int incrementalId = 1;
-    public int id;
 
     private float spawnDuration = 1;
 
-    public float timeCreated;
-
-    public PassengerState state = PassengerState.Idling;
-
-    public Vector3 destination;
 
     [SerializeField] public Transform agentStatusTextPrefab;
 
@@ -34,32 +20,29 @@ public class Passenger : MonoBehaviour
 
 
     public bool hasAcceptedRideOffer = false;
-    public Trip currentTrip;
 
     private City city;
 
+    public PassengerPerson person;
+
     Animator passengerAnimator;
 
-
-    public PassengerEconomicParameters passengerEconomicParameters;
-
-
-    public static Passenger Create(Transform prefab, float x, float z, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, PassengerEconomicParameters? passengerEconomicParameters = null)
+    public static Passenger Create(PassengerPerson person, Transform prefab, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot)
     {
 
         Quaternion rotation = Quaternion.identity;
 
-        float xVisual = x;
-        float zVisual = z;
+        float xVisual = person.startPosition.x;
+        float zVisual = person.startPosition.z;
 
-        if (x % GridUtils.blockSize == 0)
+        if (person.startPosition.x % GridUtils.blockSize == 0)
         {
-            xVisual = x + .23f;
+            xVisual = person.startPosition.x + .23f;
             rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
         }
-        if (z % GridUtils.blockSize == 0)
+        if (person.startPosition.z % GridUtils.blockSize == 0)
         {
-            zVisual = z + .23f;
+            zVisual = person.startPosition.z + .23f;
             rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
 
         }
@@ -67,37 +50,24 @@ public class Passenger : MonoBehaviour
         Transform passengerTransform = Instantiate(prefab, city.transform, false);
         passengerTransform.rotation = rotation;
         passengerTransform.localPosition = new Vector3(xVisual, 0.08f, zVisual);
-        passengerTransform.name = "Passenger";
         Passenger passenger = passengerTransform.GetComponent<Passenger>();
-        passenger.positionActual = new Vector3(x, 0.05f, z);
         passenger.city = city;
         passenger.waitingTimeGraph = waitingTimeGraph;
         passenger.passengerSurplusGraph = passengerSurplusGraph;
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
-        if (passengerEconomicParameters == null)
-        {
-            passenger.passengerEconomicParameters = passengerEconomicParameters;
-        }
+        passenger.person = person;
+        passenger.person.state = PassengerState.Idling;
+        passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         return passenger;
     }
 
     void Awake()
     {
-        id = incrementalId;
-        incrementalId += 1;
-        timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         passengerAnimator = this.GetComponentInChildren<Animator>();
-
-
     }
 
     void Start()
     {
-        destination = GridUtils.GetRandomPosition(city.passengerSpawnRandom);
-        if (passengerEconomicParameters == null)
-        {
-            GenerateEconomicParameters();
-        }
         StartCoroutine(ScheduleActions());
     }
 
@@ -126,123 +96,9 @@ public class Passenger : MonoBehaviour
         transform.localScale = Vector3.one;
     }
 
-    void GenerateEconomicParameters()
-    {
-        float hourlyIncome = city.simulationSettings.GetRandomHourlyIncome(city.passengerSpawnRandom);
-        float tripUtilityScore = GenerateTripUtilityScore();
-        // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
-        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(city.passengerSpawnRandom, 1.5f, 0.5f, 0, 3f);
-        float waitingCostPerHour = hourlyIncome * timePreference;
-        // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
-        float tripUtilityValue = tripUtilityScore * hourlyIncome;
-        // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
-
-        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
-        passengerEconomicParameters = new PassengerEconomicParameters()
-        {
-            hourlyIncome = hourlyIncome,
-            tripUtilityScore = tripUtilityScore,
-            timePreference = timePreference,
-            waitingCostPerHour = waitingCostPerHour,
-            tripUtilityValue = tripUtilityValue,
-            bestSubstitute = bestSubstitute
-        };
-    }
-
-    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
-    {
-        float tripDistance = GridUtils.GetDistance(positionActual, destination);
-        Random random = city.passengerSpawnRandom;
-
-        // Public transport
-        float publicTransportTime = tripDistance / city.simulationSettings.publicTransportSpeed;
-        // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
-        float publicTransportAdditionalTime = Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
-        float publicTransportTimeCost = (publicTransportTime + publicTransportAdditionalTime) * waitingCostPerHour;
-        float publicTransportMoneyCost = 3;
-        float publicTransportUtilityCost = publicTransportTimeCost + publicTransportMoneyCost;
-        float netValueOfPublicTransport = tripUtilityValue - publicTransportUtilityCost;
-        Substitute publicTransportSubstitute = new Substitute()
-        {
-            type = SubstituteType.PublicTransport,
-            timeCost = publicTransportTimeCost,
-            moneyCost = publicTransportMoneyCost,
-            totalCost = publicTransportUtilityCost,
-            netValue = netValueOfPublicTransport,
-            netUtility = netValueOfPublicTransport / hourlyIncome
-        };
-
-        // Walking
-        float walkingTime = tripDistance / city.simulationSettings.walkingSpeed;
-        float timeCostOfWalking = walkingTime * waitingCostPerHour;
-        float moneyCostOfWalking = 0;
-        float utilityCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
-        float netValueOfWalking = tripUtilityValue - utilityCostOfWalking;
-        Substitute walkingSubstitute = new Substitute()
-        {
-            type = SubstituteType.Walking,
-            timeCost = timeCostOfWalking,
-            moneyCost = moneyCostOfWalking,
-            totalCost = utilityCostOfWalking,
-            netValue = netValueOfWalking,
-            netUtility = netValueOfWalking / hourlyIncome
-        };
-
-        // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
-        float privateVehicleTime = tripDistance / city.simulationSettings.driverSpeed;
-        // Add a 5 minute waiting cost for getting into the car
-        float privateVehicleWaitingTime = 5 / 60f;
-        float privateVehicleTimeCost = (privateVehicleTime + privateVehicleWaitingTime) * waitingCostPerHour;
-        float marginalCostEnRoute = tripDistance * city.simulationSettings.driverMarginalCostPerKm;
-        float privateVehicleMoneyCost = city.simulationSettings.privateVehicleCost + marginalCostEnRoute;
-        float privateVehicleUtilityCost = privateVehicleTimeCost + privateVehicleMoneyCost;
-        float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
-        Substitute privateVehicleSubstitute = new Substitute()
-        {
-            type = SubstituteType.SkipTrip,
-            timeCost = privateVehicleTimeCost,
-            moneyCost = privateVehicleMoneyCost,
-            totalCost = privateVehicleUtilityCost,
-            netValue = netValueOfPrivateVehicle,
-            netUtility = netValueOfPrivateVehicle / hourlyIncome
-        };
-
-        // Skip trip
-        Substitute skipTripSubstitute = new Substitute()
-        {
-            type = SubstituteType.SkipTrip,
-            timeCost = 0,
-            moneyCost = 0,
-            totalCost = 0,
-            netValue = 0
-        };
-
-        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, privateVehicleSubstitute, skipTripSubstitute };
-
-        Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
-
-
-        return bestSubstitute;
-    }
-
-
-    float GenerateTripUtilityScore()
-    {
-        float tripDistance = GridUtils.GetDistance(positionActual, destination);
-        float tripDistanceUtilityModifier = Mathf.Sqrt(tripDistance);
-
-
-        float mu = 0;
-        float sigma = 0.4f;
-        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(city.passengerSpawnRandom, mu, sigma);
-        // Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
-        return tripUtilityScore;
-    }
-
-
     void MakeTripDecision()
     {
-        RideOffer rideOffer = city.RequestRideOffer(positionActual, destination);
+        RideOffer rideOffer = city.RequestRideOffer(person.startPosition, person.destination);
 
 
         float tripCreatedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
@@ -252,28 +108,28 @@ public class Passenger : MonoBehaviour
         {
             passenger = this,
             createdTime = tripCreatedTime,
-            pickUpPosition = positionActual,
-            destination = destination,
-            tripDistance = GridUtils.GetDistance(positionActual, destination),
+            pickUpPosition = person.startPosition,
+            destination = person.destination,
+            tripDistance = GridUtils.GetDistance(person.startPosition, person.destination),
             expectedWaitingTime = rideOffer.expectedWaitingTime,
             expectedTripTime = rideOffer.expectedTripTime,
             fare = rideOffer.fare,
             expectedPickupTime = expectedPickupTime
         };
 
-        float expectedWaitingCost = rideOffer.expectedWaitingTime * passengerEconomicParameters.waitingCostPerHour;
-        float expectedTripTimeCost = rideOffer.expectedTripTime * passengerEconomicParameters.waitingCostPerHour;
+        float expectedWaitingCost = rideOffer.expectedWaitingTime * person.economicParameters.waitingCostPerHour;
+        float expectedTripTimeCost = rideOffer.expectedTripTime * person.economicParameters.waitingCostPerHour;
 
         float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
 
-        float expectedNetValue = passengerEconomicParameters.tripUtilityValue - totalCost;
-        float expectedNetUtility = expectedNetValue / passengerEconomicParameters.hourlyIncome;
-        float expectedTripTimeDisutility = expectedTripTimeCost / passengerEconomicParameters.hourlyIncome;
+        float expectedNetValue = person.economicParameters.tripUtilityValue - totalCost;
+        float expectedNetUtility = expectedNetValue / person.economicParameters.hourlyIncome;
+        float expectedTripTimeDisutility = expectedTripTimeCost / person.economicParameters.hourlyIncome;
         // 'expectedNetUtilityBeforeVariableCosts' represents the utility of the trip before the fare and waiting costs are taken into account - useful for comparing how much passengers of different income levels value getting a ride
-        float expectedNetUtilityBeforeVariableCosts = passengerEconomicParameters.tripUtilityScore - expectedTripTimeDisutility - passengerEconomicParameters.bestSubstitute.netUtility;
+        float expectedNetUtilityBeforeVariableCosts = person.economicParameters.tripUtilityScore - expectedTripTimeDisutility - person.economicParameters.bestSubstitute.netUtility;
 
 
-        float expectedValueSurplus = expectedNetValue - passengerEconomicParameters.bestSubstitute.netValue;
+        float expectedValueSurplus = expectedNetValue - person.economicParameters.bestSubstitute.netValue;
         hasAcceptedRideOffer = expectedValueSurplus > 0;
 
         // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
@@ -281,7 +137,7 @@ public class Passenger : MonoBehaviour
         TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
         {
             hasAcceptedRideOffer = hasAcceptedRideOffer,
-            tripUtilityValue = passengerEconomicParameters.tripUtilityValue,
+            tripUtilityValue = person.economicParameters.tripUtilityValue,
             expectedWaitingCost = expectedWaitingCost,
             expectedTripTimeCost = expectedTripTimeCost,
             expectedNetValue = expectedNetValue,
@@ -297,8 +153,8 @@ public class Passenger : MonoBehaviour
         if (hasAcceptedRideOffer)
         {
             // Debug.Log("Passenger " + id + " is hailing a taxi");
-            currentTrip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
-            SetState(PassengerState.AssignedToTrip);
+            person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
+            person.SetState(PassengerState.AssignedToTrip);
         }
         else
         {
@@ -307,7 +163,7 @@ public class Passenger : MonoBehaviour
             {
                 passengerSurplusGraph.AppendPassenger(this);
             }
-            SetState(PassengerState.RejectedRideOffer);
+            person.SetState(PassengerState.RejectedRideOffer);
             Destroy(gameObject);
         }
 
@@ -317,17 +173,17 @@ public class Passenger : MonoBehaviour
 
     public void HandleDriverArrivedAtPickUp()
     {
-        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.5f, $"-${currentTrip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.5f, $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
 
     }
 
     public PickedUpPassengerData HandlePassengerPickedUp(PickedUpData pickedUpData)
     {
-        float waitingCost = pickedUpData.waitingTime * passengerEconomicParameters.waitingCostPerHour;
-        float valueSurplus = currentTrip.tripCreatedPassengerData.tripUtilityValue - waitingCost - currentTrip.tripCreatedData.fare.total;
+        float waitingCost = pickedUpData.waitingTime * person.economicParameters.waitingCostPerHour;
+        float valueSurplus = person.trip.tripCreatedPassengerData.tripUtilityValue - waitingCost - person.trip.tripCreatedData.fare.total;
 
-        float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
-        // Debug.Log($"Passenger {id} was picked up at {TimeUtils.ConvertSimulationHoursToTimeString(pickedUpData.pickedUpTime)}, expected pickup time was {TimeUtils.ConvertSimulationHoursToTimeString(currentTrip.tripCreatedData.expectedPickupTime)}, difference is {(pickedUpData.pickedUpTime - currentTrip.tripCreatedData.expectedPickupTime) * 60f} minutes");
+        float utilitySurplus = valueSurplus / person.economicParameters.hourlyIncome;
+        // Debug.Log($"Passenger {id} was picked up at {TimeUtils.ConvertSimulationHoursToTimeString(pickedUpData.pickedUpTime)}, expected pickup time was {TimeUtils.ConvertSimulationHoursToTimeString(person.trip.tripCreatedData.expectedPickupTime)}, difference is {(pickedUpData.pickedUpTime - person.trip.tripCreatedData.expectedPickupTime) * 60f} minutes");
 
         // Debug.Log($"Surplus gained by passenger {id} is {utilitySurplus}");
 
@@ -347,11 +203,11 @@ public class Passenger : MonoBehaviour
 
     public DroppedOffPassengerData HandlePassengerDroppedOff(DroppedOffData droppedOffData)
     {
-        float tripTimeCost = droppedOffData.timeSpentOnTrip * passengerEconomicParameters.waitingCostPerHour;
-        float netValue = currentTrip.tripCreatedPassengerData.tripUtilityValue - tripTimeCost - currentTrip.pickedUpPassengerData.waitingCost - currentTrip.tripCreatedData.fare.total;
-        float netUtility = netValue / passengerEconomicParameters.hourlyIncome;
-        float valueSurplus = netValue - passengerEconomicParameters.bestSubstitute.netValue;
-        float utilitySurplus = valueSurplus / passengerEconomicParameters.hourlyIncome;
+        float tripTimeCost = droppedOffData.timeSpentOnTrip * person.economicParameters.waitingCostPerHour;
+        float netValue = person.trip.tripCreatedPassengerData.tripUtilityValue - tripTimeCost - person.trip.pickedUpPassengerData.waitingCost - person.trip.tripCreatedData.fare.total;
+        float netUtility = netValue / person.economicParameters.hourlyIncome;
+        float valueSurplus = netValue - person.economicParameters.bestSubstitute.netValue;
+        float utilitySurplus = valueSurplus / person.economicParameters.hourlyIncome;
 
         DroppedOffPassengerData droppedOffPassengerData = new DroppedOffPassengerData()
         {
@@ -371,15 +227,12 @@ public class Passenger : MonoBehaviour
         return droppedOffPassengerData;
 
     }
-    public void SetState(PassengerState state)
-    {
-        this.state = state;
-    }
+
 
     public void HandlePassengerDroppedOff()
     {
         this.transform.parent = null;
-        SetState(PassengerState.DroppedOff);
+        person.SetState(PassengerState.DroppedOff);
         Destroy(gameObject);
     }
 }

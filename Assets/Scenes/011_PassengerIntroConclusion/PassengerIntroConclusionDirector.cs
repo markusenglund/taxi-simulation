@@ -35,7 +35,6 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
 
         DriverPerson driverPerson = CreateGenericDriverPerson();
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
-        // Passenger passenger = city.CreatePassenger(passengerPosition, economicParameters);
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
         PassengerStats passengerStats = SpawnPassengerStats(passenger);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();

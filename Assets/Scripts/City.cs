@@ -41,7 +41,7 @@ public class City : MonoBehaviour
 
     private List<Trip> trips = new List<Trip>();
 
-    private List<Passenger> passengers = new List<Passenger>();
+    private List<PassengerPerson> passengerAgents = new List<PassengerPerson>();
 
     private int currentHour = 0;
 
@@ -89,7 +89,6 @@ public class City : MonoBehaviour
         }
 
         SpawnInitialDrivers();
-        // createInitialPassengers();
         if (simulationSettings.isActive)
         {
             StartCoroutine(createPassengers());
@@ -215,17 +214,6 @@ public class City : MonoBehaviour
     }
 
 
-    private void createInitialPassengers()
-    {
-        // Create 8 passengers to start
-        for (int i = 0; i < 1; i++)
-        {
-            Vector3 randomPosition = GridUtils.GetRandomPosition(passengerSpawnRandom);
-            Passenger passenger = Passenger.Create(passengerPrefab, randomPosition.x, randomPosition.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
-            passengers.Add(passenger);
-        }
-    }
-
     IEnumerator createPassengers()
     {
 
@@ -263,23 +251,12 @@ public class City : MonoBehaviour
 
     public Passenger CreatePassenger(Vector3 position)
     {
-        Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
-        passengers.Add(passenger);
+        // Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
+        PassengerPerson person = new PassengerPerson(position, simulationSettings, passengerSpawnRandom);
+        passengerAgents.Add(person);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
         return passenger;
     }
-
-    public Passenger CreatePassenger(Vector3 position, PassengerEconomicParameters economicParameters)
-    {
-        Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, economicParameters);
-        passengers.Add(passenger);
-        return passenger;
-    }
-
-    public List<Passenger> GetPassengers()
-    {
-        return passengers;
-    }
-
 
     public float GetNumExpectedPassengersPerHour(float simulationTime)
     {
@@ -323,9 +300,9 @@ public class City : MonoBehaviour
     {
         float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
         int numPassengersSpawned = 0;
-        foreach (Passenger passenger in passengers)
+        foreach (PassengerPerson passengerPerson in passengerAgents)
         {
-            if (passenger.timeCreated > intervalStartTime)
+            if (passengerPerson.timeSpawned > intervalStartTime)
             {
                 numPassengersSpawned += 1;
             }
@@ -343,17 +320,17 @@ public class City : MonoBehaviour
         int population = 0;
         // FIXME: Hard-coded values for now based on mu=0.9, median 16 + 4 fixed income
         float[] quartiledIncomeTopRange = { 12.72f, 20.0f, 33.36f, float.PositiveInfinity };
-        foreach (Passenger passenger in passengers)
+        foreach (PassengerPerson passengerPerson in passengerAgents)
         {
-            if (passenger.state == PassengerState.Idling || passenger.state == PassengerState.AssignedToTrip)
+            if (passengerPerson.state == PassengerState.Idling || passengerPerson.state == PassengerState.AssignedToTrip)
             {
                 // Passengers who are not dropped off yet are not contributing to surplus, so are not counted in the population either so they don't influence the per capita calculation
                 continue;
             }
             population++;
-            float valueSurplus = passenger.state == PassengerState.RejectedRideOffer ? 0 : passenger.currentTrip.droppedOffPassengerData.valueSurplus;
+            float valueSurplus = passengerPerson.state == PassengerState.RejectedRideOffer ? 0 : passengerPerson.trip.droppedOffPassengerData.valueSurplus;
             totalUtilitySurplusValue += valueSurplus;
-            float hourlyIncome = passenger.passengerEconomicParameters.hourlyIncome;
+            float hourlyIncome = passengerPerson.economicParameters.hourlyIncome;
 
             if (hourlyIncome < quartiledIncomeTopRange[0])
             {
@@ -407,7 +384,7 @@ public class City : MonoBehaviour
     {
         Passenger passenger = tripCreatedData.passenger;
         // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
-        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(passenger.positionActual);
+        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(tripCreatedData.pickUpPosition);
 
         Trip trip = new Trip(tripCreatedData, tripCreatedPassengerData);
 
@@ -441,7 +418,7 @@ public class City : MonoBehaviour
         Trip trip = GetNextTrip();
         if (trip != null)
         {
-            float enRouteDistance = GridUtils.GetDistance(driver.transform.localPosition, trip.tripCreatedData.passenger.positionActual);
+            float enRouteDistance = GridUtils.GetDistance(driver.transform.localPosition, trip.tripCreatedData.pickUpPosition);
             trip.AssignDriver(driver, enRouteDistance);
             driver.HandleDriverAssigned(trip);
             DispatchDriver(driver, trip);
