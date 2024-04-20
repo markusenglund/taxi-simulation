@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System;
+using System.Linq;
 
 
 public enum PassengerSpawnGraphMode
@@ -191,10 +191,10 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     private IEnumerator UpdateActualPassengerCurve()
     {
-        float numPositions = 40;
+        float numPositions = 200;
         float i = 0;
         float timeResolution = 0.5f;
-        // Queue<float> lastFewValues = new Queue<float>();
+        Queue<float> lastFewValues = new Queue<float>();
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         while (simulationTime < city.simulationSettings.simulationLengthHours)
         {
@@ -202,13 +202,19 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             float t = simulationTime / city.simulationSettings.simulationLengthHours;
             int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
             int numPassengersPerHour = numPassengersSpawnedPerTimeResolutionInterval * (int)(1 / timeResolution);
-
+            lastFewValues.Enqueue(numPassengersPerHour);
             if (t * numPositions >= i)
             {
                 actualPassengersLine.positionCount++;
                 i++;
             }
-            Vector2 passengersPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, numPassengersPerHour));
+            if (lastFewValues.Count > 100)
+            {
+                lastFewValues.Dequeue();
+            }
+            float smoothedNumPassengersPerHour = lastFewValues.Average();
+            Debug.Log("§" + smoothedNumPassengersPerHour);
+            Vector2 passengersPosition = ConvertValueToGraphPosition(new Vector2(simulationTime, smoothedNumPassengersPerHour));
             actualPassengersLine.SetPosition(actualPassengersLine.positionCount - 1, new Vector3(passengersPosition.x, passengersPosition.y, 0));
             yield return null;
         }
