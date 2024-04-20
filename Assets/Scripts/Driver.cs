@@ -300,7 +300,6 @@ public class Driver : MonoBehaviour
             float speed = TimeUtils.ConvertSimulationSpeedPerHourToRealSpeed(CalculateSpeed());
 
             // Vector3 newPosition = Vector3.Lerp(currentWaypointSegment.startPosition, waypoint, positionPercentage);
-            Debug.Log(speed);
             Vector3 newPosition = Vector3.MoveTowards(transform.localPosition, waypoint, Mathf.Max(speed * Time.deltaTime, 0.01f));
 
             transform.localPosition = newPosition;

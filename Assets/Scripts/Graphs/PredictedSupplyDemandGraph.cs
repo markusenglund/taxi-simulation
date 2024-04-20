@@ -31,7 +31,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     Vector2 graphSize = new Vector2(1200, 800);
     Vector3 graphPosition = new Vector3(3100, 1100);
     float margin = 100f;
-    float marginTop = 180f;
+    float marginTop = 220f;
     float marginBottom = 140f;
     float maxY = 60f;
     float minY = 0f;
@@ -45,7 +45,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     PassengerSpawnGraphMode mode;
 
     Color actualPassengersLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    Color passengersLineColor = new Color(0.4f, 0.8f, 1.0f, 1.0f);
+    Color passengersLineColor = new Color(0.2f, 0.9f, 1.0f, 1.0f);
 
     Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
 
@@ -59,7 +59,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     CanvasGroup canvasGroup;
 
-    TMP_Text actualPassengersText;
+    TMP_Text actualPassengersNumberText;
 
     float defaultLineWidth;
 
@@ -213,6 +213,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         float timeResolution = 0.5f;
         Queue<(float value, float time)> lastFewValues = new Queue<(float value, float time)>();
         float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        Vector2 zeroGraphPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         while (simulationTime < city.simulationSettings.simulationLengthHours)
         {
             simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
@@ -237,9 +238,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             actualPassengersLine.SetPosition(actualPassengersLine.positionCount - 1, passengersPosition);
             actualPassengersLineDot.SetPosition(0, passengersPosition);
             actualPassengersLineDot.SetPosition(1, passengersPosition);
-            Vector3 passengersTextPosition = new Vector3(passengersPosition.x + 18, passengersPosition.y - 5, 0);
-            actualPassengersText.rectTransform.anchoredPosition = passengersTextPosition;
-            actualPassengersText.text = smoothedNumPassengersPerHour.ToString("n0");
+            Vector3 passengersTextPosition = new Vector3(passengersPosition.x + 18, Mathf.Max(passengersPosition.y - 5, zeroGraphPosition.y + 15), 0);
+            actualPassengersNumberText.rectTransform.anchoredPosition = passengersTextPosition;
+            actualPassengersNumberText.text = smoothedNumPassengersPerHour.ToString("n0");
             yield return null;
         }
     }
@@ -330,19 +331,29 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         RectTransform textRectTransform = text.rectTransform;
         textRectTransform.sizeDelta = graphSize;
         text.fontSize = 90;
-        Vector2 textPosition = new Vector2(0f, graphSize.y / 2 - 100f);
+        Vector2 textPosition = new Vector2(0f, graphSize.y / 2 - 80f);
         text.text = headingText;
 
         text.rectTransform.anchoredPosition = textPosition;
     }
 
-    private void CreateLegend()
+    private void CreateLegends()
+    {
+        passengersLegendLine = Instantiate(lrPrefab);
+        actualPassengersLegendLine = Instantiate(lrPrefab);
+
+        CreateLegend(x: 0, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
+        CreateLegend(x: 540, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
+    }
+
+    private void CreateLegend(float x, LineRenderer legendDot, Color color, string text)
     {
 
 
         // Create a tiny green line with the line renderer
         // Create empty legend game object inside the graph container with scale 1
         GameObject legend = new GameObject("Legend", typeof(RectTransform));
+        legendDot.transform.SetParent(legend.transform, false);
         // Add canvasgroup to legend
         legend.transform.SetParent(graphContainer);
         legend.transform.localScale = new Vector3(1, 1, 1);
@@ -356,35 +367,27 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         // Set size delta of the legend
         float legendHeight = 42;
         float legendWidth = 600;
-        legend.transform.localPosition = new Vector3(-legendWidth + margin, (-graphSize.y) / 2 + 0.15f * marginBottom, 0);
+        float legendMargin = 20;
+        legend.transform.localPosition = new Vector3(-legendWidth + margin + x, graphSize.y / 2 - marginTop + legendMargin, 0);
         legendRectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
 
-        passengersLegendLine = Instantiate(lrPrefab, legend.transform);
-        passengersLegendLine.positionCount = 2;
+        legendDot.positionCount = 2;
         // Offset with 6 px to get it properly centered
         Vector2 passengerLegendLinePosition = new Vector3(0, legendHeight / 2 - 6, 0);
-        passengersLegendLine.SetPosition(0, passengerLegendLinePosition);
-        passengersLegendLine.SetPosition(1, passengerLegendLinePosition);
-        passengersLegendLine.startColor = passengersLineColor;
-        passengersLegendLine.endColor = passengersLineColor;
-        passengersLegendLine.widthCurve = AnimationCurve.Constant(0, 1, 6f);
+        legendDot.SetPosition(0, passengerLegendLinePosition);
+        legendDot.SetPosition(1, passengerLegendLinePosition);
+        legendDot.startColor = color;
+        legendDot.endColor = color;
+        legendDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
+        legendDot.sortingOrder = 1;
 
-        TMP_Text text1 = Instantiate(legendTextPrefab, legend.transform);
-        Vector2 textPosition1 = new Vector2(30, 0);
-        text1.text = "Number of passengers/hr";
-        text1.rectTransform.anchoredPosition = textPosition1;
-        text1.rectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
-        text1.fontSize = legendHeight;
-
-        actualPassengersText = Instantiate(legendTextPrefab, graphContainer);
-        actualPassengersText.rectTransform.pivot = new Vector2(0, 0);
-        actualPassengersText.rectTransform.anchorMin = new Vector2(0, 0);
-        actualPassengersText.rectTransform.anchorMax = new Vector2(0, 0);
-        actualPassengersText.text = "Actual rate";
-        actualPassengersText.rectTransform.sizeDelta = new Vector2(300, 30);
-        actualPassengersText.fontSize = 42;
-        actualPassengersText.color = actualPassengersLineColor;
-        actualPassengersText.fontStyle = FontStyles.Bold;
+        TMP_Text legendText = Instantiate(legendTextPrefab, legend.transform);
+        Vector2 textPosition = new Vector2(20, 0);
+        legendText.text = text;
+        legendText.rectTransform.anchoredPosition = textPosition;
+        legendText.rectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
+        legendText.fontSize = legendHeight;
+        legendText.color = color;
 
         // Set text to lower left corner by default by setting anchor min and max to 0, 0
 
@@ -415,6 +418,17 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         actualPassengersLineDot.endColor = actualPassengersLineColor;
         actualPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
         actualPassengersLineDot.sortingOrder = 3;
+
+
+        actualPassengersNumberText = Instantiate(legendTextPrefab, graphContainer);
+        actualPassengersNumberText.rectTransform.pivot = new Vector2(0, 0);
+        actualPassengersNumberText.rectTransform.anchorMin = new Vector2(0, 0);
+        actualPassengersNumberText.rectTransform.anchorMax = new Vector2(0, 0);
+        actualPassengersNumberText.text = "Actual rate";
+        actualPassengersNumberText.rectTransform.sizeDelta = new Vector2(300, 30);
+        actualPassengersNumberText.fontSize = 42;
+        actualPassengersNumberText.color = actualPassengersLineColor;
+        actualPassengersNumberText.fontStyle = FontStyles.Bold;
     }
 
     private void InstantiateGraph()
@@ -423,7 +437,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         CreateAxes();
         CreateAxisValues();
         CreateHeaderText();
-        CreateLegend();
+        CreateLegends();
     }
 
 
