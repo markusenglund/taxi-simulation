@@ -20,6 +20,9 @@ public class PassengerTripTypeGraph : MonoBehaviour
     LineRenderer substituteLine;
     LineRenderer substituteLineDot;
 
+    LineRenderer skipTripLine;
+    LineRenderer skipTripLineDot;
+
     List<LineRenderer> separatorLines = new List<LineRenderer>();
 
     int startHour = 18;
@@ -28,7 +31,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
-    float maxY = 60f;
+    float maxY = 30f;
     float minY = 0f;
     float maxX;
     float minX = 0f;
@@ -37,14 +40,17 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
     City city;
 
-    Color substituteLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    Color uberLineColor = new Color(0.2f, 0.9f, 1.0f, 1.0f);
+    Color substituteLineColor = new Color(1f, 0.4f, 0.2f, 1f);
+    Color uberLineColor = Color.white;
+
+    Color skipTripLineColor = new Color(1f, 0.8f, 0f, 1f);
 
     Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
 
 
     LineRenderer uberLegendLine;
     LineRenderer substituteLegendLine;
+    LineRenderer skipTripLegendLine;
     LineRenderer xLineRenderer;
     LineRenderer yLineRenderer;
 
@@ -80,7 +86,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
         canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
-        graphContainer.sizeDelta = graphSize; //new Vector2(graphSize.x - 2 * margin, graphSize.y - 2 * margin);
+        graphContainer.sizeDelta = graphSize;
         defaultLineWidth = lrPrefab.widthMultiplier;
         InstantiateGraph();
 
@@ -140,46 +146,16 @@ public class PassengerTripTypeGraph : MonoBehaviour
         }
     }
 
-    private IEnumerator CreatePassengerCurve(float duration)
-    {
-        float startTime = Time.time;
-
-        // float previousTime = Time.time;
-        float numPositions = 200;
-        Vector2 firstGraphPosition = ConvertValueToGraphPosition(new Vector2(0, city.GetNumExpectedPassengersPerHour(0)));
-
-        uberLine.positionCount = 1;
-        uberLine.SetPosition(0, new Vector3(firstGraphPosition.x, firstGraphPosition.y, 0));
-        float i = 0;
-        uberLineDot.positionCount = 2;
-
-        while (Time.time - startTime < duration)
-        {
-            // float time = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-            float t = (Time.time - startTime) / duration;
-            float graphTime = Mathf.Lerp(0, city.simulationSettings.simulationLengthHours, t);
-            float passengersPerHour = city.GetNumExpectedPassengersPerHour(graphTime);
-            Vector2 graphPosition = ConvertValueToGraphPosition(new Vector2(graphTime, passengersPerHour));
-            Vector3 passengersPosition = new Vector3(graphPosition.x, graphPosition.y, 0);
-            if (t * numPositions >= i)
-            {
-                uberLine.positionCount++;
-                i++;
-            }
-            uberLine.SetPosition(uberLine.positionCount - 1, passengersPosition);
-            uberLineDot.SetPosition(0, passengersPosition);
-            uberLineDot.SetPosition(1, passengersPosition);
-            yield return null;
-        }
-    }
-
     private IEnumerator UpdateCurves()
     {
         float numPositions = 200;
-        float i = 0;
+        float i0 = 0;
+        float i1 = 0;
+        float i2 = 0;
         float timeResolution = 0.5f;
         substituteLineDot.positionCount = 2;
         uberLineDot.positionCount = 2;
+        skipTripLineDot.positionCount = 2;
 
         Queue<(float value, float time)> lastSubstituteValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastUberValues = new Queue<(float value, float time)>();
@@ -217,10 +193,10 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
             float numSubstitutePassengersPerHour = numSubstitutePassengers * (1 / timeResolution);
             lastSubstituteValues.Enqueue((numSubstitutePassengersPerHour, simulationTime));
-            if (t * numPositions >= i)
+            if (t * numPositions >= i0)
             {
                 substituteLine.positionCount++;
-                i++;
+                i0++;
             }
             if (lastSubstituteValues.Count > 100)
             {
@@ -238,14 +214,13 @@ public class PassengerTripTypeGraph : MonoBehaviour
             substituteNumberText.rectTransform.anchoredPosition = passengersTextPosition;
             substituteNumberText.text = smoothedNumPassengersPerHour.ToString("n0");
 
-            // TODO - START HERE, fix the weird curve behavior
             // Uber passengers
-            float numUberPassengersPerHour = numSubstitutePassengers * (1 / timeResolution);
+            float numUberPassengersPerHour = numUberPassengers * (1 / timeResolution);
             lastUberValues.Enqueue((numUberPassengersPerHour, simulationTime));
-            if (t * numPositions >= i)
+            if (t * numPositions >= i1)
             {
                 uberLine.positionCount++;
-                i++;
+                i1++;
             }
             if (lastUberValues.Count > 100)
             {
@@ -262,6 +237,30 @@ public class PassengerTripTypeGraph : MonoBehaviour
             // Vector3 passengersTextPosition = new Vector3(uberLinePosition.x + 18, Mathf.Max(uberLinePosition.y - 5, zeroGraphPosition.y + 15), 0);
             // substituteNumberText.rectTransform.anchoredPosition = passengersTextPosition;
             // substituteNumberText.text = smoothedNumUberPassengersPerHour.ToString("n0");
+
+
+            // Skipped trips
+            float numSkippedTripsPerHour = numSkippedTrip * (1 / timeResolution);
+            lastSkippedTripValues.Enqueue((numSkippedTripsPerHour, simulationTime));
+            if (t * numPositions >= i2)
+            {
+                skipTripLine.positionCount++;
+                i2++;
+            }
+            if (lastSkippedTripValues.Count > 100)
+            {
+                lastSkippedTripValues.Dequeue();
+            }
+            float smoothedNumSkippedTripsPerHour = lastSkippedTripValues.Average(x => x.value);
+            float skippedTripTimeInterval = lastSkippedTripValues.Last().time - lastSkippedTripValues.First().time;
+            // Offset the time axis to the average time of the values that were used to calculate the spawn rate
+            float skippedTripGraphTime = simulationTime - timeResolution / 2 - timeInterval / 2;
+            Vector3 skippedTripLinePosition = ConvertValueToGraphPosition(new Vector3(graphTime, smoothedNumSkippedTripsPerHour, 0));
+            skipTripLine.SetPosition(skipTripLine.positionCount - 1, skippedTripLinePosition);
+            skipTripLineDot.SetPosition(0, skippedTripLinePosition);
+            skipTripLineDot.SetPosition(1, skippedTripLinePosition);
+
+
             yield return null;
         }
     }
@@ -362,10 +361,12 @@ public class PassengerTripTypeGraph : MonoBehaviour
     {
         uberLegendLine = Instantiate(lrPrefab);
         substituteLegendLine = Instantiate(lrPrefab);
+        skipTripLegendLine = Instantiate(lrPrefab);
 
 
-        CreateLegend(x: 0, uberLegendLine, uberLineColor, "Uber passengers");
-        CreateLegend(x: 540, substituteLegendLine, substituteLineColor, "Substitute passengers");
+        CreateLegend(x: 0, uberLegendLine, uberLineColor, "Uber");
+        CreateLegend(x: 340, substituteLegendLine, substituteLineColor, "Substitute");
+        CreateLegend(x: 680, skipTripLegendLine, skipTripLineColor, "Skipped trip");
 
     }
 
@@ -432,6 +433,14 @@ public class PassengerTripTypeGraph : MonoBehaviour
         substituteLine.numCornerVertices = 1;
         substituteLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
 
+        skipTripLine = Instantiate(lrPrefab, graphContainer);
+        skipTripLine.positionCount = 0;
+        skipTripLine.startColor = skipTripLineColor;
+        skipTripLine.endColor = skipTripLineColor;
+        skipTripLine.sortingOrder = 2;
+        skipTripLine.numCornerVertices = 1;
+        skipTripLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
+
         substituteLineDot = Instantiate(lrPrefab, graphContainer);
         substituteLineDot.positionCount = 0;
         substituteLineDot.startColor = substituteLineColor;
@@ -445,6 +454,13 @@ public class PassengerTripTypeGraph : MonoBehaviour
         uberLineDot.endColor = uberLineColor;
         uberLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
         uberLineDot.sortingOrder = 3;
+
+        skipTripLineDot = Instantiate(lrPrefab, graphContainer);
+        skipTripLineDot.positionCount = 0;
+        skipTripLineDot.startColor = skipTripLineColor;
+        skipTripLineDot.endColor = skipTripLineColor;
+        skipTripLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
+        skipTripLineDot.sortingOrder = 3;
 
 
         substituteNumberText = Instantiate(legendTextPrefab, graphContainer);
