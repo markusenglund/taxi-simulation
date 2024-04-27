@@ -27,6 +27,8 @@ public class Passenger : MonoBehaviour
 
     public PassengerPerson person;
 
+    float passengerScaleFactor = 5f;
+
     Animator passengerAnimator;
 
     public static Passenger Create(PassengerPerson person, Transform prefab, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot)
@@ -88,19 +90,21 @@ public class Passenger : MonoBehaviour
 
     IEnumerator SpawnPassenger()
     {
-        Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+        Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+        spawnAnimation.localScale = Vector3.one * passengerScaleFactor;
 
         transform.localScale = Vector3.zero;
+        Vector3 finalScale = Vector3.one * passengerScaleFactor;
         float startTime = Time.time;
         passengerAnimator.SetTrigger("LookAtPhone");
         while (Time.time < startTime + spawnDuration)
         {
             float t = (Time.time - startTime) / spawnDuration;
             t = EaseUtils.EaseInOutCubic(t);
-            transform.localScale = Vector3.one * t;
+            transform.localScale = finalScale * t;
             yield return null;
         }
-        transform.localScale = Vector3.one;
+        transform.localScale = finalScale;
     }
 
     void MakeTripDecision()
@@ -174,7 +178,7 @@ public class Passenger : MonoBehaviour
                 passengerSurplusGraph.AppendPassenger(this);
             }
             person.SetState(PassengerState.RejectedRideOffer);
-            Destroy(gameObject);
+            StartCoroutine(DespawnPassenger(duration: 1.5f));
         }
 
 
@@ -306,11 +310,13 @@ public class Passenger : MonoBehaviour
     {
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
 
-        Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
+        Transform despawnAnimation = Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
+        despawnAnimation.localScale = Vector3.one * passengerScaleFactor;
         passengerAnimator.SetTrigger("Celebrate");
         yield return new WaitForSeconds(0.5f);
         Quaternion startRotation = transform.localRotation;
         float endRotationY = 360 * 5;
+        Vector3 startScale = transform.localScale;
 
         float startTime = Time.time;
         while (Time.time < startTime + duration)
@@ -318,7 +324,7 @@ public class Passenger : MonoBehaviour
             float t = (Time.time - startTime) / duration;
             float shrinkFactor = EaseUtils.EaseInOutCubic(t);
             float spinFactor = EaseUtils.EaseInCubic(t);
-            transform.localScale = Vector3.one * (1 - shrinkFactor);
+            transform.localScale = startScale * (1 - shrinkFactor);
             Quaternion newRotation = Quaternion.AngleAxis(startRotation.eulerAngles.y + endRotationY * spinFactor, Vector3.up);
             transform.localRotation = newRotation;
             yield return null;
