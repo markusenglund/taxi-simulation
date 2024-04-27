@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 #nullable enable
 public class Passenger : MonoBehaviour
@@ -30,26 +31,11 @@ public class Passenger : MonoBehaviour
     public static Passenger Create(PassengerPerson person, Transform prefab, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot)
     {
 
-        Quaternion rotation = Quaternion.identity;
-
-        float xVisual = person.startPosition.x;
-        float zVisual = person.startPosition.z;
-
-        if (person.startPosition.x % GridUtils.blockSize == 0)
-        {
-            xVisual = person.startPosition.x + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
-        }
-        if (person.startPosition.z % GridUtils.blockSize == 0)
-        {
-            zVisual = person.startPosition.z + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
-
-        }
+        (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition);
 
         Transform passengerTransform = Instantiate(prefab, city.transform, false);
         passengerTransform.rotation = rotation;
-        passengerTransform.localPosition = new Vector3(xVisual, 0.08f, zVisual);
+        passengerTransform.localPosition = position;
         Passenger passenger = passengerTransform.GetComponent<Passenger>();
         passenger.city = city;
         passenger.waitingTimeGraph = waitingTimeGraph;
@@ -59,6 +45,26 @@ public class Passenger : MonoBehaviour
         passenger.person.state = PassengerState.Idling;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         return passenger;
+    }
+
+    // 
+    private static (Vector3 position, Quaternion rotation) GetSideWalkPositionRotation(Vector3 roadPosition)
+    {
+        float positionX = roadPosition.x;
+        float positionZ = roadPosition.z;
+        Quaternion rotation = Quaternion.identity;
+        if (roadPosition.x % GridUtils.blockSize == 0)
+        {
+            positionX = roadPosition.x + .23f;
+            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
+        }
+        if (roadPosition.z % GridUtils.blockSize == 0)
+        {
+            positionZ = roadPosition.z + .23f;
+            rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
+        }
+
+        return (new Vector3(positionX, 0.08f, positionZ), rotation);
     }
 
     void Awake()
@@ -225,6 +231,9 @@ public class Passenger : MonoBehaviour
         {
             passengerSurplusGraph.AppendPassenger(this);
         }
+        person.SetState(PassengerState.DroppedOff);
+
+        StartCoroutine(EndTripAnimation());
 
 
         return droppedOffPassengerData;
@@ -232,11 +241,34 @@ public class Passenger : MonoBehaviour
     }
 
 
-    public void HandlePassengerDroppedOff()
+    public IEnumerator EndTripAnimation()
     {
         this.transform.parent = null;
-        person.SetState(PassengerState.DroppedOff);
+        yield return StartCoroutine(SlideOffCarRoof(1));
         Destroy(gameObject);
+    }
+
+    IEnumerator SlideOffCarRoof(float duration)
+    {
+        transform.SetParent(city.transform);
+        float startTime = Time.time;
+        Vector3 startPosition = transform.localPosition;
+        Vector3 finalPosition = GetSideWalkPositionRotation(person.destination).position;
+
+        Quaternion startRotation = transform.localRotation;
+        Quaternion finalRotation = Quaternion.LookRotation(finalPosition - new Vector3(startPosition.x, 0.08f, startPosition.z), Vector3.up);
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float verticalT = EaseUtils.EaseInCubic(t);
+            float horizontalT = EaseUtils.EaseInOutCubic(t);
+            transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, horizontalT);
+            transform.localPosition = new Vector3(Mathf.Lerp(startPosition.x, finalPosition.x, horizontalT), Mathf.Lerp(startPosition.y, finalPosition.y, verticalT), Mathf.Lerp(startPosition.z, finalPosition.z, horizontalT));
+            yield return null;
+        }
+        transform.localPosition = finalPosition;
+        transform.localRotation = finalRotation;
+        yield return null;
     }
 }
 

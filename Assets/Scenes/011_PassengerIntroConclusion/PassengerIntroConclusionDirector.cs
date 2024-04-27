@@ -67,8 +67,6 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         yield return new WaitForSeconds(0.8f);
         driver.SetDestination(new Vector3(0, 0, 0));
         StartCoroutine(passenger.DespawnPassenger());
-        // Animate passenger to the sidewalk
-
     }
 
     IEnumerator MoveToCarRoof(PassengerBase passenger, float duration)

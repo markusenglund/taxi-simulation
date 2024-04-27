@@ -191,7 +191,6 @@ public class Driver : MonoBehaviour
 
 
         SetState(TaxiState.Idling);
-        currentTrip.tripCreatedData.passenger.HandlePassengerDroppedOff();
         driverPerson.completedTrips.Add(currentTrip);
         currentTrip = null;
         if (isEndingSession)
