@@ -7,6 +7,7 @@ public class Passenger : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
 
+
     private float spawnDuration = 1;
 
 
@@ -244,7 +245,10 @@ public class Passenger : MonoBehaviour
     public IEnumerator EndTripAnimation()
     {
         this.transform.parent = null;
-        yield return StartCoroutine(SlideOffCarRoof(1));
+        yield return StartCoroutine(SlideOffCarRoof(0.5f));
+        // yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(DespawnPassenger(duration: 1.5f));
+
         Destroy(gameObject);
     }
 
@@ -269,6 +273,30 @@ public class Passenger : MonoBehaviour
         transform.localPosition = finalPosition;
         transform.localRotation = finalRotation;
         yield return null;
+    }
+
+    public IEnumerator DespawnPassenger(float duration)
+    {
+        Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
+
+        Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
+        passengerAnimator.SetTrigger("Celebrate");
+        yield return new WaitForSeconds(0.5f);
+        Quaternion startRotation = transform.localRotation;
+        float endRotationY = 360 * 5;
+
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float shrinkFactor = EaseUtils.EaseInOutCubic(t);
+            float spinFactor = EaseUtils.EaseInCubic(t);
+            transform.localScale = Vector3.one * (1 - shrinkFactor);
+            Quaternion newRotation = Quaternion.AngleAxis(startRotation.eulerAngles.y + endRotationY * spinFactor, Vector3.up);
+            transform.localRotation = newRotation;
+            yield return null;
+        }
+        Destroy(gameObject);
     }
 }
 

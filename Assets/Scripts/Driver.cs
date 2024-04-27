@@ -155,7 +155,7 @@ public class Driver : MonoBehaviour
         Debug.Log($"Driver {id} dispatched at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
     }
 
-    private void DropOffPassenger()
+    private IEnumerator DropOffPassenger()
     {
         float droppedOffTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
         float timeSpentOnTrip = droppedOffTime - currentTrip.pickedUpData.pickedUpTime;
@@ -188,7 +188,7 @@ public class Driver : MonoBehaviour
         currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
 
         // Debug.Log($"On trip time: {droppedOffData.timeSpentOnTrip} On trip distance: {currentTrip.tripCreatedData.tripDistance} km, En route time: {currentTrip.pickedUpData.timeSpentEnRoute} En route distance: {currentTrip.driverAssignedData.enRouteDistance} km");
-
+        yield return new WaitForSeconds(0.5f);
 
         SetState(TaxiState.Idling);
         driverPerson.completedTrips.Add(currentTrip);
@@ -272,7 +272,7 @@ public class Driver : MonoBehaviour
                 }
                 else if (currentTrip.state == TripState.OnTrip)
                 {
-                    DropOffPassenger();
+                    StartCoroutine(DropOffPassenger());
 
                 }
             }
