@@ -125,14 +125,11 @@ public class Driver : MonoBehaviour
 
         AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
 
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
-        // Put the passenger on top of the taxi cab
         Passenger passenger = currentTrip.tripCreatedData.passenger;
-        passenger.transform.SetParent(transform);
-        float middleTaxiX = 0.09f;
-        float topTaxiY = 1.44f;
-        passenger.transform.localPosition = new Vector3(middleTaxiX, topTaxiY, 0);
-        passenger.transform.localRotation = Quaternion.identity;
+        yield return StartCoroutine(passenger.JumpToCarRoof(duration: 0.5f, this));
+
+        // TODO: Figure out how to handle the passenger jump delay, it's now 0.8 seconds
+        // yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
 
         currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData);
 

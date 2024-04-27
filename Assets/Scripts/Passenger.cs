@@ -241,6 +241,33 @@ public class Passenger : MonoBehaviour
 
     }
 
+    public IEnumerator JumpToCarRoof(float duration, Driver driver)
+    {
+        passengerAnimator.SetTrigger("EnterTaxi");
+        yield return new WaitForSeconds(0.3f);
+
+        transform.SetParent(driver.transform);
+        float startTime = Time.time;
+        Vector3 startPosition = transform.localPosition;
+        float topTaxiY = 1.44f;
+        Vector3 finalPosition = new Vector3(0.09f, topTaxiY, 0);
+
+        Quaternion startRotation = transform.localRotation;
+        Quaternion finalRotation = Quaternion.Euler(0, 0, 0);
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float verticalT = 1.2f * EaseUtils.EaseOutQuadratic(t);
+            float horizontalT = EaseUtils.EaseInOutCubic(t);
+            // transform.localPosition = Vector3.Lerp(startPosition, finalPosition, t);
+            transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, horizontalT);
+            transform.localPosition = new Vector3(Mathf.Lerp(startPosition.x, finalPosition.x, horizontalT), Mathf.Lerp(startPosition.y, finalPosition.y, verticalT), Mathf.Lerp(startPosition.z, finalPosition.z, horizontalT));
+            yield return null;
+        }
+        transform.localPosition = finalPosition;
+        transform.localRotation = finalRotation;
+    }
+
 
     public IEnumerator EndTripAnimation()
     {
