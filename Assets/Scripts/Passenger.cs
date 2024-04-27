@@ -178,7 +178,7 @@ public class Passenger : MonoBehaviour
                 passengerSurplusGraph.AppendPassenger(this);
             }
             person.SetState(PassengerState.RejectedRideOffer);
-            StartCoroutine(DespawnPassenger(duration: 1.5f));
+            StartCoroutine(DespawnPassenger(duration: 1.5f, "BeDisappointed"));
         }
 
 
@@ -306,13 +306,13 @@ public class Passenger : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator DespawnPassenger(float duration)
+    public IEnumerator DespawnPassenger(float duration, string animationTrigger = "Celebrate")
     {
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
 
         Transform despawnAnimation = Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
         despawnAnimation.localScale = Vector3.one * passengerScaleFactor;
-        passengerAnimator.SetTrigger("Celebrate");
+        passengerAnimator.SetTrigger(animationTrigger);
         yield return new WaitForSeconds(0.5f);
         Quaternion startRotation = transform.localRotation;
         float endRotationY = 360 * 5;
