@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
+using Random = System.Random;
 
 #nullable enable
 public class Passenger : MonoBehaviour
@@ -47,10 +48,43 @@ public class Passenger : MonoBehaviour
         passenger.person = person;
         passenger.person.state = PassengerState.Idling;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+
+
+        SetDressColor(passenger, person.economicParameters.hourlyIncome);
         return passenger;
     }
 
-    // 
+    static private void SetDressColor(Passenger passenger, float hourlyIncome)
+    {
+
+        Transform dressBody = passenger.transform.Find("blender-character-v5@Standing Greeting/DressBody");
+        Material[] dressMaterials = dressBody.GetComponent<SkinnedMeshRenderer>().materials;
+
+        Transform dressArms = passenger.transform.Find("blender-character-v5@Standing Greeting/DressArms");
+        Material[] armMaterials = dressArms.GetComponent<SkinnedMeshRenderer>().materials;
+        Color green = new Color(0, 0.8f, 0.3f);
+        // For incomes below, the dress color is a gradient between red and yellow
+        Color dressBaseColor;
+        if (hourlyIncome <= 20)
+        {
+            dressBaseColor = Color.Lerp(Color.red, Color.yellow, Mathf.InverseLerp(10, 20, hourlyIncome));
+        }
+        else if (hourlyIncome <= 40)
+        {
+            dressBaseColor = Color.Lerp(Color.yellow, green, Mathf.InverseLerp(20, 40, hourlyIncome));
+        }
+        else
+        {
+            dressBaseColor = Color.Lerp(green, Color.black, Mathf.InverseLerp(40, 120, hourlyIncome));
+        }
+        // We just assume that the first material is DressBase and second is DressAccent, let's hope it doesn't change
+        dressMaterials[0].color = dressBaseColor;
+        armMaterials[0].color = dressBaseColor;
+
+        Color accentColor = Color.Lerp(dressBaseColor, Color.black, 0.3f);
+        dressMaterials[1].color = accentColor;
+        armMaterials[1].color = accentColor;
+    }
     private static (Vector3 position, Quaternion rotation) GetSideWalkPositionRotation(Vector3 roadPosition)
     {
         float positionX = roadPosition.x;
