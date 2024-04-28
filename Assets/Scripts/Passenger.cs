@@ -221,7 +221,7 @@ public class Passenger : MonoBehaviour
 
     public void HandleDriverArrivedAtPickUp()
     {
-        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.5f, $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
 
     }
 
@@ -287,7 +287,7 @@ public class Passenger : MonoBehaviour
         transform.SetParent(driver.transform);
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
-        float topTaxiY = 1.44f;
+        float topTaxiY = 1.2f;
         Vector3 finalPosition = new Vector3(0.09f, topTaxiY, 0);
 
         Quaternion startRotation = transform.localRotation;
