@@ -2,9 +2,9 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class AgentStatusText : MonoBehaviour
+public class AgentOverheadReaction : MonoBehaviour
 {
-    [SerializeField] public Transform statTextPrefab;
+    // [SerializeField] public Transform statTextPrefab;
     TextMeshProUGUI textMeshPro;
     Color color;
     string text;
@@ -20,14 +20,14 @@ public class AgentStatusText : MonoBehaviour
 
     void Update()
     {
-        transform.rotation = Quaternion.Euler(-Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y + 180, Camera.main.transform.rotation.eulerAngles.z);
+        transform.rotation = Quaternion.Euler(-Camera.main.transform.rotation.eulerAngles.x / 2, Camera.main.transform.rotation.eulerAngles.y + 180, 0);
     }
 
     private IEnumerator ScheduleActions()
     {
         StartCoroutine(SpawnCard(duration: 0.3f));
         yield return new WaitForSeconds(0.8f);
-        yield return StartCoroutine(FadeIntoTheSky(duration: 1.3f));
+        yield return StartCoroutine(Fade(duration: 1.3f));
     }
 
     private IEnumerator SpawnCard(float duration)
@@ -45,25 +45,23 @@ public class AgentStatusText : MonoBehaviour
         transform.localScale = finalScale;
     }
 
-    private IEnumerator FadeIntoTheSky(float duration)
+    private IEnumerator Fade(float duration)
     {
         float startTime = Time.time;
-        Vector3 startPosition = transform.localPosition;
-        Vector3 finalPosition = transform.localPosition + Vector3.up * 0.6f;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
             textMeshPro.color = new Color(textMeshPro.color.r, textMeshPro.color.g, textMeshPro.color.b, 1 - t);
-            transform.localPosition = Vector3.Lerp(startPosition, finalPosition, EaseUtils.EaseInCubic(t));
             yield return null;
         }
         Destroy(this.gameObject);
     }
 
-    public static AgentStatusText Create(Transform prefab, Transform parent, Vector3 positionOffset, string text, Color color)
+    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color)
     {
-        Transform agentStatusText = Instantiate(prefab, parent.position + positionOffset, Quaternion.identity);
-        AgentStatusText agentStatusTextComponent = agentStatusText.GetComponent<AgentStatusText>();
+        Transform statTextPrefab = Resources.Load<Transform>("AgentReaction");
+        Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity, parent);
+        AgentOverheadReaction agentStatusTextComponent = agentStatusText.GetComponent<AgentOverheadReaction>();
         agentStatusTextComponent.text = text;
         agentStatusTextComponent.color = color;
         return agentStatusTextComponent;

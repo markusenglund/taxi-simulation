@@ -13,6 +13,7 @@ public class Passenger : MonoBehaviour
 
 
     [SerializeField] public Transform agentStatusTextPrefab;
+    public Transform agentReactionTextPrefab;
 
 
     private WaitingTimeGraph? waitingTimeGraph;
@@ -111,6 +112,7 @@ public class Passenger : MonoBehaviour
 
     void Start()
     {
+        agentReactionTextPrefab = Resources.Load<Transform>("AgentReaction");
         StartCoroutine(ScheduleActions());
     }
 
@@ -221,7 +223,7 @@ public class Passenger : MonoBehaviour
 
     public void HandleDriverArrivedAtPickUp()
     {
-        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+        AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
 
     }
 
@@ -342,6 +344,8 @@ public class Passenger : MonoBehaviour
 
     public IEnumerator DespawnPassenger(float duration, string animationTrigger = "Celebrate")
     {
+        AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😦", Color.red);
+
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
 
         Transform despawnAnimation = Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);

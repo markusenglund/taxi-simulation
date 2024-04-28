@@ -123,7 +123,7 @@ public class Driver : MonoBehaviour
         };
 
 
-        AgentStatusText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
+        AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
 
         Passenger passenger = currentTrip.tripCreatedData.passenger;
         yield return StartCoroutine(passenger.JumpToCarRoof(duration: 0.5f, this));
