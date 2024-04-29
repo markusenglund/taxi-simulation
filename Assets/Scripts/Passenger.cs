@@ -4,6 +4,13 @@ using Unity.VisualScripting;
 using Random = System.Random;
 
 #nullable enable
+
+public enum DespawnReason
+{
+    RejectedRideOffer,
+    NoRideOffer,
+    DroppedOff
+}
 public class Passenger : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
@@ -145,76 +152,88 @@ public class Passenger : MonoBehaviour
 
     void MakeTripDecision()
     {
-        RideOffer rideOffer = city.RequestRideOffer(person.startPosition, person.destination);
+        RideOffer? rideOffer = city.RequestRideOffer(person.startPosition, person.destination);
 
 
-        float tripCreatedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
-        float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
-
-        TripCreatedData tripCreatedData = new TripCreatedData()
+        if (rideOffer == null)
         {
-            passenger = this,
-            createdTime = tripCreatedTime,
-            pickUpPosition = person.startPosition,
-            destination = person.destination,
-            tripDistance = GridUtils.GetDistance(person.startPosition, person.destination),
-            expectedWaitingTime = rideOffer.expectedWaitingTime,
-            expectedTripTime = rideOffer.expectedTripTime,
-            fare = rideOffer.fare,
-            expectedPickupTime = expectedPickupTime
-        };
-
-        float expectedWaitingCost = rideOffer.expectedWaitingTime * person.economicParameters.waitingCostPerHour;
-        float expectedTripTimeCost = rideOffer.expectedTripTime * person.economicParameters.waitingCostPerHour;
-
-        float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
-
-        float expectedNetValue = person.economicParameters.tripUtilityValue - totalCost;
-        float expectedNetUtility = expectedNetValue / person.economicParameters.hourlyIncome;
-        float expectedTripTimeDisutility = expectedTripTimeCost / person.economicParameters.hourlyIncome;
-        // 'expectedNetUtilityBeforeVariableCosts' represents the utility of the trip before the fare and waiting costs are taken into account - useful for comparing how much passengers of different income levels value getting a ride
-        float expectedNetUtilityBeforeVariableCosts = person.economicParameters.tripUtilityScore - expectedTripTimeDisutility - person.economicParameters.bestSubstitute.netUtility;
-
-
-        float expectedValueSurplus = expectedNetValue - person.economicParameters.bestSubstitute.netValue;
-        TripType tripTypeChosen = expectedValueSurplus > 0 ? TripType.Uber : person.economicParameters.bestSubstitute.type;
-        hasAcceptedRideOffer = tripTypeChosen == TripType.Uber;
-
-        // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
-        // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedNetValue);
-        TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
-        {
-            hasAcceptedRideOffer = hasAcceptedRideOffer,
-            tripUtilityValue = person.economicParameters.tripUtilityValue,
-            expectedWaitingCost = expectedWaitingCost,
-            expectedTripTimeCost = expectedTripTimeCost,
-            expectedNetValue = expectedNetValue,
-            expectedNetUtility = expectedNetUtility,
-            expectedValueSurplus = expectedValueSurplus,
-            expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
-        };
-
-        person.tripTypeChosen = tripTypeChosen;
-
-        if (utilityIncomeScatterPlot != null)
-        {
-            utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
-        }
-        if (hasAcceptedRideOffer)
-        {
-            // Debug.Log("Passenger " + id + " is hailing a taxi");
-            person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
-            person.SetState(PassengerState.AssignedToTrip);
+            person.SetState(PassengerState.RejectedRideOffer);
+            person.tripTypeChosen = person.economicParameters.bestSubstitute.type;
+            hasAcceptedRideOffer = false;
+            StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.NoRideOffer));
         }
         else
         {
-            // Debug.Log("Passenger " + id + " is giving up");
-            if (passengerSurplusGraph != null)
+
+
+            float tripCreatedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
+
+            TripCreatedData tripCreatedData = new TripCreatedData()
             {
-                passengerSurplusGraph.AppendPassenger(this);
+                passenger = this,
+                createdTime = tripCreatedTime,
+                pickUpPosition = person.startPosition,
+                destination = person.destination,
+                tripDistance = GridUtils.GetDistance(person.startPosition, person.destination),
+                expectedWaitingTime = rideOffer.expectedWaitingTime,
+                expectedTripTime = rideOffer.expectedTripTime,
+                fare = rideOffer.fare,
+                expectedPickupTime = expectedPickupTime
+            };
+
+            float expectedWaitingCost = rideOffer.expectedWaitingTime * person.economicParameters.waitingCostPerHour;
+            float expectedTripTimeCost = rideOffer.expectedTripTime * person.economicParameters.waitingCostPerHour;
+
+            float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
+
+            float expectedNetValue = person.economicParameters.tripUtilityValue - totalCost;
+            float expectedNetUtility = expectedNetValue / person.economicParameters.hourlyIncome;
+            float expectedTripTimeDisutility = expectedTripTimeCost / person.economicParameters.hourlyIncome;
+            // 'expectedNetUtilityBeforeVariableCosts' represents the utility of the trip before the fare and waiting costs are taken into account - useful for comparing how much passengers of different income levels value getting a ride
+            float expectedNetUtilityBeforeVariableCosts = person.economicParameters.tripUtilityScore - expectedTripTimeDisutility - person.economicParameters.bestSubstitute.netUtility;
+
+
+            float expectedValueSurplus = expectedNetValue - person.economicParameters.bestSubstitute.netValue;
+            TripType tripTypeChosen = expectedValueSurplus > 0 ? TripType.Uber : person.economicParameters.bestSubstitute.type;
+            hasAcceptedRideOffer = tripTypeChosen == TripType.Uber;
+
+            // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
+            // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedNetValue);
+            TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
+            {
+                hasAcceptedRideOffer = hasAcceptedRideOffer,
+                tripUtilityValue = person.economicParameters.tripUtilityValue,
+                expectedWaitingCost = expectedWaitingCost,
+                expectedTripTimeCost = expectedTripTimeCost,
+                expectedNetValue = expectedNetValue,
+                expectedNetUtility = expectedNetUtility,
+                expectedValueSurplus = expectedValueSurplus,
+                expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
+            };
+
+            person.tripTypeChosen = tripTypeChosen;
+
+            if (utilityIncomeScatterPlot != null)
+            {
+                utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
             }
-            person.SetState(PassengerState.RejectedRideOffer);
-            StartCoroutine(DespawnPassenger(duration: 1.5f, "BeDisappointed"));
+            if (hasAcceptedRideOffer)
+            {
+                // Debug.Log("Passenger " + id + " is hailing a taxi");
+                person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
+                person.SetState(PassengerState.AssignedToTrip);
+            }
+            else
+            {
+                // Debug.Log("Passenger " + id + " is giving up");
+                if (passengerSurplusGraph != null)
+                {
+                    passengerSurplusGraph.AppendPassenger(this);
+                }
+                person.SetState(PassengerState.RejectedRideOffer);
+                StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.RejectedRideOffer));
+            }
         }
 
 
@@ -314,7 +333,7 @@ public class Passenger : MonoBehaviour
         this.transform.parent = null;
         yield return StartCoroutine(SlideOffCarRoof(0.5f));
         // yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(DespawnPassenger(duration: 1.5f));
+        yield return StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.DroppedOff));
 
         Destroy(gameObject);
     }
@@ -342,15 +361,26 @@ public class Passenger : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator DespawnPassenger(float duration, string animationTrigger = "Celebrate")
+    public IEnumerator DespawnPassenger(float duration, DespawnReason reason)
     {
-        AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😦", Color.red);
+        if (reason == DespawnReason.RejectedRideOffer)
+        {
+            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😦", Color.red);
+        }
+        else if (reason == DespawnReason.NoRideOffer)
+        {
+            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😦📵", Color.red);
+        }
+        else if (reason == DespawnReason.DroppedOff)
+        {
+            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😀", Color.green);
+        }
 
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
 
         Transform despawnAnimation = Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
         despawnAnimation.localScale = Vector3.one * passengerScaleFactor;
-        passengerAnimator.SetTrigger(animationTrigger);
+        passengerAnimator.SetTrigger(reason == DespawnReason.DroppedOff ? "Celebrate" : "BeDisappointed");
         yield return new WaitForSeconds(0.5f);
         Quaternion startRotation = transform.localRotation;
         float endRotationY = 360 * 5;

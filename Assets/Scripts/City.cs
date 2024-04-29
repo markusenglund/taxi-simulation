@@ -466,7 +466,7 @@ public class City : MonoBehaviour
         return (closestTaxi, closestTaxiDistance);
     }
 
-    private float GetExpectedWaitingTime(Vector3 position)
+    private float? GetExpectedWaitingTime(Vector3 position)
     {
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
         if (closestTaxi != null)
@@ -476,14 +476,16 @@ public class City : MonoBehaviour
             return expectedWaitingTime;
         }
 
-        // ! These approximations that will change based on how efficient the queueing algorithm is
-        float avgTimeEnRoute = 11f / 60f;
-        float avgTimeOnTrip = 10f / 60f;
-        float numTaxis = drivers.Count;
-        float queueSize = queuedTrips.Count;
+        return null;
 
-        float expectedWaitingTimeForQueue = ((avgTimeEnRoute + avgTimeOnTrip) * queueSize / numTaxis) + avgTimeEnRoute;
-        return expectedWaitingTimeForQueue;
+        // ! These approximations that will change based on how efficient the queueing algorithm is
+        // float avgTimeEnRoute = 11f / 60f;
+        // float avgTimeOnTrip = 10f / 60f;
+        // float numTaxis = drivers.Count;
+        // float queueSize = queuedTrips.Count;
+
+        // float expectedWaitingTimeForQueue = ((avgTimeEnRoute + avgTimeOnTrip) * queueSize / numTaxis) + avgTimeEnRoute;
+        // return expectedWaitingTimeForQueue;
 
     }
 
@@ -505,16 +507,22 @@ public class City : MonoBehaviour
         return fare;
     }
 
-    public RideOffer RequestRideOffer(Vector3 position, Vector3 destination)
+    public RideOffer? RequestRideOffer(Vector3 position, Vector3 destination)
     {
         float tripDistance = GridUtils.GetDistance(position, destination);
         Fare fare = GetFare(tripDistance);
-        float expectedWaitingTime = GetExpectedWaitingTime(position);
+        float? expectedWaitingTime = GetExpectedWaitingTime(position);
+
+        if (expectedWaitingTime == null)
+        {
+            return null;
+        }
+
         float expectedTripTime = tripDistance / simulationSettings.driverSpeed + 0.6f / 60f;
 
         RideOffer tripOffer = new RideOffer
         {
-            expectedWaitingTime = expectedWaitingTime,
+            expectedWaitingTime = (float)expectedWaitingTime,
             expectedTripTime = expectedTripTime,
             fare = fare,
         };

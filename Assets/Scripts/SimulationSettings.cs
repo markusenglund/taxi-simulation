@@ -130,6 +130,10 @@ public class SimulationSettings : ScriptableObject
     public float[] expectedPassengersByHour;
 
 
+    // Visual settings
+    public bool showDriverEarnings = true;
+
+
 
     private float[] GetExpectedPassengersByHour()
     {

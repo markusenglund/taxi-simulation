@@ -122,11 +122,14 @@ public class Driver : MonoBehaviour
             marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * city.simulationSettings.driverMarginalCostPerKm
         };
 
-
-        AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
+        if (city.simulationSettings.showDriverEarnings)
+        {
+            AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
+        }
 
         Passenger passenger = currentTrip.tripCreatedData.passenger;
-        yield return StartCoroutine(passenger.JumpToCarRoof(duration: 0.5f, this));
+        StartCoroutine(passenger.JumpToCarRoof(duration: 0.5f, this));
+        yield return new WaitForSeconds(0.5f);
 
         // TODO: Figure out how to handle the passenger jump delay, it's now 0.8 seconds
         // yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
