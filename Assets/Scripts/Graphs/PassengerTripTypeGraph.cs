@@ -176,6 +176,10 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
             foreach (PassengerPerson passenger in passengers)
             {
+                if (passenger.state == PassengerState.BeforeSpawn || passenger.state == PassengerState.Idling)
+                {
+                    continue;
+                }
                 if (passenger.tripTypeChosen == TripType.Uber)
                 {
                     numUberPassengers++;

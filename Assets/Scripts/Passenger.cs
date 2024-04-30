@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
 using Random = System.Random;
+using System.Collections.Generic;
 
 #nullable enable
 
@@ -363,17 +364,31 @@ public class Passenger : MonoBehaviour
 
     public IEnumerator DespawnPassenger(float duration, DespawnReason reason)
     {
+        Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
+        {
+            { TripType.RentalCar, "🚗" },
+            { TripType.Uber, "🚕" },
+            { TripType.Walking, "🚶" },
+            { TripType.PublicTransport, "🚌" },
+            { TripType.SkipTrip, "🏠" }
+        };
         if (reason == DespawnReason.RejectedRideOffer)
         {
-            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😦", Color.red);
+            string reaction = tripTypeToEmoji[person.tripTypeChosen];
+            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.red);
         }
         else if (reason == DespawnReason.NoRideOffer)
         {
-            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😦📵", Color.red);
+            string reaction = tripTypeToEmoji[person.tripTypeChosen] + "📵";
+            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.red);
         }
         else if (reason == DespawnReason.DroppedOff)
         {
-            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), "😀", Color.green);
+            float surplus = person.trip.droppedOffPassengerData.utilitySurplus;
+            int surplusCeil = Mathf.CeilToInt(surplus);
+            // Add one smiley face per unit of utility surplus
+            string reaction = surplusCeil > 0 ? new string('+', surplusCeil) : "😐";
+            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.green, isBold: true);
         }
 
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");

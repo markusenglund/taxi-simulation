@@ -8,6 +8,7 @@ public class AgentOverheadReaction : MonoBehaviour
     TextMeshProUGUI textMeshPro;
     Color color;
     string text;
+    bool isBold;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
@@ -15,6 +16,7 @@ public class AgentOverheadReaction : MonoBehaviour
         textMeshPro = textComponent.GetComponent<TextMeshProUGUI>();
         textMeshPro.color = color;
         textMeshPro.text = text;
+        textMeshPro.fontStyle = isBold ? FontStyles.Bold : FontStyles.Normal;
         StartCoroutine(ScheduleActions());
     }
 
@@ -57,13 +59,15 @@ public class AgentOverheadReaction : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color)
+    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false)
     {
         Transform statTextPrefab = Resources.Load<Transform>("AgentReaction");
         Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity, parent);
         AgentOverheadReaction agentStatusTextComponent = agentStatusText.GetComponent<AgentOverheadReaction>();
         agentStatusTextComponent.text = text;
         agentStatusTextComponent.color = color;
+        // Set font style
+        agentStatusTextComponent.isBold = isBold;
         return agentStatusTextComponent;
     }
 }
