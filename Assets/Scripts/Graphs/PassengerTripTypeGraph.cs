@@ -160,11 +160,11 @@ public class PassengerTripTypeGraph : MonoBehaviour
         Queue<(float value, float time)> lastSubstituteValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastUberValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastSkippedTripValues = new Queue<(float value, float time)>();
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         Vector2 zeroGraphPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         while (simulationTime < city.simulationSettings.simulationLengthHours)
         {
-            simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float t = simulationTime / city.simulationSettings.simulationLengthHours;
             // int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
             PassengerPerson[] passengers = city.GetPassengersSpawnedInLastInterval(timeResolution);

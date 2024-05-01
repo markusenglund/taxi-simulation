@@ -57,7 +57,7 @@ public class SupplyDemandGraph : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval));
+            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(timeInterval));
             UpdateGraph();
         }
     }
@@ -65,7 +65,7 @@ public class SupplyDemandGraph : MonoBehaviour
 
     private void UpdateGraph()
     {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
 
         // Update passengers line
         passengersLine.positionCount += 1;

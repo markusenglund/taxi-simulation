@@ -6,6 +6,8 @@ public class TimeUtils : MonoBehaviour
 {
     private static float simulationSecondsPerRealSecond = 5 * 60;
 
+    public static float simulationStartTime = 4;
+
     public static float ConvertRealSpeedToSimulationSpeedPerHour(float realSpeed)
     {
         return 3600 * realSpeed / simulationSecondsPerRealSecond;
@@ -16,14 +18,24 @@ public class TimeUtils : MonoBehaviour
         return simulationSpeedPerHour * simulationSecondsPerRealSecond / 3600;
     }
 
-    public static float ConvertRealSecondsToSimulationHours(float realSeconds)
+    public static float ConvertRealSecondsTimeToSimulationHours(float timeSeconds)
     {
-        return realSeconds * simulationSecondsPerRealSecond / 3600;
+        return Mathf.Max(0, (timeSeconds - simulationStartTime) * simulationSecondsPerRealSecond / 3600);
     }
 
-    public static float ConvertSimulationHoursToRealSeconds(float simulationHours)
+    public static float ConvertRealSecondsDurationToSimulationHours(float durationSeconds)
     {
-        return simulationHours * 3600 / simulationSecondsPerRealSecond;
+        return Mathf.Max(durationSeconds * simulationSecondsPerRealSecond / 3600);
+    }
+
+    public static float ConvertSimulationHoursTimeToRealSeconds(float timeHours)
+    {
+        return simulationStartTime + timeHours * 3600 / simulationSecondsPerRealSecond;
+    }
+
+    public static float ConvertSimulationHoursDurationToRealSeconds(float durationHours)
+    {
+        return durationHours * 3600 / simulationSecondsPerRealSecond;
     }
 
     public static string ConvertSimulationHoursToTimeString(float simulationHours)

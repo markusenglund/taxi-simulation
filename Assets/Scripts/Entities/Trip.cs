@@ -139,7 +139,7 @@ public class Trip
     )
     {
         state = TripState.DriverAssigned;
-        float matchedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float matchedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         driverAssignedData = new DriverAssignedData
         {
             matchedTime = matchedTime,
@@ -151,7 +151,7 @@ public class Trip
     public void DispatchDriver(Vector3 startPosition)
     {
         state = TripState.DriverEnRoute;
-        float driverDispatchedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float driverDispatchedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
 
         driverDispatchedData = new DriverDispatchedData
         {

@@ -15,7 +15,7 @@ public class Clock : MonoBehaviour
     void Update()
     {
         int startHour = 18;
-        float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) + startHour;
+        float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time) + startHour;
         // Get the text component from the child of this transform
         TMP_Text text = GetComponentInChildren<TMP_Text>();
         text.text = TimeUtils.ConvertSimulationHoursToTimeString(currentTime);

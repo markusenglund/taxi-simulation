@@ -67,7 +67,7 @@ public class DriverProfitGraph : MonoBehaviour
     {
         while (true)
         {
-            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
+            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursDurationToRealSeconds(timeInterval);
             yield return new WaitForSeconds(intervalRealSeconds);
             UpdateGraph();
         }
@@ -75,7 +75,7 @@ public class DriverProfitGraph : MonoBehaviour
 
     private void UpdateGraph()
     {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         (float grossProfitLastHour, float surplusValueLastHour, float _1, float _2, float _3) = driverPool.CalculateAverageGrossProfitInInterval(1);
         Vector2 grossProfitPoint = new Vector2(simulationTime, grossProfitLastHour);
         Vector2 grossProfitGraphPosition = ConvertValueToGraphPosition(grossProfitPoint);

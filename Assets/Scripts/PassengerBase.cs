@@ -76,7 +76,7 @@ public class PassengerBase : MonoBehaviour
     {
         id = incrementalId;
         incrementalId += 1;
-        timeCreated = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        timeCreated = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         passengerAnimator = this.GetComponentInChildren<Animator>();
     }
 

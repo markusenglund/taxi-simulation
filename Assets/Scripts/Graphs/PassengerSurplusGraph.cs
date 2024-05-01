@@ -71,7 +71,7 @@ public class PassengerSurplusGraph : MonoBehaviour
 
   private void UpdateGraph()
   {
-    float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+    float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
 
     (float[] quartiledUtilitySurplusPerCapita, int[] quartiledPopulation) = CalculateQuartiledUtilitySurplusPerCapita();
 

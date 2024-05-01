@@ -104,7 +104,7 @@ public class Driver : MonoBehaviour
     IEnumerator PickUpPassenger()
     {
         // Calculate trip pickup data
-        float pickedUpTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float pickedUpTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         float timeSpentEnRoute = pickedUpTime - currentTrip.driverDispatchedData.driverDispatchedTime;
         float waitingTime = pickedUpTime - currentTrip.tripCreatedData.createdTime;
         PickedUpData pickedUpData = new PickedUpData
@@ -144,7 +144,7 @@ public class Driver : MonoBehaviour
     {
         nextTrip = trip;
         SetState(TaxiState.AssignedToTrip);
-        Debug.Log($"Driver {id} assigned to trip at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
+        Debug.Log($"Driver {id} assigned to trip at {TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time)}");
     }
 
     public void HandleDriverDispatched(Trip trip)
@@ -152,12 +152,12 @@ public class Driver : MonoBehaviour
         currentTrip = trip;
         nextTrip = null;
         SetDestination(trip.tripCreatedData.pickUpPosition);
-        Debug.Log($"Driver {id} dispatched at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
+        Debug.Log($"Driver {id} dispatched at {TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time)}");
     }
 
     private IEnumerator DropOffPassenger()
     {
-        float droppedOffTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float droppedOffTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         float timeSpentOnTrip = droppedOffTime - currentTrip.pickedUpData.pickedUpTime;
 
         DroppedOffData droppedOffData = new DroppedOffData
@@ -210,7 +210,7 @@ public class Driver : MonoBehaviour
         float grossProfitInterval = 0;
         foreach (Trip trip in driverPerson.completedTrips)
         {
-            float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+            float intervalStartTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time) - intervalHours;
             if (trip.droppedOffData.droppedOffTime > intervalStartTime)
             {
                 grossProfitInterval += trip.droppedOffDriverData.grossProfit;
@@ -235,9 +235,9 @@ public class Driver : MonoBehaviour
 
     public void EndSession()
     {
-        driverPerson.actualSessionEndTimes.Add(TimeUtils.ConvertRealSecondsToSimulationHours(Time.time));
+        driverPerson.actualSessionEndTimes.Add(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
         driverPerson.isCurrentlyDriving = false;
-        Debug.Log($"Driver {id} ended session at {TimeUtils.ConvertRealSecondsToSimulationHours(Time.time)}");
+        Debug.Log($"Driver {id} ended session at {TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time)}");
         Destroy(gameObject);
     }
 
@@ -314,7 +314,7 @@ public class Driver : MonoBehaviour
 
     private float CalculateSpeed()
     {
-        float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         float time = currentTime - currentWaypointSegment.startTime;
         if (currentTime < currentWaypointSegment.startTime + currentWaypointSegment.accelerationDuration)
         {
@@ -351,7 +351,7 @@ public class Driver : MonoBehaviour
 
         currentWaypointSegment = new WaypointSegment
         {
-            startTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time),
+            startTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time),
             distance = distance,
             accelerationDistance = accelerationDistance,
             duration = totalDuration,

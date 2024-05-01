@@ -47,7 +47,7 @@ public class WaitingTimeGraph : MonoBehaviour
 
     public void SetNewValue(float hoursWaited)
     {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
 
         float minutesWaited = hoursWaited * 60;
         Vector2 point = new Vector2(simulationTime, minutesWaited);

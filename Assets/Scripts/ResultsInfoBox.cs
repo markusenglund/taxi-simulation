@@ -51,7 +51,7 @@ public class ResultsInfoBox : MonoBehaviour
     {
         while (true)
         {
-            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursToRealSeconds(timeInterval);
+            float intervalRealSeconds = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeInterval);
             yield return new WaitForSeconds(intervalRealSeconds);
             UpdateSurplusValues();
             UpdateTripValues();

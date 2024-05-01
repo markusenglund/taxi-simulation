@@ -56,7 +56,7 @@ public class Passenger : MonoBehaviour
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
         passenger.person = person;
         passenger.person.state = PassengerState.Idling;
-        passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
 
 
         SetDressColor(passenger, person.economicParameters.hourlyIncome);
@@ -167,7 +167,7 @@ public class Passenger : MonoBehaviour
         {
 
 
-            float tripCreatedTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            float tripCreatedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
 
             TripCreatedData tripCreatedData = new TripCreatedData()

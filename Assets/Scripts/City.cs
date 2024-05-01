@@ -89,10 +89,12 @@ public class City : MonoBehaviour
         }
 
         SpawnInitialDrivers();
+
         if (simulationSettings.isActive)
         {
-            StartCoroutine(createPassengers());
+            StartCoroutine(StartSimulation());
         }
+
     }
 
     void Update()
@@ -103,6 +105,13 @@ public class City : MonoBehaviour
         {
             UpdateSurgeMultiplier();
         }
+    }
+
+    private IEnumerator StartSimulation()
+    {
+        yield return new WaitForSeconds(4f);
+        StartCoroutine(createPassengers());
+        yield return null;
     }
 
     void InstantiateGraphs()
@@ -118,7 +127,7 @@ public class City : MonoBehaviour
 
     private void EndSimulation()
     {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         if (simulationTime > simulationSettings.simulationLengthHours + 0.1 / 60f) // Add a small buffer to make sure all data collection at the top of the hour finishes
         {
             Time.timeScale = 0;
@@ -146,7 +155,7 @@ public class City : MonoBehaviour
 
     private void SpawnAndRemoveDrivers()
     {
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         if (simulationTime > currentHour + 1)
         {
             currentHour = Mathf.FloorToInt(simulationTime);
@@ -186,7 +195,7 @@ public class City : MonoBehaviour
         if (!simulationSettings.useConstantSurgeMultiplier)
         {
             float maxSurgeMultiplier = 5f;
-            float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsToSimulationHours(Time.time));
+            float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
 
             int numWaitingPassengers = queuedTrips.Count;
             int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
@@ -217,14 +226,14 @@ public class City : MonoBehaviour
     IEnumerator createPassengers()
     {
 
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         while (simulationTime < simulationSettings.simulationLengthHours)
         {
 
-            float expectedPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsToSimulationHours(Time.time));
+            float expectedPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
 
             float interval = 1f / 30f;
-            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(interval));
+            yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(interval));
 
             float expectedPassengersInInterval = expectedPassengersPerHour * interval;
             float numPassengersToCreate = 0;
@@ -283,7 +292,7 @@ public class City : MonoBehaviour
 
     public int CalculateNumStartedTripsInLastInterval(float intervalHours)
     {
-        float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+        float intervalStartTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time) - intervalHours;
         int numStartedTrips = 0;
         foreach (Trip trip in trips)
         {
@@ -305,7 +314,7 @@ public class City : MonoBehaviour
 
     public PassengerPerson[] GetPassengersSpawnedInLastInterval(float intervalHours)
     {
-        float intervalStartTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time) - intervalHours;
+        float intervalStartTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time) - intervalHours;
         return passengerAgents.Where(passenger => passenger.timeSpawned > intervalStartTime).ToArray();
     }
 

@@ -75,7 +75,7 @@ public class PassengerPerson
         this.random = random;
         this.simSettings = simSettings;
         this.startPosition = startPosition;
-        timeSpawned = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         state = PassengerState.BeforeSpawn;
         destination = GridUtils.GetRandomPosition(random);
 

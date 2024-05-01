@@ -219,11 +219,11 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         float i = 0;
         float timeResolution = 0.5f;
         Queue<(float value, float time)> lastFewValues = new Queue<(float value, float time)>();
-        float simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         Vector2 zeroGraphPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         while (simulationTime < city.simulationSettings.simulationLengthHours)
         {
-            simulationTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+            simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float t = simulationTime / city.simulationSettings.simulationLengthHours;
             int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
             float numPassengersPerHour = numPassengersSpawnedPerTimeResolutionInterval * (1 / timeResolution);

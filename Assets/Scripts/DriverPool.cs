@@ -71,7 +71,7 @@ public class DriverPool
 
     public (float hourlyGrossProfitPerDriver, float hourlySurplusValuePerDriver, float totalGrossProfit, float totalSurplusValue, float totalUberRevenue) CalculateAverageGrossProfitInInterval(int intervalHours)
     {
-        float currentTime = TimeUtils.ConvertRealSecondsToSimulationHours(Time.time);
+        float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         float intervalStartTime = Math.Max(currentTime - intervalHours, 0);
         float totalGrossProfit = 0;
         float totalSurplusValue = 0;
