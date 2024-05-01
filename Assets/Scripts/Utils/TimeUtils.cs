@@ -6,7 +6,12 @@ public class TimeUtils : MonoBehaviour
 {
     private static float simulationSecondsPerRealSecond = 5 * 60;
 
-    public static float simulationStartTime = 4;
+    public static float simulationStartTime = 0;
+
+    public static void SetSimulationStartTime(float startTime)
+    {
+        simulationStartTime = startTime;
+    }
 
     public static float ConvertRealSpeedToSimulationSpeedPerHour(float realSpeed)
     {

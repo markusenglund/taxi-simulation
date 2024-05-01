@@ -9,6 +9,8 @@ public class FirstSimDirector : MonoBehaviour
     [SerializeField] public SimulationSettings simSettings;
     [SerializeField] public GraphSettings graphSettings;
 
+    [SerializeField] public float simulationStartTime = 4;
+
     Vector3 lookAtPosition = new Vector3(5.5f, 3, 5.5f);
     City city;
 
@@ -28,6 +30,7 @@ public class FirstSimDirector : MonoBehaviour
 
         Camera.main.transform.position = new Vector3(10f, 10f, 0);
         Camera.main.transform.LookAt(lookAtPosition);
+        TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
     }
 
@@ -40,7 +43,8 @@ public class FirstSimDirector : MonoBehaviour
         PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Sim);
         PassengerTripTypeGraph.Create(city, PassengerSpawnGraphMode.Sim);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, 8, Ease.Cubic, 30));
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(simulationStartTime);
+        StartCoroutine(city.StartSimulation());
 
         yield return null;
     }

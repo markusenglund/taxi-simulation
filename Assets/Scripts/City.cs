@@ -89,12 +89,6 @@ public class City : MonoBehaviour
         }
 
         SpawnInitialDrivers();
-
-        if (simulationSettings.isActive)
-        {
-            StartCoroutine(StartSimulation());
-        }
-
     }
 
     void Update()
@@ -107,9 +101,8 @@ public class City : MonoBehaviour
         }
     }
 
-    private IEnumerator StartSimulation()
+    public IEnumerator StartSimulation()
     {
-        yield return new WaitForSeconds(4f);
         StartCoroutine(createPassengers());
         yield return null;
     }
