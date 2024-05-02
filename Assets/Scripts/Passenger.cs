@@ -387,8 +387,18 @@ public class Passenger : MonoBehaviour
             float surplus = person.trip.droppedOffPassengerData.utilitySurplus;
             int surplusCeil = Mathf.CeilToInt(surplus);
             // Add one smiley face per unit of utility surplus
-            string reaction = surplusCeil > 0 ? new string('+', surplusCeil) : "😐";
-            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.green, isBold: true);
+            if (surplusCeil > 0)
+            {
+                string reaction = new string('+', surplusCeil);
+
+                AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.green, isBold: true);
+            }
+            else
+            {
+                string reaction = "😐";
+                AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.yellow, isBold: false);
+
+            }
         }
 
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
