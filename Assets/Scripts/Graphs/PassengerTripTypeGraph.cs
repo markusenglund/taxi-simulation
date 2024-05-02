@@ -356,9 +356,9 @@ public class PassengerTripTypeGraph : MonoBehaviour
         skipTripLegendLine = Instantiate(lrPrefab);
 
 
-        CreateLegend(x: 0, uberLegendLine, uberLineColor, "Uber");
+        CreateLegend(x: 80, uberLegendLine, uberLineColor, "Uber");
         CreateLegend(x: 340, substituteLegendLine, substituteLineColor, "Substitute");
-        CreateLegend(x: 680, skipTripLegendLine, skipTripLineColor, "Skipped trip");
+        CreateLegend(x: 690, skipTripLegendLine, skipTripLineColor, "Skipped trip");
 
     }
 

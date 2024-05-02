@@ -7,16 +7,16 @@ using System.Linq;
 public class SimulationInfoGroup : MonoBehaviour
 {
     City city;
+    TMP_Text numPassengersWhoGotRidesValueText;
+    TMP_Text numPassengersWhoDidNotGetRidesValueText;
     TMP_Text ridesCompletedValueText;
-    TMP_Text averageFareValueText;
-    TMP_Text averageDistanceValueText;
 
     void Start()
     {
         city = GameObject.Find("City(Clone)").GetComponent<City>();
-        ridesCompletedValueText = transform.Find("Group1").Find("RidesCompletedValueText").GetComponent<TMP_Text>();
-        averageFareValueText = transform.Find("Group2").Find("AverageFareValueText").GetComponent<TMP_Text>();
-        averageDistanceValueText = transform.Find("Group3").Find("AverageDistanceValueText").GetComponent<TMP_Text>();
+        numPassengersWhoGotRidesValueText = transform.Find("Group1").Find("ValueText").GetComponent<TMP_Text>();
+        numPassengersWhoDidNotGetRidesValueText = transform.Find("Group2").Find("ValueText").GetComponent<TMP_Text>();
+        ridesCompletedValueText = transform.Find("Group3").Find("ValueText").GetComponent<TMP_Text>();
         StartCoroutine(FadeInSchedule());
     }
 
@@ -57,19 +57,27 @@ public class SimulationInfoGroup : MonoBehaviour
         float totalDistance = completedTrips.Sum(trip => trip.tripCreatedData.tripDistance);
 
         ridesCompletedValueText.text = numCompletedTrips.ToString();
-        if (numCompletedTrips > 0)
-        {
-            float averageFare = totalFare / numCompletedTrips;
-            averageFareValueText.text = $"${averageFare:0.00}";
 
-            float averageDistance = totalDistance / numCompletedTrips;
-            averageDistanceValueText.text = $"{averageDistance:0.0} km";
-        }
-        else
-        {
-            averageFareValueText.text = "";
-            averageDistanceValueText.text = "";
-        }
+        PassengerPerson[] passengers = city.GetPassengers();
+        int numPassengersWhoGotRides = passengers.Count(passenger => passenger.tripTypeChosen == TripType.Uber);
+        int numPassengerWhoDidNotGetRides = passengers.Count(passenger => passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport || passenger.tripTypeChosen == TripType.RentalCar || passenger.tripTypeChosen == TripType.SkipTrip);
+
+        numPassengersWhoGotRidesValueText.text = numPassengersWhoGotRides.ToString();
+        numPassengersWhoDidNotGetRidesValueText.text = numPassengerWhoDidNotGetRides.ToString();
+
+        // if (numCompletedTrips > 0)
+        // {
+        //     float averageFare = totalFare / numCompletedTrips;
+        //     averageFareValueText.text = $"${averageFare:0.00}";
+
+        //     float averageDistance = totalDistance / numCompletedTrips;
+        //     averageDistanceValueText.text = $"{averageDistance:0.0} km";
+        // }
+        // else
+        // {
+        //     averageFareValueText.text = "";
+        //     averageDistanceValueText.text = "";
+        // }
 
     }
 }

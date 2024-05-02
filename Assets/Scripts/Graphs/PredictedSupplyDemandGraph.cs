@@ -351,8 +351,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
         if (mode == PassengerSpawnGraphMode.Sim)
         {
-            CreateLegend(x: 0, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
-            CreateLegend(x: 540, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
+            CreateLegend(x: 30, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
+            CreateLegend(x: 570, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
         }
         else
         {

@@ -311,6 +311,11 @@ public class City : MonoBehaviour
         return passengerAgents.Where(passenger => passenger.timeSpawned > intervalStartTime).ToArray();
     }
 
+    public PassengerPerson[] GetPassengers()
+    {
+        return passengerAgents.ToArray();
+    }
+
     public (float totalUtilitySurplusValue, float totalUtilitySurplusValuePerCapita, int population, float[] quartiledUtilitySurplusValuePerCapita, int[] quartiledPopulation) CalculatePassengerUtilitySurplusData()
     {
         float[] quartiledUtilitySurplusValuePerCapita = new float[4];

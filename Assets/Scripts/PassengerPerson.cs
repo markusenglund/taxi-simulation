@@ -16,6 +16,7 @@ public enum PassengerState
 
 public enum TripType
 {
+    None,
     Walking,
     PublicTransport,
     RentalCar,
