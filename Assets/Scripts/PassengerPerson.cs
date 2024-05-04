@@ -11,7 +11,7 @@ public enum PassengerState
     AssignedToTrip,
     DroppedOff,
     RejectedRideOffer,
-    Destroyed
+    NoRideOffer,
 }
 
 public enum TripType

@@ -121,10 +121,29 @@ public class City : MonoBehaviour
     private void EndSimulation()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
-        if (simulationTime > simulationSettings.simulationLengthHours + 0.1 / 60f) // Add a small buffer to make sure all data collection at the top of the hour finishes
+        if (simulationTime > simulationSettings.simulationLengthHours + 0.1 / 60f && !simulationEnded) // Add a small buffer to make sure all data collection at the top of the hour finishes
         {
             Time.timeScale = 0;
             simulationEnded = true;
+            LogPassengersWhoDidNotGetARide();
+        }
+
+    }
+
+    private void LogPassengersWhoDidNotGetARide()
+    {
+        List<PassengerPerson> passengersWhoDidNotGetRides = passengerAgents.Where(passenger => passenger.tripTypeChosen != TripType.Uber).ToList()
+        .OrderByDescending(passenger => passenger.economicParameters.tripUtilityScore).ToList();
+        Debug.Log("Number of passengers who did not get a ride: " + passengersWhoDidNotGetRides.Count);
+
+        // Log the top three passengers
+        for (int i = 0; i < 20; i++)
+        {
+            if (i < passengersWhoDidNotGetRides.Count)
+            {
+                PassengerPerson passenger = passengersWhoDidNotGetRides[i];
+                Debug.Log($"Passenger {passenger.id} with trip utility score {passenger.economicParameters.tripUtilityScore} did not get a ride, position: {passenger.startPosition}, destination: {passenger.destination}, time spawned: {passenger.timeSpawned}, received ride offer: {passenger.state == PassengerState.RejectedRideOffer}");
+            }
         }
     }
 
@@ -333,7 +352,7 @@ public class City : MonoBehaviour
                 continue;
             }
             population++;
-            float valueSurplus = passengerPerson.state == PassengerState.RejectedRideOffer ? 0 : passengerPerson.trip.droppedOffPassengerData.valueSurplus;
+            float valueSurplus = passengerPerson.state == PassengerState.RejectedRideOffer || passengerPerson.state == PassengerState.NoRideOffer ? 0 : passengerPerson.trip.droppedOffPassengerData.valueSurplus;
             totalUtilitySurplusValue += valueSurplus;
             float hourlyIncome = passengerPerson.economicParameters.hourlyIncome;
 

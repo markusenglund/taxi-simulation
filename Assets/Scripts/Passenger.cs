@@ -158,7 +158,7 @@ public class Passenger : MonoBehaviour
 
         if (rideOffer == null)
         {
-            person.SetState(PassengerState.RejectedRideOffer);
+            person.SetState(PassengerState.NoRideOffer);
             person.tripTypeChosen = person.economicParameters.bestSubstitute.type;
             hasAcceptedRideOffer = false;
             StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.NoRideOffer));
