@@ -19,16 +19,16 @@ public enum PassengerStatMode
 public class PassengerStats : MonoBehaviour
 {
     [SerializeField] public Transform statTextPrefab;
-    public PassengerBase passenger;
     TextMeshProUGUI headingText;
     List<TextMeshProUGUI> statTexts = new List<TextMeshProUGUI>();
+    PassengerEconomicParameters economicParameters;
     PassengerStatMode mode;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
         Transform heading = passengerStatsSheet.Find("Heading");
         headingText = heading.GetComponent<TextMeshProUGUI>();
-        headingText.text = $"Passenger {passenger.id} Stats";
+        headingText.text = $"Passenger Stats";
         headingText.color = new Color(headingText.color.r, headingText.color.g, headingText.color.b, 0);
         StartCoroutine(ScheduleActions());
     }
@@ -93,20 +93,20 @@ public class PassengerStats : MonoBehaviour
         Stat incomeStat = new Stat()
         {
             name = "Income",
-            value = $"${(Mathf.Round(passenger.passengerEconomicParameters.hourlyIncome * 10) / 10f).ToString("F2")}/hr",
-            barValue = passenger.passengerEconomicParameters.hourlyIncome
+            value = $"${(Mathf.Round(economicParameters.hourlyIncome * 10) / 10f).ToString("F2")}/hr",
+            barValue = economicParameters.hourlyIncome
         };
         Stat tripValueStat = new Stat()
         {
             name = "Trip value",
-            value = $"${(Mathf.Round(passenger.passengerEconomicParameters.tripUtilityValue * 10) / 10f).ToString("F2")}",
-            barValue = passenger.passengerEconomicParameters.tripUtilityValue / 2
+            value = $"${(Mathf.Round(economicParameters.tripUtilityValue * 10) / 10f).ToString("F2")}",
+            barValue = economicParameters.tripUtilityValue / 2
         };
         Stat timeCostStat = new Stat()
         {
             name = "Cost of time",
-            value = $"${(Mathf.Round(passenger.passengerEconomicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
-            barValue = passenger.passengerEconomicParameters.waitingCostPerHour / 2
+            value = $"${(Mathf.Round(economicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
+            barValue = economicParameters.waitingCostPerHour / 2
         };
 
         StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 0, duration: 1));
@@ -127,8 +127,9 @@ public class PassengerStats : MonoBehaviour
 
     private IEnumerator InstantiateStat(Transform passengerStatsSheet, Stat stat, int index, float duration)
     {
-        Transform statText = Instantiate(statTextPrefab, passengerStatsSheet, true);
+        Transform statText = Instantiate(statTextPrefab, passengerStatsSheet);
         statText.localPosition = new Vector3(0, -4 - index * 20, 0);
+        statText.localScale = Vector3.one;
         Transform statName = statText.Find("StatName");
         TextMeshProUGUI statNameText = statName.GetComponent<TextMeshProUGUI>();
         statNameText.text = stat.name;
@@ -151,11 +152,13 @@ public class PassengerStats : MonoBehaviour
 
     }
 
-    public static PassengerStats Create(Transform passengerStatsPrefab, Vector3 position, Quaternion rotation, PassengerBase passenger, PassengerStatMode mode = PassengerStatMode.Fast)
+    public static PassengerStats Create(Transform passengerStatsPrefab, Transform parent, Vector3 position, Quaternion rotation, PassengerEconomicParameters economicParameters, PassengerStatMode mode = PassengerStatMode.Fast)
     {
-        Transform passengerStatsTransform = Instantiate(passengerStatsPrefab, position, rotation);
+        Transform passengerStatsTransform = Instantiate(passengerStatsPrefab, parent);
+        passengerStatsTransform.localPosition = position;
+        passengerStatsTransform.localRotation = rotation;
         PassengerStats passengerStats = passengerStatsTransform.GetComponent<PassengerStats>();
-        passengerStats.passenger = passenger;
+        passengerStats.economicParameters = economicParameters;
         passengerStatsTransform.localScale = Vector3.zero;
         passengerStats.mode = mode;
         return passengerStats;

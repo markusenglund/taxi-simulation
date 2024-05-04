@@ -42,6 +42,7 @@ public class City : MonoBehaviour
     private List<Trip> trips = new List<Trip>();
 
     private List<PassengerPerson> passengerAgents = new List<PassengerPerson>();
+    private List<Passenger> passengers = new List<Passenger>();
 
     private int currentHour = 0;
 
@@ -276,6 +277,7 @@ public class City : MonoBehaviour
         PassengerPerson person = new PassengerPerson(position, simulationSettings, passengerSpawnRandom);
         passengerAgents.Add(person);
         Passenger passenger = Passenger.Create(person, passengerPrefab, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
+        passengers.Add(passenger);
         return passenger;
     }
 
@@ -330,9 +332,14 @@ public class City : MonoBehaviour
         return passengerAgents.Where(passenger => passenger.timeSpawned > intervalStartTime).ToArray();
     }
 
-    public PassengerPerson[] GetPassengers()
+    public PassengerPerson[] GetPassengerPeople()
     {
         return passengerAgents.ToArray();
+    }
+
+    public Passenger[] GetPassengers()
+    {
+        return passengers.ToArray();
     }
 
     public (float totalUtilitySurplusValue, float totalUtilitySurplusValuePerCapita, int population, float[] quartiledUtilitySurplusValuePerCapita, int[] quartiledPopulation) CalculatePassengerUtilitySurplusData()

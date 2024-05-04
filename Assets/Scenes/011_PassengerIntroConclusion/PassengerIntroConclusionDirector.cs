@@ -139,7 +139,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
     {
         Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, position, rotation, passenger);
+        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.passengerEconomicParameters);
         return passengerStats;
     }
     DriverPerson CreateGenericDriverPerson()
