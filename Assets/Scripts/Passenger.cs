@@ -149,6 +149,7 @@ public class Passenger : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
+        // AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f), $"{person.id}", Color.black);
     }
 
     void MakeTripDecision()
