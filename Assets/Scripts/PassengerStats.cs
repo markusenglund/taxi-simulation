@@ -128,8 +128,12 @@ public class PassengerStats : MonoBehaviour
     private IEnumerator InstantiateStat(Transform passengerStatsSheet, Stat stat, int index, float duration)
     {
         Transform statText = Instantiate(statTextPrefab, passengerStatsSheet);
-        statText.localPosition = new Vector3(0, -4 - index * 20, 0);
-        statText.localScale = Vector3.one;
+        RectTransform statTextRect = statText.GetComponent<RectTransform>();
+        // statText.localPosition = new Vector3(0, -4 - index * 20, 0);
+        statText.localScale = Vector3.one * 0.8f;
+        // statTextRect.anchoredPosition = new Vector2(0, 0);
+        statTextRect.anchoredPosition = new Vector2(50, -4 - index * 20);
+
         Transform statName = statText.Find("StatName");
         TextMeshProUGUI statNameText = statName.GetComponent<TextMeshProUGUI>();
         statNameText.text = stat.name;
@@ -138,7 +142,7 @@ public class PassengerStats : MonoBehaviour
         statValueText.text = stat.value;
         Transform barValue = statText.Find("Bar").Find("BarValue");
         RectTransform barValueRect = barValue.GetComponent<RectTransform>();
-        barValueRect.sizeDelta = new Vector2(stat.barValue, 1.5f);
+        barValueRect.sizeDelta = new Vector2(stat.barValue, barValueRect.sizeDelta.y);
         // statTexts.Add(statNameText)
 
         CanvasGroup canvasGroup = statText.GetComponent<CanvasGroup>();
