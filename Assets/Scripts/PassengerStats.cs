@@ -22,6 +22,8 @@ public class PassengerStats : MonoBehaviour
     TextMeshProUGUI headingText;
     List<TextMeshProUGUI> statTexts = new List<TextMeshProUGUI>();
     PassengerEconomicParameters economicParameters;
+
+    RideOffer rideOffer;
     PassengerStatMode mode;
     void Start()
     {
@@ -133,15 +135,36 @@ public class PassengerStats : MonoBehaviour
         }
         StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 3, duration: 1));
         yield return null;
-        // InstantiateStat(passengerStatsSheet, tripValueStat, 1);
-        // InstantiateStat(passengerStatsSheet, timeCostStat, 2);
     }
 
     private IEnumerator SetSubstitutes()
     {
-        Substitute bus = economicParameters.substitutes.Find(substitute => substitute.type == TripType.PublicTransport);
-        Substitute walking = economicParameters.substitutes.Find(substitute => substitute.type == TripType.Walking);
-        Substitute rentalCar = economicParameters.substitutes.Find(substitute => substitute.type == TripType.RentalCar);
+        Substitute uber = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Uber);
+        Substitute bus = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.PublicTransport);
+        Substitute walking = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Walking);
+        Substitute rentalCar = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.RentalCar);
+
+        Transform uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
+        if (uber != null)
+        {
+            uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${uber.moneyCost.ToString("F2")}";
+            uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(uber.timeHours)} min";
+            string netValueUber = uber.netValue > 0 ? $"${uber.netValue.ToString("F2")}" : $"-${Mathf.Abs(uber.netValue).ToString("F2")}";
+            TextMeshProUGUI uberNetValueText = uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+            uberNetValueText.text = netValueUber;
+            Color netValueUberColor = uber.netValue > 0 ? Color.green : Color.red;
+            uberNetValueText.color = netValueUberColor;
+        }
+        else
+        {
+            uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = "x";
+            uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
+            uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = "x";
+            uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
+            uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = "x";
+            uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
+        }
+
 
         Transform busRow = transform.Find("PassengerStatsSheet/Table/Row2");
         busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.moneyCost.ToString("F2")}";

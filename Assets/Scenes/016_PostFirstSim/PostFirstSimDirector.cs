@@ -73,6 +73,11 @@ public class PostFirstSimDirector : MonoBehaviour
             {
                 continue;
             }
+            // Skip passengers that hasn't received a ride offer yet
+            if (passengers[i].person.state == PassengerState.BeforeSpawn || passengers[i].person.state == PassengerState.Idling)
+            {
+                continue;
+            }
             Passenger passenger = passengers[i];
             Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
             Vector3 statsPosition = new Vector3(-0.1f, 0.2f, 0);

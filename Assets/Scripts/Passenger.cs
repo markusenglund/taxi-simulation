@@ -167,7 +167,6 @@ public class Passenger : MonoBehaviour
         else
         {
 
-
             float tripCreatedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
 
@@ -213,6 +212,18 @@ public class Passenger : MonoBehaviour
                 expectedValueSurplus = expectedValueSurplus,
                 expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
             };
+
+            Substitute uberTripOption = new Substitute()
+            {
+                type = TripType.Uber,
+                timeHours = rideOffer.expectedWaitingTime + rideOffer.expectedTripTime,
+                timeCost = expectedTripTimeCost + expectedWaitingCost,
+                moneyCost = rideOffer.fare.total,
+                totalCost = totalCost,
+                netValue = expectedNetValue,
+                netUtility = expectedNetUtility,
+            };
+            person.economicParameters.tripOptions.Add(uberTripOption);
 
             person.tripTypeChosen = tripTypeChosen;
 

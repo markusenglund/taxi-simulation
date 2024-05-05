@@ -51,7 +51,7 @@ public class PassengerEconomicParameters
 
     [field: SerializeField] public Substitute bestSubstitute { get; set; }
 
-    public List<Substitute> substitutes { get; set; }
+    public List<Substitute> tripOptions { get; set; }
 }
 
 
@@ -103,7 +103,7 @@ public class PassengerPerson
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
         // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
 
-        (Substitute bestSubstitute, List<Substitute> substitutes) = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
+        (Substitute bestSubstitute, List<Substitute> tripOptions) = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
@@ -112,13 +112,13 @@ public class PassengerPerson
             waitingCostPerHour = waitingCostPerHour,
             tripUtilityValue = tripUtilityValue,
             bestSubstitute = bestSubstitute,
-            substitutes = substitutes
+            tripOptions = tripOptions
         };
 
         return passengerEconomicParameters;
     }
 
-    (Substitute bestSubstitute, List<Substitute> substitutes) GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
+    (Substitute bestSubstitute, List<Substitute> tripOptions) GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
     {
         float tripDistance = GridUtils.GetDistance(startPosition, destination);
 
@@ -186,12 +186,12 @@ public class PassengerPerson
             netValue = 0
         };
 
-        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
+        List<Substitute> tripOptions = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
 
-        Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
+        Substitute bestSubstitute = tripOptions.OrderByDescending(substitute => substitute.netValue).First();
 
 
-        return (bestSubstitute, substitutes);
+        return (bestSubstitute, tripOptions);
     }
 
 

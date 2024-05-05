@@ -234,9 +234,9 @@ public class PassengerBase : MonoBehaviour
             netValue = 0
         };
 
-        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
+        List<Substitute> tripOptions = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
 
-        Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
+        Substitute bestSubstitute = tripOptions.OrderByDescending(substitute => substitute.netValue).First();
 
 
         return bestSubstitute;
