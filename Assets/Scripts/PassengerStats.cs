@@ -96,6 +96,12 @@ public class PassengerStats : MonoBehaviour
             value = $"${(Mathf.Round(economicParameters.hourlyIncome * 10) / 10f).ToString("F2")}/hr",
             barValue = economicParameters.hourlyIncome
         };
+        Stat tripUtilityStat = new Stat()
+        {
+            name = "Trip utility",
+            value = $"{economicParameters.tripUtilityScore.ToString("F2")}",
+            barValue = economicParameters.tripUtilityScore * 20
+        };
         Stat tripValueStat = new Stat()
         {
             name = "Trip value",
@@ -114,12 +120,17 @@ public class PassengerStats : MonoBehaviour
         {
             yield return new WaitForSeconds(5f);
         }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, tripValueStat, index: 1, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, tripUtilityStat, index: 1, duration: 1));
         if (mode == PassengerStatMode.Slow)
         {
             yield return new WaitForSeconds(5f);
         }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 2, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, tripValueStat, index: 2, duration: 1));
+        if (mode == PassengerStatMode.Slow)
+        {
+            yield return new WaitForSeconds(5f);
+        }
+        StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 3, duration: 1));
         yield return null;
         // InstantiateStat(passengerStatsSheet, tripValueStat, 1);
         // InstantiateStat(passengerStatsSheet, timeCostStat, 2);
@@ -132,7 +143,7 @@ public class PassengerStats : MonoBehaviour
         // statText.localPosition = new Vector3(0, -4 - index * 20, 0);
         statText.localScale = Vector3.one * 0.8f;
         // statTextRect.anchoredPosition = new Vector2(0, 0);
-        statTextRect.anchoredPosition = new Vector2(50, -4 - index * 20);
+        statTextRect.anchoredPosition = new Vector2(50, 7 - index * 20);
 
         Transform statName = statText.Find("StatName");
         TextMeshProUGUI statNameText = statName.GetComponent<TextMeshProUGUI>();
