@@ -206,22 +206,22 @@ public class PassengerBase : MonoBehaviour
         };
 
         // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
-        float privateVehicleTime = tripDistance / simulationSettings.driverSpeed;
+        float rentalCarTime = tripDistance / simulationSettings.driverSpeed;
         // Add a 5 minute waiting cost for getting into the car
-        float privateVehicleWaitingTime = 5 / 60f;
-        float privateVehicleTimeCost = (privateVehicleTime + privateVehicleWaitingTime) * waitingCostPerHour;
+        float rentalCarWaitingTime = 5 / 60f;
+        float rentalCarTimeCost = (rentalCarTime + rentalCarWaitingTime) * waitingCostPerHour;
         float marginalCostEnRoute = tripDistance * simulationSettings.driverMarginalCostPerKm;
-        float privateVehicleMoneyCost = simulationSettings.privateVehicleCost + marginalCostEnRoute;
-        float privateVehicleUtilityCost = privateVehicleTimeCost + privateVehicleMoneyCost;
-        float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
-        Substitute privateVehicleSubstitute = new Substitute()
+        float rentalCarMoneyCost = simulationSettings.rentalCarCost + marginalCostEnRoute;
+        float rentalCarUtilityCost = rentalCarTimeCost + rentalCarMoneyCost;
+        float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
+        Substitute rentalCarSubstitute = new Substitute()
         {
             type = TripType.SkipTrip,
-            timeCost = privateVehicleTimeCost,
-            moneyCost = privateVehicleMoneyCost,
-            totalCost = privateVehicleUtilityCost,
-            netValue = netValueOfPrivateVehicle,
-            netUtility = netValueOfPrivateVehicle / hourlyIncome
+            timeCost = rentalCarTimeCost,
+            moneyCost = rentalCarMoneyCost,
+            totalCost = rentalCarUtilityCost,
+            netValue = netValueOfRentalCar,
+            netUtility = netValueOfRentalCar / hourlyIncome
         };
 
         // Skip trip
@@ -234,7 +234,7 @@ public class PassengerBase : MonoBehaviour
             netValue = 0
         };
 
-        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, privateVehicleSubstitute, skipTripSubstitute };
+        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
 
         Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
 

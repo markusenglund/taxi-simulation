@@ -28,6 +28,8 @@ public enum TripType
 public class Substitute
 {
     [field: SerializeField] public TripType type { get; set; }
+
+    [field: SerializeField] public float timeHours { get; set; }
     [field: SerializeField] public float timeCost { get; set; }
     [field: SerializeField] public float moneyCost { get; set; }
     [field: SerializeField] public float totalCost { get; set; }
@@ -48,6 +50,8 @@ public class PassengerEconomicParameters
     [field: SerializeField] public float tripUtilityValue { get; set; }
 
     [field: SerializeField] public Substitute bestSubstitute { get; set; }
+
+    public List<Substitute> substitutes { get; set; }
 }
 
 
@@ -99,7 +103,7 @@ public class PassengerPerson
         float tripUtilityValue = tripUtilityScore * hourlyIncome;
         // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
 
-        Substitute bestSubstitute = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
+        (Substitute bestSubstitute, List<Substitute> substitutes) = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
@@ -107,29 +111,29 @@ public class PassengerPerson
             timePreference = timePreference,
             waitingCostPerHour = waitingCostPerHour,
             tripUtilityValue = tripUtilityValue,
-            bestSubstitute = bestSubstitute
+            bestSubstitute = bestSubstitute,
+            substitutes = substitutes
         };
 
         return passengerEconomicParameters;
     }
 
-    Substitute GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
+    (Substitute bestSubstitute, List<Substitute> substitutes) GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
     {
         float tripDistance = GridUtils.GetDistance(startPosition, destination);
 
         // Public transport
-        float publicTransportTime = tripDistance / simSettings.publicTransportSpeed;
+        float publicTransportTime = tripDistance / simSettings.publicTransportSpeed + Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
         // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
-        float publicTransportAdditionalTime = Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
-        float publicTransportTimeCost = (publicTransportTime + publicTransportAdditionalTime) * waitingCostPerHour;
-        float publicTransportMoneyCost = 3;
-        float publicTransportUtilityCost = publicTransportTimeCost + publicTransportMoneyCost;
+        float publicTransportTimeCost = publicTransportTime * waitingCostPerHour;
+        float publicTransportUtilityCost = publicTransportTimeCost + simSettings.publicTransportCost;
         float netValueOfPublicTransport = tripUtilityValue - publicTransportUtilityCost;
         Substitute publicTransportSubstitute = new Substitute()
         {
             type = TripType.PublicTransport,
+            timeHours = publicTransportTime,
             timeCost = publicTransportTimeCost,
-            moneyCost = publicTransportMoneyCost,
+            moneyCost = simSettings.publicTransportCost,
             totalCost = publicTransportUtilityCost,
             netValue = netValueOfPublicTransport,
             netUtility = netValueOfPublicTransport / hourlyIncome
@@ -144,6 +148,7 @@ public class PassengerPerson
         Substitute walkingSubstitute = new Substitute()
         {
             type = TripType.Walking,
+            timeHours = walkingTime,
             timeCost = timeCostOfWalking,
             moneyCost = moneyCostOfWalking,
             totalCost = utilityCostOfWalking,
@@ -152,22 +157,23 @@ public class PassengerPerson
         };
 
         // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
-        float privateVehicleTime = tripDistance / simSettings.driverSpeed;
+        float rentalCarWaitingTime = 5 / 60f;
+        float rentalCarTime = tripDistance / simSettings.driverSpeed + rentalCarWaitingTime;
         // Add a 5 minute waiting cost for getting into the car
-        float privateVehicleWaitingTime = 5 / 60f;
-        float privateVehicleTimeCost = (privateVehicleTime + privateVehicleWaitingTime) * waitingCostPerHour;
+        float rentalCarTimeCost = rentalCarTime * waitingCostPerHour;
         float marginalCostEnRoute = tripDistance * simSettings.driverMarginalCostPerKm;
-        float privateVehicleMoneyCost = simSettings.privateVehicleCost + marginalCostEnRoute;
-        float privateVehicleUtilityCost = privateVehicleTimeCost + privateVehicleMoneyCost;
-        float netValueOfPrivateVehicle = tripUtilityValue - privateVehicleUtilityCost;
-        Substitute privateVehicleSubstitute = new Substitute()
+        float rentalCarCost = simSettings.rentalCarCost + marginalCostEnRoute;
+        float rentalCarUtilityCost = rentalCarTimeCost + rentalCarCost;
+        float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
+        Substitute rentalCarSubstitute = new Substitute()
         {
-            type = TripType.SkipTrip,
-            timeCost = privateVehicleTimeCost,
-            moneyCost = privateVehicleMoneyCost,
-            totalCost = privateVehicleUtilityCost,
-            netValue = netValueOfPrivateVehicle,
-            netUtility = netValueOfPrivateVehicle / hourlyIncome
+            type = TripType.RentalCar,
+            timeHours = rentalCarTime,
+            timeCost = rentalCarTimeCost,
+            moneyCost = rentalCarCost,
+            totalCost = rentalCarUtilityCost,
+            netValue = netValueOfRentalCar,
+            netUtility = netValueOfRentalCar / hourlyIncome
         };
 
         // Skip trip
@@ -180,12 +186,12 @@ public class PassengerPerson
             netValue = 0
         };
 
-        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, privateVehicleSubstitute, skipTripSubstitute };
+        List<Substitute> substitutes = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
 
         Substitute bestSubstitute = substitutes.OrderByDescending(substitute => substitute.netValue).First();
 
 
-        return bestSubstitute;
+        return (bestSubstitute, substitutes);
     }
 
 

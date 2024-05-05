@@ -40,6 +40,7 @@ public class PassengerStats : MonoBehaviour
         StartCoroutine(FadeInText(headingText, 0.5f));
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(InstantiateStats());
+        StartCoroutine(SetSubstitutes());
         yield return null;
     }
 
@@ -134,6 +135,29 @@ public class PassengerStats : MonoBehaviour
         yield return null;
         // InstantiateStat(passengerStatsSheet, tripValueStat, 1);
         // InstantiateStat(passengerStatsSheet, timeCostStat, 2);
+    }
+
+    private IEnumerator SetSubstitutes()
+    {
+        Substitute bus = economicParameters.substitutes.Find(substitute => substitute.type == TripType.PublicTransport);
+        Substitute walking = economicParameters.substitutes.Find(substitute => substitute.type == TripType.Walking);
+        Substitute rentalCar = economicParameters.substitutes.Find(substitute => substitute.type == TripType.RentalCar);
+
+        Transform busRow = transform.Find("PassengerStatsSheet/Table/Row2");
+        busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.moneyCost.ToString("F2")}";
+        busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(bus.timeHours)} min";
+        busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.netValue.ToString("F2")}";
+
+        Transform walkingRow = transform.Find("PassengerStatsSheet/Table/Row3");
+        walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${walking.moneyCost.ToString("F2")}";
+        walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(walking.timeHours)} min";
+        walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${walking.netValue.ToString("F2")}";
+
+        Transform rentalCarRow = transform.Find("PassengerStatsSheet/Table/Row4");
+        rentalCarRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${rentalCar.moneyCost.ToString("F2")}";
+        rentalCarRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(rentalCar.timeHours)} min";
+        rentalCarRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${rentalCar.netValue.ToString("F2")}";
+        yield return null;
     }
 
     private IEnumerator InstantiateStat(Transform passengerStatsSheet, Stat stat, int index, float duration)

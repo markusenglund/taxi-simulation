@@ -50,4 +50,10 @@ public class TimeUtils : MonoBehaviour
         int hoursSinceMidnight = hours % 24;
         return hoursSinceMidnight.ToString("00") + ":" + minutes.ToString("00");
     }
+
+    public static string ConvertSimulationHoursToMinuteString(float simulationHours)
+    {
+        int minutes = (int)(simulationHours * 60);
+        return minutes.ToString();
+    }
 }
