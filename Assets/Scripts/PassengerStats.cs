@@ -146,17 +146,30 @@ public class PassengerStats : MonoBehaviour
         Transform busRow = transform.Find("PassengerStatsSheet/Table/Row2");
         busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.moneyCost.ToString("F2")}";
         busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(bus.timeHours)} min";
-        busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.netValue.ToString("F2")}";
 
+        string netValueBus = bus.netValue > 0 ? $"${bus.netValue.ToString("F2")}" : $"-${Mathf.Abs(bus.netValue).ToString("F2")}";
+        TextMeshProUGUI busNetValueText = busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+        busNetValueText.text = netValueBus;
+        Color netValueBusColor = bus.netValue > 0 ? Color.green : Color.red;
+        busNetValueText.color = netValueBusColor;
         Transform walkingRow = transform.Find("PassengerStatsSheet/Table/Row3");
         walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${walking.moneyCost.ToString("F2")}";
         walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(walking.timeHours)} min";
-        walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${walking.netValue.ToString("F2")}";
+        string netValueWalking = walking.netValue > 0 ? $"${walking.netValue.ToString("F2")}" : $"-${Mathf.Abs(walking.netValue).ToString("F2")}";
+        TextMeshProUGUI walkingNetValueText = walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+        walkingNetValueText.text = netValueWalking;
+        Color netValueWalkingColor = walking.netValue > 0 ? Color.green : Color.red;
+        walkingNetValueText.color = netValueWalkingColor;
 
         Transform rentalCarRow = transform.Find("PassengerStatsSheet/Table/Row4");
         rentalCarRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${rentalCar.moneyCost.ToString("F2")}";
         rentalCarRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(rentalCar.timeHours)} min";
-        rentalCarRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${rentalCar.netValue.ToString("F2")}";
+        string netValueRentalCar = rentalCar.netValue > 0 ? $"${rentalCar.netValue.ToString("F2")}" : $"-${Mathf.Abs(rentalCar.netValue).ToString("F2")}";
+        TextMeshProUGUI rentalCarNetValueText = rentalCarRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+        rentalCarNetValueText.text = netValueRentalCar;
+        Color netValueRentalCarColor = rentalCar.netValue > 0 ? Color.green : Color.red;
+        rentalCarNetValueText.color = netValueRentalCarColor;
+
         yield return null;
     }
 
