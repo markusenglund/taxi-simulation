@@ -7,6 +7,8 @@ public class CameraUtils : MonoBehaviour
     public static IEnumerator MoveCamera(Vector3 toPosition, float duration, Ease ease)
     {
         float startTime = Time.time;
+        // float startFov = Camera.main.fieldOfView;
+
         Vector3 startPosition = Camera.main.transform.position;
         while (Time.time < startTime + duration)
         {
@@ -23,6 +25,7 @@ public class CameraUtils : MonoBehaviour
             {
             }
             Camera.main.transform.position = Vector3.Lerp(startPosition, toPosition, t);
+            // Camera.main.fieldOfView = Mathf.Lerp(startFov, finalFov, t);
             yield return null;
         }
         Camera.main.transform.position = toPosition;
@@ -46,6 +49,22 @@ public class CameraUtils : MonoBehaviour
             yield return null;
         }
         Camera.main.transform.localPosition = toPosition;
+    }
+    public static IEnumerator ZoomCamera(float finalFov, float duration, Ease ease = Ease.Linear)
+    {
+        float startTime = Time.time;
+        float startFov = Camera.main.fieldOfView;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            if (ease == Ease.Cubic)
+            {
+                t = EaseUtils.EaseInOutCubic(t);
+            }
+            Camera.main.fieldOfView = Mathf.Lerp(startFov, finalFov, t);
+            yield return null;
+        }
+        Camera.main.fieldOfView = finalFov;
     }
 
     public static IEnumerator MoveAndRotateCameraLocal(Vector3 finalPosition, Quaternion finalRotation, float duration, Ease ease = Ease.Cubic, float finalFov = 60)

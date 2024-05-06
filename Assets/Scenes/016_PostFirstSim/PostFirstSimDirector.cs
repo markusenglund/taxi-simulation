@@ -16,8 +16,8 @@ public class PostFirstSimDirector : MonoBehaviour
     City city;
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(2.67f - 4.5f, 0.5f, 0);
-    Vector3 passengerCameraPosition = new Vector3(2.67f - 4.5f, 1.5f, -2f);
+    Vector3 focusPassengerPosition = new Vector3(2.67f - 4.5f, 1f, 0);
+    Vector3 passengerCameraPosition = new Vector3(2.67f - 4.5f, 0.9f, -1.1f);
 
     Vector3 finalCameraPosition;
     Vector3 finalLookAtPosition;
@@ -67,16 +67,23 @@ public class PostFirstSimDirector : MonoBehaviour
 
         Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
 
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passengerCameraPosition, passengerCameraRotation, realTimeWhenFocusPassengerSpawns, Ease.Cubic, 60));
+        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passengerCameraPosition, passengerCameraRotation, realTimeWhenFocusPassengerSpawns, Ease.Cubic, 60));
+        StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, realTimeWhenFocusPassengerSpawns, Ease.Cubic));
+        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns / 3f);
 
-        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns);
-        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(CameraUtils.RotateCamera(passengerCameraRotation, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
+        StartCoroutine(CameraUtils.ZoomCamera(75, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
+        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
+        yield return new WaitForSeconds(1.5f);
 
 
 
         Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
         float duration = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
+        StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
+        StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
+        StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
+        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
 
         yield return null;
     }

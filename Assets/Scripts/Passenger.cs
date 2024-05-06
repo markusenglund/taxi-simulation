@@ -384,15 +384,16 @@ public class Passenger : MonoBehaviour
             { TripType.PublicTransport, "🚌" },
             { TripType.SkipTrip, "🏠" }
         };
+        Vector3 reactionPosition = Vector3.up * (passengerScaleFactor * 0.3f + 0.2f);
         if (reason == DespawnReason.RejectedRideOffer)
         {
             string reaction = tripTypeToEmoji[person.tripTypeChosen];
-            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.red);
+            AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
         }
         else if (reason == DespawnReason.NoRideOffer)
         {
             string reaction = tripTypeToEmoji[person.tripTypeChosen] + "📵";
-            AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.red);
+            AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
         }
         else if (reason == DespawnReason.DroppedOff)
         {
@@ -403,12 +404,12 @@ public class Passenger : MonoBehaviour
             {
                 string reaction = new string('+', surplusCeil);
 
-                AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.green, isBold: true);
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.green, isBold: true);
             }
             else
             {
                 string reaction = "😐";
-                AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.5f), reaction, Color.yellow, isBold: false);
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.yellow, isBold: false);
 
             }
         }
