@@ -17,6 +17,10 @@ public class PostFirstSimDirector : MonoBehaviour
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
     Vector3 focusPassengerPosition = new Vector3(2.67f - 4.5f, 0.5f, 0);
+    Vector3 passengerCameraPosition = new Vector3(2.67f - 4.5f, 1.5f, -2f);
+
+    Vector3 finalCameraPosition;
+    Vector3 finalLookAtPosition;
 
     public Random driverSpawnRandom;
 
@@ -27,14 +31,20 @@ public class PostFirstSimDirector : MonoBehaviour
     {
         city = City.Create(cityPrefab, cityPosition.x, cityPosition.y, simSettings, graphSettings);
         Time.captureFramerate = 60;
+
+        float cityRightEdge = cityPosition.z + 8;
+
+        finalCameraPosition = new Vector3(14, 16, cityRightEdge);
+        finalLookAtPosition = new Vector3(5.5f, 5.7f, cityRightEdge);
     }
 
     void Start()
     {
 
         driverSpawnRandom = new Random(simSettings.randomSeed);
-        Camera.main.transform.position = new Vector3(2.67f - 4.5f, 1.5f, -2f);
-        Camera.main.transform.LookAt(focusPassengerPosition);
+        Camera.main.transform.position = finalCameraPosition;
+        Camera.main.transform.LookAt(finalLookAtPosition);
+        Camera.main.fieldOfView = 30;
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         Time.timeScale = 1f;
         StartCoroutine(Scene());
@@ -44,19 +54,27 @@ public class PostFirstSimDirector : MonoBehaviour
     {
         PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Sim);
         PassengerTripTypeGraph.Create(city, PassengerSpawnGraphMode.Sim);
+        yield return new WaitForSeconds(0.1f);
+        // Set the canvas to world space
+        Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
         yield return new WaitForSeconds(simulationStartTime);
         StartCoroutine(city.StartSimulation());
 
 
         float timeWhenFocusPassengerSpawns = 2.47f;
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns));
+        float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
+
+        Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
+
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passengerCameraPosition, passengerCameraRotation, realTimeWhenFocusPassengerSpawns, Ease.Cubic, 60));
+
+        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns);
         yield return new WaitForSeconds(0.5f);
 
-        float cityRightEdge = cityPosition.z + 8;
 
-        Vector3 finalCameraPosition = new Vector3(14, 16, cityRightEdge);
-        Vector3 newLookAtPosition = new Vector3(5.5f, 5.7f, cityRightEdge);
-        Quaternion finalCameraRotation = Quaternion.LookRotation(newLookAtPosition - finalCameraPosition, Vector3.up);
+
+        Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
         float duration = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
 
@@ -79,10 +97,13 @@ public class PostFirstSimDirector : MonoBehaviour
                 continue;
             }
             Passenger passenger = passengers[i];
-            Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
-            Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
-            PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person.economicParameters);
-            spawnedPassengerStats.Add(passenger.person.id);
+            if (passenger.person.id == 47)
+            {
+                Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
+                Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
+                PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person.economicParameters);
+                spawnedPassengerStats.Add(passenger.person.id);
+            }
         }
     }
 }
