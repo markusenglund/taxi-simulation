@@ -418,7 +418,7 @@ public class Passenger : MonoBehaviour
         Transform despawnAnimation = Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
         despawnAnimation.localScale = Vector3.one * passengerScaleFactor;
         passengerAnimator.SetTrigger(reason == DespawnReason.DroppedOff ? "Celebrate" : "BeDisappointed");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         Quaternion startRotation = transform.localRotation;
         float endRotationY = 360 * 5;
         Vector3 startScale = transform.localScale;

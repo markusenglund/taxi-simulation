@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -25,6 +26,7 @@ public class PassengerStats : MonoBehaviour
 
     RideOffer rideOffer;
     PassengerStatMode mode;
+    [SerializeField] TMP_FontAsset notoEmoji;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
@@ -37,12 +39,15 @@ public class PassengerStats : MonoBehaviour
 
     private IEnumerator ScheduleActions()
     {
+        StartCoroutine(SetSubstitutes());
         StartCoroutine(SpawnCard(duration: 1f));
-        yield return new WaitForSeconds(0.5f);
-        StartCoroutine(FadeInText(headingText, 0.5f));
+        if (mode == PassengerStatMode.Slow)
+        {
+            yield return new WaitForSeconds(1f);
+        }
+        StartCoroutine(FadeInText(headingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(InstantiateStats());
-        StartCoroutine(SetSubstitutes());
         yield return null;
     }
 
@@ -157,12 +162,13 @@ public class PassengerStats : MonoBehaviour
         }
         else
         {
-            uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = "x";
-            uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
-            uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = "x";
-            uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
-            uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().text = "x";
-            uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
+            for (int i = 1; i < 4; i++)
+            {
+                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().font = notoEmoji;
+                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().fontSize = 12;
+                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().text = "📵";
+                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
+            }
         }
 
 

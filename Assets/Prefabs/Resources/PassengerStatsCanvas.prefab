@@ -581,7 +581,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1043144263319678731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,6 +612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statTextPrefab: {fileID: 4289896684550134435, guid: de863e0ccb142ee41b62dad437610e6d, type: 3}
+  notoEmoji: {fileID: 11400000, guid: c3feb523f525f0f46bed1d7c836d4841, type: 2}
 --- !u!1 &760002088763762092
 GameObject:
   m_ObjectHideFlags: 0
