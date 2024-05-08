@@ -20,6 +20,7 @@ public class FirstSimDirector : MonoBehaviour
     void Awake()
     {
         city = City.Create(cityPrefab, cityPosition.x, cityPosition.y, simSettings, graphSettings);
+        Time.captureFramerate = 60;
 
     }
 
