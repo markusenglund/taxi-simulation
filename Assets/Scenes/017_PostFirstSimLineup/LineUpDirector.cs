@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -13,6 +14,9 @@ public class LineUpDirector : MonoBehaviour
     City city;
 
     Random random = new Random();
+
+    List<Vector3> lineUpPositions = new List<Vector3>
+    { };
 
     void Awake()
     {
@@ -60,7 +64,7 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(2f);
 
             Passenger randomPassenger3 = passengers[random.Next(passengers.Length)];
-            Animator passengerAnimator3 = randomPassenger2.GetComponentInChildren<Animator>();
+            Animator passengerAnimator3 = randomPassenger3.GetComponentInChildren<Animator>();
             passengerAnimator3.SetTrigger("IdleVariation1");
             yield return new WaitForSeconds(3f);
         }
@@ -71,7 +75,22 @@ public class LineUpDirector : MonoBehaviour
         Animator passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 startPosition = passenger.transform.position;
         float linePosition = ConvertUtilityScoreToLinePosition(passenger.person.economicParameters.tripUtilityScore);
-        Vector3 endPosition = new Vector3(linePosition, 0, -6.7f + (float)random.NextDouble());
+        Vector3 endPosition = new Vector3(linePosition, 0, -6.7f);
+        // Check if there's a lineUpPosition within 0.3f of the endPosition
+        bool isEndPositionFree = false;
+        while (!isEndPositionFree)
+        {
+            isEndPositionFree = true;
+            foreach (Vector3 existingLineUpPosition in lineUpPositions)
+            {
+                if (Vector3.Distance(existingLineUpPosition, endPosition) < 0.35f)
+                {
+                    endPosition = endPosition + new Vector3(0, 0, 0.2f);
+                    isEndPositionFree = false;
+                }
+            }
+        }
+        lineUpPositions.Add(endPosition);
         float startTime = Time.time;
         passengerAnimator.SetTrigger("SlowJump");
         Quaternion startRotation = passenger.transform.rotation;

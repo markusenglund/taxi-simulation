@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnAnimationPrefab: {fileID: 4805017702919070, guid: 6634ac450e36fea418cebc0a02264d7f, type: 3}
   agentStatusTextPrefab: {fileID: 7420584253704279518, guid: 899bd1bc7108dcf4184794d900c5ba7b, type: 3}
+  agentReactionTextPrefab: {fileID: 0}
   hasAcceptedRideOffer: 0
 --- !u!1001 &4249385618737593345
 PrefabInstance:
