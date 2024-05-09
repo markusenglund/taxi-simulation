@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
 public enum TripState
@@ -12,6 +13,7 @@ public enum TripState
 
 public class TripCreatedData
 {
+    [JsonIgnore]
     public Passenger passenger { get; set; }
 
     public float createdTime { get; set; }
@@ -46,6 +48,7 @@ public class TripCreatedPassengerData
 public class DriverAssignedData
 {
     public float matchedTime { get; set; }
+    [JsonIgnore]
     public Driver driver { get; set; }
 
     public float enRouteDistance { get; set; }
@@ -180,5 +183,6 @@ public class Trip
         this.droppedOffData = droppedOffData;
         this.droppedOffDriverData = droppedOffDriverData;
         this.droppedOffPassengerData = this.tripCreatedData.passenger.HandlePassengerDroppedOff(droppedOffData);
+        // this.tripCreatedData.passenger = null;
     }
 }

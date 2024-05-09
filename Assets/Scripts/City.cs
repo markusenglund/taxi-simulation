@@ -59,7 +59,7 @@ public class City : MonoBehaviour
     private ResultsInfoBox resultsInfoBox;
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
-    private bool simulationEnded = false;
+    public bool simulationEnded = false;
 
     public DriverPool driverPool;
 
@@ -238,7 +238,6 @@ public class City : MonoBehaviour
 
     IEnumerator createPassengers()
     {
-
         float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         while (simulationTime < simulationSettings.simulationLengthHours)
         {
@@ -269,6 +268,20 @@ public class City : MonoBehaviour
                 CreatePassenger(randomPosition);
             }
         }
+    }
+
+    public Passenger[] SpawnSavedPassengers()
+    {
+        PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simulationSettings.randomSeed + "_016");
+        Debug.Log(savedPersons.Length);
+
+        foreach (PassengerPerson person in savedPersons)
+        {
+            Passenger passenger = Passenger.Create(person, passengerPrefab, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, PassengerMode.Inactive);
+            passengers.Add(passenger);
+        }
+
+        return passengers.ToArray();
     }
 
     public Passenger CreatePassenger(Vector3 position)
@@ -405,7 +418,6 @@ public class City : MonoBehaviour
 
     private void DispatchDriver(Driver driver, Trip trip)
     {
-        Passenger passenger = trip.tripCreatedData.passenger;
         trip.DispatchDriver(driver.transform.localPosition);
         driver.HandleDriverDispatched(trip);
         // Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
@@ -413,7 +425,6 @@ public class City : MonoBehaviour
 
     public Trip AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
     {
-        Passenger passenger = tripCreatedData.passenger;
         // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
         (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(tripCreatedData.pickUpPosition);
 

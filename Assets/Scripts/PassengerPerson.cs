@@ -55,6 +55,7 @@ public class PassengerEconomicParameters
 }
 
 
+[Serializable]
 public class PassengerPerson
 {
     static int incrementalId = 1;
@@ -73,6 +74,7 @@ public class PassengerPerson
     public Vector3 destination { get; set; }
     public Vector3 startPosition { get; set; }
 
+    public PassengerPerson() { }
     public PassengerPerson(Vector3 startPosition, SimulationSettings simSettings, Random random)
     {
         id = incrementalId;

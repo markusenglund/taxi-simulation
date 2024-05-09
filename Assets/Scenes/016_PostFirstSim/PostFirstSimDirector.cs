@@ -2,7 +2,15 @@ using System.Collections;
 using UnityEngine;
 using Random = System.Random;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
+[Serializable]
+public class TestPassengerPerson
+{
+    public int id;
+    public Vector3 position;
+}
 
 public class PostFirstSimDirector : MonoBehaviour
 {
@@ -23,6 +31,8 @@ public class PostFirstSimDirector : MonoBehaviour
     Vector3 finalLookAtPosition;
 
     public Random driverSpawnRandom;
+
+    bool hasSavedPassengerData = false;
 
     // A set of passenger IDs that have already spawned a PassengerStats object
     HashSet<int> spawnedPassengerStats = new HashSet<int>();
@@ -47,6 +57,8 @@ public class PostFirstSimDirector : MonoBehaviour
         Camera.main.fieldOfView = 30;
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         Time.timeScale = 1f;
+        // PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
+        // Debug.Log(savedPersons.Length);
         StartCoroutine(Scene());
     }
 
@@ -103,13 +115,31 @@ public class PostFirstSimDirector : MonoBehaviour
             {
                 continue;
             }
+
+
             Passenger passenger = passengers[i];
+            // List<PassengerPerson> savedPersons = SaveData.LoadObject<List<PassengerPerson>>(simSettings.randomSeed + "_016");
+            // Debug.Log(savedPersons.Count);
+
             if (passenger.person.id == 47)
             {
                 Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
                 Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
                 PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person.economicParameters);
                 spawnedPassengerStats.Add(passenger.person.id);
+
+
+            }
+            if (city.simulationEnded && !hasSavedPassengerData)
+            {
+                List<PassengerPerson> persons = new List<PassengerPerson>();
+                foreach (Passenger p in passengers)
+                {
+                    persons.Add(p.person);
+                }
+                Debug.Log($"Saving passenger data from {persons.Count} passengers");
+                SaveData.SaveObject(simSettings.randomSeed + "_016", persons);
+                hasSavedPassengerData = true;
             }
         }
     }

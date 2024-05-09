@@ -12,6 +12,12 @@ public enum DespawnReason
     NoRideOffer,
     DroppedOff
 }
+
+public enum PassengerMode
+{
+    Active,
+    Inactive
+}
 public class Passenger : MonoBehaviour
 {
     [SerializeField] public Transform spawnAnimationPrefab;
@@ -37,11 +43,13 @@ public class Passenger : MonoBehaviour
 
     public PassengerPerson person;
 
-    float passengerScaleFactor = 5f;
+    float passengerScale = 5f;
+
+    PassengerMode mode;
 
     Animator passengerAnimator;
 
-    public static Passenger Create(PassengerPerson person, Transform prefab, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot)
+    public static Passenger Create(PassengerPerson person, Transform prefab, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, PassengerMode mode = PassengerMode.Active)
     {
 
         (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition);
@@ -57,8 +65,8 @@ public class Passenger : MonoBehaviour
         passenger.person = person;
         passenger.person.state = PassengerState.Idling;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
-
-
+        passenger.passengerScale = 4f + 0.4f * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
+        passenger.mode = mode;
         SetDressColor(passenger, person.economicParameters.hourlyIncome);
         return passenger;
     }
@@ -84,7 +92,7 @@ public class Passenger : MonoBehaviour
         }
         else
         {
-            dressBaseColor = Color.Lerp(green, Color.black, Mathf.InverseLerp(40, 120, hourlyIncome));
+            dressBaseColor = Color.Lerp(green, new Color(0, 0.3f, 0), Mathf.InverseLerp(40, 120, hourlyIncome));
         }
         // We just assume that the first material is DressBase and second is DressAccent, let's hope it doesn't change
         dressMaterials[0].color = dressBaseColor;
@@ -128,19 +136,25 @@ public class Passenger : MonoBehaviour
     {
         StartCoroutine(SpawnPassenger());
         yield return new WaitForSeconds(1);
-        MakeTripDecision();
+        if (mode == PassengerMode.Active)
+        {
+            MakeTripDecision();
+        }
         yield return null;
     }
 
     IEnumerator SpawnPassenger()
     {
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
-        spawnAnimation.localScale = Vector3.one * passengerScaleFactor;
+        spawnAnimation.localScale = Vector3.one * passengerScale;
 
         transform.localScale = Vector3.zero;
-        Vector3 finalScale = Vector3.one * passengerScaleFactor;
+        Vector3 finalScale = Vector3.one * passengerScale;
         float startTime = Time.time;
-        passengerAnimator.SetTrigger("LookAtPhone");
+        if (mode == PassengerMode.Active)
+        {
+            passengerAnimator.SetTrigger("LookAtPhone");
+        }
         while (Time.time < startTime + spawnDuration)
         {
             float t = (Time.time - startTime) / spawnDuration;
@@ -149,7 +163,7 @@ public class Passenger : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
-        // AgentOverheadReaction.Create(transform, Vector3.up * (passengerScaleFactor * 0.3f), $"{person.id}", Color.black);
+        // AgentOverheadReaction.Create(transform, Vector3.up * (passengerScale * 0.3f), $"{person.id}", Color.black);
     }
 
     void MakeTripDecision()
@@ -255,7 +269,7 @@ public class Passenger : MonoBehaviour
 
     public void HandleDriverArrivedAtPickUp()
     {
-        AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScaleFactor * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+        AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScale * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
 
     }
 
@@ -384,7 +398,7 @@ public class Passenger : MonoBehaviour
             { TripType.PublicTransport, "🚌" },
             { TripType.SkipTrip, "🏠" }
         };
-        Vector3 reactionPosition = Vector3.up * (passengerScaleFactor * 0.3f + 0.2f);
+        Vector3 reactionPosition = Vector3.up * (passengerScale * 0.3f + 0.2f);
         if (reason == DespawnReason.RejectedRideOffer)
         {
             string reaction = tripTypeToEmoji[person.tripTypeChosen];
@@ -417,7 +431,7 @@ public class Passenger : MonoBehaviour
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
 
         Transform despawnAnimation = Instantiate(despawnAnimationPrefab, transform.position, Quaternion.identity);
-        despawnAnimation.localScale = Vector3.one * passengerScaleFactor;
+        despawnAnimation.localScale = Vector3.one * passengerScale;
         passengerAnimator.SetTrigger(reason == DespawnReason.DroppedOff ? "Celebrate" : "BeDisappointed");
         yield return new WaitForSeconds(1f);
         Quaternion startRotation = transform.localRotation;
