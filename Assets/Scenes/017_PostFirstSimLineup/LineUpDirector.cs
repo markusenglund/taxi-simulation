@@ -21,6 +21,7 @@ public class LineUpDirector : MonoBehaviour
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
+        GameObject.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0;
     }
 
     void Start()
@@ -34,9 +35,24 @@ public class LineUpDirector : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         Passenger[] passengers = city.SpawnSavedPassengers();
+        StartCoroutine(FadeInCanvas());
         StartCoroutine(MovePassengersToLineUp(passengers));
         yield return new WaitForSeconds(3f);
         StartCoroutine(TriggerIdleVariations(passengers));
+    }
+
+    IEnumerator FadeInCanvas()
+    {
+        CanvasGroup canvasGroup = GameObject.Find("Canvas").GetComponent<CanvasGroup>();
+        float duration = 1.5f;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float alpha = EaseUtils.EaseInCubic(t);
+            canvasGroup.alpha = alpha;
+            yield return null;
+        }
     }
 
     IEnumerator MovePassengersToLineUp(Passenger[] passengers)
