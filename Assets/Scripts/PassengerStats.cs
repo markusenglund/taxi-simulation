@@ -155,11 +155,11 @@ public class PassengerStats : MonoBehaviour
         {
             uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${uber.moneyCost.ToString("F2")}";
             uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(uber.timeHours)} min";
-            string netValueUber = uber.netValue > 0 ? $"${uber.netValue.ToString("F2")}" : $"-${Mathf.Abs(uber.netValue).ToString("F2")}";
-            TextMeshProUGUI uberNetValueText = uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
-            uberNetValueText.text = netValueUber;
-            Color netValueUberColor = uber.netValue > 0 ? Color.green : Color.red;
-            uberNetValueText.color = netValueUberColor;
+            string uberTotalCost = $"${uber.totalCost.ToString("F2")}";
+            TextMeshProUGUI uberTotalCostText = uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+            uberTotalCostText.text = uberTotalCost;
+            Color netValueUberColor = Color.white;
+            uberTotalCostText.color = netValueUberColor;
         }
         else
         {
@@ -177,28 +177,28 @@ public class PassengerStats : MonoBehaviour
         busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.moneyCost.ToString("F2")}";
         busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(bus.timeHours)} min";
 
-        string netValueBus = bus.netValue > 0 ? $"${bus.netValue.ToString("F2")}" : $"-${Mathf.Abs(bus.netValue).ToString("F2")}";
-        TextMeshProUGUI busNetValueText = busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
-        busNetValueText.text = netValueBus;
-        Color netValueBusColor = bus.netValue > 0 ? Color.green : Color.red;
-        busNetValueText.color = netValueBusColor;
+        string busTotalCost = $"${bus.totalCost.ToString("F2")}";
+        TextMeshProUGUI busTotalCostText = busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+        busTotalCostText.text = busTotalCost;
+        Color totalCostBusColor = Color.white;
+        busTotalCostText.color = totalCostBusColor;
         Transform walkingRow = transform.Find("PassengerStatsSheet/Table/Row3");
         walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${walking.moneyCost.ToString("F2")}";
         walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(walking.timeHours)} min";
-        string netValueWalking = walking.netValue > 0 ? $"${walking.netValue.ToString("F2")}" : $"-${Mathf.Abs(walking.netValue).ToString("F2")}";
-        TextMeshProUGUI walkingNetValueText = walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
-        walkingNetValueText.text = netValueWalking;
-        Color netValueWalkingColor = walking.netValue > 0 ? Color.green : Color.red;
-        walkingNetValueText.color = netValueWalkingColor;
+        string walkingTotalCost = $"${walking.totalCost.ToString("F2")}";
+        TextMeshProUGUI walkingTotalCostText = walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+        walkingTotalCostText.text = walkingTotalCost;
+        Color totalCostWalkingColor = Color.white;
+        walkingTotalCostText.color = totalCostWalkingColor;
 
         Transform rentalCarRow = transform.Find("PassengerStatsSheet/Table/Row4");
         rentalCarRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${rentalCar.moneyCost.ToString("F2")}";
         rentalCarRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(rentalCar.timeHours)} min";
-        string netValueRentalCar = rentalCar.netValue > 0 ? $"${rentalCar.netValue.ToString("F2")}" : $"-${Mathf.Abs(rentalCar.netValue).ToString("F2")}";
-        TextMeshProUGUI rentalCarNetValueText = rentalCarRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
-        rentalCarNetValueText.text = netValueRentalCar;
-        Color netValueRentalCarColor = rentalCar.netValue > 0 ? Color.green : Color.red;
-        rentalCarNetValueText.color = netValueRentalCarColor;
+        string rentalCarTotalCost = $"${rentalCar.totalCost.ToString("F2")}";
+        TextMeshProUGUI rentalCarTotalCostText = rentalCarRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
+        rentalCarTotalCostText.text = rentalCarTotalCost;
+        Color totalCostRentalCarColor = Color.white;
+        rentalCarTotalCostText.color = totalCostRentalCarColor;
 
         yield return null;
     }
