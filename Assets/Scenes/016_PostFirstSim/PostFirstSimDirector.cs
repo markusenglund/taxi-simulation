@@ -5,13 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-[Serializable]
-public class TestPassengerPerson
-{
-    public int id;
-    public Vector3 position;
-}
-
 public class PostFirstSimDirector : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;

@@ -41,30 +41,34 @@ public class Passenger : MonoBehaviour
 
     private City city;
 
+    private Transform parentTransform;
+
     public PassengerPerson person;
 
-    public float passengerScale = 5f;
+    public float passengerScale;
 
     PassengerMode mode;
 
     Animator passengerAnimator;
 
-    public static Passenger Create(PassengerPerson person, Transform prefab, City city, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, PassengerMode mode = PassengerMode.Active)
+    public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f, float scaleFactor = 4)
     {
 
         (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition);
 
-        Transform passengerTransform = Instantiate(prefab, city.transform, false);
+        Transform passengerTransform = Instantiate(prefab, parentTransform, false);
         passengerTransform.rotation = rotation;
         passengerTransform.localPosition = position;
         Passenger passenger = passengerTransform.GetComponent<Passenger>();
         passenger.city = city;
+        passenger.parentTransform = parentTransform;
+        passenger.spawnDuration = spawnDuration;
         passenger.waitingTimeGraph = waitingTimeGraph;
         passenger.passengerSurplusGraph = passengerSurplusGraph;
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
         passenger.person = person;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
-        passenger.passengerScale = 4f + 0.4f * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
+        passenger.passengerScale = scaleFactor + 0.1f * scaleFactor * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
         passenger.mode = mode;
         if (passenger.person.state == PassengerState.BeforeSpawn)
         {
@@ -370,7 +374,7 @@ public class Passenger : MonoBehaviour
 
     IEnumerator SlideOffCarRoof(float duration)
     {
-        transform.SetParent(city.transform);
+        transform.SetParent(parentTransform);
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
         Vector3 finalPosition = GetSideWalkPositionRotation(person.destination).position;

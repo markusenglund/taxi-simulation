@@ -277,7 +277,7 @@ public class City : MonoBehaviour
 
         foreach (PassengerPerson person in savedPersons)
         {
-            Passenger passenger = Passenger.Create(person, passengerPrefab, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, PassengerMode.Inactive);
+            Passenger passenger = Passenger.Create(person, passengerPrefab, transform, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, city: this, PassengerMode.Inactive);
             passengers.Add(passenger);
         }
 
@@ -289,7 +289,7 @@ public class City : MonoBehaviour
         // Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
         PassengerPerson person = new PassengerPerson(position, simulationSettings, passengerSpawnRandom);
         passengerAgents.Add(person);
-        Passenger passenger = Passenger.Create(person, passengerPrefab, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, transform, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, city: this);
         passengers.Add(passenger);
         return passenger;
     }

@@ -255,7 +255,7 @@ public class LineUpDirector : MonoBehaviour
         foreach (Passenger passenger in passengers)
         {
             StartCoroutine(MovePassengerToIncomeDistribution(passenger));
-            yield return new WaitForSeconds(0.01f);
+            // yield return new WaitForSeconds(0.01f);
         }
         yield return null;
     }

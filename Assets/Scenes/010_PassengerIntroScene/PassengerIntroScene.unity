@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAnimationPrefab: {fileID: 4805017702919070, guid: 6634ac450e36fea418cebc0a02264d7f, type: 3}
-  passengerPrefab: {fileID: 257660041485958409, guid: 8926daef5d2d88b458c75c7b1118906e, type: 3}
+  passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
   passengerStatsPrefab: {fileID: 7420584253704279518, guid: 6316bdce544ade54c96b77ed55fcd97d, type: 3}
   simSettings: {fileID: 11400000, guid: 019e238a4fa93471b82673b97cf3bd06, type: 2}
 --- !u!4 &46887370

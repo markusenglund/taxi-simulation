@@ -12,10 +12,10 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     [SerializeField] public Transform passengerStatsPrefab;
     [SerializeField] public SimulationSettings simSettings;
 
-    Transform passenger;
-    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0f);
+    Vector3 passengerPosition = new Vector3(2.5f - 4.5f, 0.08f, -4.3f);
     // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
     Animator passengerAnimator;
+    Transform grid;
     public Random passengerSpawnRandom;
 
 
@@ -36,7 +36,10 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         StartCoroutine(SpawnCity());
         yield return new WaitForSeconds(1.8f);
-        PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
+        PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
+        float spawnDuration = 1.5f;
+        Passenger passenger = Passenger.Create(person, passengerPrefab, grid, null, null, null, null, mode: PassengerMode.Inactive, spawnDuration, scaleFactor: 0.4f);
+        passenger.transform.rotation = Quaternion.Euler(0, 180, 0);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1.5f));
@@ -87,7 +90,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
     IEnumerator SpawnCity()
     {
-        Transform grid = GridUtils.GenerateStreetGrid(null);
+        grid = GridUtils.GenerateStreetGrid(null);
         Transform tiles = grid.Find("Tiles");
         Renderer[] tileRenderers = tiles.GetComponentsInChildren<Renderer>();
         foreach (Renderer renderer in tileRenderers)
@@ -228,11 +231,11 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     }
 
 
-    IEnumerator SpawnPassengerStats(PassengerBase passenger)
+    IEnumerator SpawnPassengerStats(Passenger passenger)
     {
-        Vector3 position = new Vector3(-0.14f, 0.1f, 0.06f);
+        Vector3 position = new Vector3(-0.14f, 0.2f, 0.06f);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.passengerEconomicParameters);
+        PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person.economicParameters);
         yield return null;
     }
 
