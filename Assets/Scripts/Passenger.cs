@@ -197,7 +197,7 @@ public class Passenger : MonoBehaviour
                 createdTime = tripCreatedTime,
                 pickUpPosition = person.startPosition,
                 destination = person.destination,
-                tripDistance = GridUtils.GetDistance(person.startPosition, person.destination),
+                tripDistance = person.distanceToDestination,
                 expectedWaitingTime = rideOffer.expectedWaitingTime,
                 expectedTripTime = rideOffer.expectedTripTime,
                 fare = rideOffer.fare,

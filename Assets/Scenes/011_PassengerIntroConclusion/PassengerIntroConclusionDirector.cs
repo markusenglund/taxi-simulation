@@ -36,7 +36,8 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         DriverPerson driverPerson = CreateGenericDriverPerson();
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
         PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
-        PassengerStats passengerStats = SpawnPassengerStats(passenger);
+        // TODO: All passengerStats stuff should be added back in when replacing passengerBase
+        // PassengerStats passengerStats = SpawnPassengerStats(passenger);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
 
         Camera.main.transform.position = new Vector3(1.75f, 0.148f, 0);
@@ -46,7 +47,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         // passengerChild.localScale = new Vector3(0.04f, 0.04f, 0.04f);
         yield return new WaitForSeconds(3);
 
-        StartCoroutine(passengerStats.DespawnCard());
+        // StartCoroutine(passengerStats.DespawnCard());
         // Pan camera towards the incoming taxi
         // StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(15, 60, 0), 1.5f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passenger.transform.position + new Vector3(0, 0.2f, -0.3f), Quaternion.Euler(15, 70, 0), 3f, Ease.Cubic));
@@ -135,13 +136,13 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         }
     }
 
-    PassengerStats SpawnPassengerStats(PassengerBase passenger)
-    {
-        Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
-        Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.passengerEconomicParameters);
-        return passengerStats;
-    }
+    // PassengerStats SpawnPassengerStats(PassengerBase passenger)
+    // {
+    //     Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
+    //     Quaternion rotation = Quaternion.Euler(0, 20, 0);
+    //     PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.passengerEconomicParameters);
+    //     return passengerStats;
+    // }
     DriverPerson CreateGenericDriverPerson()
     {
         return new DriverPerson()

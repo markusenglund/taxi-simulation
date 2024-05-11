@@ -22,7 +22,7 @@ public class PassengerStats : MonoBehaviour
     [SerializeField] public Transform statTextPrefab;
     TextMeshProUGUI headingText;
     List<TextMeshProUGUI> statTexts = new List<TextMeshProUGUI>();
-    PassengerEconomicParameters economicParameters;
+    PassengerPerson person;
 
     RideOffer rideOffer;
     PassengerStatMode mode;
@@ -101,26 +101,27 @@ public class PassengerStats : MonoBehaviour
         Stat incomeStat = new Stat()
         {
             name = "Income",
-            value = $"${(Mathf.Round(economicParameters.hourlyIncome * 10) / 10f).ToString("F2")}/hr",
-            barValue = economicParameters.hourlyIncome
+            value = $"${(Mathf.Round(person.economicParameters.hourlyIncome * 10) / 10f).ToString("F2")}/hr",
+            // Subtract 4 since it's the minimum hourlyIncome value, the barValue is an approximation of the values place in the distribution
+            barValue = Mathf.Sqrt(person.economicParameters.hourlyIncome - 4) * 8
         };
-        Stat tripUtilityStat = new Stat()
+        Stat timePreferenceStat = new Stat()
         {
-            name = "Trip utility",
-            value = $"{economicParameters.tripUtilityScore.ToString("F2")}",
-            barValue = economicParameters.tripUtilityScore * 20
-        };
-        Stat tripValueStat = new Stat()
-        {
-            name = "Trip value",
-            value = $"${(Mathf.Round(economicParameters.tripUtilityValue * 10) / 10f).ToString("F2")}",
-            barValue = economicParameters.tripUtilityValue / 2
+            name = "Time preference",
+            value = $"{person.economicParameters.timePreference.ToString("F2")}",
+            barValue = person.economicParameters.timePreference * 20
         };
         Stat timeCostStat = new Stat()
         {
             name = "Cost of time",
-            value = $"${(Mathf.Round(economicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
-            barValue = economicParameters.waitingCostPerHour / 2
+            value = $"${(Mathf.Round(person.economicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
+            barValue = Mathf.Sqrt(person.economicParameters.waitingCostPerHour) * 5
+        };
+        Stat distanceStat = new Stat()
+        {
+            name = "Travel distance",
+            value = $"{person.distanceToDestination.ToString("F2")} km",
+            barValue = person.distanceToDestination * 5
         };
 
         StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 0, duration: 1));
@@ -128,26 +129,26 @@ public class PassengerStats : MonoBehaviour
         {
             yield return new WaitForSeconds(5f);
         }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, tripUtilityStat, index: 1, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, timePreferenceStat, index: 1, duration: 1));
         if (mode == PassengerStatMode.Slow)
         {
             yield return new WaitForSeconds(5f);
         }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, tripValueStat, index: 2, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 2, duration: 1));
         if (mode == PassengerStatMode.Slow)
         {
             yield return new WaitForSeconds(5f);
         }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 3, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, distanceStat, index: 3, duration: 1));
         yield return null;
     }
 
     private IEnumerator SetSubstitutes()
     {
-        Substitute uber = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Uber);
-        Substitute bus = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.PublicTransport);
-        Substitute walking = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Walking);
-        Substitute rentalCar = economicParameters.tripOptions.Find(substitute => substitute.type == TripType.RentalCar);
+        Substitute uber = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Uber);
+        Substitute bus = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.PublicTransport);
+        Substitute walking = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Walking);
+        Substitute rentalCar = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.RentalCar);
 
         Transform uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
         if (uber != null)
@@ -233,13 +234,13 @@ public class PassengerStats : MonoBehaviour
 
     }
 
-    public static PassengerStats Create(Transform passengerStatsPrefab, Transform parent, Vector3 position, Quaternion rotation, PassengerEconomicParameters economicParameters, PassengerStatMode mode = PassengerStatMode.Fast)
+    public static PassengerStats Create(Transform passengerStatsPrefab, Transform parent, Vector3 position, Quaternion rotation, PassengerPerson person, PassengerStatMode mode = PassengerStatMode.Fast)
     {
         Transform passengerStatsTransform = Instantiate(passengerStatsPrefab, parent);
         passengerStatsTransform.localPosition = position;
         passengerStatsTransform.localRotation = rotation;
         PassengerStats passengerStats = passengerStatsTransform.GetComponent<PassengerStats>();
-        passengerStats.economicParameters = economicParameters;
+        passengerStats.person = person;
         passengerStatsTransform.localScale = Vector3.zero;
         passengerStats.mode = mode;
         return passengerStats;

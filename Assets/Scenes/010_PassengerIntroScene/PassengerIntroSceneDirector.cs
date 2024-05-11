@@ -235,7 +235,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         Vector3 position = new Vector3(-0.14f, 0.2f, 0.06f);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person.economicParameters);
+        PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person);
         yield return null;
     }
 

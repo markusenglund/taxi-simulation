@@ -118,7 +118,7 @@ public class PostFirstSimDirector : MonoBehaviour
             {
                 Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
                 Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
-                PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person.economicParameters);
+                PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person);
                 spawnedPassengerStats.Add(passenger.person.id);
 
 

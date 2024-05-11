@@ -74,6 +74,8 @@ public class PassengerPerson
     public Vector3 destination { get; set; }
     public Vector3 startPosition { get; set; }
 
+    public float distanceToDestination { get; set; }
+
     public PassengerPerson() { }
     public PassengerPerson(Vector3 startPosition, SimulationSettings simSettings, Random random)
     {
@@ -85,7 +87,7 @@ public class PassengerPerson
         timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         state = PassengerState.BeforeSpawn;
         destination = GridUtils.GetRandomPosition(random);
-
+        distanceToDestination = GridUtils.GetDistance(startPosition, destination);
         economicParameters = GenerateEconomicParameters();
     }
 
@@ -122,10 +124,8 @@ public class PassengerPerson
 
     (Substitute bestSubstitute, List<Substitute> tripOptions) GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
     {
-        float tripDistance = GridUtils.GetDistance(startPosition, destination);
-
         // Public transport
-        float publicTransportTime = tripDistance / simSettings.publicTransportSpeed + Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
+        float publicTransportTime = distanceToDestination / simSettings.publicTransportSpeed + Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
         // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
         float publicTransportTimeCost = publicTransportTime * waitingCostPerHour;
         float publicTransportUtilityCost = publicTransportTimeCost + simSettings.publicTransportCost;
@@ -142,7 +142,7 @@ public class PassengerPerson
         };
 
         // Walking
-        float walkingTime = tripDistance / simSettings.walkingSpeed;
+        float walkingTime = distanceToDestination / simSettings.walkingSpeed;
         float timeCostOfWalking = walkingTime * waitingCostPerHour;
         float moneyCostOfWalking = 0;
         float utilityCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
@@ -160,10 +160,10 @@ public class PassengerPerson
 
         // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
         float rentalCarWaitingTime = 5 / 60f;
-        float rentalCarTime = tripDistance / simSettings.driverSpeed + rentalCarWaitingTime;
+        float rentalCarTime = distanceToDestination / simSettings.driverSpeed + rentalCarWaitingTime;
         // Add a 5 minute waiting cost for getting into the car
         float rentalCarTimeCost = rentalCarTime * waitingCostPerHour;
-        float marginalCostEnRoute = tripDistance * simSettings.driverMarginalCostPerKm;
+        float marginalCostEnRoute = distanceToDestination * simSettings.driverMarginalCostPerKm;
         float rentalCarCost = simSettings.rentalCarCost + marginalCostEnRoute;
         float rentalCarUtilityCost = rentalCarTimeCost + rentalCarCost;
         float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
@@ -201,8 +201,7 @@ public class PassengerPerson
 
     float GenerateTripUtilityScore()
     {
-        float tripDistance = GridUtils.GetDistance(startPosition, destination);
-        float tripDistanceUtilityModifier = Mathf.Sqrt(tripDistance);
+        float tripDistanceUtilityModifier = Mathf.Sqrt(distanceToDestination);
 
 
         float mu = 0;
