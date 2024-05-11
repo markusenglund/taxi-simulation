@@ -43,7 +43,7 @@ public class Passenger : MonoBehaviour
 
     public PassengerPerson person;
 
-    float passengerScale = 5f;
+    public float passengerScale = 5f;
 
     PassengerMode mode;
 
@@ -63,10 +63,13 @@ public class Passenger : MonoBehaviour
         passenger.passengerSurplusGraph = passengerSurplusGraph;
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
         passenger.person = person;
-        passenger.person.state = PassengerState.Idling;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         passenger.passengerScale = 4f + 0.4f * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
         passenger.mode = mode;
+        if (passenger.person.state == PassengerState.BeforeSpawn)
+        {
+            passenger.person.state = PassengerState.Idling;
+        }
         SetDressColor(passenger, person.economicParameters.hourlyIncome);
         return passenger;
     }

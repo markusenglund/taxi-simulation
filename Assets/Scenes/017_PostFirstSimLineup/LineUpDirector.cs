@@ -38,7 +38,7 @@ public class LineUpDirector : MonoBehaviour
 
     void Start()
     {
-        Camera.main.transform.position = new Vector3(4.5f, 1f, -16f);
+        Camera.main.transform.position = new Vector3(4.5f, 5f, -16f);
         Camera.main.transform.LookAt(cityMiddlePosition);
         StartCoroutine(Scene());
     }
@@ -51,6 +51,8 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(MovePassengersToLineUp(passengers));
         yield return new WaitForSeconds(3f);
         StartCoroutine(TriggerIdleVariations(passengers));
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(ShowPassengerResults(passengers));
     }
 
     IEnumerator FadeInCanvas()
@@ -144,6 +146,74 @@ public class LineUpDirector : MonoBehaviour
             yield return null;
         }
         // passenger.transform.position = endPosition;
+    }
+
+    private IEnumerator ShowPassengerResults(Passenger[] passengers)
+    {
+        Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
+        {
+            { TripType.RentalCar, "🚗" },
+            { TripType.Uber, "🚕" },
+            { TripType.Walking, "🚶" },
+            { TripType.PublicTransport, "🚌" },
+            { TripType.SkipTrip, "🏠" }
+        };
+        // Order passengers by utility score
+        List<Passenger> orderedPassengers = new List<Passenger>(passengers);
+        orderedPassengers.Sort((a, b) => a.person.economicParameters.tripUtilityScore.CompareTo(b.person.economicParameters.tripUtilityScore));
+
+        List<Passenger> passengersWhoGotAnUber = new List<Passenger>();
+        List<Passenger> passengersWhoRejectedRideOffer = new List<Passenger>();
+        List<Passenger> passengersWhoDidNotReceiveRideOffer = new List<Passenger>();
+        foreach (Passenger passenger in orderedPassengers)
+        {
+            TripType tripType = passenger.person.tripTypeChosen;
+            if (tripType == TripType.Uber)
+            {
+                passengersWhoGotAnUber.Add(passenger);
+            }
+            else if (passenger.person.state == PassengerState.NoRideOffer)
+            {
+                passengersWhoDidNotReceiveRideOffer.Add(passenger);
+            }
+            else
+            {
+                passengersWhoRejectedRideOffer.Add(passenger);
+            }
+        }
+
+        foreach (Passenger passenger in passengersWhoGotAnUber)
+        {
+            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
+            string reaction = "✅";
+            Color reactionColor = Color.green;
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
+            yield return new WaitForSeconds(0.04f);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        foreach (Passenger passenger in passengersWhoRejectedRideOffer)
+        {
+            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
+            string reaction = "❎";
+            Color reactionColor = Color.red;
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+
+        foreach (Passenger passenger in passengersWhoDidNotReceiveRideOffer)
+        {
+            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
+            string reaction = "📵";
+            Color reactionColor = Color.red;
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
+            yield return new WaitForSeconds(0.04f);
+        }
+        yield return null;
     }
 
 

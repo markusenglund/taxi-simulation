@@ -9,6 +9,8 @@ public class AgentOverheadReaction : MonoBehaviour
     Color color;
     string text;
     bool isBold;
+
+    float durationBeforeFade = 0.8f;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
@@ -28,7 +30,7 @@ public class AgentOverheadReaction : MonoBehaviour
     private IEnumerator ScheduleActions()
     {
         StartCoroutine(SpawnCard(duration: 0.3f));
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(durationBeforeFade);
         yield return StartCoroutine(Fade(duration: 1.3f));
     }
 
@@ -59,13 +61,14 @@ public class AgentOverheadReaction : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false)
+    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false, float durationBeforeFade = 0.8f)
     {
         Transform statTextPrefab = Resources.Load<Transform>("AgentReaction");
         Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity, parent);
         AgentOverheadReaction agentStatusTextComponent = agentStatusText.GetComponent<AgentOverheadReaction>();
         agentStatusTextComponent.text = text;
         agentStatusTextComponent.color = color;
+        agentStatusTextComponent.durationBeforeFade = durationBeforeFade;
         // Set font style
         agentStatusTextComponent.isBold = isBold;
         return agentStatusTextComponent;
