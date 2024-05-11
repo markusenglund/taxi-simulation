@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
+using System.Linq;
 
 
 public class LineUpDirector : MonoBehaviour
@@ -158,6 +159,7 @@ public class LineUpDirector : MonoBehaviour
             { TripType.PublicTransport, "🚌" },
             { TripType.SkipTrip, "🏠" }
         };
+
         // Order passengers by utility score
         List<Passenger> orderedPassengers = new List<Passenger>(passengers);
         orderedPassengers.Sort((a, b) => a.person.economicParameters.tripUtilityScore.CompareTo(b.person.economicParameters.tripUtilityScore));
@@ -182,6 +184,7 @@ public class LineUpDirector : MonoBehaviour
             }
         }
 
+
         foreach (Passenger passenger in passengersWhoGotAnUber)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
@@ -191,6 +194,13 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(0.04f);
         }
 
+        Transform averageUberLineTransform = canvas.transform.Find("Graph/AverageUberLine");
+        LineRenderer averageUberLine = averageUberLineTransform.GetComponent<LineRenderer>();
+
+        float averageUberUtilityScore = passengersWhoGotAnUber.Average(p => p.person.economicParameters.tripUtilityScore);
+        averageUberLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageUberUtilityScore), 0.01f, -7.5f));
+        averageUberLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageUberUtilityScore), 0.01f, -2.5f));
+        averageUberLineTransform.gameObject.SetActive(true);
         yield return new WaitForSeconds(2f);
 
         foreach (Passenger passenger in passengersWhoRejectedRideOffer)
@@ -201,6 +211,14 @@ public class LineUpDirector : MonoBehaviour
             AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
             yield return new WaitForSeconds(0.05f);
         }
+
+        Transform averageRejectedLineTransform = canvas.transform.Find("Graph/AverageRejectedLine");
+        LineRenderer averageRejectedLine = averageRejectedLineTransform.GetComponent<LineRenderer>();
+
+        float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.tripUtilityScore);
+        averageRejectedLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
+        averageRejectedLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
+        averageRejectedLineTransform.gameObject.SetActive(true);
 
         yield return new WaitForSeconds(2f);
 
@@ -213,6 +231,17 @@ public class LineUpDirector : MonoBehaviour
             AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
             yield return new WaitForSeconds(0.04f);
         }
+
+
+        Transform averageNoOfferLineTransform = canvas.transform.Find("Graph/AverageNoOfferLine");
+        LineRenderer averageNoOfferLine = averageNoOfferLineTransform.GetComponent<LineRenderer>();
+
+        float averageNoOfferUtilityScore = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.tripUtilityScore);
+        averageNoOfferLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
+        averageNoOfferLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
+        averageNoOfferLineTransform.gameObject.SetActive(true);
+
+
         yield return null;
     }
 
