@@ -15,13 +15,25 @@ public class LineUpDirector : MonoBehaviour
 
     Random random = new Random();
 
+    GameObject canvas;
+    LineRenderer[] lineRenderers;
+
     List<Vector3> lineUpPositions = new List<Vector3>
     { };
 
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
-        GameObject.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0;
+        canvas = GameObject.Find("Canvas");
+        canvas.GetComponent<CanvasGroup>().alpha = 0;
+
+        lineRenderers = canvas.GetComponentsInChildren<LineRenderer>();
+        foreach (LineRenderer lineRenderer in lineRenderers)
+        {
+            Color lineRendererColor = new Color(lineRenderer.startColor.r, lineRenderer.startColor.g, lineRenderer.startColor.b, 0);
+            lineRenderer.startColor = lineRendererColor;
+            lineRenderer.endColor = lineRendererColor;
+        }
     }
 
     void Start()
@@ -43,14 +55,22 @@ public class LineUpDirector : MonoBehaviour
 
     IEnumerator FadeInCanvas()
     {
-        CanvasGroup canvasGroup = GameObject.Find("Canvas").GetComponent<CanvasGroup>();
+        CanvasGroup canvasGroup = canvas.GetComponent<CanvasGroup>();
         float duration = 1.5f;
         float startTime = Time.time;
+
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
             float alpha = EaseUtils.EaseInCubic(t);
             canvasGroup.alpha = alpha;
+            // Set the alpha of the line renderers to the same value
+            foreach (LineRenderer lineRenderer in lineRenderers)
+            {
+                Color lineRendererColor = new Color(lineRenderer.startColor.r, lineRenderer.startColor.g, lineRenderer.startColor.b, alpha);
+                lineRenderer.startColor = lineRendererColor;
+                lineRenderer.endColor = lineRendererColor;
+            }
             yield return null;
         }
     }
