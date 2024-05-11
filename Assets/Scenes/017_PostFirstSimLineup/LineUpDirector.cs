@@ -22,6 +22,9 @@ public class LineUpDirector : MonoBehaviour
     List<Vector3> lineUpPositions = new List<Vector3>
     { };
 
+    List<Vector3> incomeDistributionPositions = new List<Vector3>
+    { };
+
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
@@ -54,6 +57,8 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(TriggerIdleVariations(passengers));
         yield return new WaitForSeconds(2f);
         StartCoroutine(ShowPassengerResults(passengers));
+        yield return new WaitForSeconds(15f);
+        StartCoroutine(ChangeGraphToIncome(passengers));
     }
 
     IEnumerator FadeInCanvas()
@@ -243,6 +248,56 @@ public class LineUpDirector : MonoBehaviour
 
 
         yield return null;
+    }
+
+    private IEnumerator ChangeGraphToIncome(Passenger[] passengers)
+    {
+        foreach (Passenger passenger in passengers)
+        {
+            StartCoroutine(MovePassengerToIncomeDistribution(passenger));
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield return null;
+    }
+
+    private IEnumerator MovePassengerToIncomeDistribution(Passenger passenger)
+    {
+        float duration = 1;
+        Vector3 startPosition = passenger.transform.position;
+        float linePosition = ConvertHourlyIncomeToLinePosition(passenger.person.economicParameters.hourlyIncome);
+        Vector3 endPosition = new Vector3(linePosition, 0, -6.7f);
+        // Check if there's a lineUpPosition within 0.3f of the endPosition
+        bool isEndPositionFree = false;
+        while (!isEndPositionFree)
+        {
+            isEndPositionFree = true;
+            foreach (Vector3 existingIncomeDistributionPosition in incomeDistributionPositions)
+            {
+                if (Vector3.Distance(existingIncomeDistributionPosition, endPosition) < 0.35f)
+                {
+                    endPosition = endPosition + new Vector3(0, 0, 0.2f);
+                    isEndPositionFree = false;
+                }
+            }
+        }
+        incomeDistributionPositions.Add(endPosition);
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float positionFactor = EaseUtils.EaseInOutQuadratic(t);
+
+            passenger.transform.position = Vector3.Lerp(startPosition, endPosition, positionFactor);
+            yield return null;
+        }
+        passenger.transform.position = endPosition;
+    }
+
+    private float ConvertHourlyIncomeToLinePosition(float hourlyIncome)
+    {
+        float linePositionStart = -5f;
+        float linePositionStep = 3 / 20f;
+        return hourlyIncome * linePositionStep + linePositionStart;
     }
 
 
