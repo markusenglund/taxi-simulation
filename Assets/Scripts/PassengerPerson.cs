@@ -158,25 +158,25 @@ public class PassengerPerson
             netUtility = netValueOfWalking / hourlyIncome
         };
 
-        // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
-        float rentalCarWaitingTime = 5 / 60f;
-        float rentalCarTime = distanceToDestination / simSettings.driverSpeed + rentalCarWaitingTime;
-        // Add a 5 minute waiting cost for getting into the car
-        float rentalCarTimeCost = rentalCarTime * waitingCostPerHour;
-        float marginalCostEnRoute = distanceToDestination * simSettings.driverMarginalCostPerKm;
-        float rentalCarCost = simSettings.rentalCarCost + marginalCostEnRoute;
-        float rentalCarUtilityCost = rentalCarTimeCost + rentalCarCost;
-        float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
-        Substitute rentalCarSubstitute = new Substitute()
-        {
-            type = TripType.RentalCar,
-            timeHours = rentalCarTime,
-            timeCost = rentalCarTimeCost,
-            moneyCost = rentalCarCost,
-            totalCost = rentalCarUtilityCost,
-            netValue = netValueOfRentalCar,
-            netUtility = netValueOfRentalCar / hourlyIncome
-        };
+        // // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
+        // float rentalCarWaitingTime = 5 / 60f;
+        // float rentalCarTime = distanceToDestination / simSettings.driverSpeed + rentalCarWaitingTime;
+        // // Add a 5 minute waiting cost for getting into the car
+        // float rentalCarTimeCost = rentalCarTime * waitingCostPerHour;
+        // float marginalCostEnRoute = distanceToDestination * simSettings.driverMarginalCostPerKm;
+        // float rentalCarCost = simSettings.rentalCarCost + marginalCostEnRoute;
+        // float rentalCarUtilityCost = rentalCarTimeCost + rentalCarCost;
+        // float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
+        // Substitute rentalCarSubstitute = new Substitute()
+        // {
+        //     type = TripType.RentalCar,
+        //     timeHours = rentalCarTime,
+        //     timeCost = rentalCarTimeCost,
+        //     moneyCost = rentalCarCost,
+        //     totalCost = rentalCarUtilityCost,
+        //     netValue = netValueOfRentalCar,
+        //     netUtility = netValueOfRentalCar / hourlyIncome
+        // };
 
         // Skip trip
         Substitute skipTripSubstitute = new Substitute()
@@ -188,7 +188,7 @@ public class PassengerPerson
             netValue = 0
         };
 
-        List<Substitute> tripOptions = new List<Substitute> { publicTransportSubstitute, walkingSubstitute, rentalCarSubstitute, skipTripSubstitute };
+        List<Substitute> tripOptions = new List<Substitute> { publicTransportSubstitute, walkingSubstitute };
 
         Substitute bestSubstitute = tripOptions.OrderByDescending(substitute => substitute.netValue).First();
 
@@ -208,6 +208,6 @@ public class PassengerPerson
         float sigma = 0.4f;
         float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(random, mu, sigma);
         // Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
-        return tripUtilityScore;
+        return 10;
     }
 }
