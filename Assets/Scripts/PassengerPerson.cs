@@ -19,8 +19,6 @@ public enum TripType
     None,
     Walking,
     PublicTransport,
-    RentalCar,
-    SkipTrip,
     Uber
 }
 
@@ -157,16 +155,7 @@ public class PassengerPerson
             totalCost = totalCostOfWalking,
         };
 
-        // Skip trip
-        TripOption skipTripSubstitute = new TripOption()
-        {
-            type = TripType.SkipTrip,
-            timeCost = 0,
-            moneyCost = 0,
-            totalCost = 0,
-        };
-
-        List<TripOption> substitutes = new List<TripOption> { publicTransportSubstitute, walkingSubstitute, skipTripSubstitute };
+        List<TripOption> substitutes = new List<TripOption> { publicTransportSubstitute, walkingSubstitute };
 
         return substitutes;
     }

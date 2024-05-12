@@ -25,7 +25,6 @@ public class SimulationSettings : ScriptableObject
 
     public float publicTransportCost = 2.5f;
 
-    public float rentalCarCost = 100f;
     public readonly float timeSpentWaitingForPassenger = 2f / 60f;
     // Fare values were empirically chosen to approximate the fare for a getting a ride in Utrecht
     // In the "Who benefits?" paper $3.30 + $0.87 ⇥ (predicted miles) + $0.11 ⇥ (predicted minutes) was the formula used which is a bit less than the values below

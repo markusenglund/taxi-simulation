@@ -148,7 +148,6 @@ public class PassengerStats : MonoBehaviour
         TripOption uber = person.uberTripOption;
         TripOption bus = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.PublicTransport);
         TripOption walking = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.Walking);
-        TripOption rentalCar = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.RentalCar);
 
         Transform uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
         if (uber != null)
@@ -190,15 +189,6 @@ public class PassengerStats : MonoBehaviour
         walkingTotalCostText.text = walkingTotalCost;
         Color totalCostWalkingColor = Color.white;
         walkingTotalCostText.color = totalCostWalkingColor;
-
-        Transform rentalCarRow = transform.Find("PassengerStatsSheet/Table/Row4");
-        rentalCarRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${rentalCar.moneyCost.ToString("F2")}";
-        rentalCarRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(rentalCar.timeHours)} min";
-        string rentalCarTotalCost = $"${rentalCar.totalCost.ToString("F2")}";
-        TextMeshProUGUI rentalCarTotalCostText = rentalCarRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
-        rentalCarTotalCostText.text = rentalCarTotalCost;
-        Color totalCostRentalCarColor = Color.white;
-        rentalCarTotalCostText.color = totalCostRentalCarColor;
 
         yield return null;
     }

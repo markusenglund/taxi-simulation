@@ -154,10 +154,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
         {
             simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float t = simulationTime / city.simulationSettings.simulationLengthHours;
-            // int numPassengersSpawnedPerTimeResolutionInterval = city.CalculateNumPassengersSpawnedInLastInterval(timeResolution);
             PassengerPerson[] passengers = city.GetPassengersSpawnedInLastInterval(timeResolution);
-            // Count the number of passengers that chose uber, a substitute and those who chose to stay at home
-            // float numSubstitutePassengers = passengers.Count(x => x.tripTypeChosen == TripType.Walking || x.tripTypeChosen == TripType.PublicTransport || x.tripTypeChosen == TripType.RentalCar);
             int numSubstitutePassengers = 0;
             int numUberPassengers = 0;
             int numSkippedTrip = 0;
@@ -172,13 +169,9 @@ public class PassengerTripTypeGraph : MonoBehaviour
                 {
                     numUberPassengers++;
                 }
-                else if (passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport || passenger.tripTypeChosen == TripType.RentalCar)
+                else if (passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport)
                 {
                     numSubstitutePassengers++;
-                }
-                else if (passenger.tripTypeChosen == TripType.SkipTrip)
-                {
-                    numSkippedTrip++;
                 }
             }
 

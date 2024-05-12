@@ -158,11 +158,9 @@ public class LineUpDirector : MonoBehaviour
     {
         Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
         {
-            { TripType.RentalCar, "🚗" },
             { TripType.Uber, "🚕" },
             { TripType.Walking, "🚶" },
             { TripType.PublicTransport, "🚌" },
-            { TripType.SkipTrip, "🏠" }
         };
 
         // Order passengers by utility score

@@ -60,7 +60,7 @@ public class SimulationInfoGroup : MonoBehaviour
 
         PassengerPerson[] passengers = city.GetPassengerPeople();
         int numPassengersWhoGotRides = passengers.Count(passenger => passenger.tripTypeChosen == TripType.Uber);
-        int numPassengerWhoDidNotGetRides = passengers.Count(passenger => passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport || passenger.tripTypeChosen == TripType.RentalCar || passenger.tripTypeChosen == TripType.SkipTrip);
+        int numPassengerWhoDidNotGetRides = passengers.Count(passenger => passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport);
 
         numPassengersWhoGotRidesValueText.text = numPassengersWhoGotRides.ToString();
         numPassengersWhoDidNotGetRidesValueText.text = numPassengerWhoDidNotGetRides.ToString();

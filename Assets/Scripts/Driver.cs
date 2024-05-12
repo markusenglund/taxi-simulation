@@ -159,9 +159,10 @@ public class Driver : MonoBehaviour
     {
         float droppedOffTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         float timeSpentOnTrip = droppedOffTime - currentTrip.pickedUpData.pickedUpTime;
-
+        float totalTime = droppedOffTime - currentTrip.tripCreatedData.createdTime;
         DroppedOffData droppedOffData = new DroppedOffData
         {
+            totalTime = totalTime,
             droppedOffTime = droppedOffTime,
             timeSpentOnTrip = timeSpentOnTrip
 

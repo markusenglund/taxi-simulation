@@ -388,11 +388,9 @@ public class Passenger : MonoBehaviour
     {
         Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
         {
-            { TripType.RentalCar, "🚗" },
             { TripType.Uber, "🚕" },
             { TripType.Walking, "🚶" },
             { TripType.PublicTransport, "🚌" },
-            { TripType.SkipTrip, "🏠" }
         };
         Vector3 reactionPosition = Vector3.up * (passengerScale * 0.3f + 0.2f);
         if (reason == DespawnReason.RejectedRideOffer)
