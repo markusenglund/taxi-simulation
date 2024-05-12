@@ -29,6 +29,26 @@ public class LineUpDirector : MonoBehaviour
 
     Vector3 canvasPosition = new Vector3(4.5f, 0, -6);
 
+
+    Transform uberAverageLineTransform;
+    Transform uberAverageDotTransform;
+    Transform uberAverageLabelTransform;
+
+
+    Transform rejectedAverageLineTransform;
+    Transform rejectedAverageDotTransform;
+    Transform rejectedAverageLabelTransform;
+
+
+    Transform noOfferAverageLineTransform;
+    Transform noOfferAverageDotTransform;
+    Transform noOfferAverageLabelTransform;
+
+
+    List<Passenger> passengersWhoGotAnUber = new List<Passenger>();
+    List<Passenger> passengersWhoRejectedRideOffer = new List<Passenger>();
+    List<Passenger> passengersWhoDidNotReceiveRideOffer = new List<Passenger>();
+
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
@@ -181,9 +201,9 @@ public class LineUpDirector : MonoBehaviour
         List<Passenger> orderedPassengers = new List<Passenger>(passengers);
         orderedPassengers.Sort((a, b) => a.person.economicParameters.timePreference.CompareTo(b.person.economicParameters.timePreference));
 
-        List<Passenger> passengersWhoGotAnUber = new List<Passenger>();
-        List<Passenger> passengersWhoRejectedRideOffer = new List<Passenger>();
-        List<Passenger> passengersWhoDidNotReceiveRideOffer = new List<Passenger>();
+        passengersWhoGotAnUber = new List<Passenger>();
+        passengersWhoRejectedRideOffer = new List<Passenger>();
+        passengersWhoDidNotReceiveRideOffer = new List<Passenger>();
         foreach (Passenger passenger in orderedPassengers)
         {
             TripType tripType = passenger.person.tripTypeChosen;
@@ -211,7 +231,14 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(0.04f);
         }
         float averageUberTimePreference = passengers.Average(p => p.person.economicParameters.timePreference);
-        yield return StartCoroutine(SpawnAverageLine(averageUberTimePreference, Color.green, -5.5f, new Vector3(0.2f, 0, 0)));
+        Transform averageLineTransform = canvas.transform.Find("Graph/AverageLine");
+        Transform averageDotTransform = canvas.transform.Find("Graph/AverageDot");
+        Transform averageLabelTransform = canvas.transform.Find("Graph/AverageLabel");
+
+        uberAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
+        uberAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
+        uberAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
+        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, averageUberTimePreference, Color.green, -5.5f, new Vector3(0.2f, 0, 0)));
 
         yield return new WaitForSeconds(2f);
 
@@ -226,7 +253,10 @@ public class LineUpDirector : MonoBehaviour
 
         float averageRejectedTimePreference = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
 
-        yield return StartCoroutine(SpawnAverageLine(averageRejectedTimePreference, Color.red, -5.4f, new Vector3(0f, 0, 0.1f)));
+        rejectedAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
+        rejectedAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
+        rejectedAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
+        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, averageRejectedTimePreference, Color.red, -5.4f, new Vector3(0f, 0, 0.1f)));
 
         yield return new WaitForSeconds(2f);
 
@@ -243,7 +273,11 @@ public class LineUpDirector : MonoBehaviour
 
         float averageNoOfferTimePreference = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
 
-        yield return StartCoroutine(SpawnAverageLine(averageNoOfferTimePreference, Color.red, -5.3f, new Vector3(0f, 0, 0.1f)));
+        noOfferAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
+        noOfferAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
+        noOfferAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
+
+        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, averageNoOfferTimePreference, Color.red, -5.3f, new Vector3(0f, 0, 0.1f)));
 
 
         yield return null;
@@ -259,6 +293,22 @@ public class LineUpDirector : MonoBehaviour
             Transform label = canvas.transform.Find($"Graph/AxisValue{i}");
             StartCoroutine(ChangeLabel(label, $"${i * 20}"));
         }
+
+        // Set the average line label of uber to the average of the hourly income
+        TMP_Text uberAverageTmp = uberAverageLabelTransform.GetComponent<TMP_Text>();
+        string uberAverageNewText = $"${passengersWhoGotAnUber.Average(p => p.person.economicParameters.hourlyIncome):F2}";
+        StartCoroutine(ChangeLabel(uberAverageLabelTransform, uberAverageNewText));
+
+        // Set the average line label of rejected to the average of the hourly income
+        TMP_Text rejectedAverageTmp = rejectedAverageLabelTransform.GetComponent<TMP_Text>();
+        string rejectedAverageNewText = $"${passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.hourlyIncome):F2}";
+        StartCoroutine(ChangeLabel(rejectedAverageLabelTransform, rejectedAverageNewText));
+
+        // Set the average line label of no offer to the average of the hourly income
+        TMP_Text noOfferAverageTmp = noOfferAverageLabelTransform.GetComponent<TMP_Text>();
+        string noOfferAverageNewText = $"${passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.hourlyIncome):F2}";
+        StartCoroutine(ChangeLabel(noOfferAverageLabelTransform, noOfferAverageNewText));
+
         foreach (Passenger passenger in passengers)
         {
             StartCoroutine(MovePassengerToIncomeDistribution(passenger));
@@ -267,34 +317,6 @@ public class LineUpDirector : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator ChangeGraphLabelsToIncome()
-    {
-        Transform label = canvas.transform.Find("Graph/Label");
-        TMP_Text labelTMP = label.GetComponent<TMP_Text>();
-        // Shrink the label to nothing
-        float duration = 0.5f;
-        Vector3 startScale = labelTMP.transform.localScale;
-        Vector3 endScale = Vector3.zero;
-        float startTime = Time.time;
-        while (Time.time < startTime + duration)
-        {
-            float t = (Time.time - startTime) / duration;
-            float scale = EaseUtils.EaseInOutQuadratic(t);
-            labelTMP.transform.localScale = Vector3.Lerp(startScale, endScale, scale);
-            yield return null;
-        }
-
-        labelTMP.text = "Hourly Income";
-        // Grow it back
-        startTime = Time.time;
-        while (Time.time < startTime + duration)
-        {
-            float t = (Time.time - startTime) / duration;
-            float scale = EaseUtils.EaseInOutQuadratic(t);
-            labelTMP.transform.localScale = Vector3.Lerp(endScale, startScale, scale);
-            yield return null;
-        }
-    }
 
     private IEnumerator ChangeLabel(Transform label, string text)
     {
@@ -357,25 +379,20 @@ public class LineUpDirector : MonoBehaviour
         passenger.transform.position = endPosition;
     }
 
-    IEnumerator SpawnAverageLine(float averageValue, Color lineColor, float topPosition, Vector3 labelOffset)
+    IEnumerator SpawnAverageLine(Transform lineTransform, Transform dotTransform, Transform labelTransform, float averageValue, Color lineColor, float topPosition, Vector3 labelOffset)
     {
-        Transform averageLineTransform = canvas.transform.Find("Graph/AverageLine");
-        // Create a clone of the averageUberLine, CLONE PLEASE or copy or whatever you call it
-        Transform averageLineTransformClone = Instantiate(averageLineTransform, canvas.transform);
 
-        Transform averageDotTransform = canvas.transform.Find("Graph/AverageDot");
-        Transform averageDotTransformClone = Instantiate(averageDotTransform, canvas.transform);
 
-        LineRenderer averageUberLine = averageLineTransformClone.GetComponent<LineRenderer>();
-        LineRenderer averageUberDot = averageDotTransformClone.GetComponent<LineRenderer>();
-        Transform averageLabelTransform = canvas.transform.Find("Graph/AverageLabel");
-        Transform averageLabelTransformClone = Instantiate(averageLabelTransform, canvas.transform);
+
+        LineRenderer averageUberLine = lineTransform.GetComponent<LineRenderer>();
+        LineRenderer averageUberDot = dotTransform.GetComponent<LineRenderer>();
+
         // Get the TMPro text component and set its text to the average time preference
-        TMP_Text averageUberText = averageLabelTransformClone.GetComponent<TMP_Text>();
+        TMP_Text averageUberText = labelTransform.GetComponent<TMP_Text>();
 
-        averageLineTransformClone.gameObject.SetActive(true);
-        averageDotTransformClone.gameObject.SetActive(true);
-        averageLabelTransformClone.gameObject.SetActive(true);
+        lineTransform.gameObject.SetActive(true);
+        dotTransform.gameObject.SetActive(true);
+        labelTransform.gameObject.SetActive(true);
         averageUberText.text = $"{averageValue:F2}";
         float lineDuration = 1f;
         float startTime = Time.time;
@@ -388,7 +405,7 @@ public class LineUpDirector : MonoBehaviour
             averageUberLine.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
             averageUberDot.SetPosition(0, new Vector3(linePosition, 0.01f, topPosition));
             averageUberDot.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
-            averageLabelTransformClone.position = new Vector3(linePosition, 0.02f, topPosition) + labelOffset;
+            labelTransform.position = new Vector3(linePosition, 0.02f, topPosition) + labelOffset;
             // Set the alpha of the average uber text
             averageUberText.color = new Color(1, 1, 1, EaseUtils.EaseInCubic(t));
             float alpha = EaseUtils.EaseInCubic(t);
