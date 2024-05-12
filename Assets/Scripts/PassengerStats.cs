@@ -39,7 +39,7 @@ public class PassengerStats : MonoBehaviour
 
     private IEnumerator ScheduleActions()
     {
-        StartCoroutine(SetSubstitutes());
+        StartCoroutine(SetTripOptions());
         StartCoroutine(SpawnCard(duration: 1f));
         if (mode == PassengerStatMode.Slow)
         {
@@ -143,12 +143,12 @@ public class PassengerStats : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator SetSubstitutes()
+    private IEnumerator SetTripOptions()
     {
-        Substitute uber = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Uber);
-        Substitute bus = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.PublicTransport);
-        Substitute walking = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.Walking);
-        Substitute rentalCar = person.economicParameters.tripOptions.Find(substitute => substitute.type == TripType.RentalCar);
+        TripOption uber = person.uberTripOption;
+        TripOption bus = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.PublicTransport);
+        TripOption walking = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.Walking);
+        TripOption rentalCar = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.RentalCar);
 
         Transform uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
         if (uber != null)

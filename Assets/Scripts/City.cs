@@ -126,26 +126,8 @@ public class City : MonoBehaviour
         {
             Time.timeScale = 0;
             simulationEnded = true;
-            LogPassengersWhoDidNotGetARide();
         }
 
-    }
-
-    private void LogPassengersWhoDidNotGetARide()
-    {
-        List<PassengerPerson> passengersWhoDidNotGetRides = passengerAgents.Where(passenger => passenger.tripTypeChosen != TripType.Uber).ToList()
-        .OrderByDescending(passenger => passenger.economicParameters.tripUtilityScore).ToList();
-        Debug.Log("Number of passengers who did not get a ride: " + passengersWhoDidNotGetRides.Count);
-
-        // Log the top three passengers
-        for (int i = 0; i < 20; i++)
-        {
-            if (i < passengersWhoDidNotGetRides.Count)
-            {
-                PassengerPerson passenger = passengersWhoDidNotGetRides[i];
-                Debug.Log($"Passenger {passenger.id} with trip utility score {passenger.economicParameters.tripUtilityScore} did not get a ride, position: {passenger.startPosition}, destination: {passenger.destination}, time spawned: {passenger.timeSpawned}, received ride offer: {passenger.state == PassengerState.RejectedRideOffer}");
-            }
-        }
     }
 
     public Driver CreateDriver(DriverPerson driverPerson, Vector3 position)

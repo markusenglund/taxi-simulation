@@ -118,7 +118,7 @@ public class LineUpDirector : MonoBehaviour
     {
         Animator passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 startPosition = passenger.transform.position;
-        float linePosition = ConvertUtilityScoreToLinePosition(passenger.person.economicParameters.tripUtilityScore);
+        float linePosition = ConvertUtilityScoreToLinePosition(passenger.person.economicParameters.timePreference);
         Vector3 endPosition = new Vector3(linePosition, 0, -6.7f);
         // Check if there's a lineUpPosition within 0.3f of the endPosition
         bool isEndPositionFree = false;
@@ -167,7 +167,7 @@ public class LineUpDirector : MonoBehaviour
 
         // Order passengers by utility score
         List<Passenger> orderedPassengers = new List<Passenger>(passengers);
-        orderedPassengers.Sort((a, b) => a.person.economicParameters.tripUtilityScore.CompareTo(b.person.economicParameters.tripUtilityScore));
+        orderedPassengers.Sort((a, b) => a.person.economicParameters.timePreference.CompareTo(b.person.economicParameters.timePreference));
 
         List<Passenger> passengersWhoGotAnUber = new List<Passenger>();
         List<Passenger> passengersWhoRejectedRideOffer = new List<Passenger>();
@@ -202,7 +202,7 @@ public class LineUpDirector : MonoBehaviour
         Transform averageUberLineTransform = canvas.transform.Find("Graph/AverageUberLine");
         LineRenderer averageUberLine = averageUberLineTransform.GetComponent<LineRenderer>();
 
-        float averageUberUtilityScore = passengersWhoGotAnUber.Average(p => p.person.economicParameters.tripUtilityScore);
+        float averageUberUtilityScore = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
         averageUberLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageUberUtilityScore), 0.01f, -7.5f));
         averageUberLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageUberUtilityScore), 0.01f, -2.5f));
         averageUberLineTransform.gameObject.SetActive(true);
@@ -220,7 +220,7 @@ public class LineUpDirector : MonoBehaviour
         Transform averageRejectedLineTransform = canvas.transform.Find("Graph/AverageRejectedLine");
         LineRenderer averageRejectedLine = averageRejectedLineTransform.GetComponent<LineRenderer>();
 
-        float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.tripUtilityScore);
+        float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
         averageRejectedLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
         averageRejectedLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
         averageRejectedLineTransform.gameObject.SetActive(true);
@@ -241,7 +241,7 @@ public class LineUpDirector : MonoBehaviour
         Transform averageNoOfferLineTransform = canvas.transform.Find("Graph/AverageNoOfferLine");
         LineRenderer averageNoOfferLine = averageNoOfferLineTransform.GetComponent<LineRenderer>();
 
-        float averageNoOfferUtilityScore = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.tripUtilityScore);
+        float averageNoOfferUtilityScore = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
         averageNoOfferLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
         averageNoOfferLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
         averageNoOfferLineTransform.gameObject.SetActive(true);

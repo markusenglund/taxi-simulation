@@ -32,7 +32,6 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         DriverPerson driverPerson = CreateGenericDriverPerson();
         city.CreateDriver(driverPerson, new Vector3(6, 0, 6));
-        // PassengerBase.CreateRaw(passengerPrefab, new Vector3(2, 0.08f, 2.77f), Quaternion.identity, spawnDuration: 1, passengerSpawnRandom, simSettings);
         city.CreatePassenger(new Vector3(2, 0.08f, 3f));
         yield return new WaitForSeconds(0.7f);
         SpawnPassenger(new Vector3(5, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)));
@@ -50,7 +49,9 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
 
     void SpawnPassenger(Vector3 position, Quaternion rotation)
     {
-        PassengerBase passenger = PassengerBase.CreateRaw(passengerPrefab, position, rotation, spawnDuration: 1, passengerSpawnRandom, simSettings);
+        PassengerPerson person = new PassengerPerson(position, simSettings, passengerSpawnRandom);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, null, null, null, null, mode: PassengerMode.Inactive, spawnDuration: 1, scaleFactor: 0.4f);
+
         // Animator animator = passenger.GetComponentInChildren<Animator>();
         // animator.SetTrigger("LookAtPhone");
 

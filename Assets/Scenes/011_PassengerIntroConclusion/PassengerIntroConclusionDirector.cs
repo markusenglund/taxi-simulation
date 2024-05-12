@@ -35,7 +35,9 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
 
         DriverPerson driverPerson = CreateGenericDriverPerson();
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
-        PassengerBase passenger = PassengerBase.Create(passengerPrefab, passengerPosition, spawnDuration: 1.5f, passengerSpawnRandom, simSettings);
+        PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
+        float spawnDuration = 1.5f;
+        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, null, null, null, null, mode: PassengerMode.Inactive, spawnDuration, scaleFactor: 0.4f);
         // TODO: All passengerStats stuff should be added back in when replacing passengerBase
         // PassengerStats passengerStats = SpawnPassengerStats(passenger);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
@@ -67,10 +69,10 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         StartCoroutine(MoveOffCarRoof(passenger, 0.8f));
         yield return new WaitForSeconds(0.8f);
         driver.SetDestination(new Vector3(0, 0, 0));
-        StartCoroutine(passenger.DespawnPassenger());
+        StartCoroutine(passenger.DespawnPassenger(duration: 1.5f, reason: DespawnReason.DroppedOff));
     }
 
-    IEnumerator MoveToCarRoof(PassengerBase passenger, float duration)
+    IEnumerator MoveToCarRoof(Passenger passenger, float duration)
     {
         passengerAnimator.SetTrigger("EnterTaxi");
         yield return new WaitForSeconds(0.3f);
@@ -98,7 +100,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
     }
 
 
-    IEnumerator MoveOffCarRoof(PassengerBase passenger, float duration)
+    IEnumerator MoveOffCarRoof(Passenger passenger, float duration)
     {
         passenger.transform.SetParent(null);
         float startTime = Time.time;
@@ -136,7 +138,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         }
     }
 
-    // PassengerStats SpawnPassengerStats(PassengerBase passenger)
+    // PassengerStats SpawnPassengerStats(Passenger passenger)
     // {
     //     Vector3 position = new Vector3(1.8f, 0.18f, 0.2f);
     //     Quaternion rotation = Quaternion.Euler(0, 20, 0);

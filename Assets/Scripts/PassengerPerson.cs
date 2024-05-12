@@ -24,8 +24,16 @@ public enum TripType
     Uber
 }
 
+public enum RideOfferStatus
+{
+    NotYetRequested,
+    NoneReceived,
+    Accepted,
+    Rejected
+}
+
 [Serializable]
-public class Substitute
+public class TripOption
 {
     [field: SerializeField] public TripType type { get; set; }
 
@@ -33,8 +41,6 @@ public class Substitute
     [field: SerializeField] public float timeCost { get; set; }
     [field: SerializeField] public float moneyCost { get; set; }
     [field: SerializeField] public float totalCost { get; set; }
-    [field: SerializeField] public float netValue { get; set; }
-    [field: SerializeField] public float netUtility { get; set; }
 }
 
 [Serializable]
@@ -42,16 +48,16 @@ public class PassengerEconomicParameters
 {
     // Base values
     [field: SerializeField] public float hourlyIncome { get; set; }
-    [field: SerializeField] public float tripUtilityScore { get; set; }
     [field: SerializeField] public float timePreference { get; set; }
 
-    // Derived values
     [field: SerializeField] public float waitingCostPerHour { get; set; }
-    [field: SerializeField] public float tripUtilityValue { get; set; }
 
-    [field: SerializeField] public Substitute bestSubstitute { get; set; }
+    public List<TripOption> substitutes { get; set; }
 
-    public List<Substitute> tripOptions { get; set; }
+    public TripOption GetBestSubstitute()
+    {
+        return substitutes.OrderByDescending(substitute => substitute.totalCost).Last();
+    }
 }
 
 
@@ -65,7 +71,11 @@ public class PassengerPerson
     public Trip trip { get; set; }
 
     public TripType tripTypeChosen { get; set; }
+
+    public TripOption uberTripOption { get; set; }
     public PassengerState state { get; set; }
+
+    public RideOfferStatus rideOfferStatus { get; set; }
 
     private Random random;
 
@@ -89,6 +99,7 @@ public class PassengerPerson
         destination = GridUtils.GetRandomPosition(random);
         distanceToDestination = GridUtils.GetDistance(startPosition, destination);
         economicParameters = GenerateEconomicParameters();
+        rideOfferStatus = RideOfferStatus.NotYetRequested;
     }
 
     public void SetState(PassengerState state)
@@ -99,63 +110,51 @@ public class PassengerPerson
     PassengerEconomicParameters GenerateEconomicParameters()
     {
         float hourlyIncome = simSettings.GetRandomHourlyIncome(random);
-        float tripUtilityScore = GenerateTripUtilityScore();
-        // TODO: Set a reasonable time preference based on empirical data. Passengers value their time on average 2.5x their hourly income, sqrt(tripUtilityScore) is on average around 1.7 so we multiply by a random variable that is normally distributed with mean 1.5 and std 0.5
-        float timePreference = Mathf.Sqrt(tripUtilityScore) * StatisticsUtils.GetRandomFromNormalDistribution(random, 1.5f, 0.5f, 0, 3f);
+        float timePreference = StatisticsUtils.GetRandomFromNormalDistribution(random, 1.5f, 0.5f, 0, 3f);
         float waitingCostPerHour = hourlyIncome * timePreference;
         // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
-        float tripUtilityValue = tripUtilityScore * hourlyIncome;
         // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
 
-        (Substitute bestSubstitute, List<Substitute> tripOptions) = GetBestSubstituteForRideOffer(waitingCostPerHour, tripUtilityValue, hourlyIncome);
+        List<TripOption> substitutes = GenerateSubstitutes(waitingCostPerHour, hourlyIncome);
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
-            tripUtilityScore = tripUtilityScore,
             timePreference = timePreference,
             waitingCostPerHour = waitingCostPerHour,
-            tripUtilityValue = tripUtilityValue,
-            bestSubstitute = bestSubstitute,
-            tripOptions = tripOptions
+            substitutes = substitutes
         };
 
         return passengerEconomicParameters;
     }
 
-    (Substitute bestSubstitute, List<Substitute> tripOptions) GetBestSubstituteForRideOffer(float waitingCostPerHour, float tripUtilityValue, float hourlyIncome)
+    List<TripOption> GenerateSubstitutes(float waitingCostPerHour, float hourlyIncome)
     {
         // Public transport
         float publicTransportTime = distanceToDestination / simSettings.publicTransportSpeed + Mathf.Lerp(20f / 60f, 2, (float)random.NextDouble());
         // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
         float publicTransportTimeCost = publicTransportTime * waitingCostPerHour;
         float publicTransportUtilityCost = publicTransportTimeCost + simSettings.publicTransportCost;
-        float netValueOfPublicTransport = tripUtilityValue - publicTransportUtilityCost;
-        Substitute publicTransportSubstitute = new Substitute()
+        TripOption publicTransportSubstitute = new TripOption()
         {
             type = TripType.PublicTransport,
             timeHours = publicTransportTime,
             timeCost = publicTransportTimeCost,
             moneyCost = simSettings.publicTransportCost,
             totalCost = publicTransportUtilityCost,
-            netValue = netValueOfPublicTransport,
-            netUtility = netValueOfPublicTransport / hourlyIncome
         };
 
         // Walking
         float walkingTime = distanceToDestination / simSettings.walkingSpeed;
         float timeCostOfWalking = walkingTime * waitingCostPerHour;
         float moneyCostOfWalking = 0;
-        float utilityCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
-        float netValueOfWalking = tripUtilityValue - utilityCostOfWalking;
-        Substitute walkingSubstitute = new Substitute()
+        float totalCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
+        TripOption walkingSubstitute = new TripOption()
         {
             type = TripType.Walking,
             timeHours = walkingTime,
             timeCost = timeCostOfWalking,
             moneyCost = moneyCostOfWalking,
-            totalCost = utilityCostOfWalking,
-            netValue = netValueOfWalking,
-            netUtility = netValueOfWalking / hourlyIncome
+            totalCost = totalCostOfWalking,
         };
 
         // // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
@@ -167,7 +166,7 @@ public class PassengerPerson
         // float rentalCarCost = simSettings.rentalCarCost + marginalCostEnRoute;
         // float rentalCarUtilityCost = rentalCarTimeCost + rentalCarCost;
         // float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
-        // Substitute rentalCarSubstitute = new Substitute()
+        // TripOption rentalCarSubstitute = new TripOption()
         // {
         //     type = TripType.RentalCar,
         //     timeHours = rentalCarTime,
@@ -179,35 +178,18 @@ public class PassengerPerson
         // };
 
         // Skip trip
-        Substitute skipTripSubstitute = new Substitute()
+        TripOption skipTripSubstitute = new TripOption()
         {
             type = TripType.SkipTrip,
             timeCost = 0,
             moneyCost = 0,
             totalCost = 0,
-            netValue = 0
         };
 
-        List<Substitute> tripOptions = new List<Substitute> { publicTransportSubstitute, walkingSubstitute };
+        List<TripOption> substitutes = new List<TripOption> { publicTransportSubstitute, walkingSubstitute, skipTripSubstitute };
 
-        Substitute bestSubstitute = tripOptions.OrderByDescending(substitute => substitute.netValue).First();
-
-
-        return (bestSubstitute, tripOptions);
+        return substitutes;
     }
 
 
-
-
-    float GenerateTripUtilityScore()
-    {
-        float tripDistanceUtilityModifier = Mathf.Sqrt(distanceToDestination);
-
-
-        float mu = 0;
-        float sigma = 0.4f;
-        float tripUtilityScore = tripDistanceUtilityModifier * StatisticsUtils.getRandomFromLogNormalDistribution(random, mu, sigma);
-        // Debug.Log("Passenger " + id + " trip utility score: " + tripUtilityScore + ", trip distance: " + tripDistance + ", trip distance utility modifier: " + tripDistanceUtilityModifier);
-        return 10;
-    }
 }

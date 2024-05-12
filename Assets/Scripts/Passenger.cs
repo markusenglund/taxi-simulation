@@ -37,8 +37,6 @@ public class Passenger : MonoBehaviour
     private PassengerSurplusGraph? passengerSurplusGraph;
 
 
-    public bool hasAcceptedRideOffer = false;
-
     private City city;
 
     private Transform parentTransform;
@@ -181,13 +179,12 @@ public class Passenger : MonoBehaviour
         if (rideOffer == null)
         {
             person.SetState(PassengerState.NoRideOffer);
-            person.tripTypeChosen = person.economicParameters.bestSubstitute.type;
-            hasAcceptedRideOffer = false;
+            person.tripTypeChosen = person.economicParameters.GetBestSubstitute().type;
+            person.rideOfferStatus = RideOfferStatus.NoneReceived;
             StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.NoRideOffer));
         }
         else
         {
-
             float tripCreatedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
 
@@ -209,44 +206,35 @@ public class Passenger : MonoBehaviour
 
             float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
 
-            float expectedNetValue = person.economicParameters.tripUtilityValue - totalCost;
-            float expectedNetUtility = expectedNetValue / person.economicParameters.hourlyIncome;
-            float expectedTripTimeDisutility = expectedTripTimeCost / person.economicParameters.hourlyIncome;
-            // 'expectedNetUtilityBeforeVariableCosts' represents the utility of the trip before the fare and waiting costs are taken into account - useful for comparing how much passengers of different income levels value getting a ride
-            float expectedNetUtilityBeforeVariableCosts = person.economicParameters.tripUtilityScore - expectedTripTimeDisutility - person.economicParameters.bestSubstitute.netUtility;
 
-
-            float expectedValueSurplus = expectedNetValue - person.economicParameters.bestSubstitute.netValue;
-            TripType tripTypeChosen = expectedValueSurplus > 0 ? TripType.Uber : person.economicParameters.bestSubstitute.type;
-            hasAcceptedRideOffer = tripTypeChosen == TripType.Uber;
 
             // Debug.Log("Passenger " + id + " - fare $: " + rideOffer.fare.total + ", waiting cost $: " + expectedWaitingCost + " for waiting " + rideOffer.expectedWaitingTime + " hours");
-            // Debug.Log("Passenger " + id + " Net expected utility $ from ride: " + expectedNetValue);
-            TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
-            {
-                hasAcceptedRideOffer = hasAcceptedRideOffer,
-                tripUtilityValue = person.economicParameters.tripUtilityValue,
-                expectedWaitingCost = expectedWaitingCost,
-                expectedTripTimeCost = expectedTripTimeCost,
-                expectedNetValue = expectedNetValue,
-                expectedNetUtility = expectedNetUtility,
-                expectedValueSurplus = expectedValueSurplus,
-                expectedNetUtilityBeforeVariableCosts = expectedNetUtilityBeforeVariableCosts
-            };
 
-            Substitute uberTripOption = new Substitute()
+
+            TripOption uberTripOption = new TripOption()
             {
                 type = TripType.Uber,
                 timeHours = rideOffer.expectedWaitingTime + rideOffer.expectedTripTime,
                 timeCost = expectedTripTimeCost + expectedWaitingCost,
                 moneyCost = rideOffer.fare.total,
                 totalCost = totalCost,
-                netValue = expectedNetValue,
-                netUtility = expectedNetUtility,
             };
-            person.economicParameters.tripOptions.Add(uberTripOption);
+            person.uberTripOption = uberTripOption;
+
+            TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
+            float expectedValueSurplus = bestSubstitute.totalCost - uberTripOption.totalCost;
+            TripType tripTypeChosen = expectedValueSurplus > 0 ? TripType.Uber : bestSubstitute.type;
+            bool hasAcceptedRideOffer = tripTypeChosen == TripType.Uber;
 
             person.tripTypeChosen = tripTypeChosen;
+
+
+            TripCreatedPassengerData tripCreatedPassengerData = new TripCreatedPassengerData()
+            {
+                expectedWaitingCost = expectedWaitingCost,
+                expectedTripTimeCost = expectedTripTimeCost,
+                expectedValueSurplus = expectedValueSurplus,
+            };
 
             if (utilityIncomeScatterPlot != null)
             {
@@ -254,12 +242,14 @@ public class Passenger : MonoBehaviour
             }
             if (hasAcceptedRideOffer)
             {
+                person.rideOfferStatus = RideOfferStatus.Accepted;
                 // Debug.Log("Passenger " + id + " is hailing a taxi");
                 person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
                 person.SetState(PassengerState.AssignedToTrip);
             }
             else
             {
+                person.rideOfferStatus = RideOfferStatus.Rejected;
                 // Debug.Log("Passenger " + id + " is giving up");
                 if (passengerSurplusGraph != null)
                 {
@@ -306,17 +296,14 @@ public class Passenger : MonoBehaviour
 
     public DroppedOffPassengerData HandlePassengerDroppedOff(DroppedOffData droppedOffData)
     {
+        TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
         float tripTimeCost = droppedOffData.timeSpentOnTrip * person.economicParameters.waitingCostPerHour;
-        float netValue = person.trip.tripCreatedPassengerData.tripUtilityValue - tripTimeCost - person.trip.pickedUpPassengerData.waitingCost - person.trip.tripCreatedData.fare.total;
-        float netUtility = netValue / person.economicParameters.hourlyIncome;
-        float valueSurplus = netValue - person.economicParameters.bestSubstitute.netValue;
+        float valueSurplus = netValue - bestSubstitute.netValue;
         float utilitySurplus = valueSurplus / person.economicParameters.hourlyIncome;
 
         DroppedOffPassengerData droppedOffPassengerData = new DroppedOffPassengerData()
         {
             tripTimeCost = tripTimeCost,
-            netValue = netValue,
-            netUtility = netUtility,
             valueSurplus = valueSurplus,
             utilitySurplus = utilitySurplus
         };

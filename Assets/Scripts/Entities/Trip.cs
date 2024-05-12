@@ -28,7 +28,6 @@ public class TripCreatedData
 
 public class TripCreatedPassengerData
 {
-    public bool hasAcceptedRideOffer { get; set; }
 
     public float tripUtilityValue { get; set; }
 
