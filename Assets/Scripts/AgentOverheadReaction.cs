@@ -69,6 +69,8 @@ public class AgentOverheadReaction : MonoBehaviour
         agentStatusTextComponent.text = text;
         agentStatusTextComponent.color = color;
         agentStatusTextComponent.durationBeforeFade = durationBeforeFade;
+        // Set sort order to 1
+        agentStatusTextComponent.GetComponent<Canvas>().sortingOrder = 1;
         // Set font style
         agentStatusTextComponent.isBold = isBold;
         return agentStatusTextComponent;

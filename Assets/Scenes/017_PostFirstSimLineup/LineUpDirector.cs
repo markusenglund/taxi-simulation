@@ -27,6 +27,8 @@ public class LineUpDirector : MonoBehaviour
     List<Vector3> incomeDistributionPositions = new List<Vector3>
     { };
 
+    Vector3 canvasPosition = new Vector3(4.5f, 0, -6);
+
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
@@ -44,7 +46,7 @@ public class LineUpDirector : MonoBehaviour
 
     void Start()
     {
-        Camera.main.transform.position = new Vector3(4.5f, 5f, -16f);
+        Camera.main.transform.position = new Vector3(-4.5f, 3f, -2f);
         Camera.main.transform.LookAt(cityMiddlePosition);
         StartCoroutine(Scene());
     }
@@ -53,9 +55,19 @@ public class LineUpDirector : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         Passenger[] passengers = city.SpawnSavedPassengers(1);
-        StartCoroutine(FadeInCanvas());
+        Vector3 cameraPosition = new Vector3(0f, 4, -12);
+        Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
         StartCoroutine(MovePassengersToLineUp(passengers));
         yield return new WaitForSeconds(3f);
+        Vector3 newCameraPosition = new Vector3(4.5f, 1, -10);
+        Quaternion newCameraRotation = Quaternion.LookRotation(canvasPosition - newCameraPosition, Vector3.up);
+        Camera.main.transform.position = newCameraPosition;
+        Camera.main.transform.rotation = newCameraRotation;
+        StartCoroutine(FadeInCanvas());
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(CameraUtils.RotateCameraAround(canvasPosition, Vector3.right, 45, 3, Ease.Cubic));
+        yield return new WaitForSeconds(1f);
         StartCoroutine(TriggerIdleVariations(passengers));
         yield return new WaitForSeconds(2f);
         StartCoroutine(ShowPassengerResults(passengers));
@@ -153,7 +165,7 @@ public class LineUpDirector : MonoBehaviour
             passenger.transform.rotation = Quaternion.Lerp(startRotation, finalRotation, t);
             yield return null;
         }
-        // passenger.transform.position = endPosition;
+        passenger.transform.position = endPosition;
     }
 
     private IEnumerator ShowPassengerResults(Passenger[] passengers)
@@ -212,14 +224,6 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
 
-        // Transform averageRejectedLineTransform = canvas.transform.Find("Graph/AverageRejectedLine");
-        // LineRenderer averageRejectedLine = averageRejectedLineTransform.GetComponent<LineRenderer>();
-
-        // float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
-        // averageRejectedLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
-        // averageRejectedLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
-        // averageRejectedLineTransform.gameObject.SetActive(true);
-
         float averageRejectedTimePreference = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
 
         yield return StartCoroutine(SpawnAverageLine(averageRejectedTimePreference, Color.red, -5.4f, new Vector3(0f, 0, 0.1f)));
@@ -232,20 +236,14 @@ public class LineUpDirector : MonoBehaviour
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
             string reaction = "📵";
             Color reactionColor = Color.red;
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: true, durationBeforeFade: 10f);
             yield return new WaitForSeconds(0.04f);
         }
 
 
-        // Transform averageNoOfferLineTransform = canvas.transform.Find("Graph/AverageNoOfferLine");
-        // LineRenderer averageNoOfferLine = averageNoOfferLineTransform.GetComponent<LineRenderer>();
-
         float averageNoOfferTimePreference = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
 
         yield return StartCoroutine(SpawnAverageLine(averageNoOfferTimePreference, Color.red, -5.3f, new Vector3(0f, 0, 0.1f)));
-        // averageNoOfferLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
-        // averageNoOfferLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
-        // averageNoOfferLineTransform.gameObject.SetActive(true);
 
 
         yield return null;
@@ -253,12 +251,77 @@ public class LineUpDirector : MonoBehaviour
 
     private IEnumerator ChangeGraphToIncome(Passenger[] passengers)
     {
+        Transform mainLabel = canvas.transform.Find("Graph/Label");
+
+        StartCoroutine(ChangeLabel(mainLabel, "Hourly Income"));
+        for (int i = 0; i < 7; i++)
+        {
+            Transform label = canvas.transform.Find($"Graph/AxisValue{i}");
+            StartCoroutine(ChangeLabel(label, $"${i * 20}"));
+        }
         foreach (Passenger passenger in passengers)
         {
             StartCoroutine(MovePassengerToIncomeDistribution(passenger));
             // yield return new WaitForSeconds(0.01f);
         }
         yield return null;
+    }
+
+    private IEnumerator ChangeGraphLabelsToIncome()
+    {
+        Transform label = canvas.transform.Find("Graph/Label");
+        TMP_Text labelTMP = label.GetComponent<TMP_Text>();
+        // Shrink the label to nothing
+        float duration = 0.5f;
+        Vector3 startScale = labelTMP.transform.localScale;
+        Vector3 endScale = Vector3.zero;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scale = EaseUtils.EaseInOutQuadratic(t);
+            labelTMP.transform.localScale = Vector3.Lerp(startScale, endScale, scale);
+            yield return null;
+        }
+
+        labelTMP.text = "Hourly Income";
+        // Grow it back
+        startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scale = EaseUtils.EaseInOutQuadratic(t);
+            labelTMP.transform.localScale = Vector3.Lerp(endScale, startScale, scale);
+            yield return null;
+        }
+    }
+
+    private IEnumerator ChangeLabel(Transform label, string text)
+    {
+        TMP_Text labelTMP = label.GetComponent<TMP_Text>();
+        // Shrink the label to nothing
+        float duration = 0.5f;
+        Vector3 startScale = labelTMP.transform.localScale;
+        Vector3 endScale = Vector3.zero;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scale = EaseUtils.EaseInOutQuadratic(t);
+            labelTMP.transform.localScale = Vector3.Lerp(startScale, endScale, scale);
+            yield return null;
+        }
+
+        labelTMP.text = text;
+        // Grow it back
+        startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scale = EaseUtils.EaseInOutQuadratic(t);
+            labelTMP.transform.localScale = Vector3.Lerp(endScale, startScale, scale);
+            yield return null;
+        }
     }
 
     private IEnumerator MovePassengerToIncomeDistribution(Passenger passenger)
