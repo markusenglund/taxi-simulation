@@ -4,6 +4,7 @@ using UnityEngine;
 using Random = System.Random;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 
 
 public class LineUpDirector : MonoBehaviour
@@ -197,42 +198,8 @@ public class LineUpDirector : MonoBehaviour
             AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
             yield return new WaitForSeconds(0.04f);
         }
-
-        Transform averageUberLineTransform = canvas.transform.Find("Graph/AverageUberLine");
-        Transform averageUberDotTransform = canvas.transform.Find("Graph/AverageDot");
-        LineRenderer averageUberLine = averageUberLineTransform.GetComponent<LineRenderer>();
-        LineRenderer averageUberDot = averageUberDotTransform.GetComponent<LineRenderer>();
-        Transform averageUberTextTransform = canvas.transform.Find("Graph/AverageLabel");
-        // Get the TMPro text component and set its text to the average time preference
-        TMP_Text averageUberText = averageUberTextTransform.GetComponent<TMP_Text>();
-
-        float averageUberTimePreference = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
-        averageUberLineTransform.gameObject.SetActive(true);
-        averageUberDotTransform.gameObject.SetActive(true);
-        averageUberTextTransform.gameObject.SetActive(true);
-        averageUberText.text = $"Avg: {averageUberTimePreference:F2}";
-        float lineDuration = 1f;
-        float startTime = Time.time;
-        while (Time.time < startTime + lineDuration)
-        {
-            float t = (Time.time - startTime) / lineDuration;
-            float positionFactor = EaseUtils.EaseInOutQuadratic(t);
-            float linePosition = ConvertTimePreferenceToLinePosition(Mathf.Lerp(0, averageUberTimePreference, positionFactor));
-            averageUberLine.SetPosition(0, new Vector3(linePosition, 0.01f, -6.8f));
-            averageUberLine.SetPosition(1, new Vector3(linePosition, 0.01f, -5.4f));
-            averageUberDot.SetPosition(0, new Vector3(linePosition, 0.01f, -5.4f));
-            averageUberDot.SetPosition(1, new Vector3(linePosition, 0.01f, -5.401f));
-            averageUberTextTransform.position = new Vector3(linePosition, 0.01f, -5.2f);
-            // Set the alpha of the average uber text
-            averageUberText.color = new Color(1, 1, 1, EaseUtils.EaseInCubic(t));
-            float alpha = EaseUtils.EaseInCubic(t);
-            Color lineRendererColor = new Color(0, 1, 0, alpha);
-            averageUberLine.startColor = lineRendererColor;
-            averageUberLine.endColor = lineRendererColor;
-            averageUberDot.startColor = lineRendererColor;
-            averageUberDot.endColor = lineRendererColor;
-            yield return null;
-        }
+        float averageUberTimePreference = passengers.Average(p => p.person.economicParameters.timePreference);
+        yield return StartCoroutine(SpawnAverageLine(averageUberTimePreference, Color.green, -5.5f, new Vector3(0.2f, 0, 0)));
 
         yield return new WaitForSeconds(2f);
 
@@ -245,13 +212,17 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
 
-        Transform averageRejectedLineTransform = canvas.transform.Find("Graph/AverageRejectedLine");
-        LineRenderer averageRejectedLine = averageRejectedLineTransform.GetComponent<LineRenderer>();
+        // Transform averageRejectedLineTransform = canvas.transform.Find("Graph/AverageRejectedLine");
+        // LineRenderer averageRejectedLine = averageRejectedLineTransform.GetComponent<LineRenderer>();
 
-        float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
-        averageRejectedLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
-        averageRejectedLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
-        averageRejectedLineTransform.gameObject.SetActive(true);
+        // float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
+        // averageRejectedLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
+        // averageRejectedLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
+        // averageRejectedLineTransform.gameObject.SetActive(true);
+
+        float averageRejectedTimePreference = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
+
+        yield return StartCoroutine(SpawnAverageLine(averageRejectedTimePreference, Color.red, -5.4f, new Vector3(0f, 0, 0.1f)));
 
         yield return new WaitForSeconds(2f);
 
@@ -266,13 +237,15 @@ public class LineUpDirector : MonoBehaviour
         }
 
 
-        Transform averageNoOfferLineTransform = canvas.transform.Find("Graph/AverageNoOfferLine");
-        LineRenderer averageNoOfferLine = averageNoOfferLineTransform.GetComponent<LineRenderer>();
+        // Transform averageNoOfferLineTransform = canvas.transform.Find("Graph/AverageNoOfferLine");
+        // LineRenderer averageNoOfferLine = averageNoOfferLineTransform.GetComponent<LineRenderer>();
 
-        float averageNoOfferUtilityScore = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
-        averageNoOfferLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
-        averageNoOfferLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
-        averageNoOfferLineTransform.gameObject.SetActive(true);
+        float averageNoOfferTimePreference = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
+
+        yield return StartCoroutine(SpawnAverageLine(averageNoOfferTimePreference, Color.red, -5.3f, new Vector3(0f, 0, 0.1f)));
+        // averageNoOfferLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
+        // averageNoOfferLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
+        // averageNoOfferLineTransform.gameObject.SetActive(true);
 
 
         yield return null;
@@ -319,6 +292,50 @@ public class LineUpDirector : MonoBehaviour
             yield return null;
         }
         passenger.transform.position = endPosition;
+    }
+
+    IEnumerator SpawnAverageLine(float averageValue, Color lineColor, float topPosition, Vector3 labelOffset)
+    {
+        Transform averageLineTransform = canvas.transform.Find("Graph/AverageLine");
+        // Create a clone of the averageUberLine, CLONE PLEASE or copy or whatever you call it
+        Transform averageLineTransformClone = Instantiate(averageLineTransform, canvas.transform);
+
+        Transform averageDotTransform = canvas.transform.Find("Graph/AverageDot");
+        Transform averageDotTransformClone = Instantiate(averageDotTransform, canvas.transform);
+
+        LineRenderer averageUberLine = averageLineTransformClone.GetComponent<LineRenderer>();
+        LineRenderer averageUberDot = averageDotTransformClone.GetComponent<LineRenderer>();
+        Transform averageLabelTransform = canvas.transform.Find("Graph/AverageLabel");
+        Transform averageLabelTransformClone = Instantiate(averageLabelTransform, canvas.transform);
+        // Get the TMPro text component and set its text to the average time preference
+        TMP_Text averageUberText = averageLabelTransformClone.GetComponent<TMP_Text>();
+
+        averageLineTransformClone.gameObject.SetActive(true);
+        averageDotTransformClone.gameObject.SetActive(true);
+        averageLabelTransformClone.gameObject.SetActive(true);
+        averageUberText.text = $"{averageValue:F2}";
+        float lineDuration = 1f;
+        float startTime = Time.time;
+        while (Time.time < startTime + lineDuration)
+        {
+            float t = (Time.time - startTime) / lineDuration;
+            float positionFactor = EaseUtils.EaseInOutQuadratic(t);
+            float linePosition = ConvertTimePreferenceToLinePosition(Mathf.Lerp(0, averageValue, positionFactor));
+            averageUberLine.SetPosition(0, new Vector3(linePosition, 0.01f, -6.8f));
+            averageUberLine.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
+            averageUberDot.SetPosition(0, new Vector3(linePosition, 0.01f, topPosition));
+            averageUberDot.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
+            averageLabelTransformClone.position = new Vector3(linePosition, 0.02f, topPosition) + labelOffset;
+            // Set the alpha of the average uber text
+            averageUberText.color = new Color(1, 1, 1, EaseUtils.EaseInCubic(t));
+            float alpha = EaseUtils.EaseInCubic(t);
+            Color lineRendererColor = new Color(lineColor.r, lineColor.g, lineColor.b, alpha);
+            averageUberLine.startColor = lineRendererColor;
+            averageUberLine.endColor = lineRendererColor;
+            averageUberDot.startColor = lineRendererColor;
+            averageUberDot.endColor = lineRendererColor;
+            yield return null;
+        }
     }
 
     private float ConvertHourlyIncomeToLinePosition(float hourlyIncome)
