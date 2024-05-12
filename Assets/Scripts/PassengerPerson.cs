@@ -157,26 +157,6 @@ public class PassengerPerson
             totalCost = totalCostOfWalking,
         };
 
-        // // Private vehicle - the idea here is that if a taxi ride going to cost you more than 100$, you're gonna find a way to have your own vehicle
-        // float rentalCarWaitingTime = 5 / 60f;
-        // float rentalCarTime = distanceToDestination / simSettings.driverSpeed + rentalCarWaitingTime;
-        // // Add a 5 minute waiting cost for getting into the car
-        // float rentalCarTimeCost = rentalCarTime * waitingCostPerHour;
-        // float marginalCostEnRoute = distanceToDestination * simSettings.driverMarginalCostPerKm;
-        // float rentalCarCost = simSettings.rentalCarCost + marginalCostEnRoute;
-        // float rentalCarUtilityCost = rentalCarTimeCost + rentalCarCost;
-        // float netValueOfRentalCar = tripUtilityValue - rentalCarUtilityCost;
-        // TripOption rentalCarSubstitute = new TripOption()
-        // {
-        //     type = TripType.RentalCar,
-        //     timeHours = rentalCarTime,
-        //     timeCost = rentalCarTimeCost,
-        //     moneyCost = rentalCarCost,
-        //     totalCost = rentalCarUtilityCost,
-        //     netValue = netValueOfRentalCar,
-        //     netUtility = netValueOfRentalCar / hourlyIncome
-        // };
-
         // Skip trip
         TripOption skipTripSubstitute = new TripOption()
         {

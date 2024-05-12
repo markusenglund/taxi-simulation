@@ -29,19 +29,13 @@ public class TripCreatedData
 public class TripCreatedPassengerData
 {
 
-    public float tripUtilityValue { get; set; }
-
     public float expectedWaitingCost { get; set; }
 
     public float expectedTripTimeCost { get; set; }
 
-    public float expectedNetValue { get; set; }
-
-    public float expectedNetUtility { get; set; }
-
     public float expectedValueSurplus { get; set; }
 
-    public float expectedNetUtilityBeforeVariableCosts { get; set; }
+    public float expectedUtilitySurplus { get; set; }
 }
 
 public class DriverAssignedData
@@ -82,6 +76,7 @@ public class PickedUpDriverData
 
 public class DroppedOffData
 {
+    public float totalTime { get; set; }
     public float droppedOffTime { get; set; }
     public float timeSpentOnTrip { get; set; }
 
@@ -90,10 +85,10 @@ public class DroppedOffData
 public class DroppedOffPassengerData
 {
     public float tripTimeCost { get; set; }
-    public float netValue { get; set; }
-    public float netUtility { get; set; }
     public float valueSurplus { get; set; }
     public float utilitySurplus { get; set; }
+    public float totalTimeCost { get; set; }
+    public float totalCost { get; set; }
 
 }
 

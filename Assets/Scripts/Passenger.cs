@@ -200,9 +200,10 @@ public class Passenger : MonoBehaviour
                 fare = rideOffer.fare,
                 expectedPickupTime = expectedPickupTime
             };
-
+            float expectedTotalTime = rideOffer.expectedWaitingTime + rideOffer.expectedTripTime;
             float expectedWaitingCost = rideOffer.expectedWaitingTime * person.economicParameters.waitingCostPerHour;
             float expectedTripTimeCost = rideOffer.expectedTripTime * person.economicParameters.waitingCostPerHour;
+            float expectedTotalTimeCost = expectedWaitingCost + expectedTripTimeCost;
 
             float totalCost = expectedWaitingCost + expectedTripTimeCost + rideOffer.fare.total;
 
@@ -214,8 +215,8 @@ public class Passenger : MonoBehaviour
             TripOption uberTripOption = new TripOption()
             {
                 type = TripType.Uber,
-                timeHours = rideOffer.expectedWaitingTime + rideOffer.expectedTripTime,
-                timeCost = expectedTripTimeCost + expectedWaitingCost,
+                timeHours = expectedTotalTime,
+                timeCost = expectedTotalTimeCost,
                 moneyCost = rideOffer.fare.total,
                 totalCost = totalCost,
             };
@@ -223,6 +224,7 @@ public class Passenger : MonoBehaviour
 
             TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
             float expectedValueSurplus = bestSubstitute.totalCost - uberTripOption.totalCost;
+            float expectedUtilitySurplus = expectedValueSurplus / person.economicParameters.hourlyIncome;
             TripType tripTypeChosen = expectedValueSurplus > 0 ? TripType.Uber : bestSubstitute.type;
             bool hasAcceptedRideOffer = tripTypeChosen == TripType.Uber;
 
@@ -234,6 +236,7 @@ public class Passenger : MonoBehaviour
                 expectedWaitingCost = expectedWaitingCost,
                 expectedTripTimeCost = expectedTripTimeCost,
                 expectedValueSurplus = expectedValueSurplus,
+                expectedUtilitySurplus = expectedUtilitySurplus,
             };
 
             if (utilityIncomeScatterPlot != null)
@@ -273,13 +276,8 @@ public class Passenger : MonoBehaviour
     public PickedUpPassengerData HandlePassengerPickedUp(PickedUpData pickedUpData)
     {
         float waitingCost = pickedUpData.waitingTime * person.economicParameters.waitingCostPerHour;
-        float valueSurplus = person.trip.tripCreatedPassengerData.tripUtilityValue - waitingCost - person.trip.tripCreatedData.fare.total;
 
-        float utilitySurplus = valueSurplus / person.economicParameters.hourlyIncome;
         // Debug.Log($"Passenger {id} was picked up at {TimeUtils.ConvertSimulationHoursToTimeString(pickedUpData.pickedUpTime)}, expected pickup time was {TimeUtils.ConvertSimulationHoursToTimeString(person.trip.tripCreatedData.expectedPickupTime)}, difference is {(pickedUpData.pickedUpTime - person.trip.tripCreatedData.expectedPickupTime) * 60f} minutes");
-
-        // Debug.Log($"Surplus gained by passenger {id} is {utilitySurplus}");
-
         PickedUpPassengerData pickedUpPassengerData = new PickedUpPassengerData()
         {
             waitingCost = waitingCost,
@@ -298,12 +296,16 @@ public class Passenger : MonoBehaviour
     {
         TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
         float tripTimeCost = droppedOffData.timeSpentOnTrip * person.economicParameters.waitingCostPerHour;
-        float valueSurplus = netValue - bestSubstitute.netValue;
+        float totalTimeCost = droppedOffData.totalTime * person.economicParameters.waitingCostPerHour;
+        float totalCost = totalTimeCost + person.trip.tripCreatedData.fare.total;
+        float valueSurplus = bestSubstitute.totalCost - totalCost;
         float utilitySurplus = valueSurplus / person.economicParameters.hourlyIncome;
 
         DroppedOffPassengerData droppedOffPassengerData = new DroppedOffPassengerData()
         {
             tripTimeCost = tripTimeCost,
+            totalTimeCost = totalTimeCost,
+            totalCost = totalCost,
             valueSurplus = valueSurplus,
             utilitySurplus = utilitySurplus
         };

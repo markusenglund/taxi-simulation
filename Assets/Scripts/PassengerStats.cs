@@ -158,8 +158,8 @@ public class PassengerStats : MonoBehaviour
             string uberTotalCost = $"${uber.totalCost.ToString("F2")}";
             TextMeshProUGUI uberTotalCostText = uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
             uberTotalCostText.text = uberTotalCost;
-            Color netValueUberColor = Color.white;
-            uberTotalCostText.color = netValueUberColor;
+            Color totalCostUberColor = Color.white;
+            uberTotalCostText.color = totalCostUberColor;
         }
         else
         {
