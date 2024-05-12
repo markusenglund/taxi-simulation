@@ -20,7 +20,7 @@ MonoBehaviour:
   driverSpeed: 20
   walkingSpeed: 3.5
   publicTransportSpeed: 25
-  privateVehicleCost: 1000
+  publicTransportCost: 2.5
   baseStartingFare: 4
   baseFarePerKm: 1.5
   driverFareCutPercentage: 0.67
@@ -28,7 +28,7 @@ MonoBehaviour:
   numDrivers: 0
   maxSessionLength: 4
   passengerMedianIncome: 20
-  passengerIncomeSigma: 0.9
+  passengerIncomeSigma: 0.85
   demandIndexMultiplier: 5
   expectedPassengersByHour:
   - 10
@@ -37,3 +37,4 @@ MonoBehaviour:
   - 35
   - 37
   - 0
+  showDriverEarnings: 1
