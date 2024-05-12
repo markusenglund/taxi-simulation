@@ -108,10 +108,10 @@ public class PassengerPerson
     PassengerEconomicParameters GenerateEconomicParameters()
     {
         float hourlyIncome = simSettings.GetRandomHourlyIncome(random);
-        float timePreference = StatisticsUtils.GetRandomFromNormalDistribution(random, 1.5f, 0.5f, 0, 3f);
+        float timePreferenceSigma = 0.5f;
+        float timePreferenceMedian = 2f;
+        float timePreference = timePreferenceMedian * StatisticsUtils.getRandomFromLogNormalDistribution(random, 0, timePreferenceSigma);
         float waitingCostPerHour = hourlyIncome * timePreference;
-        // Practically speaking tripUtilityValue will be on average 2x the hourly income (20$) which is 40$ (will have to refined later to be more realistic)
-        // Debug.Log("Passenger " + id + " time preference: " + timePreference + ", waiting cost per hour: " + waitingCostPerHour + ", trip utility value: " + tripUtilityValue);
 
         List<TripOption> substitutes = GenerateSubstitutes(waitingCostPerHour, hourlyIncome);
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
