@@ -252,14 +252,14 @@ public class City : MonoBehaviour
         }
     }
 
-    public Passenger[] SpawnSavedPassengers()
+    public Passenger[] SpawnSavedPassengers(float scaleFactor)
     {
         PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simulationSettings.randomSeed + "_016");
         Debug.Log(savedPersons.Length);
 
         foreach (PassengerPerson person in savedPersons)
         {
-            Passenger passenger = Passenger.Create(person, passengerPrefab, transform, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, city: this, PassengerMode.Inactive);
+            Passenger passenger = Passenger.Create(person, passengerPrefab, transform, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, city: this, PassengerMode.Inactive, 1, scaleFactor);
             passengers.Add(passenger);
         }
 

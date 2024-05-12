@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 using System.Linq;
+using TMPro;
 
 
 public class LineUpDirector : MonoBehaviour
@@ -50,7 +51,7 @@ public class LineUpDirector : MonoBehaviour
     IEnumerator Scene()
     {
         yield return new WaitForSeconds(0.5f);
-        Passenger[] passengers = city.SpawnSavedPassengers();
+        Passenger[] passengers = city.SpawnSavedPassengers(1);
         StartCoroutine(FadeInCanvas());
         StartCoroutine(MovePassengersToLineUp(passengers));
         yield return new WaitForSeconds(3f);
@@ -118,7 +119,7 @@ public class LineUpDirector : MonoBehaviour
     {
         Animator passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 startPosition = passenger.transform.position;
-        float linePosition = ConvertUtilityScoreToLinePosition(passenger.person.economicParameters.timePreference);
+        float linePosition = ConvertTimePreferenceToLinePosition(passenger.person.economicParameters.timePreference);
         Vector3 endPosition = new Vector3(linePosition, 0, -6.7f);
         // Check if there's a lineUpPosition within 0.3f of the endPosition
         bool isEndPositionFree = false;
@@ -127,9 +128,9 @@ public class LineUpDirector : MonoBehaviour
             isEndPositionFree = true;
             foreach (Vector3 existingLineUpPosition in lineUpPositions)
             {
-                if (Vector3.Distance(existingLineUpPosition, endPosition) < 0.35f)
+                if (Vector3.Distance(existingLineUpPosition, endPosition) < 0.35f / 4f)
                 {
-                    endPosition = endPosition + new Vector3(0, 0, 0.2f);
+                    endPosition = endPosition + new Vector3(0, 0, 0.05f);
                     isEndPositionFree = false;
                 }
             }
@@ -198,12 +199,41 @@ public class LineUpDirector : MonoBehaviour
         }
 
         Transform averageUberLineTransform = canvas.transform.Find("Graph/AverageUberLine");
+        Transform averageUberDotTransform = canvas.transform.Find("Graph/AverageDot");
         LineRenderer averageUberLine = averageUberLineTransform.GetComponent<LineRenderer>();
+        LineRenderer averageUberDot = averageUberDotTransform.GetComponent<LineRenderer>();
+        Transform averageUberTextTransform = canvas.transform.Find("Graph/AverageLabel");
+        // Get the TMPro text component and set its text to the average time preference
+        TMP_Text averageUberText = averageUberTextTransform.GetComponent<TMP_Text>();
 
-        float averageUberUtilityScore = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
-        averageUberLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageUberUtilityScore), 0.01f, -7.5f));
-        averageUberLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageUberUtilityScore), 0.01f, -2.5f));
+        float averageUberTimePreference = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
         averageUberLineTransform.gameObject.SetActive(true);
+        averageUberDotTransform.gameObject.SetActive(true);
+        averageUberTextTransform.gameObject.SetActive(true);
+        averageUberText.text = $"Avg: {averageUberTimePreference:F2}";
+        float lineDuration = 1f;
+        float startTime = Time.time;
+        while (Time.time < startTime + lineDuration)
+        {
+            float t = (Time.time - startTime) / lineDuration;
+            float positionFactor = EaseUtils.EaseInOutQuadratic(t);
+            float linePosition = ConvertTimePreferenceToLinePosition(Mathf.Lerp(0, averageUberTimePreference, positionFactor));
+            averageUberLine.SetPosition(0, new Vector3(linePosition, 0.01f, -6.8f));
+            averageUberLine.SetPosition(1, new Vector3(linePosition, 0.01f, -5.4f));
+            averageUberDot.SetPosition(0, new Vector3(linePosition, 0.01f, -5.4f));
+            averageUberDot.SetPosition(1, new Vector3(linePosition, 0.01f, -5.401f));
+            averageUberTextTransform.position = new Vector3(linePosition, 0.01f, -5.2f);
+            // Set the alpha of the average uber text
+            averageUberText.color = new Color(1, 1, 1, EaseUtils.EaseInCubic(t));
+            float alpha = EaseUtils.EaseInCubic(t);
+            Color lineRendererColor = new Color(0, 1, 0, alpha);
+            averageUberLine.startColor = lineRendererColor;
+            averageUberLine.endColor = lineRendererColor;
+            averageUberDot.startColor = lineRendererColor;
+            averageUberDot.endColor = lineRendererColor;
+            yield return null;
+        }
+
         yield return new WaitForSeconds(2f);
 
         foreach (Passenger passenger in passengersWhoRejectedRideOffer)
@@ -219,8 +249,8 @@ public class LineUpDirector : MonoBehaviour
         LineRenderer averageRejectedLine = averageRejectedLineTransform.GetComponent<LineRenderer>();
 
         float averageRejectedUtilityScore = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
-        averageRejectedLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
-        averageRejectedLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
+        averageRejectedLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -7.5f));
+        averageRejectedLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageRejectedUtilityScore), 0.01f, -2.5f));
         averageRejectedLineTransform.gameObject.SetActive(true);
 
         yield return new WaitForSeconds(2f);
@@ -240,8 +270,8 @@ public class LineUpDirector : MonoBehaviour
         LineRenderer averageNoOfferLine = averageNoOfferLineTransform.GetComponent<LineRenderer>();
 
         float averageNoOfferUtilityScore = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
-        averageNoOfferLine.SetPosition(0, new Vector3(ConvertUtilityScoreToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
-        averageNoOfferLine.SetPosition(1, new Vector3(ConvertUtilityScoreToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
+        averageNoOfferLine.SetPosition(0, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -7.5f));
+        averageNoOfferLine.SetPosition(1, new Vector3(ConvertTimePreferenceToLinePosition(averageNoOfferUtilityScore), 0.01f, -2.5f));
         averageNoOfferLineTransform.gameObject.SetActive(true);
 
 
@@ -271,9 +301,9 @@ public class LineUpDirector : MonoBehaviour
             isEndPositionFree = true;
             foreach (Vector3 existingIncomeDistributionPosition in incomeDistributionPositions)
             {
-                if (Vector3.Distance(existingIncomeDistributionPosition, endPosition) < 0.35f)
+                if (Vector3.Distance(existingIncomeDistributionPosition, endPosition) < (0.35f / 4f))
                 {
-                    endPosition = endPosition + new Vector3(0, 0, 0.2f);
+                    endPosition = endPosition + new Vector3(0, 0, 0.2f / 4f);
                     isEndPositionFree = false;
                 }
             }
@@ -293,17 +323,17 @@ public class LineUpDirector : MonoBehaviour
 
     private float ConvertHourlyIncomeToLinePosition(float hourlyIncome)
     {
-        float linePositionStart = -5f;
-        float linePositionStep = 3 / 20f;
+        float linePositionStart = 2f;
+        float linePositionStep = 3 / 80f;
         return hourlyIncome * linePositionStep + linePositionStart;
     }
 
 
-    private float ConvertUtilityScoreToLinePosition(float utilityScore)
+    private float ConvertTimePreferenceToLinePosition(float timePreference)
     {
-        float linePositionStart = -5f;
-        float linePositionStep = 3f;
-        return utilityScore * linePositionStep + linePositionStart;
+        float linePositionStart = 2f;
+        float linePositionStep = 3 / 4f;
+        return timePreference * linePositionStep + linePositionStart;
     }
 
 }
