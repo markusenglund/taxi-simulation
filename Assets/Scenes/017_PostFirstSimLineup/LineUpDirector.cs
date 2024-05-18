@@ -94,19 +94,13 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(1f);
         StartCoroutine(TriggerIdleVariations(passengers));
         yield return new WaitForSeconds(2f);
-        StartCoroutine(ShowPassengerResults(passengers));
-        yield return new WaitForSeconds(2f);
-        // StartCoroutine(FadeInLegend());
-        yield return new WaitForSeconds(15f);
+        yield return StartCoroutine(ShowPassengerResults(passengers));
+        // yield return new WaitForSeconds(18f);
         StartCoroutine(ChangeGraphToIncome(passengers));
-        yield return new WaitForSeconds(3f);
         Vector3 currentCameraPosition = Camera.main.transform.position;
-        StartCoroutine(CameraUtils.MoveCamera(currentCameraPosition + new Vector3(1.5f, 2, -1), 0.5f, Ease.Cubic));
+        StartCoroutine(CameraUtils.MoveCamera(currentCameraPosition + new Vector3(1.5f, 1.5f, -1), 0.5f, Ease.Cubic));
+        yield return new WaitForSeconds(12f);
         StartCoroutine(ChangeGraphToBestSubstitute(passengers));
-        yield return new WaitForSeconds(3f);
-        StartCoroutine(ChangeGraphToSubstitutePriceDividedByIncome(passengers));
-        yield return new WaitForSeconds(3f);
-        StartCoroutine(ChangeGraphToDistance(passengers));
     }
 
     IEnumerator FadeInCanvas()
@@ -257,7 +251,7 @@ public class LineUpDirector : MonoBehaviour
         foreach (Passenger passenger in passengersWhoGotAnUber)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, uberReactionEmoji, uberColor, isBold: false, durationBeforeFade: 30f);
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, uberReactionEmoji, uberColor, isBold: false, durationBeforeFade: 50f);
             yield return new WaitForSeconds(0.04f);
         }
         // float averageUberTimePreference = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
@@ -278,7 +272,7 @@ public class LineUpDirector : MonoBehaviour
         foreach (Passenger passenger in passengersWhoRejectedRideOffer)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, rejectedReactionEmoji, rejectedColor, isBold: false, durationBeforeFade: 30f);
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, rejectedReactionEmoji, rejectedColor, isBold: false, durationBeforeFade: 50f);
             yield return new WaitForSeconds(0.05f);
         }
 
@@ -289,14 +283,14 @@ public class LineUpDirector : MonoBehaviour
         rejectedAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
         yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, medianRejectedTimePreference, rejectedColor, -4.5f, new Vector3(-0.2f, 0, 0f), rejectedReactionEmoji));
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(8f);
 
         StartCoroutine(FadeInLegend("Legend/NoOfferLegend"));
         string noOfferReactionEmoji = "📵";
         foreach (Passenger passenger in passengersWhoDidNotReceiveRideOffer)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, noOfferReactionEmoji, noOfferColor, isBold: true, durationBeforeFade: 30f);
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, noOfferReactionEmoji, noOfferColor, isBold: true, durationBeforeFade: 7);
             yield return null;
         }
 
@@ -308,8 +302,9 @@ public class LineUpDirector : MonoBehaviour
         noOfferAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
 
         yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, medianNoOfferTimePreference, noOfferColor, -4.46f, new Vector3(0f, 0, 0.1f), noOfferReactionEmoji));
-
-
+        yield return new WaitForSeconds(7f);
+        StartCoroutine(FadeOutAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform));
+        yield return new WaitForSeconds(3f);
         yield return null;
     }
 
@@ -327,7 +322,7 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToBestSubstitute(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
-        StartCoroutine(ChangeGraphAxis(passengers, "Max acceptable total cost", selectPassengerValue, stepSize: 80f, "$"));
+        StartCoroutine(ChangeGraphAxis(passengers, "Best substitute total cost", selectPassengerValue, stepSize: 80f, "$"));
         yield return null;
     }
 
@@ -374,10 +369,6 @@ public class LineUpDirector : MonoBehaviour
         string rejectedAverageNewText = $"{axisLabelPrefix}{rejectedMedianValue:F2}";
         StartCoroutine(ChangeLabel(rejectedAverageLabelTransform, rejectedAverageNewText));
 
-        // Set the average line label of no offer to the average of the hourly income
-        TMP_Text noOfferAverageTmp = noOfferAverageLabelTransform.GetComponent<TMP_Text>();
-        string noOfferAverageNewText = $"{axisLabelPrefix}{noOfferMedianValue:F2}";
-        StartCoroutine(ChangeLabel(noOfferAverageLabelTransform, noOfferAverageNewText));
 
         List<Vector3> passengerPositions = new List<Vector3> { };
         foreach (Passenger passenger in passengers)
@@ -391,6 +382,31 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(MoveAverageLineToNewDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedMedianValue, new Vector3(-0.3f, 0, 0), stepSize));
         StartCoroutine(MoveAverageLineToNewDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferMedianValue, new Vector3(0, 0, 0.1f), stepSize));
         yield return null;
+    }
+
+    private IEnumerator FadeOutAverageLine(Transform lineTransform, Transform dotTransform, Transform labelTransform)
+    {
+        LineRenderer averageLine = lineTransform.GetComponent<LineRenderer>();
+        LineRenderer averageDot = dotTransform.GetComponent<LineRenderer>();
+        CanvasGroup labelCanvasGroup = labelTransform.GetComponent<CanvasGroup>();
+
+        float duration = 1f;
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float alpha = 1 - EaseUtils.EaseInCubic(t);
+            labelCanvasGroup.alpha = alpha;
+            Color lineRendererColor = new Color(averageLine.startColor.r, averageLine.startColor.g, averageLine.startColor.b, alpha);
+            averageLine.startColor = lineRendererColor;
+            averageLine.endColor = lineRendererColor;
+            averageDot.startColor = lineRendererColor;
+            averageDot.endColor = lineRendererColor;
+            yield return null;
+        }
+        lineTransform.gameObject.SetActive(false);
+        dotTransform.gameObject.SetActive(false);
+        labelTransform.gameObject.SetActive(false);
     }
 
 
