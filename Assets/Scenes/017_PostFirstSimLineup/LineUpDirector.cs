@@ -49,6 +49,10 @@ public class LineUpDirector : MonoBehaviour
     List<Passenger> passengersWhoRejectedRideOffer = new List<Passenger>();
     List<Passenger> passengersWhoDidNotReceiveRideOffer = new List<Passenger>();
 
+    Color uberColor = ColorScheme.blue;
+    Color rejectedColor = ColorScheme.purple;
+    Color noOfferColor = ColorScheme.red;
+
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
@@ -227,10 +231,9 @@ public class LineUpDirector : MonoBehaviour
 
         foreach (Passenger passenger in passengersWhoGotAnUber)
         {
-            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
-            string reaction = "✅";
-            Color reactionColor = Color.green;
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
+            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
+            string reaction = "✔️";
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, uberColor, isBold: false, durationBeforeFade: 30f);
             yield return new WaitForSeconds(0.04f);
         }
         // float averageUberTimePreference = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
@@ -242,16 +245,15 @@ public class LineUpDirector : MonoBehaviour
         uberAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         uberAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         uberAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
-        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, medianUberTimePreference, Color.green, -4.9f, new Vector3(0.2f, 0, 0)));
+        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, medianUberTimePreference, uberColor, -4.5f, new Vector3(0.2f, 0, 0)));
 
         yield return new WaitForSeconds(2f);
 
         foreach (Passenger passenger in passengersWhoRejectedRideOffer)
         {
-            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
-            string reaction = "❎";
-            Color reactionColor = Color.red;
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
+            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
+            string reaction = "✖️";
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, rejectedColor, isBold: false, durationBeforeFade: 30f);
             yield return new WaitForSeconds(0.05f);
         }
 
@@ -260,17 +262,16 @@ public class LineUpDirector : MonoBehaviour
         rejectedAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         rejectedAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         rejectedAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
-        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, medianRejectedTimePreference, Color.red, -4.9f, new Vector3(-0.2f, 0, 0f)));
+        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, medianRejectedTimePreference, rejectedColor, -4.5f, new Vector3(-0.2f, 0, 0f)));
 
         yield return new WaitForSeconds(2f);
 
 
         foreach (Passenger passenger in passengersWhoDidNotReceiveRideOffer)
         {
-            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.2f);
+            Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
             string reaction = "📵";
-            Color reactionColor = Color.red;
-            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: true, durationBeforeFade: 10f);
+            AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, noOfferColor, isBold: true, durationBeforeFade: 30f);
             yield return new WaitForSeconds(0.04f);
         }
 
@@ -281,7 +282,7 @@ public class LineUpDirector : MonoBehaviour
         noOfferAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         noOfferAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
 
-        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, medianNoOfferTimePreference, Color.red, -4.86f, new Vector3(0f, 0, 0.1f)));
+        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, medianNoOfferTimePreference, noOfferColor, -4.46f, new Vector3(0f, 0, 0.1f)));
 
 
         yield return null;
@@ -401,8 +402,8 @@ public class LineUpDirector : MonoBehaviour
 
 
 
-        LineRenderer averageUberLine = lineTransform.GetComponent<LineRenderer>();
-        LineRenderer averageUberDot = dotTransform.GetComponent<LineRenderer>();
+        LineRenderer averageLine = lineTransform.GetComponent<LineRenderer>();
+        LineRenderer averageDot = dotTransform.GetComponent<LineRenderer>();
 
         // Get the TMPro text component and set its text to the average time preference
         TMP_Text averageUberText = labelTransform.GetComponent<TMP_Text>();
@@ -418,19 +419,19 @@ public class LineUpDirector : MonoBehaviour
             float t = (Time.time - startTime) / lineDuration;
             float positionFactor = EaseUtils.EaseInOutQuadratic(t);
             float linePosition = ConvertTimePreferenceToLinePosition(Mathf.Lerp(0, averageValue, positionFactor));
-            averageUberLine.SetPosition(0, new Vector3(linePosition, 0.01f, -6.8f));
-            averageUberLine.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
-            averageUberDot.SetPosition(0, new Vector3(linePosition, 0.01f, topPosition));
-            averageUberDot.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
+            averageLine.SetPosition(0, new Vector3(linePosition, 0.01f, -6.8f));
+            averageLine.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
+            averageDot.SetPosition(0, new Vector3(linePosition, 0.01f, topPosition));
+            averageDot.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
             labelTransform.position = new Vector3(linePosition, 0.01f, topPosition) + labelOffset;
             // Set the alpha of the average uber text
             averageUberText.color = new Color(1, 1, 1, EaseUtils.EaseInCubic(t));
             float alpha = EaseUtils.EaseInCubic(t);
             Color lineRendererColor = new Color(lineColor.r, lineColor.g, lineColor.b, alpha);
-            averageUberLine.startColor = lineRendererColor;
-            averageUberLine.endColor = lineRendererColor;
-            averageUberDot.startColor = lineRendererColor;
-            averageUberDot.endColor = lineRendererColor;
+            averageLine.startColor = lineRendererColor;
+            averageLine.endColor = lineRendererColor;
+            averageDot.startColor = lineRendererColor;
+            averageDot.endColor = lineRendererColor;
             yield return null;
         }
     }
