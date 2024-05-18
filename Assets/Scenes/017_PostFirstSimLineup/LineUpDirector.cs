@@ -238,7 +238,7 @@ public class LineUpDirector : MonoBehaviour
         uberAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         uberAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         uberAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
-        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, averageUberTimePreference, Color.green, -5.5f, new Vector3(0.2f, 0, 0)));
+        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, averageUberTimePreference, Color.green, -4.9f, new Vector3(0.2f, 0, 0)));
 
         yield return new WaitForSeconds(2f);
 
@@ -256,7 +256,7 @@ public class LineUpDirector : MonoBehaviour
         rejectedAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         rejectedAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         rejectedAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
-        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, averageRejectedTimePreference, Color.red, -5.4f, new Vector3(0f, 0, 0.1f)));
+        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, averageRejectedTimePreference, Color.red, -4.9f, new Vector3(0f, 0, 0.1f)));
 
         yield return new WaitForSeconds(2f);
 
@@ -277,7 +277,7 @@ public class LineUpDirector : MonoBehaviour
         noOfferAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         noOfferAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
 
-        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, averageNoOfferTimePreference, Color.red, -5.3f, new Vector3(0f, 0, 0.1f)));
+        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, averageNoOfferTimePreference, Color.red, -4.86f, new Vector3(0f, 0, 0.1f)));
 
 
         yield return null;
@@ -314,7 +314,44 @@ public class LineUpDirector : MonoBehaviour
             StartCoroutine(MovePassengerToIncomeDistribution(passenger));
             // yield return new WaitForSeconds(0.01f);
         }
+
+        float uberAverageIncome = passengersWhoGotAnUber.Average(p => p.person.economicParameters.hourlyIncome);
+        float rejectedAverageIncome = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.hourlyIncome);
+        float noOfferAverageIncome = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.hourlyIncome);
+        StartCoroutine(MoveAverageLineToIncomeDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberAverageIncome));
+        StartCoroutine(MoveAverageLineToIncomeDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedAverageIncome));
+        StartCoroutine(MoveAverageLineToIncomeDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferAverageIncome));
         yield return null;
+    }
+
+    private IEnumerator MoveAverageLineToIncomeDistribution(Transform lineTransform, Transform dotTransform, Transform labelTransform, float averageIncome)
+    {
+        LineRenderer averageLine = lineTransform.GetComponent<LineRenderer>();
+        LineRenderer averageDot = dotTransform.GetComponent<LineRenderer>();
+
+        float duration = 1f;
+        Vector3 startPosition0 = averageLine.GetPosition(0);
+        Vector3 startPosition1 = averageLine.GetPosition(1);
+        float endPositionX = ConvertHourlyIncomeToLinePosition(averageIncome);
+        Vector3 endPosition0 = new Vector3(endPositionX, startPosition0.y, startPosition0.z);
+        Vector3 endPosition1 = new Vector3(endPositionX, startPosition1.y, startPosition1.z);
+        Vector3 labelStartPosition = labelTransform.position;
+        Vector3 labelEndPosition = labelStartPosition + endPosition0 - startPosition0;
+
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float positionFactor = EaseUtils.EaseInOutQuadratic(t);
+            averageLine.SetPosition(0, Vector3.Lerp(startPosition0, endPosition0, positionFactor));
+            averageLine.SetPosition(1, Vector3.Lerp(startPosition1, endPosition1, positionFactor));
+            averageDot.SetPosition(0, Vector3.Lerp(startPosition1, endPosition1, positionFactor));
+            averageDot.SetPosition(1, Vector3.Lerp(startPosition1, endPosition1, positionFactor));
+            labelTransform.position = Vector3.Lerp(labelStartPosition, labelEndPosition, positionFactor);
+            yield return null;
+        }
+        averageLine.SetPosition(0, endPosition0);
+        averageLine.SetPosition(1, endPosition1);
     }
 
 
@@ -405,7 +442,7 @@ public class LineUpDirector : MonoBehaviour
             averageUberLine.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
             averageUberDot.SetPosition(0, new Vector3(linePosition, 0.01f, topPosition));
             averageUberDot.SetPosition(1, new Vector3(linePosition, 0.01f, topPosition));
-            labelTransform.position = new Vector3(linePosition, 0.02f, topPosition) + labelOffset;
+            labelTransform.position = new Vector3(linePosition, 0.01f, topPosition) + labelOffset;
             // Set the alpha of the average uber text
             averageUberText.color = new Color(1, 1, 1, EaseUtils.EaseInCubic(t));
             float alpha = EaseUtils.EaseInCubic(t);
