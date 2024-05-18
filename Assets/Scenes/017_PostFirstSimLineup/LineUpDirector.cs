@@ -93,6 +93,9 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(ShowPassengerResults(passengers));
         yield return new WaitForSeconds(15f);
         StartCoroutine(ChangeGraphToIncome(passengers));
+        yield return new WaitForSeconds(3f);
+        Vector3 currentCameraPosition = Camera.main.transform.position;
+        StartCoroutine(CameraUtils.MoveCamera(currentCameraPosition + new Vector3(1.5f, 2, -1), 0.5f, Ease.Cubic));
     }
 
     IEnumerator FadeInCanvas()
