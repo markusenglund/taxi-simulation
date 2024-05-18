@@ -97,9 +97,15 @@ public class LineUpDirector : MonoBehaviour
         yield return StartCoroutine(ShowPassengerResults(passengers));
         // yield return new WaitForSeconds(18f);
         StartCoroutine(ChangeGraphToIncome(passengers));
+        yield return new WaitForSeconds(2f);
         Vector3 currentCameraPosition = Camera.main.transform.position;
-        StartCoroutine(CameraUtils.MoveCamera(currentCameraPosition + new Vector3(1.5f, 1.5f, -1), 0.5f, Ease.Cubic));
-        yield return new WaitForSeconds(12f);
+        Quaternion currentCameraRotation = Camera.main.transform.rotation;
+        Quaternion newCameraRotation2 = Quaternion.Euler(60, 8, 5);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(currentCameraPosition + new Vector3(1.5f, 1.4f, 0)
+        , newCameraRotation2, 2f, Ease.Cubic));
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(currentCameraPosition, currentCameraRotation, 2.5f, Ease.Cubic));
+        yield return new WaitForSeconds(8f);
         StartCoroutine(ChangeGraphToBestSubstitute(passengers));
     }
 
@@ -136,6 +142,22 @@ public class LineUpDirector : MonoBehaviour
         {
             float t = (Time.time - startTime) / duration;
             float alpha = EaseUtils.EaseInCubic(t);
+            legendCanvasGroup.alpha = alpha;
+            yield return null;
+        }
+    }
+
+    IEnumerator FadeOutLegend(string path)
+    {
+        Transform legend = canvas.transform.Find(path);
+        CanvasGroup legendCanvasGroup = legend.GetComponent<CanvasGroup>();
+        float duration = 1.5f;
+        float startTime = Time.time;
+
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float alpha = 1 - EaseUtils.EaseInCubic(t);
             legendCanvasGroup.alpha = alpha;
             yield return null;
         }
@@ -304,6 +326,7 @@ public class LineUpDirector : MonoBehaviour
         yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, medianNoOfferTimePreference, noOfferColor, -4.46f, new Vector3(0f, 0, 0.1f), noOfferReactionEmoji));
         yield return new WaitForSeconds(7f);
         StartCoroutine(FadeOutAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform));
+        StartCoroutine(FadeOutLegend("Legend/NoOfferLegend"));
         yield return new WaitForSeconds(3f);
         yield return null;
     }
@@ -322,7 +345,7 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToBestSubstitute(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
-        StartCoroutine(ChangeGraphAxis(passengers, "Best substitute total cost", selectPassengerValue, stepSize: 80f, "$"));
+        StartCoroutine(ChangeGraphAxis(passengers, "Total cost of best substitute", selectPassengerValue, stepSize: 80f, "$"));
         yield return null;
     }
 
