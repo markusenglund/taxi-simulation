@@ -101,6 +101,8 @@ public class LineUpDirector : MonoBehaviour
         Vector3 currentCameraPosition = Camera.main.transform.position;
         StartCoroutine(CameraUtils.MoveCamera(currentCameraPosition + new Vector3(1.5f, 2, -1), 0.5f, Ease.Cubic));
         StartCoroutine(ChangeGraphToBestSubstitute(passengers));
+        yield return new WaitForSeconds(3f);
+        StartCoroutine(ChangeGraphToDistance(passengers));
     }
 
     IEnumerator FadeInCanvas()
@@ -295,7 +297,7 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToIncome(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.hourlyIncome;
-        StartCoroutine(ChangeGraphAxis(passengers, "Hourly Income", selectPassengerValue, stepSize: 20f));
+        StartCoroutine(ChangeGraphAxis(passengers, "Hourly Income", selectPassengerValue, stepSize: 20f, "$"));
 
         yield return null;
     }
@@ -303,11 +305,19 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToBestSubstitute(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
-        StartCoroutine(ChangeGraphAxis(passengers, "Max acceptable total cost", selectPassengerValue, stepSize: 80f));
+        StartCoroutine(ChangeGraphAxis(passengers, "Max acceptable total cost", selectPassengerValue, stepSize: 80f, "$"));
         yield return null;
     }
 
-    private IEnumerator ChangeGraphAxis(Passenger[] passengers, string labelText, Func<Passenger, float> selectPassengerValue, float stepSize)
+    private IEnumerator ChangeGraphToDistance(Passenger[] passengers)
+    {
+        Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.distanceToDestination;
+        StartCoroutine(ChangeGraphAxis(passengers, "Distance to destination", selectPassengerValue, stepSize: 3f, ""));
+        yield return null;
+    }
+
+
+    private IEnumerator ChangeGraphAxis(Passenger[] passengers, string labelText, Func<Passenger, float> selectPassengerValue, float stepSize, string axisLabelPrefix = "")
     {
         Transform mainLabel = canvas.transform.Find("Graph/Label");
 
@@ -315,7 +325,7 @@ public class LineUpDirector : MonoBehaviour
         for (int i = 0; i < 7; i++)
         {
             Transform label = canvas.transform.Find($"Graph/AxisValue{i}");
-            StartCoroutine(ChangeLabel(label, $"${i * stepSize}"));
+            StartCoroutine(ChangeLabel(label, $"{axisLabelPrefix}{i * stepSize}"));
         }
 
         // float uberAverageIncome = passengersWhoGotAnUber.Average(selectPassengerValue);
@@ -327,17 +337,17 @@ public class LineUpDirector : MonoBehaviour
 
         // Set the average line label of uber to the average of the hourly income
         TMP_Text uberAverageTmp = uberAverageLabelTransform.GetComponent<TMP_Text>();
-        string uberAverageNewText = $"${uberMedianValue:F2}";
+        string uberAverageNewText = $"{axisLabelPrefix}{uberMedianValue:F2}";
         StartCoroutine(ChangeLabel(uberAverageLabelTransform, uberAverageNewText));
 
         // Set the average line label of rejected to the average of the hourly income
         TMP_Text rejectedAverageTmp = rejectedAverageLabelTransform.GetComponent<TMP_Text>();
-        string rejectedAverageNewText = $"${rejectedMedianValue:F2}";
+        string rejectedAverageNewText = $"{axisLabelPrefix}{rejectedMedianValue:F2}";
         StartCoroutine(ChangeLabel(rejectedAverageLabelTransform, rejectedAverageNewText));
 
         // Set the average line label of no offer to the average of the hourly income
         TMP_Text noOfferAverageTmp = noOfferAverageLabelTransform.GetComponent<TMP_Text>();
-        string noOfferAverageNewText = $"${noOfferMedianValue:F2}";
+        string noOfferAverageNewText = $"{axisLabelPrefix}{noOfferMedianValue:F2}";
         StartCoroutine(ChangeLabel(noOfferAverageLabelTransform, noOfferAverageNewText));
 
         List<Vector3> passengerPositions = new List<Vector3> { };
