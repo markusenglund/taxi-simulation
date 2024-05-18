@@ -233,7 +233,8 @@ public class LineUpDirector : MonoBehaviour
             AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, reactionColor, isBold: false, durationBeforeFade: 10f);
             yield return new WaitForSeconds(0.04f);
         }
-        float averageUberTimePreference = passengers.Average(p => p.person.economicParameters.timePreference);
+        // float averageUberTimePreference = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
+        float medianUberTimePreference = CalculateMedian(passengersWhoGotAnUber.Select(p => p.person.economicParameters.timePreference).ToList());
         Transform averageLineTransform = canvas.transform.Find("Graph/AverageLine");
         Transform averageDotTransform = canvas.transform.Find("Graph/AverageDot");
         Transform averageLabelTransform = canvas.transform.Find("Graph/AverageLabel");
@@ -241,7 +242,7 @@ public class LineUpDirector : MonoBehaviour
         uberAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         uberAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         uberAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
-        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, averageUberTimePreference, Color.green, -4.9f, new Vector3(0.2f, 0, 0)));
+        yield return StartCoroutine(SpawnAverageLine(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, medianUberTimePreference, Color.green, -4.9f, new Vector3(0.2f, 0, 0)));
 
         yield return new WaitForSeconds(2f);
 
@@ -254,12 +255,12 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
 
-        float averageRejectedTimePreference = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
-
+        // float averageRejectedTimePreference = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
+        float medianRejectedTimePreference = CalculateMedian(passengersWhoRejectedRideOffer.Select(p => p.person.economicParameters.timePreference).ToList());
         rejectedAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         rejectedAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         rejectedAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
-        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, averageRejectedTimePreference, Color.red, -4.9f, new Vector3(-0.2f, 0, 0f)));
+        yield return StartCoroutine(SpawnAverageLine(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, medianRejectedTimePreference, Color.red, -4.9f, new Vector3(-0.2f, 0, 0f)));
 
         yield return new WaitForSeconds(2f);
 
@@ -274,13 +275,13 @@ public class LineUpDirector : MonoBehaviour
         }
 
 
-        float averageNoOfferTimePreference = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
-
+        // float averageNoOfferTimePreference = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
+        float medianNoOfferTimePreference = CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(p => p.person.economicParameters.timePreference).ToList());
         noOfferAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         noOfferAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         noOfferAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
 
-        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, averageNoOfferTimePreference, Color.red, -4.86f, new Vector3(0f, 0, 0.1f)));
+        yield return StartCoroutine(SpawnAverageLine(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, medianNoOfferTimePreference, Color.red, -4.86f, new Vector3(0f, 0, 0.1f)));
 
 
         yield return null;
@@ -297,19 +298,26 @@ public class LineUpDirector : MonoBehaviour
             StartCoroutine(ChangeLabel(label, $"${i * 20}"));
         }
 
+        // float uberAverageIncome = passengersWhoGotAnUber.Average(p => p.person.economicParameters.hourlyIncome);
+        float uberMedianIncome = CalculateMedian(passengersWhoGotAnUber.Select(p => p.person.economicParameters.hourlyIncome).ToList());
+        // float rejectedAverageIncome = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.hourlyIncome);
+        float rejectedMedianIncome = CalculateMedian(passengersWhoRejectedRideOffer.Select(p => p.person.economicParameters.hourlyIncome).ToList());
+        // float noOfferAverageIncome = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.hourlyIncome);
+        float noOfferMedianIncome = CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(p => p.person.economicParameters.hourlyIncome).ToList());
+
         // Set the average line label of uber to the average of the hourly income
         TMP_Text uberAverageTmp = uberAverageLabelTransform.GetComponent<TMP_Text>();
-        string uberAverageNewText = $"${passengersWhoGotAnUber.Average(p => p.person.economicParameters.hourlyIncome):F2}";
+        string uberAverageNewText = $"${uberMedianIncome:F2}";
         StartCoroutine(ChangeLabel(uberAverageLabelTransform, uberAverageNewText));
 
         // Set the average line label of rejected to the average of the hourly income
         TMP_Text rejectedAverageTmp = rejectedAverageLabelTransform.GetComponent<TMP_Text>();
-        string rejectedAverageNewText = $"${passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.hourlyIncome):F2}";
+        string rejectedAverageNewText = $"${rejectedMedianIncome:F2}";
         StartCoroutine(ChangeLabel(rejectedAverageLabelTransform, rejectedAverageNewText));
 
         // Set the average line label of no offer to the average of the hourly income
         TMP_Text noOfferAverageTmp = noOfferAverageLabelTransform.GetComponent<TMP_Text>();
-        string noOfferAverageNewText = $"${passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.hourlyIncome):F2}";
+        string noOfferAverageNewText = $"${noOfferMedianIncome:F2}";
         StartCoroutine(ChangeLabel(noOfferAverageLabelTransform, noOfferAverageNewText));
 
         foreach (Passenger passenger in passengers)
@@ -318,12 +326,10 @@ public class LineUpDirector : MonoBehaviour
             // yield return new WaitForSeconds(0.01f);
         }
 
-        float uberAverageIncome = passengersWhoGotAnUber.Average(p => p.person.economicParameters.hourlyIncome);
-        float rejectedAverageIncome = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.hourlyIncome);
-        float noOfferAverageIncome = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.hourlyIncome);
-        StartCoroutine(MoveAverageLineToIncomeDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberAverageIncome, new Vector3(0.3f, 0, 0)));
-        StartCoroutine(MoveAverageLineToIncomeDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedAverageIncome, new Vector3(-0.3f, 0, 0)));
-        StartCoroutine(MoveAverageLineToIncomeDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferAverageIncome, new Vector3(0, 0, 0.1f)));
+
+        StartCoroutine(MoveAverageLineToIncomeDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberMedianIncome, new Vector3(0.3f, 0, 0)));
+        StartCoroutine(MoveAverageLineToIncomeDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedMedianIncome, new Vector3(-0.3f, 0, 0)));
+        StartCoroutine(MoveAverageLineToIncomeDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferMedianIncome, new Vector3(0, 0, 0.1f)));
         yield return null;
     }
 
@@ -473,6 +479,20 @@ public class LineUpDirector : MonoBehaviour
         float linePositionStart = 2f;
         float linePositionStep = 3 / 4f;
         return timePreference * linePositionStep + linePositionStart;
+    }
+
+    private float CalculateMedian(List<float> values)
+    {
+        List<float> sortedList = values.OrderBy(x => x).ToList();
+        int count = sortedList.Count;
+        if (count % 2 == 0)
+        {
+            return (sortedList[count / 2 - 1] + sortedList[count / 2]) / 2;
+        }
+        else
+        {
+            return sortedList[count / 2];
+        }
     }
 
 }
