@@ -11,9 +11,11 @@ public class AgentOverheadReaction : MonoBehaviour
     bool isBold;
 
     float durationBeforeFade = 0.8f;
+    CanvasGroup canvasGroup;
     void Start()
     {
         Transform passengerStatsSheet = transform.GetChild(0);
+        canvasGroup = transform.GetComponent<CanvasGroup>();
         Transform textComponent = passengerStatsSheet.Find("Text");
         textMeshPro = textComponent.GetComponent<TextMeshProUGUI>();
         textMeshPro.color = color;
@@ -55,7 +57,7 @@ public class AgentOverheadReaction : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            textMeshPro.color = new Color(textMeshPro.color.r, textMeshPro.color.g, textMeshPro.color.b, 1 - t);
+            canvasGroup.alpha = 1 - t;
             yield return null;
         }
         Destroy(this.gameObject);
