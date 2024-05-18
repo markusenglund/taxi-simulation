@@ -95,6 +95,8 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(TriggerIdleVariations(passengers));
         yield return new WaitForSeconds(2f);
         StartCoroutine(ShowPassengerResults(passengers));
+        yield return new WaitForSeconds(2f);
+        // StartCoroutine(FadeInLegend());
         yield return new WaitForSeconds(15f);
         StartCoroutine(ChangeGraphToIncome(passengers));
         yield return new WaitForSeconds(3f);
@@ -125,6 +127,22 @@ public class LineUpDirector : MonoBehaviour
                 lineRenderer.startColor = lineRendererColor;
                 lineRenderer.endColor = lineRendererColor;
             }
+            yield return null;
+        }
+    }
+
+    IEnumerator FadeInLegend(string path)
+    {
+        Transform legend = canvas.transform.Find(path);
+        CanvasGroup legendCanvasGroup = legend.GetComponent<CanvasGroup>();
+        float duration = 1.5f;
+        float startTime = Time.time;
+
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float alpha = EaseUtils.EaseInCubic(t);
+            legendCanvasGroup.alpha = alpha;
             yield return null;
         }
     }
@@ -235,6 +253,7 @@ public class LineUpDirector : MonoBehaviour
 
 
         string uberReactionEmoji = "✔️";
+        StartCoroutine(FadeInLegend("Legend/UberLegend"));
         foreach (Passenger passenger in passengersWhoGotAnUber)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
@@ -255,6 +274,7 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         string rejectedReactionEmoji = "✖️";
+        StartCoroutine(FadeInLegend("Legend/RejectedLegend"));
         foreach (Passenger passenger in passengersWhoRejectedRideOffer)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
@@ -271,13 +291,13 @@ public class LineUpDirector : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-
+        StartCoroutine(FadeInLegend("Legend/NoOfferLegend"));
         string noOfferReactionEmoji = "📵";
         foreach (Passenger passenger in passengersWhoDidNotReceiveRideOffer)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
             AgentOverheadReaction.Create(passenger.transform, reactionPosition, noOfferReactionEmoji, noOfferColor, isBold: true, durationBeforeFade: 30f);
-            yield return new WaitForSeconds(0.04f);
+            yield return null;
         }
 
 
