@@ -100,6 +100,7 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(3f);
         Vector3 currentCameraPosition = Camera.main.transform.position;
         StartCoroutine(CameraUtils.MoveCamera(currentCameraPosition + new Vector3(1.5f, 2, -1), 0.5f, Ease.Cubic));
+        StartCoroutine(ChangeGraphToBestSubstitute(passengers));
     }
 
     IEnumerator FadeInCanvas()
@@ -299,6 +300,13 @@ public class LineUpDirector : MonoBehaviour
         yield return null;
     }
 
+    private IEnumerator ChangeGraphToBestSubstitute(Passenger[] passengers)
+    {
+        Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
+        StartCoroutine(ChangeGraphAxis(passengers, "Max acceptable total cost", selectPassengerValue, stepSize: 80f));
+        yield return null;
+    }
+
     private IEnumerator ChangeGraphAxis(Passenger[] passengers, string labelText, Func<Passenger, float> selectPassengerValue, float stepSize)
     {
         Transform mainLabel = canvas.transform.Find("Graph/Label");
@@ -307,41 +315,42 @@ public class LineUpDirector : MonoBehaviour
         for (int i = 0; i < 7; i++)
         {
             Transform label = canvas.transform.Find($"Graph/AxisValue{i}");
-            StartCoroutine(ChangeLabel(label, $"${i * 20}"));
+            StartCoroutine(ChangeLabel(label, $"${i * stepSize}"));
         }
 
         // float uberAverageIncome = passengersWhoGotAnUber.Average(selectPassengerValue);
-        float uberMedianIncome = CalculateMedian(passengersWhoGotAnUber.Select(selectPassengerValue).ToList());
+        float uberMedianValue = CalculateMedian(passengersWhoGotAnUber.Select(selectPassengerValue).ToList());
         // float rejectedAverageIncome = passengersWhoRejectedRideOffer.Average(selectPassengerValue);
-        float rejectedMedianIncome = CalculateMedian(passengersWhoRejectedRideOffer.Select(selectPassengerValue).ToList());
+        float rejectedMedianValue = CalculateMedian(passengersWhoRejectedRideOffer.Select(selectPassengerValue).ToList());
         // float noOfferAverageIncome = passengersWhoDidNotReceiveRideOffer.Average(selectPassengerValue);
-        float noOfferMedianIncome = CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(selectPassengerValue).ToList());
+        float noOfferMedianValue = CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(selectPassengerValue).ToList());
 
         // Set the average line label of uber to the average of the hourly income
         TMP_Text uberAverageTmp = uberAverageLabelTransform.GetComponent<TMP_Text>();
-        string uberAverageNewText = $"${uberMedianIncome:F2}";
+        string uberAverageNewText = $"${uberMedianValue:F2}";
         StartCoroutine(ChangeLabel(uberAverageLabelTransform, uberAverageNewText));
 
         // Set the average line label of rejected to the average of the hourly income
         TMP_Text rejectedAverageTmp = rejectedAverageLabelTransform.GetComponent<TMP_Text>();
-        string rejectedAverageNewText = $"${rejectedMedianIncome:F2}";
+        string rejectedAverageNewText = $"${rejectedMedianValue:F2}";
         StartCoroutine(ChangeLabel(rejectedAverageLabelTransform, rejectedAverageNewText));
 
         // Set the average line label of no offer to the average of the hourly income
         TMP_Text noOfferAverageTmp = noOfferAverageLabelTransform.GetComponent<TMP_Text>();
-        string noOfferAverageNewText = $"${noOfferMedianIncome:F2}";
+        string noOfferAverageNewText = $"${noOfferMedianValue:F2}";
         StartCoroutine(ChangeLabel(noOfferAverageLabelTransform, noOfferAverageNewText));
 
+        List<Vector3> passengerPositions = new List<Vector3> { };
         foreach (Passenger passenger in passengers)
         {
-            StartCoroutine(MovePassengerToNewDistribution(passenger, selectPassengerValue, stepSize));
+            StartCoroutine(MovePassengerToNewDistribution(passenger, selectPassengerValue, stepSize, passengerPositions));
             // yield return new WaitForSeconds(0.01f);
         }
 
 
-        StartCoroutine(MoveAverageLineToNewDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberMedianIncome, new Vector3(0.3f, 0, 0), stepSize));
-        StartCoroutine(MoveAverageLineToNewDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedMedianIncome, new Vector3(-0.3f, 0, 0), stepSize));
-        StartCoroutine(MoveAverageLineToNewDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferMedianIncome, new Vector3(0, 0, 0.1f), stepSize));
+        StartCoroutine(MoveAverageLineToNewDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberMedianValue, new Vector3(0.3f, 0, 0), stepSize));
+        StartCoroutine(MoveAverageLineToNewDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedMedianValue, new Vector3(-0.3f, 0, 0), stepSize));
+        StartCoroutine(MoveAverageLineToNewDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferMedianValue, new Vector3(0, 0, 0.1f), stepSize));
         yield return null;
     }
 
@@ -375,28 +384,27 @@ public class LineUpDirector : MonoBehaviour
         }
     }
 
-    private IEnumerator MovePassengerToNewDistribution(Passenger passenger, Func<Passenger, float> selectPassengerValue, float stepSize)
+    private IEnumerator MovePassengerToNewDistribution(Passenger passenger, Func<Passenger, float> selectPassengerValue, float stepSize, List<Vector3> passengerDistributionPositions)
     {
         float newValue = selectPassengerValue(passenger);
         float duration = 1;
         Vector3 startPosition = passenger.transform.position;
         float linePosition = ConvertValueToLinePosition(newValue, stepSize);
         Vector3 endPosition = new Vector3(linePosition, 0, -6.7f);
-        // Check if there's a lineUpPosition within 0.3f of the endPosition
         bool isEndPositionFree = false;
         while (!isEndPositionFree)
         {
             isEndPositionFree = true;
-            foreach (Vector3 existingIncomeDistributionPosition in incomeDistributionPositions)
+            foreach (Vector3 existingDistributionPosition in passengerDistributionPositions)
             {
-                if (Vector3.Distance(existingIncomeDistributionPosition, endPosition) < (0.35f / 4f))
+                if (Vector3.Distance(existingDistributionPosition, endPosition) < (0.35f / 4f))
                 {
                     endPosition = endPosition + new Vector3(0, 0, 0.2f / 4f);
                     isEndPositionFree = false;
                 }
             }
         }
-        incomeDistributionPositions.Add(endPosition);
+        passengerDistributionPositions.Add(endPosition);
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
