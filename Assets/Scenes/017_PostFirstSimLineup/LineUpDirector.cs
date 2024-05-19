@@ -78,7 +78,8 @@ public class LineUpDirector : MonoBehaviour
     IEnumerator Scene()
     {
         yield return new WaitForSeconds(0.5f);
-        Passenger[] passengers = city.SpawnSavedPassengers(1);
+        // Get all passenger who don't have state BeforeSpawn or Idling
+        Passenger[] passengers = city.SpawnSavedPassengers(1).Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         Vector3 cameraPosition = new Vector3(0f, 4, -12);
         Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
@@ -95,7 +96,8 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(TriggerIdleVariations(passengers));
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(ShowPassengerResults(passengers));
-        // yield return new WaitForSeconds(18f);
+        // StartCoroutine(ChangeGraphToSurplusValue(passengers));
+        // StartCoroutine(ChangeGraphToExpectedWaitingTime(passengers));
         StartCoroutine(ChangeGraphToIncome(passengers));
         yield return new WaitForSeconds(2f);
         Vector3 currentCameraPosition = Camera.main.transform.position;
@@ -342,10 +344,70 @@ public class LineUpDirector : MonoBehaviour
         yield return null;
     }
 
+    private IEnumerator ChangeGraphToSurplusValue(Passenger[] passengers)
+    {
+        Func<Passenger, float> selectPassengerValue = (Passenger passenger) =>
+        {
+            if (passenger.person.trip == null)
+            {
+                return 0;
+            }
+            if (passenger.person.trip.droppedOffPassengerData != null)
+            {
+                float surplusValue = passenger.person.trip.droppedOffPassengerData.valueSurplus;
+                return surplusValue;
+            }
+            else if (passenger.person.trip.tripCreatedPassengerData != null)
+            {
+                float expectedSurplusValue = passenger.person.trip.tripCreatedPassengerData.expectedValueSurplus;
+                return expectedSurplusValue;
+            }
+            throw new Exception("Passenger trip invalid state");
+
+        };
+        // Despawn non-uber passengers
+        foreach (Passenger passenger in passengers)
+        {
+            if (passenger.person.tripTypeChosen != TripType.Uber)
+            {
+                // Set passenger to inactive
+                passenger.gameObject.SetActive(false);
+            }
+        }
+        StartCoroutine(ChangeGraphAxis(passengersWhoGotAnUber.ToArray(), "Surplus value", selectPassengerValue, stepSize: 100f, "$"));
+        yield return null;
+    }
+
     private IEnumerator ChangeGraphToBestSubstitute(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
         StartCoroutine(ChangeGraphAxis(passengers, "Total cost of best substitute", selectPassengerValue, stepSize: 30f, "$"));
+        yield return null;
+    }
+
+    private IEnumerator ChangeGraphToExpectedWaitingTime(Passenger[] passengers)
+    {
+        Func<Passenger, float> selectPassengerValue = (Passenger passenger) =>
+        {
+            if (passenger.person.state == PassengerState.NoRideOffer)
+            {
+                return 0;
+            }
+            return passenger.person.rideOffer.expectedWaitingTime * 60f;
+        };
+
+        foreach (Passenger passenger in passengers)
+        {
+            if (passenger.person.state == PassengerState.NoRideOffer)
+            {
+                passenger.gameObject.SetActive(false);
+            }
+        }
+
+        // All passengers who got a ride offer
+        Passenger[] passengersWhoGotARideOffer = passengers.Where(p => p.person.state != PassengerState.NoRideOffer).ToArray();
+
+        StartCoroutine(ChangeGraphAxis(passengersWhoGotARideOffer, "Expected waiting time", selectPassengerValue, stepSize: 5f, "min"));
         yield return null;
     }
 
@@ -400,9 +462,9 @@ public class LineUpDirector : MonoBehaviour
             // yield return new WaitForSeconds(0.01f);
         }
 
-
-        StartCoroutine(MoveAverageLineToNewDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberMedianValue, new Vector3(0.3f, 0, 0), stepSize));
-        StartCoroutine(MoveAverageLineToNewDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedMedianValue, new Vector3(-0.3f, 0, 0), stepSize));
+        bool isUberMedianHigher = uberMedianValue > rejectedMedianValue;
+        StartCoroutine(MoveAverageLineToNewDistribution(uberAverageLineTransform, uberAverageDotTransform, uberAverageLabelTransform, uberMedianValue, new Vector3(isUberMedianHigher ? 0.3f : -0.3f, 0, 0), stepSize));
+        StartCoroutine(MoveAverageLineToNewDistribution(rejectedAverageLineTransform, rejectedAverageDotTransform, rejectedAverageLabelTransform, rejectedMedianValue, new Vector3(isUberMedianHigher ? -0.3f : 0.3f, 0, 0), stepSize));
         StartCoroutine(MoveAverageLineToNewDistribution(noOfferAverageLineTransform, noOfferAverageDotTransform, noOfferAverageLabelTransform, noOfferMedianValue, new Vector3(0, 0, 0.1f), stepSize));
         yield return null;
     }

@@ -135,6 +135,17 @@
       "totalCost": 38.521244
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.0528571457,
+      "expectedTripTime": 0.3052381,
+      "fare": {
+        "baseFare": 19.5,
+        "surgeMultiplier": 1.0,
+        "total": 19.5,
+        "driverCut": 13.0650005,
+        "uberCut": 6.43499947
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
@@ -309,6 +320,17 @@
       "totalCost": 19.7380981
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.205238074,
+      "expectedTripTime": 0.162380949,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
@@ -483,6 +505,17 @@
       "totalCost": 28.1443729
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.290952355,
+      "expectedTripTime": 0.238571435,
+      "fare": {
+        "baseFare": 16.0,
+        "surgeMultiplier": 1.0,
+        "total": 16.0,
+        "driverCut": 10.72,
+        "uberCut": 5.27999973
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 4.0,
@@ -650,6 +683,17 @@
       "totalCost": 66.7001343
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.186190486,
+      "expectedTripTime": 0.2004762,
+      "fare": {
+        "baseFare": 14.0,
+        "surgeMultiplier": 1.0,
+        "total": 14.0,
+        "driverCut": 9.38,
+        "uberCut": 4.62
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 5.33333349,
@@ -824,6 +868,17 @@
       "totalCost": 53.5332069
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.0623809434,
+      "expectedTripTime": 0.41,
+      "fare": {
+        "baseFare": 25.0,
+        "surgeMultiplier": 1.0,
+        "total": 25.0,
+        "driverCut": 16.75,
+        "uberCut": 8.25
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 0.6666667,
@@ -998,6 +1053,17 @@
       "totalCost": 19.17537
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.119523808,
+      "expectedTripTime": 0.162380964,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 8.0,
@@ -1165,6 +1231,17 @@
       "totalCost": 13.5423851
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.109999992,
+      "expectedTripTime": 0.09571428,
+      "fare": {
+        "baseFare": 8.5,
+        "surgeMultiplier": 1.0,
+        "total": 8.5,
+        "driverCut": 5.695,
+        "uberCut": 2.80499983
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.33333325,
@@ -1346,6 +1423,17 @@
       "totalCost": 19.9647465
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.167142853,
+      "expectedTripTime": 0.181428552,
+      "fare": {
+        "baseFare": 12.999999,
+        "surgeMultiplier": 1.0,
+        "total": 12.999999,
+        "driverCut": 8.71,
+        "uberCut": 4.28999949
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.66666675,
@@ -1548,6 +1636,17 @@
       "totalCost": 16.9993286
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.09095239,
+      "expectedTripTime": 0.09571429,
+      "fare": {
+        "baseFare": 8.5,
+        "surgeMultiplier": 1.0,
+        "total": 8.5,
+        "driverCut": 5.695,
+        "uberCut": 2.80499983
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 5.33333349,
@@ -1729,6 +1828,17 @@
       "totalCost": 20.2312431
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.319523782,
+      "expectedTripTime": 0.162380964,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
@@ -1788,6 +1898,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -1962,6 +2073,17 @@
       "totalCost": 32.29041
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.0528571457,
+      "expectedTripTime": 0.28619048,
+      "fare": {
+        "baseFare": 18.5,
+        "surgeMultiplier": 1.0,
+        "total": 18.5,
+        "driverCut": 12.395,
+        "uberCut": 6.10499954
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
@@ -2027,6 +2149,17 @@
       "totalCost": 34.3694153
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.2814286,
+      "expectedTripTime": 0.238571435,
+      "fare": {
+        "baseFare": 16.0,
+        "surgeMultiplier": 1.0,
+        "total": 16.0,
+        "driverCut": 10.72,
+        "uberCut": 5.27999973
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 9.0,
@@ -2201,6 +2334,17 @@
       "totalCost": 52.5853653
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.06238095,
+      "expectedTripTime": 0.257619023,
+      "fare": {
+        "baseFare": 17.0,
+        "surgeMultiplier": 1.0,
+        "total": 17.0,
+        "driverCut": 11.39,
+        "uberCut": 5.60999966
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
@@ -2368,6 +2512,17 @@
       "totalCost": 19.1107616
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.310000032,
+      "expectedTripTime": 0.143333346,
+      "fare": {
+        "baseFare": 11.0,
+        "surgeMultiplier": 1.0,
+        "total": 11.0,
+        "driverCut": 7.37000036,
+        "uberCut": 3.62999988
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.33333325,
@@ -2427,6 +2582,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.0,
@@ -2615,6 +2771,17 @@
       "totalCost": 52.3397369
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.386190474,
+      "expectedTripTime": 0.3052381,
+      "fare": {
+        "baseFare": 19.5,
+        "surgeMultiplier": 1.0,
+        "total": 19.5,
+        "driverCut": 13.0650005,
+        "uberCut": 6.43499947
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 8.0,
@@ -2674,6 +2841,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.33333349,
@@ -2733,6 +2901,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -2792,6 +2961,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -2857,6 +3027,17 @@
       "totalCost": 34.60215
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.319523782,
+      "expectedTripTime": 0.229047611,
+      "fare": {
+        "baseFare": 15.5,
+        "surgeMultiplier": 1.0,
+        "total": 15.5,
+        "driverCut": 10.385,
+        "uberCut": 5.115
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 9.333333,
@@ -3038,6 +3219,17 @@
       "totalCost": 40.5282326
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.157619044,
+      "expectedTripTime": 0.229047611,
+      "fare": {
+        "baseFare": 15.5,
+        "surgeMultiplier": 1.0,
+        "total": 15.5,
+        "driverCut": 10.385,
+        "uberCut": 5.115
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 6.0,
@@ -3117,6 +3309,17 @@
       "totalCost": 16.0359688
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.176666677,
+      "expectedTripTime": 0.181428567,
+      "fare": {
+        "baseFare": 13.0,
+        "surgeMultiplier": 1.0,
+        "total": 13.0,
+        "driverCut": 8.71,
+        "uberCut": 4.29
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 5.33333349,
@@ -3196,6 +3399,17 @@
       "totalCost": 23.23342
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.10047619,
+      "expectedTripTime": 0.305238068,
+      "fare": {
+        "baseFare": 19.4999981,
+        "surgeMultiplier": 1.0,
+        "total": 19.4999981,
+        "driverCut": 13.0649986,
+        "uberCut": 6.434999
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 7.66666651,
@@ -3363,6 +3577,17 @@
       "totalCost": 20.86834
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.319523782,
+      "expectedTripTime": 0.15285714,
+      "fare": {
+        "baseFare": 11.5,
+        "surgeMultiplier": 1.0,
+        "total": 11.5,
+        "driverCut": 7.7050004,
+        "uberCut": 3.79499984
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 6.66666651,
@@ -3428,6 +3653,17 @@
       "totalCost": 18.5710564
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.224285722,
+      "expectedTripTime": 0.219523817,
+      "fare": {
+        "baseFare": 15.0,
+        "surgeMultiplier": 1.0,
+        "total": 15.0,
+        "driverCut": 10.05,
+        "uberCut": 4.95
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 5.33333349,
@@ -3595,6 +3831,17 @@
       "totalCost": 61.2805061
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.167142853,
+      "expectedTripTime": 0.371904731,
+      "fare": {
+        "baseFare": 23.0,
+        "surgeMultiplier": 1.0,
+        "total": 23.0,
+        "driverCut": 15.4100008,
+        "uberCut": 7.58999968
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 7.0,
@@ -3654,6 +3901,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 1.0,
@@ -3713,6 +3961,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.66666651,
@@ -3778,6 +4027,17 @@
       "totalCost": 14.1006556
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.2147619,
+      "expectedTripTime": 0.0385714173,
+      "fare": {
+        "baseFare": 5.499999,
+        "surgeMultiplier": 1.0,
+        "total": 5.499999,
+        "driverCut": 3.68499947,
+        "uberCut": 1.81499958
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 7.33333349,
@@ -3945,6 +4205,17 @@
       "totalCost": 76.62364
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.290952355,
+      "expectedTripTime": 0.2195238,
+      "fare": {
+        "baseFare": 15.0,
+        "surgeMultiplier": 1.0,
+        "total": 15.0,
+        "driverCut": 10.05,
+        "uberCut": 4.95
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 5.0,
@@ -4004,6 +4275,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -4063,6 +4335,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -4122,6 +4395,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.333333343,
@@ -4194,6 +4468,17 @@
       "totalCost": 12.3278227
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.205238074,
+      "expectedTripTime": 0.0576190576,
+      "fare": {
+        "baseFare": 6.50000048,
+        "surgeMultiplier": 1.0,
+        "total": 6.50000048,
+        "driverCut": 4.3550005,
+        "uberCut": 2.145
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 1.0,
@@ -4361,6 +4646,17 @@
       "totalCost": 42.52769
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.19571428,
+      "expectedTripTime": 0.2195238,
+      "fare": {
+        "baseFare": 15.0,
+        "surgeMultiplier": 1.0,
+        "total": 15.0,
+        "driverCut": 10.05,
+        "uberCut": 4.95
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
@@ -4420,6 +4716,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -4479,6 +4776,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -4538,6 +4836,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -4597,6 +4896,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -4663,6 +4963,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -4722,6 +5023,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -4787,6 +5089,17 @@
       "totalCost": 37.82753
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.31,
+      "expectedTripTime": 0.419523776,
+      "fare": {
+        "baseFare": 25.4999981,
+        "surgeMultiplier": 1.0,
+        "total": 25.4999981,
+        "driverCut": 17.085,
+        "uberCut": 8.414999
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 9.0,
@@ -4982,6 +5295,17 @@
       "totalCost": 148.191772
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.3004762,
+      "expectedTripTime": 0.171904773,
+      "fare": {
+        "baseFare": 12.5,
+        "surgeMultiplier": 1.0,
+        "total": 12.5,
+        "driverCut": 8.375,
+        "uberCut": 4.125
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 1.33333337,
@@ -5048,6 +5372,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -5215,6 +5540,17 @@
       "totalCost": 81.18603
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.348095238,
+      "expectedTripTime": 0.333809555,
+      "fare": {
+        "baseFare": 21.0,
+        "surgeMultiplier": 1.0,
+        "total": 21.0,
+        "driverCut": 14.0700006,
+        "uberCut": 6.93
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
@@ -5274,6 +5610,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.0,
@@ -5333,6 +5670,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -5507,6 +5845,17 @@
       "totalCost": 86.2507248
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.31,
+      "expectedTripTime": 0.333809525,
+      "fare": {
+        "baseFare": 21.0,
+        "surgeMultiplier": 1.0,
+        "total": 21.0,
+        "driverCut": 14.0700006,
+        "uberCut": 6.93
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 8.666667,
@@ -5566,6 +5915,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 4.66666651,
@@ -5639,6 +5989,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 4.33333349,
@@ -5806,6 +6157,17 @@
       "totalCost": 32.8328857
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.252857149,
+      "expectedTripTime": 0.2957143,
+      "fare": {
+        "baseFare": 19.0,
+        "surgeMultiplier": 1.0,
+        "total": 19.0,
+        "driverCut": 12.7300005,
+        "uberCut": 6.2699995
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
@@ -5973,6 +6335,17 @@
       "totalCost": 37.0418663
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.405238122,
+      "expectedTripTime": 0.133809522,
+      "fare": {
+        "baseFare": 10.5,
+        "surgeMultiplier": 1.0,
+        "total": 10.5,
+        "driverCut": 7.03500032,
+        "uberCut": 3.465
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
@@ -6140,6 +6513,17 @@
       "totalCost": 19.56855
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.4147619,
+      "expectedTripTime": 0.15285714,
+      "fare": {
+        "baseFare": 11.5,
+        "surgeMultiplier": 1.0,
+        "total": 11.5,
+        "driverCut": 7.7050004,
+        "uberCut": 3.79499984
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 6.33333349,
@@ -6199,6 +6583,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -6258,6 +6643,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.33333349,
@@ -6317,6 +6703,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.66666651,
@@ -6376,6 +6763,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -6435,6 +6823,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -6500,6 +6889,17 @@
       "totalCost": 52.81292
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.271904767,
+      "expectedTripTime": 0.41,
+      "fare": {
+        "baseFare": 25.0,
+        "surgeMultiplier": 1.0,
+        "total": 25.0,
+        "driverCut": 16.75,
+        "uberCut": 8.25
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 3.0,
@@ -6681,6 +7081,17 @@
       "totalCost": 20.7511845
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.157619044,
+      "expectedTripTime": 0.21,
+      "fare": {
+        "baseFare": 14.499999,
+        "surgeMultiplier": 1.0,
+        "total": 14.499999,
+        "driverCut": 9.714999,
+        "uberCut": 4.78499937
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 9.333333,
@@ -6747,6 +7158,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.66666651,
@@ -6806,6 +7218,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -6865,6 +7278,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -6931,6 +7345,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -7004,6 +7419,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.66666675,
@@ -7063,6 +7479,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -7237,6 +7654,17 @@
       "totalCost": 75.98191
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.252857149,
+      "expectedTripTime": 0.276666671,
+      "fare": {
+        "baseFare": 18.0,
+        "surgeMultiplier": 1.0,
+        "total": 18.0,
+        "driverCut": 12.06,
+        "uberCut": 5.93999958
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
@@ -7411,6 +7839,17 @@
       "totalCost": 30.49275
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.2242857,
+      "expectedTripTime": 0.162380964,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 2.0,
@@ -7562,6 +8001,17 @@
       "totalCost": 53.9017334
     },
     "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.4242857,
+      "expectedTripTime": 0.248095229,
+      "fare": {
+        "baseFare": 16.5,
+        "surgeMultiplier": 1.0,
+        "total": 16.5,
+        "driverCut": 11.055,
+        "uberCut": 5.44499969
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
@@ -7627,6 +8077,17 @@
       "totalCost": 36.5864258
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.3195238,
+      "expectedTripTime": 0.324285716,
+      "fare": {
+        "baseFare": 20.5,
+        "surgeMultiplier": 1.0,
+        "total": 20.5,
+        "driverCut": 13.7350006,
+        "uberCut": 6.765
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 6.33333349,
@@ -7692,6 +8153,17 @@
       "totalCost": 17.9409676
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.262380958,
+      "expectedTripTime": 0.229047611,
+      "fare": {
+        "baseFare": 15.5,
+        "surgeMultiplier": 1.0,
+        "total": 15.5,
+        "driverCut": 10.385,
+        "uberCut": 5.115
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 0.0,
@@ -7859,6 +8331,17 @@
       "totalCost": 45.65528
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.129047617,
+      "expectedTripTime": 0.0766666755,
+      "fare": {
+        "baseFare": 7.5,
+        "surgeMultiplier": 1.0,
+        "total": 7.5,
+        "driverCut": 5.025,
+        "uberCut": 2.475
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
@@ -8010,6 +8493,17 @@
       "totalCost": 55.0239754
     },
     "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.3861905,
+      "expectedTripTime": 0.08619048,
+      "fare": {
+        "baseFare": 8.0,
+        "surgeMultiplier": 1.0,
+        "total": 8.0,
+        "driverCut": 5.36,
+        "uberCut": 2.63999987
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
@@ -8177,6 +8671,17 @@
       "totalCost": 26.6610527
     },
     "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.214761913,
+      "expectedTripTime": 0.200476184,
+      "fare": {
+        "baseFare": 14.0,
+        "surgeMultiplier": 1.0,
+        "total": 14.0,
+        "driverCut": 9.38,
+        "uberCut": 4.62
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 1.33333337,
@@ -8236,6 +8741,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.33333349,
@@ -8295,6 +8801,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -8361,6 +8868,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 1.33333337,
@@ -8420,6 +8928,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -8479,6 +8988,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -8538,6 +9048,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -8597,6 +9108,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -8656,6 +9168,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -8715,6 +9228,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -8774,6 +9288,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
@@ -8840,6 +9355,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
@@ -8899,6 +9415,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.0,
@@ -8958,6 +9475,7 @@
     "tripTypeChosen": 1,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -9024,6 +9542,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -9090,6 +9609,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 4.0,
@@ -9149,6 +9669,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 3.33333325,
@@ -9208,6 +9729,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 7.33333349,
@@ -9373,6 +9895,17 @@
       "totalCost": 19.7910042
     },
     "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.06238095,
+      "expectedTripTime": 0.2004762,
+      "fare": {
+        "baseFare": 14.0,
+        "surgeMultiplier": 1.0,
+        "total": 14.0,
+        "driverCut": 9.38,
+        "uberCut": 4.62
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 5.66666651,
@@ -9439,6 +9972,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 5.33333349,
@@ -9511,6 +10045,17 @@
       "totalCost": 29.0148048
     },
     "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.3004762,
+      "expectedTripTime": 0.2957143,
+      "fare": {
+        "baseFare": 19.0,
+        "surgeMultiplier": 1.0,
+        "total": 19.0,
+        "driverCut": 12.7300005,
+        "uberCut": 6.2699995
+      }
+    },
     "rideOfferStatus": 3,
     "destination": {
       "x": 4.0,
@@ -9667,6 +10212,17 @@
       "totalCost": 31.7959652
     },
     "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.138571441,
+      "expectedTripTime": 0.28619045,
+      "fare": {
+        "baseFare": 18.5,
+        "surgeMultiplier": 1.0,
+        "total": 18.5,
+        "driverCut": 12.395,
+        "uberCut": 6.10499954
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 8.0,
@@ -9733,6 +10289,7 @@
     "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
+    "rideOffer": null,
     "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
@@ -9889,6 +10446,17 @@
       "totalCost": 19.0423813
     },
     "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.19571428,
+      "expectedTripTime": 0.162380949,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
     "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
@@ -9948,6 +10516,7 @@
     "tripTypeChosen": 0,
     "uberTripOption": null,
     "state": 1,
+    "rideOffer": null,
     "rideOfferStatus": 0,
     "destination": {
       "x": 6.0,
@@ -10007,6 +10576,7 @@
     "tripTypeChosen": 0,
     "uberTripOption": null,
     "state": 1,
+    "rideOffer": null,
     "rideOfferStatus": 0,
     "destination": {
       "x": 0.0,
@@ -10073,6 +10643,7 @@
     "tripTypeChosen": 0,
     "uberTripOption": null,
     "state": 1,
+    "rideOffer": null,
     "rideOfferStatus": 0,
     "destination": {
       "x": 0.0,

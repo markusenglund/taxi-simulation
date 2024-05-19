@@ -72,6 +72,7 @@ public class PassengerPerson
 
     public TripOption uberTripOption { get; set; }
     public PassengerState state { get; set; }
+    public RideOffer rideOffer { get; set; }
 
     public RideOfferStatus rideOfferStatus { get; set; }
 

@@ -184,6 +184,7 @@ public class Passenger : MonoBehaviour
         }
         else
         {
+            person.rideOffer = rideOffer;
             float tripCreatedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
             float expectedPickupTime = tripCreatedTime + rideOffer.expectedWaitingTime;
 
