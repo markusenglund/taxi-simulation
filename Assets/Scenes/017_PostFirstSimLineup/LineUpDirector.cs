@@ -84,10 +84,10 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
         StartCoroutine(MovePassengersToLineUp(passengers));
         yield return new WaitForSeconds(3f);
-        Vector3 newCameraPosition = new Vector3(4.5f, 1, -10);
-        Quaternion newCameraRotation = Quaternion.LookRotation(canvasPosition - newCameraPosition, Vector3.up);
-        Camera.main.transform.position = newCameraPosition;
-        Camera.main.transform.rotation = newCameraRotation;
+        Vector3 chartFirstCameraPosition = new Vector3(4.5f, 1, -10);
+        Quaternion chartFirstCameraRotation = Quaternion.LookRotation(canvasPosition - chartFirstCameraPosition, Vector3.up);
+        Camera.main.transform.position = chartFirstCameraPosition;
+        Camera.main.transform.rotation = chartFirstCameraRotation;
         StartCoroutine(FadeInCanvas());
         yield return new WaitForSeconds(1f);
         StartCoroutine(CameraUtils.RotateCameraAround(canvasPosition, Vector3.right, 45, 3, Ease.Cubic));
@@ -100,9 +100,9 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(2f);
         Vector3 currentCameraPosition = Camera.main.transform.position;
         Quaternion currentCameraRotation = Camera.main.transform.rotation;
-        Quaternion newCameraRotation2 = Quaternion.Euler(60, 8, 5);
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(currentCameraPosition + new Vector3(1.5f, 1.4f, 0)
-        , newCameraRotation2, 2f, Ease.Cubic));
+        Quaternion wideShotCameraRotation = Quaternion.Euler(60, 8, 5);
+        Vector3 wideShotCameraPosition = currentCameraPosition + new Vector3(6f, 6f, -0.5f);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(wideShotCameraPosition, wideShotCameraRotation, 2f, Ease.Cubic));
         yield return new WaitForSeconds(5f);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(currentCameraPosition, currentCameraRotation, 2.5f, Ease.Cubic));
         yield return new WaitForSeconds(8f);
@@ -337,7 +337,7 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToIncome(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.hourlyIncome;
-        StartCoroutine(ChangeGraphAxis(passengers, "Hourly Income", selectPassengerValue, stepSize: 20f, "$"));
+        StartCoroutine(ChangeGraphAxis(passengers, "Hourly Income", selectPassengerValue, stepSize: 10f, "$"));
 
         yield return null;
     }
@@ -345,7 +345,7 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToBestSubstitute(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
-        StartCoroutine(ChangeGraphAxis(passengers, "Total cost of best substitute", selectPassengerValue, stepSize: 80f, "$"));
+        StartCoroutine(ChangeGraphAxis(passengers, "Total cost of best substitute", selectPassengerValue, stepSize: 30f, "$"));
         yield return null;
     }
 

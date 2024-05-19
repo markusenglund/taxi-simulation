@@ -16,7 +16,7 @@ MonoBehaviour:
   useConstantSurgeMultiplier: 1
   isActive: 0
   randomSeed: 1
-  simulationLengthHours: 4
+  simulationLengthHours: 16
   driverSpeed: 20
   walkingSpeed: 3.5
   publicTransportSpeed: 25
