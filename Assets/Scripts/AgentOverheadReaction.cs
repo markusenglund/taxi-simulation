@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AgentOverheadReaction : MonoBehaviour
 {
@@ -10,17 +11,25 @@ public class AgentOverheadReaction : MonoBehaviour
     string text;
     bool isBold;
 
+    bool addPadding;
+
     float durationBeforeFade = 0.8f;
     CanvasGroup canvasGroup;
     void Start()
     {
-        Transform passengerStatsSheet = transform.GetChild(0);
+        Transform textContainer = transform.GetChild(0);
         canvasGroup = transform.GetComponent<CanvasGroup>();
-        Transform textComponent = passengerStatsSheet.Find("Text");
+        Transform textComponent = textContainer.Find("Text");
         textMeshPro = textComponent.GetComponent<TextMeshProUGUI>();
         textMeshPro.color = color;
         textMeshPro.text = text;
         textMeshPro.fontStyle = isBold ? FontStyles.Bold : FontStyles.Normal;
+        if (addPadding)
+        {
+            HorizontalLayoutGroup horizontalLayoutGroup = textContainer.GetComponent<HorizontalLayoutGroup>();
+            horizontalLayoutGroup.padding = new RectOffset(30, 30, 0, 0);
+        }
+
         StartCoroutine(ScheduleActions());
     }
 
@@ -63,7 +72,7 @@ public class AgentOverheadReaction : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false, float durationBeforeFade = 0.8f)
+    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false, float durationBeforeFade = 0.8f, bool addPadding = false)
     {
         Transform statTextPrefab = Resources.Load<Transform>("AgentReaction");
         Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity, parent);
@@ -75,6 +84,7 @@ public class AgentOverheadReaction : MonoBehaviour
         agentStatusTextComponent.GetComponent<Canvas>().sortingOrder = 1;
         // Set font style
         agentStatusTextComponent.isBold = isBold;
+        agentStatusTextComponent.addPadding = addPadding;
         return agentStatusTextComponent;
     }
 }

@@ -412,7 +412,7 @@ public class Passenger : MonoBehaviour
             {
                 string reaction = new string('+', surplusCeil);
 
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.green, isBold: true);
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.green, isBold: true, addPadding: true);
             }
             else
             {
