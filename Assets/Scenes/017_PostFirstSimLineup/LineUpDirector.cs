@@ -56,6 +56,8 @@ public class LineUpDirector : MonoBehaviour
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
+        Time.captureFramerate = 60;
+
         canvas = GameObject.Find("Canvas");
         canvas.GetComponent<CanvasGroup>().alpha = 0;
 

@@ -16,6 +16,8 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
+        Time.captureFramerate = 60;
+
     }
 
     void Start()
@@ -50,7 +52,7 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
     void SpawnPassenger(Vector3 position, Quaternion rotation)
     {
         PassengerPerson person = new PassengerPerson(position, simSettings, passengerSpawnRandom);
-        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, null, null, null, null, mode: PassengerMode.Inactive, spawnDuration: 1, scaleFactor: 0.4f);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, simSettings, null, mode: PassengerMode.Inactive, spawnDuration: 1);
 
         // Animator animator = passenger.GetComponentInChildren<Animator>();
         // animator.SetTrigger("LookAtPhone");

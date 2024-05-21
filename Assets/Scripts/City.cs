@@ -28,11 +28,6 @@ public class City : MonoBehaviour
 {
     [SerializeField] public Transform taxiPrefab;
     [SerializeField] public Transform passengerPrefab;
-    [SerializeField] public Transform WaitingTimeGraphPrefab;
-    [SerializeField] public Transform DriverProfitGraphPrefab;
-    [SerializeField] public Transform SupplyDemandGraphPrefab;
-    [SerializeField] public Transform PassengerSurplusGraphPrefab;
-    [SerializeField] public Transform UtilityIncomeScatterPlotPrefab;
     [SerializeField] public Transform ResultsInfoBoxPrefab;
     [SerializeField] public Transform SurgeMultiplierGraphicPrefab;
 
@@ -110,11 +105,6 @@ public class City : MonoBehaviour
 
     void InstantiateGraphs()
     {
-        waitingTimeGraph = WaitingTimeGraph.Create(WaitingTimeGraphPrefab, graphSettings.waitingTimeGraphPos, simulationSettings);
-        driverProfitGraph = DriverProfitGraph.Create(DriverProfitGraphPrefab, graphSettings.driverProfitGraphPos, simulationSettings, driverPool);
-        SupplyDemandGraph.Create(SupplyDemandGraphPrefab, graphSettings.supplyDemandGraphPos, this);
-        passengerSurplusGraph = PassengerSurplusGraph.Create(PassengerSurplusGraphPrefab, graphSettings.passengerSurplusGraphPos, simulationSettings);
-        utilityIncomeScatterPlot = UtilityIncomeScatterPlot.Create(UtilityIncomeScatterPlotPrefab, graphSettings.passengerScatterPlotPos);
         resultsInfoBox = ResultsInfoBox.Create(ResultsInfoBoxPrefab, graphSettings.resultsInfoPos, this);
         surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
     }
@@ -259,7 +249,7 @@ public class City : MonoBehaviour
 
         foreach (PassengerPerson person in savedPersons)
         {
-            Passenger passenger = Passenger.Create(person, passengerPrefab, transform, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, city: this, PassengerMode.Inactive, 1, scaleFactor);
+            Passenger passenger = Passenger.Create(person, passengerPrefab, transform, simulationSettings, city: this, PassengerMode.Inactive, 1);
             passengers.Add(passenger);
         }
 
@@ -268,10 +258,9 @@ public class City : MonoBehaviour
 
     public Passenger CreatePassenger(Vector3 position)
     {
-        // Passenger passenger = Passenger.Create(passengerPrefab, position.x, position.z, this, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot);
         PassengerPerson person = new PassengerPerson(position, simulationSettings, passengerSpawnRandom);
         passengerAgents.Add(person);
-        Passenger passenger = Passenger.Create(person, passengerPrefab, transform, waitingTimeGraph, passengerSurplusGraph, utilityIncomeScatterPlot, city: this);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, transform, simulationSettings, city: this);
         passengers.Add(passenger);
         return passenger;
     }

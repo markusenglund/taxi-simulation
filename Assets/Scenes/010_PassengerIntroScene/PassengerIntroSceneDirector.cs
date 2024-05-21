@@ -19,7 +19,10 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     public Random passengerSpawnRandom;
 
 
-
+    void Awake()
+    {
+        Time.captureFramerate = 60;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +41,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(1.8f);
         PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
         float spawnDuration = 1.5f;
-        Passenger passenger = Passenger.Create(person, passengerPrefab, grid, null, null, null, null, mode: PassengerMode.Inactive, spawnDuration, scaleFactor: 0.4f);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, grid, simSettings, null, mode: PassengerMode.Inactive, spawnDuration);
         passenger.transform.rotation = Quaternion.Euler(0, 180, 0);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
         Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);

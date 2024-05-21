@@ -22,6 +22,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
+        Time.captureFramerate = 60;
     }
 
     void Start()
@@ -37,7 +38,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
         PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
         float spawnDuration = 1.5f;
-        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, null, null, null, null, mode: PassengerMode.Inactive, spawnDuration, scaleFactor: 0.4f);
+        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, simSettings, city, mode: PassengerMode.Inactive, spawnDuration);
         // TODO: All passengerStats stuff should be added back in when replacing passengerBase
         // PassengerStats passengerStats = SpawnPassengerStats(passenger);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();

@@ -16,6 +16,7 @@ public class PriceSceneDirector : MonoBehaviour
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
+        Time.captureFramerate = 60;
     }
 
     void Start()

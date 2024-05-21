@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
+  isActive: 1
   randomSeed: 1
   simulationLengthHours: 4
   driverSpeed: 30
   walkingSpeed: 3.5
   publicTransportSpeed: 25
+  publicTransportCost: 2.5
   baseStartingFare: 4
   baseFarePerKm: 1.5
   driverFareCutPercentage: 0.67
@@ -34,3 +36,6 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  showDriverEarnings: 1
+  showPassengerReactions: 1
+  passengerScale: 0.4

@@ -19,6 +19,8 @@ public class SlowRotatingScene : MonoBehaviour
         city1 = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
         city2 = City.Create(cityPrefab, 12, 0, simSettings, graphSettings);
         city2.transform.position = new Vector3(12, -100, 0);
+        Time.captureFramerate = 60;
+
     }
 
     void Start()
