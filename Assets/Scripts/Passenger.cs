@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
-using Random = System.Random;
 using System.Collections.Generic;
 
 #nullable enable
@@ -29,14 +27,6 @@ public class Passenger : MonoBehaviour
     [SerializeField] public Transform agentStatusTextPrefab;
     public Transform agentReactionTextPrefab;
 
-
-    private WaitingTimeGraph? waitingTimeGraph;
-
-    private UtilityIncomeScatterPlot? utilityIncomeScatterPlot;
-
-    private PassengerSurplusGraph? passengerSurplusGraph;
-
-
     private City city;
 
     private Transform parentTransform;
@@ -49,7 +39,7 @@ public class Passenger : MonoBehaviour
 
     Animator passengerAnimator;
 
-    public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f, SimulationSettings simSettings)
+    public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, SimulationSettings simSettings, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f)
     {
 
         (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition);
@@ -61,9 +51,6 @@ public class Passenger : MonoBehaviour
         passenger.city = city;
         passenger.parentTransform = parentTransform;
         passenger.spawnDuration = spawnDuration;
-        passenger.waitingTimeGraph = waitingTimeGraph;
-        passenger.passengerSurplusGraph = passengerSurplusGraph;
-        passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
         passenger.person = person;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         passenger.passengerScale = simSettings.passengerScale + 0.1f * simSettings.passengerScale * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
@@ -239,10 +226,6 @@ public class Passenger : MonoBehaviour
                 expectedUtilitySurplus = expectedUtilitySurplus,
             };
 
-            if (utilityIncomeScatterPlot != null)
-            {
-                utilityIncomeScatterPlot.AppendPassenger(this, tripCreatedPassengerData);
-            }
             if (hasAcceptedRideOffer)
             {
                 person.rideOfferStatus = RideOfferStatus.Accepted;
@@ -254,10 +237,6 @@ public class Passenger : MonoBehaviour
             {
                 person.rideOfferStatus = RideOfferStatus.Rejected;
                 // Debug.Log("Passenger " + id + " is giving up");
-                if (passengerSurplusGraph != null)
-                {
-                    passengerSurplusGraph.AppendPassenger(this);
-                }
                 person.SetState(PassengerState.RejectedRideOffer);
                 StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.RejectedRideOffer));
             }
@@ -283,12 +262,6 @@ public class Passenger : MonoBehaviour
             waitingCost = waitingCost,
         };
 
-        if (waitingTimeGraph != null)
-        {
-            waitingTimeGraph.SetNewValue(pickedUpData.waitingTime);
-        }
-
-
         return pickedUpPassengerData;
     }
 
@@ -310,10 +283,6 @@ public class Passenger : MonoBehaviour
             utilitySurplus = utilitySurplus
         };
 
-        if (passengerSurplusGraph != null)
-        {
-            passengerSurplusGraph.AppendPassenger(this);
-        }
         person.SetState(PassengerState.DroppedOff);
 
         StartCoroutine(EndTripAnimation());
