@@ -49,7 +49,7 @@ public class Passenger : MonoBehaviour
 
     Animator passengerAnimator;
 
-    public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f, float scaleFactor = 4)
+    public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, WaitingTimeGraph waitingTimeGraph, PassengerSurplusGraph passengerSurplusGraph, UtilityIncomeScatterPlot utilityIncomeScatterPlot, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f, SimulationSettings simSettings)
     {
 
         (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition);
@@ -66,7 +66,7 @@ public class Passenger : MonoBehaviour
         passenger.utilityIncomeScatterPlot = utilityIncomeScatterPlot;
         passenger.person = person;
         passenger.person.timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
-        passenger.passengerScale = scaleFactor + 0.1f * scaleFactor * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
+        passenger.passengerScale = simSettings.passengerScale + 0.1f * simSettings.passengerScale * Mathf.Pow(Mathf.Min(person.economicParameters.hourlyIncome, 100), 1f / 3f);
         passenger.mode = mode;
         if (passenger.person.state == PassengerState.BeforeSpawn)
         {
@@ -386,39 +386,43 @@ public class Passenger : MonoBehaviour
 
     public IEnumerator DespawnPassenger(float duration, DespawnReason reason)
     {
-        Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
+        if (city.simulationSettings.showPassengerReactions)
+        {
+
+            Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
         {
             { TripType.Uber, "🚕" },
             { TripType.Walking, "🚶" },
             { TripType.PublicTransport, "🚌" },
         };
-        Vector3 reactionPosition = Vector3.up * (passengerScale * 0.3f + 0.2f);
-        if (reason == DespawnReason.RejectedRideOffer)
-        {
-            string reaction = tripTypeToEmoji[person.tripTypeChosen];
-            AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
-        }
-        else if (reason == DespawnReason.NoRideOffer)
-        {
-            string reaction = tripTypeToEmoji[person.tripTypeChosen] + "📵";
-            AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
-        }
-        else if (reason == DespawnReason.DroppedOff)
-        {
-            float surplus = person.trip.droppedOffPassengerData.utilitySurplus;
-            int surplusCeil = Mathf.CeilToInt(surplus);
-            // Add one smiley face per unit of utility surplus
-            if (surplusCeil > 0)
+            Vector3 reactionPosition = Vector3.up * (passengerScale * 0.3f + 0.2f);
+            if (reason == DespawnReason.RejectedRideOffer)
             {
-                string reaction = new string('+', surplusCeil);
-
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.green, isBold: true, addPadding: true);
+                string reaction = tripTypeToEmoji[person.tripTypeChosen];
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
             }
-            else
+            else if (reason == DespawnReason.NoRideOffer)
             {
-                string reaction = "😐";
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.yellow, isBold: false);
+                string reaction = tripTypeToEmoji[person.tripTypeChosen] + "📵";
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
+            }
+            else if (reason == DespawnReason.DroppedOff)
+            {
+                float surplus = person.trip.droppedOffPassengerData.utilitySurplus;
+                int surplusCeil = Mathf.CeilToInt(surplus);
+                // Add one smiley face per unit of utility surplus
+                if (surplusCeil > 0)
+                {
+                    string reaction = new string('+', surplusCeil);
 
+                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.green, isBold: true, addPadding: true);
+                }
+                else
+                {
+                    string reaction = "😐";
+                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.yellow, isBold: false);
+
+                }
             }
         }
 

@@ -133,6 +133,8 @@ public class SimulationSettings : ScriptableObject
 
     // Visual settings
     public bool showDriverEarnings = true;
+    public bool showPassengerReactions = true;
+    public float passengerScale = 4f;
 
 
 

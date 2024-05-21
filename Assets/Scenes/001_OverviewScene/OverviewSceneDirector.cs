@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEditor;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -25,6 +24,8 @@ public class OverviewSceneDirector : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(city.StartSimulation());
+
         Camera.main.transform.position = new Vector3(4.5f, 500, 4.5f);
         Camera.main.transform.rotation = Quaternion.Euler(90, 0, 0);
         StartCoroutine(Scene());
