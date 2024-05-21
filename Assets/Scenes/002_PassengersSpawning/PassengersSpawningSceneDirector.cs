@@ -17,7 +17,7 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
         Time.captureFramerate = 60;
-
+        Time.timeScale = 0.6f;
     }
 
     void Start()
@@ -36,27 +36,30 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         city.CreateDriver(driverPerson, new Vector3(6, 0, 6));
         city.CreatePassenger(new Vector3(2, 0.08f, 3f));
         yield return new WaitForSeconds(0.7f);
-        SpawnPassenger(new Vector3(5, 0.08f, 3.23f), Quaternion.LookRotation(new Vector3(0, 0, -1)));
-        SpawnPassenger(new Vector3(7f, 0.08f, 2.77f), Quaternion.LookRotation(new Vector3(0, 0, 1)));
+        SpawnPassenger(new Vector3(5, 0.08f, 3.23f));
+        Passenger passenger2 = SpawnPassenger(new Vector3(7f, 0.08f, 2.77f));
+        Animator animator2 = passenger2.GetComponentInChildren<Animator>();
+        animator2.SetTrigger("BreathingIdle");
+        animator2.SetTrigger("IdleVariation1");
         StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(40, 90, 0), duration: 5, ease: Ease.QuadraticIn));
         yield return new WaitForSeconds(1.5f);
 
-        SpawnPassenger(new Vector3(9.23f, 0.08f, 6f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)));
-        SpawnPassenger(new Vector3(6.23f, 0.08f, 2.5f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)));
+        SpawnPassenger(new Vector3(9.23f, 0.08f, 6f));
+        SpawnPassenger(new Vector3(6.23f, 0.08f, 2.5f));
         yield return new WaitForSeconds(1);
-        SpawnPassenger(new Vector3(9.23f, 0.08f, 2.77f), Quaternion.LookRotation(new Vector3(-1, 0, 0f)));
+        Passenger passenger5 = SpawnPassenger(new Vector3(9.23f, 0.08f, 2.77f));
+        Animator animator5 = passenger5.GetComponentInChildren<Animator>();
+        animator5.SetTrigger("BreathingIdle");
+        animator5.SetTrigger("IdleVariation2");
         yield return new WaitForSeconds(50);
         EditorApplication.isPlaying = false;
     }
 
-    void SpawnPassenger(Vector3 position, Quaternion rotation)
+    Passenger SpawnPassenger(Vector3 position)
     {
         PassengerPerson person = new PassengerPerson(position, simSettings, passengerSpawnRandom);
-        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, simSettings, null, mode: PassengerMode.Inactive, spawnDuration: 1);
-
-        // Animator animator = passenger.GetComponentInChildren<Animator>();
-        // animator.SetTrigger("LookAtPhone");
-
+        Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, simSettings, city, mode: PassengerMode.Inactive, spawnDuration: 1);
+        return passenger;
     }
 
     DriverPerson CreateGenericDriverPerson()

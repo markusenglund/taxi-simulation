@@ -35,8 +35,8 @@ public class OverviewSceneDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        Time.timeScale = 10;
-        yield return new WaitForSeconds(20);
+        Time.timeScale = 5;
+        yield return new WaitForSeconds(10);
         Time.timeScale = 1;
         StartCoroutine(MoveCamera(toPosition: new Vector3(4.5f, 11.3f, 4.5f), duration: 1.5f, ease: Ease.Cubic));
         yield return new WaitForSeconds(2);

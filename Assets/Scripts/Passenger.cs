@@ -99,16 +99,35 @@ public class Passenger : MonoBehaviour
         float positionX = roadPosition.x;
         float positionZ = roadPosition.z;
         Quaternion rotation = Quaternion.identity;
-        if (roadPosition.x % GridUtils.blockSize == 0)
-        {
-            positionX = roadPosition.x + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
-        }
         if (roadPosition.z % GridUtils.blockSize == 0)
         {
             positionZ = roadPosition.z + .23f;
             rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
         }
+        else if (roadPosition.x % GridUtils.blockSize == 0)
+        {
+            positionX = roadPosition.x + .23f;
+            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
+        }
+        else
+        {
+            // Find the direction of the closest road
+            float closestVerticalRoadZ = roadPosition.z % GridUtils.blockSize < GridUtils.blockSize / 2 ? Mathf.Floor(roadPosition.z / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Ceil(roadPosition.z / GridUtils.blockSize) * GridUtils.blockSize;
+            float closestHorizontalRoadX = roadPosition.x % GridUtils.blockSize < GridUtils.blockSize / 2 ? Mathf.Floor(roadPosition.x / GridUtils.blockSize) * GridUtils.blockSize : Mathf.Ceil(roadPosition.x / GridUtils.blockSize) * GridUtils.blockSize;
+            float distanceToVerticalRoad = Mathf.Abs(roadPosition.z - closestVerticalRoadZ);
+            float distanceToHorizontalRoad = Mathf.Abs(roadPosition.x - closestHorizontalRoadX);
+            if (distanceToVerticalRoad < distanceToHorizontalRoad)
+            {
+                Vector3 roadDirection = roadPosition.z < closestVerticalRoadZ ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+                rotation = Quaternion.LookRotation(roadDirection);
+            }
+            else
+            {
+                Vector3 roadDirection = roadPosition.x < closestHorizontalRoadX ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
+                rotation = Quaternion.LookRotation(roadDirection);
+            }
+        }
+
 
         return (new Vector3(positionX, 0.08f, positionZ), rotation);
     }

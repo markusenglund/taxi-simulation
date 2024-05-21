@@ -155,7 +155,7 @@ MonoBehaviour:
   cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
   simSettings: {fileID: 11400000, guid: 56a96036e5ba6c945a63fd3fcf53cffb, type: 2}
   graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
-  passengerPrefab: {fileID: 257660041485958409, guid: 12bddc92fd236ad48acb05f9007220cc, type: 3}
+  passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
 --- !u!4 &538386556
 Transform:
   m_ObjectHideFlags: 0
