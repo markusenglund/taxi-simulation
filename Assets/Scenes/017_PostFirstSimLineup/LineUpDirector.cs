@@ -98,6 +98,8 @@ public class LineUpDirector : MonoBehaviour
         yield return StartCoroutine(ShowPassengerResults(passengers));
         // StartCoroutine(ChangeGraphToSurplusValue(passengers));
         // StartCoroutine(ChangeGraphToExpectedWaitingTime(passengers));
+        StartCoroutine(ChangeGraphToBestSubstituteTime(passengers));
+        yield return new WaitForSeconds(10f);
         StartCoroutine(ChangeGraphToIncome(passengers));
         yield return new WaitForSeconds(2f);
         Vector3 currentCameraPosition = Camera.main.transform.position;
@@ -382,6 +384,13 @@ public class LineUpDirector : MonoBehaviour
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().totalCost;
         StartCoroutine(ChangeGraphAxis(passengers, "Total cost of best substitute", selectPassengerValue, stepSize: 30f, "$"));
+        yield return null;
+    }
+
+    private IEnumerator ChangeGraphToBestSubstituteTime(Passenger[] passengers)
+    {
+        Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().timeHours * 60f;
+        StartCoroutine(ChangeGraphAxis(passengers, "Time of best substitute", selectPassengerValue, stepSize: 25f, "min"));
         yield return null;
     }
 
