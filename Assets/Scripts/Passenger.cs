@@ -271,7 +271,11 @@ public class Passenger : MonoBehaviour
 
     public void HandleDriverArrivedAtPickUp()
     {
-        AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScale * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+        if (city.simulationSettings.showPassengerCosts)
+        {
+
+            AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScale * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+        }
 
     }
 

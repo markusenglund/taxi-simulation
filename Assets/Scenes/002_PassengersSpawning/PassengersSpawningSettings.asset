@@ -27,7 +27,7 @@ MonoBehaviour:
   driverMarginalCostPerKm: 0.13
   numDrivers: 0
   maxSessionLength: 4
-  passengerMedianIncome: 40
+  passengerMedianIncome: 30
   passengerIncomeSigma: 0.9
   demandIndexMultiplier: 5
   expectedPassengersByHour:
@@ -37,5 +37,7 @@ MonoBehaviour:
   - 0
   - 0
   showDriverEarnings: 1
+  showPassengerCosts: 1
   showPassengerReactions: 1
   passengerScale: 0.8
+  driverScale: 1
