@@ -51,7 +51,7 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         Animator animator5 = passenger5.GetComponentInChildren<Animator>();
         animator5.SetTrigger("BreathingIdle");
         animator5.SetTrigger("IdleVariation2");
-        yield return new WaitForSeconds(50);
+        yield return new WaitForSeconds(5);
         EditorApplication.isPlaying = false;
     }
 

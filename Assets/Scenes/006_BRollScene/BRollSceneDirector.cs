@@ -20,7 +20,6 @@ public class BRollDirector : MonoBehaviour
         StartCoroutine(city.StartSimulation());
 
         Time.captureFramerate = 60;
-
     }
 
     void Start()
