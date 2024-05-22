@@ -2,6 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Ease
+{
+    Cubic,
+    CubicIn,
+    CubicOut,
+    Quadratic,
+    QuadraticIn,
+    QuadraticOut,
+    Linear
+}
+
 public class EaseUtils : MonoBehaviour
 {
     public static float EaseInOutCubic(float t)

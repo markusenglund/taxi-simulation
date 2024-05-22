@@ -3,14 +3,6 @@ using UnityEditor;
 using UnityEngine;
 
 
-public enum Ease
-{
-    Cubic,
-    QuadraticIn,
-    QuadraticOut,
-    Linear
-}
-
 public class OverviewSceneDirector : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;

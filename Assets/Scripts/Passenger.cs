@@ -362,7 +362,7 @@ public class Passenger : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float verticalT = EaseUtils.EaseInCubic(t);
+            float verticalT = EaseUtils.EaseInCubic(t) * 1.1f - 0.1f;
             float horizontalT = EaseUtils.EaseInOutCubic(t);
             transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, horizontalT);
             transform.localPosition = new Vector3(Mathf.Lerp(startPosition.x, finalPosition.x, horizontalT), Mathf.Lerp(startPosition.y, finalPosition.y, verticalT), Mathf.Lerp(startPosition.z, finalPosition.z, horizontalT));

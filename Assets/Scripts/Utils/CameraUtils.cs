@@ -112,14 +112,21 @@ public class CameraUtils : MonoBehaviour
         }
     }
 
-    public static IEnumerator RotateCameraAroundMovingObject(Transform target, float distance, Vector3 axis, float angle, float duration)
+    public static IEnumerator RotateCameraAroundMovingObject(Transform target, float distance, Vector3 axis, float angle, float duration, Ease ease = Ease.Cubic)
     {
         float startTime = Time.time;
         float prevT = 0;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            t = EaseUtils.EaseInOutCubic(t);
+            if (ease == Ease.Cubic)
+            {
+                t = EaseUtils.EaseInOutCubic(t);
+            }
+            else if (ease == Ease.Quadratic)
+            {
+                t = EaseUtils.EaseInOutQuadratic(t);
+            }
             Camera.main.transform.position = target.position + (Camera.main.transform.position - target.position).normalized * distance;
             Camera.main.transform.RotateAround(target.position, axis, angle * (t - prevT));
             prevT = t;

@@ -10,7 +10,6 @@ public class DriverCloseupSceneDirector : MonoBehaviour
     [SerializeField] public SimulationSettings simSettings;
     [SerializeField] public GraphSettings graphSettings;
     [SerializeField] public Transform passengerPrefab;
-    public Random passengerSpawnRandom;
 
     City city;
     void Awake()
@@ -22,7 +21,6 @@ public class DriverCloseupSceneDirector : MonoBehaviour
 
     void Start()
     {
-        passengerSpawnRandom = new Random(1);
         StartCoroutine(Scene());
     }
 
@@ -31,17 +29,18 @@ public class DriverCloseupSceneDirector : MonoBehaviour
         yield return null; // Wait for the city to run the Start method before generating passenger
         DriverPerson driverPerson = CreateGenericDriverPerson();
         Driver driver = city.CreateDriver(driverPerson, new Vector3(9, 0.05f, 6));
-        city.CreatePassenger(new Vector3(9, 0.05f, 7.23f));
+        Passenger passenger = city.CreatePassenger(new Vector3(9, 0.05f, 6f));
+        passenger.person.destination = new Vector3(3, 0.05f, 3.2f);
         Camera.main.transform.SetParent(driver.transform);
         Camera.main.transform.localPosition = new Vector3(0, 1.5f, 2.15f);
         Camera.main.transform.localRotation = Quaternion.Euler(30, 180, 0);
         // yield return StartCoroutine(FollowObject(driver.transform, duration: 5));
         yield return new WaitForSeconds(1);
         Time.timeScale = 0.3f;
-        StartCoroutine(CameraUtils.RotateCameraAroundMovingObject(driver.transform, distance: 0.37f, Vector3.up, -20, 2.5f));
-        yield return new WaitForSeconds(2.5f);
+        StartCoroutine(CameraUtils.RotateCameraAroundMovingObject(driver.transform, distance: 0.37f, Vector3.up, -20, 2f, Ease.Quadratic));
+        yield return new WaitForSeconds(2f);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(-0.6f, 2.3f, 2f), Quaternion.Euler(0, 160, 0), 0.5f));
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(4);
         EditorApplication.isPlaying = false;
     }
 
