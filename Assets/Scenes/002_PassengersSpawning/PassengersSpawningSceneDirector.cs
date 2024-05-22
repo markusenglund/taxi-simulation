@@ -17,12 +17,12 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
         Time.captureFramerate = 60;
-        Time.timeScale = 0.6f;
+        Time.timeScale = 0.7f;
     }
 
     void Start()
     {
-        passengerSpawnRandom = new Random(1);
+        passengerSpawnRandom = new Random(city.simulationSettings.randomSeed);
         StartCoroutine(Scene());
     }
 
