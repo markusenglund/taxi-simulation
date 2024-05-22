@@ -319,7 +319,8 @@ public class Passenger : MonoBehaviour
         transform.SetParent(driver.transform);
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
-        float topTaxiY = 1.2f;
+        // I'm flummoxed by why the passengers feet are not on the ground when they are at the top of the car unless we do this hack
+        float topTaxiY = 1.44f - passengerScale * 0.05f;
         Vector3 finalPosition = new Vector3(0.09f, topTaxiY, 0);
 
         Quaternion startRotation = transform.localRotation;

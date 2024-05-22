@@ -28,10 +28,10 @@ public class DriverCloseupSceneDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        DriverPerson driverPerson = CreateGenericDriverPerson();
-        Driver driver = city.CreateDriver(driverPerson, new Vector3(9, 0, 6));
         yield return null; // Wait for the city to run the Start method before generating passenger
-        city.CreatePassenger(new Vector3(9, 0.08f, 6));
+        DriverPerson driverPerson = CreateGenericDriverPerson();
+        Driver driver = city.CreateDriver(driverPerson, new Vector3(9, 0.05f, 6));
+        city.CreatePassenger(new Vector3(9, 0.08f, 7.23f));
         Camera.main.transform.SetParent(driver.transform);
         Camera.main.transform.localPosition = new Vector3(0, 1.5f, 2.15f);
         Camera.main.transform.localRotation = Quaternion.Euler(30, 180, 0);

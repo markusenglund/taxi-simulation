@@ -38,3 +38,5 @@ MonoBehaviour:
   - 37
   - 0
   showDriverEarnings: 0
+  showPassengerReactions: 1
+  passengerScale: 4
