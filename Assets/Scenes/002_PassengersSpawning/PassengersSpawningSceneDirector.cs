@@ -34,7 +34,7 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         DriverPerson driverPerson = CreateGenericDriverPerson();
         city.CreateDriver(driverPerson, new Vector3(6, 0, 6));
-        city.CreatePassenger(new Vector3(2, 0.08f, 3f));
+        city.CreatePassenger(new Vector3(2, 0.05f, 3f));
         yield return new WaitForSeconds(0.7f);
         SpawnPassenger(new Vector3(5, 0.08f, 3.23f));
         Passenger passenger2 = SpawnPassenger(new Vector3(7f, 0.08f, 2.77f));
