@@ -49,7 +49,7 @@ public class Driver : MonoBehaviour
     private City city;
 
     private float acceleration = 1000;
-    private float maxSpeed = 40;
+    private float maxSpeed;
 
     private WaypointSegment currentWaypointSegment;
 
@@ -78,6 +78,7 @@ public class Driver : MonoBehaviour
         driver.city = city;
         driver.driverPerson = person;
         driver.driverPerson.isCurrentlyDriving = true;
+        driver.maxSpeed = city.simulationSettings.driverSpeed;
         taxi.name = "Taxi";
         return driver;
     }
@@ -87,7 +88,7 @@ public class Driver : MonoBehaviour
         Transform spawnAnimationPrefab = Resources.Load<Transform>("RespawnAnimation");
         Transform animation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
         animation.localScale = Vector3.one * 7f;
-        Vector3 finalScale = transform.localScale;
+        Vector3 finalScale = city.simulationSettings.driverScale * 0.15f * Vector3.one;
         transform.localScale = Vector3.zero;
         float startTime = Time.time;
         while (Time.time < startTime + spawnDuration)

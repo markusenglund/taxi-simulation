@@ -35,8 +35,6 @@ public class BRollDirector : MonoBehaviour
     {
         StartCoroutine(CameraUtils.MoveCamera(cameraStartPosition + new Vector3(0, 0, 9), duration: 25, Ease.Linear));
         yield return new WaitForSeconds(25);
-        // StartCoroutine(CameraUtils.MoveCamera(new Vector3(-8f, 6f, -1.5f), duration: 3, Ease.Cubic));
-        // StartCoroutine(CameraUtils.RotateCameraAround(middlePosition, Vector3.up, -90, 3, Ease.Linear));
 
         EditorApplication.isPlaying = false;
     }
