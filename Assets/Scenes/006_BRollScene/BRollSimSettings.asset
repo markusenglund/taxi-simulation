@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c895f3cd3ce74493b83c995efd1ee3bb, type: 3}
-  m_Name: SimSettings
+  m_Name: BRollSimSettings
   m_EditorClassIdentifier: 
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
   randomSeed: 1
   simulationLengthHours: 6
-  driverSpeed: 30
+  driverSpeed: 2
   walkingSpeed: 3.5
   publicTransportSpeed: 25
   publicTransportCost: 2.5
@@ -40,4 +40,4 @@ MonoBehaviour:
   - 15
   showDriverEarnings: 0
   showPassengerReactions: 0
-  passengerScale: 1.2
+  passengerScale: 0.7
