@@ -125,7 +125,7 @@ public class Driver : MonoBehaviour
 
         if (city.simulationSettings.showDriverEarnings)
         {
-            AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", Color.green);
+            AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", ColorScheme.green);
         }
 
         Passenger passenger = currentTrip.tripCreatedData.passenger;

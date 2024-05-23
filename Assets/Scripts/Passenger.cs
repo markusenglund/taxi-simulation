@@ -103,15 +103,21 @@ public class Passenger : MonoBehaviour
         float positionX = roadPosition.x;
         float positionZ = roadPosition.z;
         Quaternion rotation = Quaternion.identity;
-        if (roadPosition.z % GridUtils.blockSize == 0)
+        bool isVerticalRoad = roadPosition.z % GridUtils.blockSize == 0;
+        bool isHorizontalRoad = roadPosition.x % GridUtils.blockSize == 0;
+        if (isVerticalRoad || isHorizontalRoad)
         {
-            positionZ = roadPosition.z + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
-        }
-        else if (roadPosition.x % GridUtils.blockSize == 0)
-        {
-            positionX = roadPosition.x + .23f;
-            rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
+            if (isVerticalRoad)
+            {
+                positionZ = roadPosition.z + .23f;
+                rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
+            }
+            if (isHorizontalRoad)
+            {
+                positionX = roadPosition.x + .23f;
+                rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
+            }
+
         }
         else
         {
@@ -274,7 +280,7 @@ public class Passenger : MonoBehaviour
         if (city.simulationSettings.showPassengerCosts)
         {
 
-            AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScale * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", Color.red);
+            AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * (passengerScale * 0.3f + 0.3f), $"-${person.trip.tripCreatedData.fare.total.ToString("F2")}", ColorScheme.darkRed);
         }
 
     }
@@ -328,7 +334,7 @@ public class Passenger : MonoBehaviour
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
         // I'm flummoxed by why the passengers feet are not on the ground when they are at the top of the car unless we do this hack
-        float topTaxiY = 1.44f - passengerScale * 0.05f;
+        float topTaxiY = 1.45f - passengerScale * 0.05f;
         Vector3 finalPosition = new Vector3(0.09f, topTaxiY, 0);
 
         Quaternion startRotation = transform.localRotation;
@@ -396,12 +402,12 @@ public class Passenger : MonoBehaviour
             if (reason == DespawnReason.RejectedRideOffer)
             {
                 string reaction = tripTypeToEmoji[person.tripTypeChosen];
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.purple);
             }
             else if (reason == DespawnReason.NoRideOffer)
             {
                 string reaction = tripTypeToEmoji[person.tripTypeChosen] + "📵";
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.red);
+                AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.red);
             }
             else if (reason == DespawnReason.DroppedOff)
             {
@@ -412,12 +418,12 @@ public class Passenger : MonoBehaviour
                 {
                     string reaction = new string('+', surplusCeil);
 
-                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.green, isBold: true, addPadding: true);
+                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.green, isBold: true, addPadding: true);
                 }
                 else
                 {
                     string reaction = "😐";
-                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, Color.yellow, isBold: false);
+                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.yellow, isBold: false);
 
                 }
             }

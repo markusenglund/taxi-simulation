@@ -32,8 +32,10 @@ public class AgentOverheadText : MonoBehaviour
 
     private IEnumerator SpawnCard(float duration)
     {
+        Vector3 cameraPosition = Camera.main.transform.position;
+        float distanceToCamera = Vector3.Distance(cameraPosition, transform.position);
         Vector3 startScale = Vector3.zero;
-        Vector3 finalScale = transform.localScale;
+        Vector3 finalScale = transform.localScale * (0.5f + (distanceToCamera / 30f));
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
@@ -43,6 +45,7 @@ public class AgentOverheadText : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
+        Debug.Log($"Distance to camera: {distanceToCamera}, scale: {transform.localScale}");
     }
 
     private IEnumerator FadeIntoTheSky(float duration)

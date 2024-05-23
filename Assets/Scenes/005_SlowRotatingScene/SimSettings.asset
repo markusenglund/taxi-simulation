@@ -17,7 +17,7 @@ MonoBehaviour:
   isActive: 1
   randomSeed: 1
   simulationLengthHours: 6
-  driverSpeed: 30
+  driverSpeed: 25
   walkingSpeed: 3.5
   publicTransportSpeed: 25
   publicTransportCost: 2.5
@@ -39,5 +39,7 @@ MonoBehaviour:
   - 15
   - 15
   showDriverEarnings: 0
+  showPassengerCosts: 1
   showPassengerReactions: 0
   passengerScale: 1.2
+  driverScale: 1

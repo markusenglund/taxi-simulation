@@ -167,7 +167,7 @@ public class PassengerStats : MonoBehaviour
                 uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().font = notoEmoji;
                 uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().fontSize = 12;
                 uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().text = "📵";
-                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = Color.red;
+                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = ColorScheme.red;
             }
         }
 
