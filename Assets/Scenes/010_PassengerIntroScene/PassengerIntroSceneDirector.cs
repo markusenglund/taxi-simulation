@@ -40,23 +40,44 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         StartCoroutine(SpawnCity());
         yield return new WaitForSeconds(1.8f);
         PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
+        float hourlyIncome = 45.70f;
+        float timePreference = 3.10f;
+        float waitingCostPerHour = hourlyIncome * timePreference;
+        person.economicParameters = new PassengerEconomicParameters
+        {
+            hourlyIncome = hourlyIncome,
+            timePreference = timePreference,
+            waitingCostPerHour = waitingCostPerHour,
+            substitutes = person.GenerateSubstitutes(waitingCostPerHour, hourlyIncome)
+        };
+        float timeHours = 24f / 60f;
+        float timeCost = timeHours * waitingCostPerHour;
+        float moneyCost = 12f;
+        person.uberTripOption = new TripOption
+        {
+            type = TripType.Uber,
+            timeHours = timeHours,
+            timeCost = timeCost,
+            moneyCost = moneyCost,
+            totalCost = moneyCost + timeCost,
+        };
         float spawnDuration = 1.5f;
         Passenger passenger = Passenger.Create(person, passengerPrefab, grid, simSettings, null, mode: PassengerMode.Inactive, spawnDuration);
         passenger.transform.rotation = Quaternion.Euler(0, 180, 0);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
-        Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.2f);
+        Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.22f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1.5f));
         yield return new WaitForSeconds(0.2f);
         passengerAnimator.SetTrigger("Wave");
-        yield return new WaitForSeconds(2.8f);
-        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 20, 0), 5));
+        yield return new WaitForSeconds(4f);
+        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(11, 20, 0), 5));
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(0.1f);
         StartCoroutine(SpawnPassengerStats(passenger));
         yield return new WaitForSeconds(1);
         // passengerAnimator.SetTrigger("GestureLeft");
         yield return new WaitForSeconds(1);
-        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -20, duration: 10));
+        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
         yield return new WaitForSeconds(8);
         passengerAnimator.SetTrigger("LookAtPhone");
     }
@@ -69,7 +90,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            t = EaseInOutCubic(t);
+            t = EaseUtils.EaseInOutCubic(t);
             Camera.main.transform.position = Vector3.Lerp(startPosition, finalPosition, t);
             Camera.main.transform.rotation = Quaternion.Lerp(startRotation, finalRotation, t);
             yield return null;
@@ -84,7 +105,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            t = EaseInOutCubic(t);
+            t = EaseUtils.EaseInOutCubic(t);
             Camera.main.transform.RotateAround(point, axis, angle * (t - prevT));
             prevT = t;
             yield return null;
@@ -188,8 +209,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float scaleFactor = EaseOutCubic(t);
-            float transparencyFactor = EaseInCubic(t);
+            float scaleFactor = EaseUtils.EaseOutCubic(t);
+            float transparencyFactor = EaseUtils.EaseInCubic(t);
             tile.localScale = originalScale * scaleFactor;
             tile.position = Vector3.Lerp(startPosition, finalPosition, scaleFactor);
             for (int i = 0; i < tileRenderer.materials.Count(); i++)
@@ -222,7 +243,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float scaleFactor = EaseOutCubic(t);
+            float scaleFactor = EaseUtils.EaseOutCubic(t);
             tile.localScale = originalScale * scaleFactor;
             tile.position = Vector3.Lerp(startPosition, finalPosition, scaleFactor);
 
@@ -240,30 +261,6 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
         PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person, mode: PassengerStatMode.Slow);
         yield return null;
-    }
-
-    float EaseInOutCubic(float t)
-    {
-        float t2;
-        if (t <= 0.5f)
-        {
-            t2 = Mathf.Pow(t * 2, 3) / 2;
-        }
-        else
-        {
-            t2 = (2 - Mathf.Pow((1 - t) * 2, 3)) / 2;
-        }
-        return t2;
-    }
-
-    float EaseOutCubic(float t)
-    {
-        return 1 - Mathf.Pow(1 - t, 3);
-    }
-
-    float EaseInCubic(float t)
-    {
-        return Mathf.Pow(t, 3);
     }
 
     public enum BlendMode
@@ -321,21 +318,5 @@ public class PassengerIntroSceneDirector : MonoBehaviour
                 break;
         }
     }
-
-    // IEnumerator SpawnCity(float duration)
-    // {
-    //     Transform grid = GridUtils.GenerateStreetGrid(null);
-    //     grid.localScale = Vector3.zero;
-
-    //     float startTime = Time.time;
-    //     while (Time.time < startTime + duration)
-    //     {
-    //         float t = (Time.time - startTime) / duration;
-    //         float scaleFactor = EaseOutCubic(t);
-    //         grid.localScale = Vector3.one * scaleFactor;
-    //         yield return null;
-    //     }
-    // }
-
 
 }
