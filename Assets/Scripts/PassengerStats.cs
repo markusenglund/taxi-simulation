@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Stat
 {
@@ -20,7 +18,14 @@ public enum PassengerStatMode
 public class PassengerStats : MonoBehaviour
 {
     [SerializeField] public Transform statTextPrefab;
-    TextMeshProUGUI headingText;
+    TextMeshProUGUI attributesHeadingText;
+    TextMeshProUGUI optionsHeadingText;
+    Transform dividingLine;
+    Transform head;
+    Transform uberRow;
+    Transform busRow;
+    Transform walkingRow;
+    Transform passengerStatsSheet;
     List<TextMeshProUGUI> statTexts = new List<TextMeshProUGUI>();
     PassengerPerson person;
 
@@ -29,31 +34,67 @@ public class PassengerStats : MonoBehaviour
     [SerializeField] TMP_FontAsset notoEmoji;
     void Start()
     {
-        Transform passengerStatsSheet = transform.GetChild(0);
-        Transform heading = passengerStatsSheet.Find("Heading");
-        headingText = heading.GetComponent<TextMeshProUGUI>();
-        headingText.text = $"Passenger Stats";
-        headingText.color = new Color(headingText.color.r, headingText.color.g, headingText.color.b, 0);
+        passengerStatsSheet = transform.GetChild(0);
+        Transform attributesHeading = passengerStatsSheet.Find("AttributesHeading");
+        attributesHeadingText = attributesHeading.GetComponent<TextMeshProUGUI>();
+
+        Transform optionsHeading = passengerStatsSheet.Find("OptionsHeading");
+        optionsHeadingText = optionsHeading.GetComponent<TextMeshProUGUI>();
+        if (mode == PassengerStatMode.Slow)
+        {
+            // Set width of PasangerStatsSheet to 100
+            RectTransform passengerStatsSheetRect = passengerStatsSheet.GetComponent<RectTransform>();
+            passengerStatsSheetRect.sizeDelta = new Vector2(100, passengerStatsSheetRect.sizeDelta.y);
+        }
+
+        dividingLine = passengerStatsSheet.Find("DividingLine");
+        head = transform.Find("PassengerStatsSheet/Table/Head");
+        uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
+        busRow = transform.Find("PassengerStatsSheet/Table/Row2");
+        walkingRow = transform.Find("PassengerStatsSheet/Table/Row3");
+
+        // Set alpha of everything to zero
+        attributesHeadingText.color = new Color(attributesHeadingText.color.r, attributesHeadingText.color.g, attributesHeadingText.color.b, 0);
+        optionsHeadingText.color = new Color(optionsHeadingText.color.r, optionsHeadingText.color.g, optionsHeadingText.color.b, 0);
+        dividingLine.gameObject.SetActive(false);
+
+        head.GetComponent<CanvasGroup>().alpha = 0;
+        uberRow.GetComponent<CanvasGroup>().alpha = 0;
+        busRow.GetComponent<CanvasGroup>().alpha = 0;
+        walkingRow.GetComponent<CanvasGroup>().alpha = 0;
+        // Set the Text component of every cell to color with alpha 0
+        for (int i = 1; i < 4; i++)
+        {
+            uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+            busRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+            walkingRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+        }
         StartCoroutine(ScheduleActions());
     }
 
     private IEnumerator ScheduleActions()
     {
-        StartCoroutine(SetTripOptions());
-        StartCoroutine(SpawnCard(duration: 1f));
+        yield return StartCoroutine(SpawnCard(duration: 1f));
+        yield return StartCoroutine(FadeInText(attributesHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
+
+        if (mode == PassengerStatMode.Slow)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        yield return StartCoroutine(InstantiateStats());
         if (mode == PassengerStatMode.Slow)
         {
             yield return new WaitForSeconds(1f);
+            yield return StartCoroutine(ExpandCard(duration: 1f));
         }
-        StartCoroutine(FadeInText(headingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
-        yield return new WaitForSeconds(0.5f);
-        StartCoroutine(InstantiateStats());
+        yield return StartCoroutine(FadeInText(optionsHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
+        yield return StartCoroutine(SetTripOptions());
         yield return null;
     }
 
     private IEnumerator SpawnCard(float duration)
     {
-        Vector3 startScale = new Vector3(0.0005f, 0f, 0.001f);
+        Vector3 startScale = new Vector3(0, 0.002f, 0.001f);
         Vector3 finalScale = Vector3.one * 0.002f;
         float startTime = Time.time;
         while (Time.time < startTime + duration)
@@ -64,6 +105,24 @@ public class PassengerStats : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
+    }
+
+    private IEnumerator ExpandCard(float duration)
+    {
+        float startWidth = 100;
+        float finalWidth = 200;
+        float startTime = Time.time;
+        RectTransform passengerStatsSheetRect = transform.GetChild(0).GetComponent<RectTransform>();
+        // Set dividing line to active
+        dividingLine.gameObject.SetActive(true);
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scaleFactor = EaseInOutCubic(t);
+            passengerStatsSheetRect.sizeDelta = new Vector2(Mathf.Lerp(startWidth, finalWidth, scaleFactor), passengerStatsSheetRect.sizeDelta.y);
+            yield return null;
+        }
+        passengerStatsSheetRect.sizeDelta = new Vector2(finalWidth, passengerStatsSheetRect.sizeDelta.y);
     }
 
     public IEnumerator DespawnCard()
@@ -117,29 +176,23 @@ public class PassengerStats : MonoBehaviour
             value = $"${(Mathf.Round(person.economicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
             barValue = Mathf.Sqrt(person.economicParameters.waitingCostPerHour) * 5
         };
-        // Stat distanceStat = new Stat()
-        // {
-        //     name = "Travel distance",
-        //     value = $"{person.distanceToDestination.ToString("F2")} km",
-        //     barValue = person.distanceToDestination * 5
-        // };
+
 
         StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 0, duration: 1));
         if (mode == PassengerStatMode.Slow)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(1f);
         }
         StartCoroutine(InstantiateStat(passengerStatsSheet, timePreferenceStat, index: 1, duration: 1));
         if (mode == PassengerStatMode.Slow)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(1f);
         }
         StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 2, duration: 1));
-        // if (mode == PassengerStatMode.Slow)
-        // {
-        //     yield return new WaitForSeconds(5f);
-        // }
-        // StartCoroutine(InstantiateStat(passengerStatsSheet, distanceStat, index: 3, duration: 1));
+        if (mode == PassengerStatMode.Slow)
+        {
+            yield return new WaitForSeconds(1f);
+        }
         yield return null;
     }
 
@@ -149,7 +202,7 @@ public class PassengerStats : MonoBehaviour
         TripOption bus = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.PublicTransport);
         TripOption walking = person.economicParameters.substitutes.Find(tripOption => tripOption.type == TripType.Walking);
 
-        Transform uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
+
         if (uber != null)
         {
             uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${uber.moneyCost.ToString("F2")}";
@@ -157,8 +210,6 @@ public class PassengerStats : MonoBehaviour
             string uberTotalCost = $"${uber.totalCost.ToString("F2")}";
             TextMeshProUGUI uberTotalCostText = uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
             uberTotalCostText.text = uberTotalCost;
-            Color totalCostUberColor = Color.white;
-            uberTotalCostText.color = totalCostUberColor;
         }
         else
         {
@@ -167,30 +218,61 @@ public class PassengerStats : MonoBehaviour
                 uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().font = notoEmoji;
                 uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().fontSize = 12;
                 uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().text = "📵";
-                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().color = ColorScheme.red;
             }
         }
 
 
-        Transform busRow = transform.Find("PassengerStatsSheet/Table/Row2");
         busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${bus.moneyCost.ToString("F2")}";
         busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(bus.timeHours)} min";
 
         string busTotalCost = $"${bus.totalCost.ToString("F2")}";
         TextMeshProUGUI busTotalCostText = busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
         busTotalCostText.text = busTotalCost;
-        Color totalCostBusColor = Color.white;
-        busTotalCostText.color = totalCostBusColor;
-        Transform walkingRow = transform.Find("PassengerStatsSheet/Table/Row3");
+
         walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>().text = $"${walking.moneyCost.ToString("F2")}";
         walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>().text = $"{TimeUtils.ConvertSimulationHoursToMinuteString(walking.timeHours)} min";
         string walkingTotalCost = $"${walking.totalCost.ToString("F2")}";
         TextMeshProUGUI walkingTotalCostText = walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>();
         walkingTotalCostText.text = walkingTotalCost;
-        Color totalCostWalkingColor = Color.white;
-        walkingTotalCostText.color = totalCostWalkingColor;
+
+        // Fade in canvas groups for the first two columns of head and uberRow
+        StartCoroutine(FadeInCanvasGroup(head.GetComponent<CanvasGroup>(), 1));
+        StartCoroutine(FadeInCanvasGroup(uberRow.GetComponent<CanvasGroup>(), 1));
+
+        // Fade in the text of the first uber cell
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(2);
+        StartCoroutine(FadeInText(uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInCanvasGroup(busRow.GetComponent<CanvasGroup>(), 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(2);
+        StartCoroutine(FadeInText(busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInCanvasGroup(walkingRow.GetComponent<CanvasGroup>(), 1));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        StartCoroutine(FadeInText(walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        StartCoroutine(FadeInText(walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
 
         yield return null;
+    }
+
+    IEnumerator FadeInCanvasGroup(CanvasGroup canvasGroup, float duration)
+    {
+        float startTime = Time.time;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            canvasGroup.alpha = t;
+            yield return null;
+        }
     }
 
     private IEnumerator InstantiateStat(Transform passengerStatsSheet, Stat stat, int index, float duration)
