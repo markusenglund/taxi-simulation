@@ -54,7 +54,7 @@ public class PassengerStats : MonoBehaviour
     private IEnumerator SpawnCard(float duration)
     {
         Vector3 startScale = new Vector3(0.0005f, 0f, 0.001f);
-        Vector3 finalScale = Vector3.one * 0.001f;
+        Vector3 finalScale = Vector3.one * 0.002f;
         float startTime = Time.time;
         while (Time.time < startTime + duration)
         {
@@ -107,8 +107,8 @@ public class PassengerStats : MonoBehaviour
         };
         Stat timePreferenceStat = new Stat()
         {
-            name = "Time preference",
-            value = $"{person.economicParameters.timePreference.ToString("F2")}",
+            name = "Time sensitivity",
+            value = $"{person.economicParameters.timePreference.ToString("F2")}x",
             barValue = person.economicParameters.timePreference * 20
         };
         Stat timeCostStat = new Stat()
@@ -117,12 +117,12 @@ public class PassengerStats : MonoBehaviour
             value = $"${(Mathf.Round(person.economicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
             barValue = Mathf.Sqrt(person.economicParameters.waitingCostPerHour) * 5
         };
-        Stat distanceStat = new Stat()
-        {
-            name = "Travel distance",
-            value = $"{person.distanceToDestination.ToString("F2")} km",
-            barValue = person.distanceToDestination * 5
-        };
+        // Stat distanceStat = new Stat()
+        // {
+        //     name = "Travel distance",
+        //     value = $"{person.distanceToDestination.ToString("F2")} km",
+        //     barValue = person.distanceToDestination * 5
+        // };
 
         StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 0, duration: 1));
         if (mode == PassengerStatMode.Slow)
@@ -135,11 +135,11 @@ public class PassengerStats : MonoBehaviour
             yield return new WaitForSeconds(5f);
         }
         StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 2, duration: 1));
-        if (mode == PassengerStatMode.Slow)
-        {
-            yield return new WaitForSeconds(5f);
-        }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, distanceStat, index: 3, duration: 1));
+        // if (mode == PassengerStatMode.Slow)
+        // {
+        //     yield return new WaitForSeconds(5f);
+        // }
+        // StartCoroutine(InstantiateStat(passengerStatsSheet, distanceStat, index: 3, duration: 1));
         yield return null;
     }
 

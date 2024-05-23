@@ -116,6 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statTextPrefab: {fileID: 4289896684550134435, guid: de863e0ccb142ee41b62dad437610e6d, type: 3}
+  notoEmoji: {fileID: 0}
 --- !u!1 &760002088763762092
 GameObject:
   m_ObjectHideFlags: 0

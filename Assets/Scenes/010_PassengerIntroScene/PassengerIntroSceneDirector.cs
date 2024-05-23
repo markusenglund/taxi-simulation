@@ -236,9 +236,9 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
     IEnumerator SpawnPassengerStats(Passenger passenger)
     {
-        Vector3 position = new Vector3(-0.14f, 0.2f, 0.06f);
+        Vector3 position = new Vector3(-0.24f, 0.19f, 0.08f);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person);
+        PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person, mode: PassengerStatMode.Slow);
         yield return null;
     }
 
