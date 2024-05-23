@@ -282,7 +282,7 @@ public class PassengerStats : MonoBehaviour
         // statText.localPosition = new Vector3(0, -4 - index * 20, 0);
         statText.localScale = Vector3.one * 0.8f;
         // statTextRect.anchoredPosition = new Vector2(0, 0);
-        statTextRect.anchoredPosition = new Vector2(50, 7 - index * 20);
+        statTextRect.anchoredPosition = new Vector2(50, 2 - index * 24);
 
         Transform statName = statText.Find("StatName");
         TextMeshProUGUI statNameText = statName.GetComponent<TextMeshProUGUI>();
