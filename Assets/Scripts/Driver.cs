@@ -23,6 +23,12 @@ public class WaypointSegment
     public Vector3 endPosition;
 }
 
+public enum DriverMode
+{
+    Active,
+    Inactive
+}
+
 public class Driver : MonoBehaviour
 {
 
@@ -48,6 +54,10 @@ public class Driver : MonoBehaviour
 
     private City city;
 
+    DriverMode mode;
+
+    SimulationSettings simulationSettings;
+
     private float acceleration = 1000;
     private float maxSpeed;
 
@@ -67,18 +77,20 @@ public class Driver : MonoBehaviour
         StartCoroutine(SpawnDriver());
     }
 
-    public static Driver Create(DriverPerson person, Transform prefab, float x, float z, City city)
+    public static Driver Create(DriverPerson person, Transform prefab, Transform parentTransform, float x, float z, SimulationSettings simSettings, City? city, DriverMode mode = DriverMode.Active)
     {
         Quaternion rotation = x % GridUtils.blockSize == 0 ? Quaternion.identity : Quaternion.Euler(0, 90, 0);
 
-        Transform taxi = Instantiate(prefab, city.transform, false);
+        Transform taxi = Instantiate(prefab, parentTransform, false);
         taxi.localPosition = new Vector3(x, y, z);
         taxi.localRotation = rotation;
         Driver driver = taxi.GetComponent<Driver>();
         driver.city = city;
         driver.driverPerson = person;
         driver.driverPerson.isCurrentlyDriving = true;
-        driver.maxSpeed = city.simulationSettings.driverSpeed;
+        driver.maxSpeed = simSettings.driverSpeed;
+        driver.mode = mode;
+        driver.simulationSettings = simSettings;
         taxi.name = "Taxi";
         return driver;
     }
@@ -88,7 +100,7 @@ public class Driver : MonoBehaviour
         Transform spawnAnimationPrefab = Resources.Load<Transform>("RespawnAnimation");
         Transform animation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
         animation.localScale = Vector3.one * 7f;
-        Vector3 finalScale = city.simulationSettings.driverScale * 0.15f * Vector3.one;
+        Vector3 finalScale = simulationSettings.driverScale * 0.15f * Vector3.one;
         transform.localScale = Vector3.zero;
         float startTime = Time.time;
         while (Time.time < startTime + spawnDuration)
@@ -99,7 +111,10 @@ public class Driver : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
-        city.AssignDriverToNextTrip(this);
+        if (mode == DriverMode.Active)
+        {
+            city.AssignDriverToNextTrip(this);
+        }
     }
 
     IEnumerator PickUpPassenger()
@@ -120,10 +135,10 @@ public class Driver : MonoBehaviour
         PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
         {
             timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
-            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * city.simulationSettings.driverMarginalCostPerKm
+            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * simulationSettings.driverMarginalCostPerKm
         };
 
-        if (city.simulationSettings.showDriverEarnings)
+        if (simulationSettings.showDriverEarnings)
         {
             AgentOverheadText.Create(agentStatusTextPrefab, transform, Vector3.up * 0.9f, $"+${currentTrip.tripCreatedData.fare.driverCut.ToString("F2")}", ColorScheme.green);
         }
@@ -133,7 +148,7 @@ public class Driver : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         // TODO: Figure out how to handle the passenger jump delay, it's now 0.8 seconds
-        // yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(city.simulationSettings.timeSpentWaitingForPassenger));
+        // yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(simulationSettings.timeSpentWaitingForPassenger));
 
         currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData);
 
@@ -171,7 +186,7 @@ public class Driver : MonoBehaviour
         float opportunityCostPerHour = driverPerson.GetOpportunityCostForHour(Mathf.FloorToInt(currentTrip.pickedUpData.pickedUpTime));
 
         float timeCostOnTrip = timeSpentOnTrip * opportunityCostPerHour;
-        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * city.simulationSettings.driverMarginalCostPerKm;
+        float marginalCostOnTrip = currentTrip.tripCreatedData.tripDistance * simulationSettings.driverMarginalCostPerKm;
         float grossProfit = currentTrip.tripCreatedData.fare.driverCut - marginalCostOnTrip - currentTrip.pickedUpDriverData.marginalCostEnRoute;
         float valueSurplus = grossProfit - timeCostOnTrip;
         float utilitySurplus = valueSurplus / driverPerson.baseOpportunityCostPerHour;

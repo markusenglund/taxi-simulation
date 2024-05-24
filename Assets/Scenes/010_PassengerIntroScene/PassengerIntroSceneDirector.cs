@@ -38,7 +38,11 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SpawnCity());
-        yield return new WaitForSeconds(1.8f);
+        yield return new WaitForSeconds(1.5f);
+        Vector3 closeUpCameraPosition = new Vector3(passengerPosition.x, 0.2f, passengerPosition.z - 0.22f) + new Vector3(4.5f, 0, 4.5f);
+
+        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 2.5f));
+        yield return new WaitForSeconds(1f);
         PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
         float hourlyIncome = 45.70f;
         float timePreference = 3.10f;
@@ -61,25 +65,29 @@ public class PassengerIntroSceneDirector : MonoBehaviour
             moneyCost = moneyCost,
             totalCost = moneyCost + timeCost,
         };
-        float spawnDuration = 1.5f;
+        float spawnDuration = 1.2f;
         Passenger passenger = Passenger.Create(person, passengerPrefab, grid, simSettings, null, mode: PassengerMode.Inactive, spawnDuration);
         passenger.transform.rotation = Quaternion.Euler(0, 180, 0);
         passengerAnimator = passenger.GetComponentInChildren<Animator>();
-        Vector3 closeUpCameraPosition = new Vector3(passenger.transform.position.x, 0.2f, passenger.transform.position.z - 0.22f);
-        StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 1.5f));
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.8f);
         passengerAnimator.SetTrigger("Wave");
-        yield return new WaitForSeconds(4f);
+        DriverPerson driverPerson = CreateGenericDriverPerson();
+        Transform taxiPrefab = Resources.Load<Transform>("Taxi2");
+        Driver driver = Driver.Create(driverPerson, taxiPrefab, grid, 1.5f, -4f, simSettings, null, DriverMode.Inactive);
+        driver.transform.rotation = Quaternion.Euler(0, 180, 0);
+        yield return new WaitForSeconds(6f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(11, 20, 0), 5));
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(2.5f);
         StartCoroutine(SpawnPassengerStats(passenger));
-        yield return new WaitForSeconds(1);
-        // passengerAnimator.SetTrigger("GestureLeft");
-        yield return new WaitForSeconds(1);
-        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(3f);
         passengerAnimator.SetTrigger("LookAtPhone");
+        yield return new WaitForSeconds(34);
+        passengerAnimator.SetTrigger("GestureLeft");
+        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
+        yield return new WaitForSeconds(23);
+        // Pan to Uber
+        EditorApplication.isPlaying = false;
     }
 
     IEnumerator MoveCamera(Vector3 finalPosition, Quaternion finalRotation, float duration)
@@ -148,7 +156,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(0.8f);
 
 
-        int buildingChunkSize = 5;
+        int buildingChunkSize = 3;
         for (int i = 0; i < buildingBlockRenderers.Count(); i += buildingChunkSize)
         {
             yield return new WaitForSeconds(0.02f);
@@ -317,6 +325,21 @@ public class PassengerIntroSceneDirector : MonoBehaviour
                 material.renderQueue = 3000;
                 break;
         }
+    }
+
+    DriverPerson CreateGenericDriverPerson()
+    {
+        return new DriverPerson()
+        {
+            opportunityCostProfile = DriverPool.normalDriverProfile,
+            baseOpportunityCostPerHour = 10,
+            preferredSessionLength = 4,
+            interval = new SessionInterval()
+            {
+                startTime = 0,
+                endTime = 4
+            }
+        };
     }
 
 }

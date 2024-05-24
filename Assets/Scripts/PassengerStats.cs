@@ -49,9 +49,9 @@ public class PassengerStats : MonoBehaviour
 
         dividingLine = passengerStatsSheet.Find("DividingLine");
         head = transform.Find("PassengerStatsSheet/Table/Head");
-        uberRow = transform.Find("PassengerStatsSheet/Table/Row1");
+        uberRow = transform.Find("PassengerStatsSheet/Table/Row3");
         busRow = transform.Find("PassengerStatsSheet/Table/Row2");
-        walkingRow = transform.Find("PassengerStatsSheet/Table/Row3");
+        walkingRow = transform.Find("PassengerStatsSheet/Table/Row1");
 
         // Set alpha of everything to zero
         attributesHeadingText.color = new Color(attributesHeadingText.color.r, attributesHeadingText.color.g, attributesHeadingText.color.b, 0);
@@ -74,21 +74,34 @@ public class PassengerStats : MonoBehaviour
 
     private IEnumerator ScheduleActions()
     {
-        yield return StartCoroutine(SpawnCard(duration: 1f));
-        yield return StartCoroutine(FadeInText(attributesHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
+        StartCoroutine(SpawnCard(duration: 1f));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(optionsHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
+        yield return new WaitForSeconds(3);
+        yield return StartCoroutine(SetTripOptions());
+        yield return new WaitForSeconds(9);
+
+        yield return StartCoroutine(ExpandCard(duration: 1f));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(attributesHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
 
         if (mode == PassengerStatMode.Slow)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1);
         }
         yield return StartCoroutine(InstantiateStats());
         if (mode == PassengerStatMode.Slow)
         {
-            yield return new WaitForSeconds(1f);
-            yield return StartCoroutine(ExpandCard(duration: 1f));
+            yield return new WaitForSeconds(19);
         }
-        yield return StartCoroutine(FadeInText(optionsHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
-        yield return StartCoroutine(SetTripOptions());
+        // Reveal total Uber cost
+        StartCoroutine(FadeInText(uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(1);
+        // Reveal total bus cost
+        StartCoroutine(FadeInText(busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(1);
+        // Reveal total walking cost
+        StartCoroutine(FadeInText(walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
         yield return null;
     }
 
@@ -100,7 +113,7 @@ public class PassengerStats : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float scaleFactor = EaseInOutCubic(t);
+            float scaleFactor = EaseUtils.EaseInOutCubic(t);
             transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
             yield return null;
         }
@@ -118,7 +131,7 @@ public class PassengerStats : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float scaleFactor = EaseInOutCubic(t);
+            float scaleFactor = EaseUtils.EaseInOutCubic(t);
             passengerStatsSheetRect.sizeDelta = new Vector2(Mathf.Lerp(startWidth, finalWidth, scaleFactor), passengerStatsSheetRect.sizeDelta.y);
             yield return null;
         }
@@ -134,7 +147,7 @@ public class PassengerStats : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
-            float scaleFactor = EaseInOutCubic(t);
+            float scaleFactor = EaseUtils.EaseInOutCubic(t);
             transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
             yield return null;
         }
@@ -178,21 +191,13 @@ public class PassengerStats : MonoBehaviour
         };
 
 
-        StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 0, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 0, duration: 1));
         if (mode == PassengerStatMode.Slow)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(7);
         }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, timePreferenceStat, index: 1, duration: 1));
-        if (mode == PassengerStatMode.Slow)
-        {
-            yield return new WaitForSeconds(1f);
-        }
-        StartCoroutine(InstantiateStat(passengerStatsSheet, timeCostStat, index: 2, duration: 1));
-        if (mode == PassengerStatMode.Slow)
-        {
-            yield return new WaitForSeconds(1f);
-        }
+        StartCoroutine(InstantiateStat(passengerStatsSheet, incomeStat, index: 1, duration: 1));
+        StartCoroutine(InstantiateStat(passengerStatsSheet, timePreferenceStat, index: 2, duration: 1));
         yield return null;
     }
 
@@ -237,29 +242,25 @@ public class PassengerStats : MonoBehaviour
 
         // Fade in canvas groups for the first two columns of head and uberRow
         StartCoroutine(FadeInCanvasGroup(head.GetComponent<CanvasGroup>(), 1));
-        StartCoroutine(FadeInCanvasGroup(uberRow.GetComponent<CanvasGroup>(), 1));
+        StartCoroutine(FadeInCanvasGroup(walkingRow.GetComponent<CanvasGroup>(), 1));
 
-        // Fade in the text of the first uber cell
         yield return new WaitForSeconds(1);
-        StartCoroutine(FadeInText(uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        StartCoroutine(FadeInText(walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
         yield return new WaitForSeconds(1);
-        StartCoroutine(FadeInText(uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(2);
-        StartCoroutine(FadeInText(uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(1);
+        StartCoroutine(FadeInText(walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(3);
         StartCoroutine(FadeInCanvasGroup(busRow.GetComponent<CanvasGroup>(), 1));
         yield return new WaitForSeconds(1);
         StartCoroutine(FadeInText(busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
         yield return new WaitForSeconds(1);
         StartCoroutine(FadeInText(busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(2);
-        StartCoroutine(FadeInText(busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        yield return new WaitForSeconds(3);
+        StartCoroutine(FadeInCanvasGroup(uberRow.GetComponent<CanvasGroup>(), 1));
         yield return new WaitForSeconds(1);
-        StartCoroutine(FadeInCanvasGroup(walkingRow.GetComponent<CanvasGroup>(), 1));
+        StartCoroutine(FadeInText(uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
         yield return new WaitForSeconds(1);
-        StartCoroutine(FadeInText(walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        StartCoroutine(FadeInText(walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        StartCoroutine(FadeInText(walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+        StartCoroutine(FadeInText(uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
+
 
         yield return null;
     }
@@ -282,7 +283,7 @@ public class PassengerStats : MonoBehaviour
         // statText.localPosition = new Vector3(0, -4 - index * 20, 0);
         statText.localScale = Vector3.one * 0.8f;
         // statTextRect.anchoredPosition = new Vector2(0, 0);
-        statTextRect.anchoredPosition = new Vector2(50, 2 - index * 24);
+        statTextRect.anchoredPosition = new Vector2(150, 2 - index * 24);
 
         Transform statName = statText.Find("StatName");
         TextMeshProUGUI statNameText = statName.GetComponent<TextMeshProUGUI>();
@@ -316,20 +317,6 @@ public class PassengerStats : MonoBehaviour
         passengerStatsTransform.localScale = Vector3.zero;
         passengerStats.mode = mode;
         return passengerStats;
-    }
-
-    float EaseInOutCubic(float t)
-    {
-        float t2;
-        if (t <= 0.5f)
-        {
-            t2 = Mathf.Pow(t * 2, 3) / 2;
-        }
-        else
-        {
-            t2 = (2 - Mathf.Pow((1 - t) * 2, 3)) / 2;
-        }
-        return t2;
     }
 }
 

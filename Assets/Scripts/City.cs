@@ -122,7 +122,7 @@ public class City : MonoBehaviour
 
     public Driver CreateDriver(DriverPerson driverPerson, Vector3 position)
     {
-        Driver driver = Driver.Create(driverPerson, taxiPrefab, position.x, position.z, this);
+        Driver driver = Driver.Create(driverPerson, taxiPrefab, transform, position.x, position.z, simulationSettings, this);
         drivers.Add(driver);
         return driver;
     }
@@ -151,7 +151,7 @@ public class City : MonoBehaviour
                 Vector3 randomPosition = GridUtils.GetRandomPosition(driverSpawnRandom);
                 DriverPerson driverPerson = driverToCreate[i];
 
-                nextDrivers.Add(Driver.Create(driverPerson, taxiPrefab, randomPosition.x, randomPosition.z, this));
+                nextDrivers.Add(Driver.Create(driverPerson, taxiPrefab, transform, randomPosition.x, randomPosition.z, simulationSettings, this));
             }
 
             for (int i = 0; i < drivers.Count; i++)
