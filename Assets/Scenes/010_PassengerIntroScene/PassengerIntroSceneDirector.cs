@@ -15,6 +15,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     Vector3 passengerPosition = new Vector3(2.5f - 4.5f, 0.08f, -4.3f);
     // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
     Animator passengerAnimator;
+    Transform gridParent;
     Transform grid;
     public Random passengerSpawnRandom;
 
@@ -22,6 +23,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     void Awake()
     {
         Time.captureFramerate = 60;
+        gridParent = GameObject.Find("GridParent").transform;
     }
 
     // Start is called before the first frame update
@@ -73,7 +75,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         passengerAnimator.SetTrigger("Wave");
         DriverPerson driverPerson = CreateGenericDriverPerson();
         Transform taxiPrefab = Resources.Load<Transform>("Taxi2");
-        Driver driver = Driver.Create(driverPerson, taxiPrefab, grid, 1.5f, -4f, simSettings, null, DriverMode.Inactive);
+        Driver driver = Driver.Create(driverPerson, taxiPrefab, gridParent, 6f, 0.5f, simSettings, null, DriverMode.Inactive);
         driver.transform.rotation = Quaternion.Euler(0, 180, 0);
         yield return new WaitForSeconds(6f);
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(11, 20, 0), 5));
@@ -92,10 +94,10 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
         StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 30, 2f, Ease.Cubic));
         yield return new WaitForSeconds(0.8f);
-        Vector3 driverDestination = new Vector3(-2f, 0, -4.3f);
+        Vector3 driverDestination = new Vector3(2.5f, 0, 0f);
         driver.SetDestination(driverDestination);
         yield return new WaitForSeconds(1.2f);
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(4.5f, 1.3f, 4.5f) + driverDestination, Quaternion.Euler(90, 0, 0), 3f, Ease.Cubic));
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(0, 1.3f, 0) + driverDestination, Quaternion.Euler(90, 0, 0), 3f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveCamera(Camera.main.transform.position + new Vector3(-0.2f, 0.2f, 0f), 3f, Ease.Cubic));
         yield return new WaitForSeconds(2f);
         StartCoroutine(MoveToCarRoof(passenger, driver, 0.8f));
@@ -146,7 +148,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
     IEnumerator SpawnCity()
     {
-        grid = GridUtils.GenerateStreetGrid(null);
+        grid = GridUtils.GenerateStreetGrid(gridParent);
         Transform tiles = grid.Find("Tiles");
         Renderer[] tileRenderers = tiles.GetComponentsInChildren<Renderer>();
         foreach (Renderer renderer in tileRenderers)
