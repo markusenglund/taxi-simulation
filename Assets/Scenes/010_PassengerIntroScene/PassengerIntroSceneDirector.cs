@@ -15,6 +15,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     Vector3 passengerPosition = new Vector3(2.5f - 4.5f, 0.08f, -4.3f);
     // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
     Animator passengerAnimator;
+    PassengerStats passengerStats;
     Transform gridParent;
     Transform grid;
     public Random passengerSpawnRandom;
@@ -84,20 +85,23 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         StartCoroutine(SpawnPassengerStats(passenger));
         yield return new WaitForSeconds(8f);
         passengerAnimator.SetTrigger("LookAtPhone");
-        yield return new WaitForSeconds(7);
+        yield return new WaitForSeconds(5);
         StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 25, 4f, Ease.Cubic));
 
-        yield return new WaitForSeconds(9.5f);
-        // StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, -20, 2f, Ease.Cubic));
+        yield return new WaitForSeconds(11.5f);
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, -20, 2f, Ease.Cubic));
         passengerAnimator.SetTrigger("GestureLeft");
 
-
-        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 30, 2f, Ease.Cubic));
-        yield return new WaitForSeconds(0.8f);
-        Vector3 driverDestination = new Vector3(2.5f, 0, 0f);
+        yield return new WaitForSeconds(11.5f);
+        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
+        yield return new WaitForSeconds(23);
+        StartCoroutine(passengerStats.DespawnCard());
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 40, 2f, Ease.Cubic));
+        yield return new WaitForSeconds(1.8f);
+        Vector3 driverDestination = new Vector3(2.5f, 0.05f, 0f);
         driver.SetDestination(driverDestination);
-        yield return new WaitForSeconds(1.2f);
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(0, 1.3f, 0) + driverDestination, Quaternion.Euler(90, 0, 0), 3f, Ease.Cubic));
+        yield return new WaitForSeconds(0.2f);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(0, 1.3f, 0) + driverDestination, Quaternion.Euler(90, 0, 0), 2.5f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveCamera(Camera.main.transform.position + new Vector3(-0.2f, 0.2f, 0f), 3f, Ease.Cubic));
         yield return new WaitForSeconds(2f);
         StartCoroutine(MoveToCarRoof(passenger, driver, 0.8f));
@@ -106,9 +110,6 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(4.2f);
 
 
-        yield return new WaitForSeconds(11.5f);
-        // StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
-        yield return new WaitForSeconds(23);
 
 
 
@@ -293,7 +294,8 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     {
         Vector3 position = new Vector3(-0.24f, 0.19f, 0.08f);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
-        PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person, mode: PassengerStatMode.Slow);
+        PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person, mode: PassengerStatMode.Slow);
+        this.passengerStats = passengerStats;
         yield return null;
     }
 
