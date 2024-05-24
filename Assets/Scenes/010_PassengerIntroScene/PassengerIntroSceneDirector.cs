@@ -80,12 +80,36 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
         StartCoroutine(SpawnPassengerStats(passenger));
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(8f);
         passengerAnimator.SetTrigger("LookAtPhone");
-        yield return new WaitForSeconds(34);
+        yield return new WaitForSeconds(7);
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 25, 4f, Ease.Cubic));
+
+        yield return new WaitForSeconds(9.5f);
+        // StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, -20, 2f, Ease.Cubic));
         passengerAnimator.SetTrigger("GestureLeft");
-        StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
+
+
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 30, 2f, Ease.Cubic));
+        yield return new WaitForSeconds(0.8f);
+        Vector3 driverDestination = new Vector3(-2f, 0, -4.3f);
+        driver.SetDestination(driverDestination);
+        yield return new WaitForSeconds(1.2f);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(new Vector3(4.5f, 1.3f, 4.5f) + driverDestination, Quaternion.Euler(90, 0, 0), 3f, Ease.Cubic));
+        // StartCoroutine(CameraUtils.MoveCamera(Camera.main.transform.position + new Vector3(-0.2f, 0.2f, 0f), 3f, Ease.Cubic));
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(MoveToCarRoof(passenger, driver, 0.8f));
+        yield return new WaitForSeconds(0.8f);
+        driver.SetDestination(new Vector3(0, 0, 5));
+        yield return new WaitForSeconds(4.2f);
+
+
+        yield return new WaitForSeconds(11.5f);
+        // StartCoroutine(RotateCameraAround(passenger.transform.position, new Vector3(1, 1, 0), -10, duration: 10));
         yield return new WaitForSeconds(23);
+
+
+
         // Pan to Uber
         EditorApplication.isPlaying = false;
     }
@@ -340,6 +364,72 @@ public class PassengerIntroSceneDirector : MonoBehaviour
                 endTime = 4
             }
         };
+    }
+
+    IEnumerator MoveToCarRoof(Passenger passenger, Driver driver, float duration)
+    {
+        passengerAnimator.SetTrigger("EnterTaxi");
+        yield return new WaitForSeconds(0.3f);
+
+        passenger.transform.SetParent(driver.transform);
+        float startTime = Time.time;
+        Vector3 startPosition = passenger.transform.localPosition;
+        float topTaxiY = 1.44f;
+        Vector3 finalPosition = new Vector3(0.09f, topTaxiY, 0);
+
+        Quaternion startRotation = passenger.transform.localRotation;
+        Quaternion finalRotation = Quaternion.Euler(0, 0, 0);
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float verticalT = 1.2f * EaseUtils.EaseOutQuadratic(t);
+            float horizontalT = EaseUtils.EaseInOutCubic(t);
+            // passenger.transform.localPosition = Vector3.Lerp(startPosition, finalPosition, t);
+            passenger.transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, horizontalT);
+            passenger.transform.localPosition = new Vector3(Mathf.Lerp(startPosition.x, finalPosition.x, horizontalT), Mathf.Lerp(startPosition.y, finalPosition.y, verticalT), Mathf.Lerp(startPosition.z, finalPosition.z, horizontalT));
+            yield return null;
+        }
+        passenger.transform.localPosition = finalPosition;
+        passenger.transform.localRotation = finalRotation;
+    }
+
+
+    IEnumerator MoveOffCarRoof(Passenger passenger, float duration)
+    {
+        passenger.transform.SetParent(null);
+        float startTime = Time.time;
+        Vector3 startPosition = passenger.transform.position;
+        Vector3 finalPosition = new Vector3(startPosition.x + 0.23f, 0.08f, startPosition.z);
+
+        Quaternion startRotation = passenger.transform.localRotation;
+        Quaternion finalRotation = Quaternion.Euler(0, 90, 0);
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float verticalT = EaseUtils.EaseInCubic(t);
+            float horizontalT = EaseUtils.EaseInOutCubic(t);
+            // passenger.transform.localPosition = Vector3.Lerp(startPosition, finalPosition, t);
+            passenger.transform.localRotation = Quaternion.Lerp(startRotation, finalRotation, horizontalT);
+            passenger.transform.localPosition = new Vector3(Mathf.Lerp(startPosition.x, finalPosition.x, horizontalT), Mathf.Lerp(startPosition.y, finalPosition.y, verticalT), Mathf.Lerp(startPosition.z, finalPosition.z, horizontalT));
+            yield return null;
+        }
+        passenger.transform.localPosition = finalPosition;
+        passenger.transform.localRotation = finalRotation;
+    }
+
+    IEnumerator FollowObject(Transform target, float duration)
+    {
+        float startTime = Time.time;
+        while (Time.time < startTime + duration && target != null)
+        {
+            Vector3 normalizedTargetDirection = (target.position - Camera.main.transform.position).normalized;
+            Vector3 middlePosition = target.position - normalizedTargetDirection * 0.8f;
+            Vector3 desiredPosition = new Vector3(middlePosition.x, Camera.main.transform.position.y, middlePosition.z);
+            Quaternion desiredRotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, desiredPosition, 0.15f);
+            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, desiredRotation, 0.003f);
+            yield return null;
+        }
     }
 
 }
