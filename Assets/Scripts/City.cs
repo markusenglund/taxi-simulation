@@ -46,11 +46,6 @@ public class City : MonoBehaviour
     public Random passengerSpawnRandom;
     public Random driverSpawnRandom;
 
-
-    private WaitingTimeGraph waitingTimeGraph;
-    private DriverProfitGraph driverProfitGraph;
-    private PassengerSurplusGraph passengerSurplusGraph;
-    private UtilityIncomeScatterPlot utilityIncomeScatterPlot;
     private ResultsInfoBox resultsInfoBox;
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
