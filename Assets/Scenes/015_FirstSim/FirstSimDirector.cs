@@ -9,7 +9,7 @@ public class FirstSimDirector : MonoBehaviour
     [SerializeField] public SimulationSettings simSettings;
     [SerializeField] public GraphSettings graphSettings;
 
-    [SerializeField] public float simulationStartTime = 4;
+    [SerializeField] public float simulationStartTime = 20;
 
     Vector3 lookAtPosition = new Vector3(5.5f, 3, 5.5f);
     City city;
@@ -19,8 +19,9 @@ public class FirstSimDirector : MonoBehaviour
 
     void Awake()
     {
-        city = City.Create(cityPrefab, cityPosition.x, cityPosition.y, simSettings, graphSettings);
+        city = City.Create(cityPrefab, cityPosition.x, cityPosition.y, simSettings, graphSettings, spawnInitialDrivers: false);
         Time.captureFramerate = 60;
+
 
     }
 
@@ -44,9 +45,17 @@ public class FirstSimDirector : MonoBehaviour
         PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Sim);
         PassengerTripTypeGraph.Create(city, PassengerSpawnGraphMode.Sim);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, 8, Ease.Cubic, 30));
+        yield return new WaitForSeconds(2);
+        StartCoroutine(SpawnDrivers());
         yield return new WaitForSeconds(simulationStartTime);
         StartCoroutine(city.StartSimulation());
 
+        yield return null;
+    }
+
+    IEnumerator SpawnDrivers()
+    {
+        city.SpawnInitialDrivers();
         yield return null;
     }
 }

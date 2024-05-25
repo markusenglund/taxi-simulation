@@ -51,17 +51,19 @@ public class City : MonoBehaviour
 
     public bool simulationEnded = false;
 
+    private bool spawnInitialDrivers;
     public DriverPool driverPool;
 
     public SimulationSettings simulationSettings;
     public GraphSettings graphSettings;
-    public static City Create(Transform cityPrefab, float x, float z, SimulationSettings simulationSettings, GraphSettings graphSettings)
+    public static City Create(Transform cityPrefab, float x, float z, SimulationSettings simulationSettings, GraphSettings graphSettings, bool spawnInitialDrivers = true)
 
     {
         Transform cityTransform = Instantiate(cityPrefab, new Vector3(x, 0, z), Quaternion.identity);
         City city = cityTransform.GetComponent<City>();
         city.simulationSettings = simulationSettings;
         city.graphSettings = graphSettings;
+        city.spawnInitialDrivers = spawnInitialDrivers;
         return city;
     }
 
@@ -78,8 +80,10 @@ public class City : MonoBehaviour
         {
             InstantiateGraphs();
         }
-
-        SpawnInitialDrivers();
+        if (spawnInitialDrivers)
+        {
+            SpawnInitialDrivers();
+        }
     }
 
     void Update()
@@ -122,7 +126,7 @@ public class City : MonoBehaviour
         return driver;
     }
 
-    private void SpawnInitialDrivers()
+    public void SpawnInitialDrivers()
     {
         DriverPerson[] midnightDrivers = driverPool.GetDriversActiveDuringMidnight();
         for (int i = 0; i < midnightDrivers.Length; i++)
