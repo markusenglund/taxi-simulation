@@ -22,7 +22,7 @@ public class SimulationInfoGroup : MonoBehaviour
 
     IEnumerator FadeInSchedule()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(33f);
         CanvasGroup group1CanvasGroup = transform.Find("Group1").GetComponent<CanvasGroup>();
         CanvasGroup group2CanvasGroup = transform.Find("Group2").GetComponent<CanvasGroup>();
         CanvasGroup group3CanvasGroup = transform.Find("Group3").GetComponent<CanvasGroup>();

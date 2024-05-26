@@ -103,6 +103,10 @@ public class CameraUtils : MonoBehaviour
             {
                 t = EaseUtils.EaseInOutCubic(t);
             }
+            else if (ease == Ease.QuadraticOut)
+            {
+                t = EaseUtils.EaseOutQuadratic(t);
+            }
             else if (ease == Ease.Linear)
             {
             }

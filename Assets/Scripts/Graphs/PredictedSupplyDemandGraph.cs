@@ -7,8 +7,8 @@ using System.Linq;
 
 public enum PassengerSpawnGraphMode
 {
-    PreSim,
-    Sim
+    FirstSim,
+    Regular
 }
 
 public class PredictedSupplyDemandGraph : MonoBehaviour
@@ -94,9 +94,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         InstantiateGraph();
 
 
-        if (mode == PassengerSpawnGraphMode.PreSim)
+        if (mode == PassengerSpawnGraphMode.FirstSim)
         {
-            StartCoroutine(PreSimSchedule());
+            StartCoroutine(FirstSimSchedule());
         }
         else
         {
@@ -114,14 +114,14 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         }
     }
 
-    private IEnumerator PreSimSchedule()
+    private IEnumerator FirstSimSchedule()
     {
         StartCoroutine(SpawnCard(1f));
         yield return new WaitForSeconds(1);
-
-
         StartCoroutine(CreatePassengerCurve(duration: 6));
-
+        yield return new WaitForSeconds(27);
+        InstantiateActualPassengerLine();
+        StartCoroutine(UpdateActualPassengerCurve());
     }
 
     private IEnumerator SimSchedule()
@@ -349,15 +349,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLegendLine = Instantiate(lrPrefab);
         actualPassengersLegendLine = Instantiate(lrPrefab);
 
-        if (mode == PassengerSpawnGraphMode.Sim)
-        {
-            CreateLegend(x: 30, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
-            CreateLegend(x: 570, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
-        }
-        else
-        {
-            CreateLegend(x: 280, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
-        }
+        CreateLegend(x: 30, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
+        CreateLegend(x: 570, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
     }
 
     private void CreateLegend(float x, LineRenderer legendDot, Color color, string text)
@@ -418,7 +411,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLine.numCornerVertices = 1;
         passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.2f);
 
-        if (mode == PassengerSpawnGraphMode.PreSim)
+        if (mode == PassengerSpawnGraphMode.FirstSim)
         {
             predictedPassengersLineDot = Instantiate(lrPrefab, graphContainer);
             predictedPassengersLineDot.positionCount = 0;
@@ -428,35 +421,40 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             predictedPassengersLineDot.sortingOrder = 3;
         }
 
-        if (mode == PassengerSpawnGraphMode.Sim)
+        if (mode == PassengerSpawnGraphMode.Regular)
         {
-            actualPassengersLine = Instantiate(lrPrefab, graphContainer);
-            actualPassengersLine.positionCount = 0;
-            actualPassengersLine.startColor = actualPassengersLineColor;
-            actualPassengersLine.endColor = actualPassengersLineColor;
-            actualPassengersLine.sortingOrder = 2;
-            actualPassengersLine.numCornerVertices = 1;
-            actualPassengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
-
-            actualPassengersLineDot = Instantiate(lrPrefab, graphContainer);
-            actualPassengersLineDot.positionCount = 2;
-            actualPassengersLineDot.startColor = actualPassengersLineColor;
-            actualPassengersLineDot.endColor = actualPassengersLineColor;
-            actualPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
-            actualPassengersLineDot.sortingOrder = 3;
-
-
-            actualPassengersNumberText = Instantiate(legendTextPrefab, graphContainer);
-            actualPassengersNumberText.rectTransform.pivot = new Vector2(0, 0);
-            actualPassengersNumberText.rectTransform.anchorMin = new Vector2(0, 0);
-            actualPassengersNumberText.rectTransform.anchorMax = new Vector2(0, 0);
-            actualPassengersNumberText.text = "Actual rate";
-            actualPassengersNumberText.rectTransform.sizeDelta = new Vector2(300, 30);
-            actualPassengersNumberText.fontSize = 42;
-            actualPassengersNumberText.color = actualPassengersLineColor;
-            actualPassengersNumberText.fontStyle = FontStyles.Bold;
+            InstantiateActualPassengerLine();
         }
 
+    }
+
+    private void InstantiateActualPassengerLine()
+    {
+        actualPassengersLine = Instantiate(lrPrefab, graphContainer);
+        actualPassengersLine.positionCount = 0;
+        actualPassengersLine.startColor = actualPassengersLineColor;
+        actualPassengersLine.endColor = actualPassengersLineColor;
+        actualPassengersLine.sortingOrder = 2;
+        actualPassengersLine.numCornerVertices = 1;
+        actualPassengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
+
+        actualPassengersLineDot = Instantiate(lrPrefab, graphContainer);
+        actualPassengersLineDot.positionCount = 2;
+        actualPassengersLineDot.startColor = actualPassengersLineColor;
+        actualPassengersLineDot.endColor = actualPassengersLineColor;
+        actualPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
+        actualPassengersLineDot.sortingOrder = 3;
+
+
+        actualPassengersNumberText = Instantiate(legendTextPrefab, graphContainer);
+        actualPassengersNumberText.rectTransform.pivot = new Vector2(0, 0);
+        actualPassengersNumberText.rectTransform.anchorMin = new Vector2(0, 0);
+        actualPassengersNumberText.rectTransform.anchorMax = new Vector2(0, 0);
+        actualPassengersNumberText.text = "Actual rate";
+        actualPassengersNumberText.rectTransform.sizeDelta = new Vector2(300, 30);
+        actualPassengersNumberText.fontSize = 42;
+        actualPassengersNumberText.color = actualPassengersLineColor;
+        actualPassengersNumberText.fontStyle = FontStyles.Bold;
     }
 
     private void InstantiateGraph()

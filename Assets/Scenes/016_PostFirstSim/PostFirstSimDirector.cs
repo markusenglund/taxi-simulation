@@ -57,8 +57,8 @@ public class PostFirstSimDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Sim);
-        PassengerTripTypeGraph.Create(city, PassengerSpawnGraphMode.Sim);
+        PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Regular);
+        PassengerTripTypeGraph.Create(city);
         yield return new WaitForSeconds(0.1f);
         // Set the canvas to world space
         Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();

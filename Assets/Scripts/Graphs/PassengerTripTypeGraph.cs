@@ -63,7 +63,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
     float defaultLineWidth;
 
 
-    public static PassengerTripTypeGraph Create(City city, PassengerSpawnGraphMode mode)
+    public static PassengerTripTypeGraph Create(City city)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform graphPrefab = Resources.Load<Transform>("Graphs/PassengerTripTypeGraph");
