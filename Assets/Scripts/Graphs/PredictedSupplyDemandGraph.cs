@@ -48,7 +48,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     Color actualPassengersLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
     Color passengersLineColor = new Color(0.2f, 0.9f, 1.0f, 1.0f);
 
-    Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
+    Color separatorColor = new Color(96 / 255f, 96 / 255f, 96 / 255f, 1f);
 
 
     LineRenderer passengersLegendLine;
@@ -161,6 +161,12 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
             yield return null;
         }
+        foreach (LineRenderer line in separatorLines)
+        {
+            line.startColor = separatorColor;
+            line.endColor = separatorColor;
+        }
+        canvasGroup.alpha = finalAlpha;
     }
 
     private IEnumerator CreatePassengerCurve(float duration)

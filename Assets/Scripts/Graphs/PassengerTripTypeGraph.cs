@@ -45,7 +45,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
     Color skipTripLineColor = new Color(1f, 0.8f, 0f, 1f);
 
-    Color separatorColor = new Color(192 / 255f, 192 / 255f, 192 / 255f, 0.1f);
+    Color separatorColor = new Color(96 / 255f, 96 / 255f, 96 / 255f, 1f);
 
 
     LineRenderer uberLegendLine;
@@ -103,6 +103,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
         foreach (LineRenderer line in GetComponentsInChildren<LineRenderer>())
         {
             line.widthMultiplier = scale;
+
         }
     }
 
@@ -135,6 +136,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
             }
             yield return null;
         }
+        canvasGroup.alpha = finalAlpha;
     }
 
     private IEnumerator UpdateCurves()

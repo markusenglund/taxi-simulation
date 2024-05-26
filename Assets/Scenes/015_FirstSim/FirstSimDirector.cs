@@ -28,6 +28,7 @@ public class FirstSimDirector : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 10f;
 
         driverSpawnRandom = new Random(simSettings.randomSeed);
 
