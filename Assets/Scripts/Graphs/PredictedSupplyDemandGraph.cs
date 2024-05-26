@@ -45,8 +45,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
 
     PassengerSpawnGraphMode mode;
 
-    Color actualPassengersLineColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-    Color passengersLineColor = new Color(0.2f, 0.9f, 1.0f, 1.0f);
+    Color actualPassengersLineColor = ColorScheme.blue;
+    Color predictedPassengersLineColor = ColorScheme.orange;
 
     Color separatorColor = new Color(96 / 255f, 96 / 255f, 96 / 255f, 1f);
 
@@ -142,9 +142,9 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
             float percentage = EaseUtils.EaseInQuadratic(t);
             float alpha = Mathf.Lerp(startAlpha, finalAlpha, percentage);
             canvasGroup.alpha = alpha;
-            Color passengersLineColor = new Color(passengersLegendLine.startColor.r, passengersLegendLine.startColor.g, passengersLegendLine.startColor.b, alpha);
-            passengersLegendLine.startColor = passengersLineColor;
-            passengersLegendLine.endColor = passengersLineColor;
+            Color predictedPassengersLineColor = new Color(passengersLegendLine.startColor.r, passengersLegendLine.startColor.g, passengersLegendLine.startColor.b, alpha);
+            passengersLegendLine.startColor = predictedPassengersLineColor;
+            passengersLegendLine.endColor = predictedPassengersLineColor;
 
             Color axisLineColor = new Color(axisColor.r, axisColor.g, axisColor.b, alpha);
             xLineRenderer.startColor = axisLineColor;
@@ -355,7 +355,7 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLegendLine = Instantiate(lrPrefab);
         actualPassengersLegendLine = Instantiate(lrPrefab);
 
-        CreateLegend(x: 30, passengersLegendLine, passengersLineColor, "Predicted passengers/hr");
+        CreateLegend(x: 30, passengersLegendLine, predictedPassengersLineColor, "Predicted passengers/hr");
         CreateLegend(x: 570, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
     }
 
@@ -411,8 +411,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
     {
         passengersLine = Instantiate(lrPrefab, graphContainer);
         passengersLine.positionCount = 0;
-        passengersLine.startColor = passengersLineColor;
-        passengersLine.endColor = passengersLineColor;
+        passengersLine.startColor = predictedPassengersLineColor;
+        passengersLine.endColor = predictedPassengersLineColor;
         passengersLine.sortingOrder = 1;
         passengersLine.numCornerVertices = 1;
         passengersLine.widthCurve = AnimationCurve.Constant(0, 1, 1.2f);
@@ -421,8 +421,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         {
             predictedPassengersLineDot = Instantiate(lrPrefab, graphContainer);
             predictedPassengersLineDot.positionCount = 0;
-            predictedPassengersLineDot.startColor = passengersLineColor;
-            predictedPassengersLineDot.endColor = passengersLineColor;
+            predictedPassengersLineDot.startColor = predictedPassengersLineColor;
+            predictedPassengersLineDot.endColor = predictedPassengersLineColor;
             predictedPassengersLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
             predictedPassengersLineDot.sortingOrder = 3;
         }

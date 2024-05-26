@@ -28,8 +28,6 @@ public class FirstSimDirector : MonoBehaviour
 
     void Start()
     {
-        Time.timeScale = 10f;
-
         driverSpawnRandom = new Random(simSettings.randomSeed);
 
         // Camera.main.transform.LookAt(lookAtPosition);
@@ -53,6 +51,7 @@ public class FirstSimDirector : MonoBehaviour
         PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.FirstSim);
         yield return new WaitForSeconds(rotateCameraDuration - 5 - 1);
         StartCoroutine(CameraUtils.RotateCameraAround(cityMiddlePositionBeforeMove + cityPositionAfterMove, Vector3.up, -45, 4, Ease.Linear));
+        StartCoroutine(SpawnDrivers());
 
         yield return new WaitForSeconds(4);
         float cityRightEdge = cityPositionAfterMove.z + 8;
@@ -63,7 +62,6 @@ public class FirstSimDirector : MonoBehaviour
         yield return new WaitForSeconds(7);
         PassengerTripTypeGraph.Create(city);
         yield return new WaitForSeconds(2);
-        // StartCoroutine(SpawnDrivers());
 
 
         yield return null;

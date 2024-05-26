@@ -167,7 +167,7 @@ public class Passenger : MonoBehaviour
     IEnumerator SpawnPassenger()
     {
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
-        spawnAnimation.localScale = Vector3.one * passengerScale * 2.5f;
+        spawnAnimation.localScale = Vector3.one * Mathf.Sqrt(passengerScale) * 2.5f;
 
         transform.localScale = Vector3.zero;
         Vector3 finalScale = Vector3.one * passengerScale;

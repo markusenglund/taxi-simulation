@@ -20,9 +20,6 @@ public class PassengerTripTypeGraph : MonoBehaviour
     LineRenderer substituteLine;
     LineRenderer substituteLineDot;
 
-    LineRenderer skipTripLine;
-    LineRenderer skipTripLineDot;
-
     List<LineRenderer> separatorLines = new List<LineRenderer>();
 
     int startHour = 18;
@@ -40,17 +37,14 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
     City city;
 
-    Color substituteLineColor = new Color(1f, 0.4f, 0.2f, 1f);
-    Color uberLineColor = Color.white;
-
-    Color skipTripLineColor = new Color(1f, 0.8f, 0f, 1f);
+    Color substituteLineColor = ColorScheme.purple;
+    Color uberLineColor = ColorScheme.yellow;
 
     Color separatorColor = new Color(96 / 255f, 96 / 255f, 96 / 255f, 1f);
 
 
     LineRenderer uberLegendLine;
     LineRenderer substituteLegendLine;
-    LineRenderer skipTripLegendLine;
     LineRenderer xLineRenderer;
     LineRenderer yLineRenderer;
 
@@ -144,12 +138,10 @@ public class PassengerTripTypeGraph : MonoBehaviour
         float numPositions = 200;
         float i0 = 0;
         float i1 = 0;
-        float i2 = 0;
         float timeResolution = 0.5f;
 
         Queue<(float value, float time)> lastSubstituteValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastUberValues = new Queue<(float value, float time)>();
-        Queue<(float value, float time)> lastSkippedTripValues = new Queue<(float value, float time)>();
         float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         Vector2 zeroGraphPosition = ConvertValueToGraphPosition(new Vector2(0, 0));
         while (simulationTime < city.simulationSettings.simulationLengthHours)
@@ -159,7 +151,6 @@ public class PassengerTripTypeGraph : MonoBehaviour
             PassengerPerson[] passengers = city.GetPassengersSpawnedInLastInterval(timeResolution);
             int numSubstitutePassengers = 0;
             int numUberPassengers = 0;
-            int numSkippedTrip = 0;
 
             foreach (PassengerPerson passenger in passengers)
             {
@@ -224,29 +215,6 @@ public class PassengerTripTypeGraph : MonoBehaviour
             // Vector3 passengersTextPosition = new Vector3(uberLinePosition.x + 18, Mathf.Max(uberLinePosition.y - 5, zeroGraphPosition.y + 15), 0);
             // substituteNumberText.rectTransform.anchoredPosition = passengersTextPosition;
             // substituteNumberText.text = smoothedNumUberPassengersPerHour.ToString("n0");
-
-
-            // Skipped trips
-            float numSkippedTripsPerHour = numSkippedTrip * (1 / timeResolution);
-            lastSkippedTripValues.Enqueue((numSkippedTripsPerHour, simulationTime));
-            if (t * numPositions >= i2)
-            {
-                skipTripLine.positionCount++;
-                i2++;
-            }
-            if (lastSkippedTripValues.Count > 100)
-            {
-                lastSkippedTripValues.Dequeue();
-            }
-            float smoothedNumSkippedTripsPerHour = lastSkippedTripValues.Average(x => x.value);
-            float skippedTripTimeInterval = lastSkippedTripValues.Last().time - lastSkippedTripValues.First().time;
-            // Offset the time axis to the average time of the values that were used to calculate the spawn rate
-            float skippedTripGraphTime = simulationTime - timeResolution / 2 - timeInterval / 2;
-            Vector3 skippedTripLinePosition = ConvertValueToGraphPosition(new Vector3(graphTime, smoothedNumSkippedTripsPerHour, 0));
-            skipTripLine.SetPosition(skipTripLine.positionCount - 1, skippedTripLinePosition);
-            skipTripLineDot.SetPosition(0, skippedTripLinePosition);
-            skipTripLineDot.SetPosition(1, skippedTripLinePosition);
-
 
             yield return null;
         }
@@ -348,12 +316,10 @@ public class PassengerTripTypeGraph : MonoBehaviour
     {
         uberLegendLine = Instantiate(lrPrefab);
         substituteLegendLine = Instantiate(lrPrefab);
-        skipTripLegendLine = Instantiate(lrPrefab);
 
 
-        CreateLegend(x: 80, uberLegendLine, uberLineColor, "Uber");
-        CreateLegend(x: 340, substituteLegendLine, substituteLineColor, "Substitute");
-        CreateLegend(x: 690, skipTripLegendLine, skipTripLineColor, "Skipped trip");
+        CreateLegend(x: 240, uberLegendLine, uberLineColor, "Uber");
+        CreateLegend(x: 620, substituteLegendLine, substituteLineColor, "Substitute");
 
     }
 
@@ -420,14 +386,6 @@ public class PassengerTripTypeGraph : MonoBehaviour
         substituteLine.numCornerVertices = 1;
         substituteLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
 
-        skipTripLine = Instantiate(lrPrefab, graphContainer);
-        skipTripLine.positionCount = 0;
-        skipTripLine.startColor = skipTripLineColor;
-        skipTripLine.endColor = skipTripLineColor;
-        skipTripLine.sortingOrder = 2;
-        skipTripLine.numCornerVertices = 1;
-        skipTripLine.widthCurve = AnimationCurve.Constant(0, 1, 1.5f);
-
         Vector3 originPosition = ConvertValueToGraphPosition(new Vector3(0, 0, 0));
 
 
@@ -446,25 +404,6 @@ public class PassengerTripTypeGraph : MonoBehaviour
         uberLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
         uberLineDot.sortingOrder = 4;
         uberLineDot.SetPositions(new Vector3[] { originPosition, originPosition });
-
-        skipTripLineDot = Instantiate(lrPrefab, graphContainer);
-        skipTripLineDot.positionCount = 2;
-        skipTripLineDot.startColor = skipTripLineColor;
-        skipTripLineDot.endColor = skipTripLineColor;
-        skipTripLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
-        skipTripLineDot.sortingOrder = 3;
-        skipTripLineDot.SetPositions(new Vector3[] { originPosition, originPosition });
-
-
-        // substituteNumberText = Instantiate(legendTextPrefab, graphContainer);
-        // substituteNumberText.rectTransform.pivot = new Vector2(0, 0);
-        // substituteNumberText.rectTransform.anchorMin = new Vector2(0, 0);
-        // substituteNumberText.rectTransform.anchorMax = new Vector2(0, 0);
-        // substituteNumberText.text = "";
-        // substituteNumberText.rectTransform.sizeDelta = new Vector2(300, 30);
-        // substituteNumberText.fontSize = 42;
-        // substituteNumberText.color = substituteLineColor;
-        // substituteNumberText.fontStyle = FontStyles.Bold;
 
     }
 
