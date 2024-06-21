@@ -403,7 +403,10 @@ public class Passenger : MonoBehaviour
             { TripType.Walking, "🚶" },
             { TripType.PublicTransport, "🚌" },
         };
-        Vector3 reactionPosition = new Vector3(-0.5f, passengerScale * 0.3f + 0.2f, 0);
+        Vector3 pointAbovePassengersHead = new Vector3(0, passengerScale * 0.3f + 0.2f, 0);
+        Vector3 awayFromCamera = (transform.position - Camera.main.transform.position).normalized * 0.5f;
+        awayFromCamera.y = 0;
+        Vector3 reactionPosition = pointAbovePassengersHead + awayFromCamera;
         // if (receivedRideOffer)
         // {
         if (tripType == TripType.Uber)
