@@ -9,10 +9,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.34798884,
-          "timeCost": 124.720085,
+          "timeHours": 1.86105764,
+          "timeCost": 98.8553543,
           "moneyCost": 2.5,
-          "totalCost": 127.220085
+          "totalCost": 101.355354
         },
         {
           "type": 1,
@@ -70,8 +70,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 2.80765724,
         "expectedTripTimeCost": 16.2135868,
-        "expectedValueSurplus": 88.69884,
-        "expectedUtilitySurplus": 4.809533
+        "expectedValueSurplus": 62.83411,
+        "expectedUtilitySurplus": 3.40706539
       },
       "driverAssignedData": {
         "matchedTime": 0.2680556,
@@ -113,8 +113,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 22.3537579,
-        "valueSurplus": 84.03838,
-        "utilitySurplus": 4.5568285,
+        "valueSurplus": 58.1736526,
+        "utilitySurplus": 3.15436053,
         "totalTimeCost": 23.6817036,
         "totalCost": 43.1817
       },
@@ -187,10 +187,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.78144979,
-          "timeCost": 37.4981537,
+          "timeHours": 1.36782646,
+          "timeCost": 28.7917,
           "moneyCost": 2.5,
-          "totalCost": 39.9981537
+          "totalCost": 31.2917
         },
         {
           "type": 1,
@@ -255,8 +255,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 4.320104,
         "expectedTripTimeCost": 3.41799474,
-        "expectedValueSurplus": 12.3369255,
-        "expectedUtilitySurplus": 1.81431615
+        "expectedValueSurplus": 11.5536022,
+        "expectedUtilitySurplus": 1.69911766
       },
       "driverAssignedData": {
         "matchedTime": 0.3027778,
@@ -298,8 +298,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 5.43772,
-        "valueSurplus": 9.667345,
-        "utilitySurplus": 1.42171729,
+        "valueSurplus": 8.884022,
+        "utilitySurplus": 1.30651879,
         "totalTimeCost": 10.4076786,
         "totalCost": 22.4076786
       },
@@ -379,10 +379,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.429347,
-          "timeCost": 32.7813873,
+          "timeHours": 1.10747755,
+          "timeCost": 25.3994656,
           "moneyCost": 2.5,
-          "totalCost": 35.2813873
+          "totalCost": 27.8994656
         },
         {
           "type": 1,
@@ -393,110 +393,8 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 0.406944484,
-        "pickUpPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 5.0,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.009999501,
-            "z": 0.999950051,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 5.00025,
-          "sqrMagnitude": 25.0025
-        },
-        "destination": {
-          "x": 4.0,
-          "y": 0.05,
-          "z": 9.0,
-          "normalized": {
-            "x": 0.406133235,
-            "y": 0.00507666543,
-            "z": 0.913799763,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 9.848985,
-          "sqrMagnitude": 97.0025
-        },
-        "tripDistance": 8.0,
-        "expectedWaitingTime": 0.290952355,
-        "expectedTripTime": 0.238571435,
-        "fare": {
-          "baseFare": 16.0,
-          "surgeMultiplier": 1.0,
-          "total": 16.0,
-          "driverCut": 10.72,
-          "uberCut": 5.27999973
-        },
-        "expectedPickupTime": 0.697896838
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 6.672852,
-        "expectedTripTimeCost": 5.471521,
-        "expectedValueSurplus": 7.13701439,
-        "expectedUtilitySurplus": 0.8167466
-      },
-      "driverAssignedData": {
-        "matchedTime": 0.406944484,
-        "enRouteDistance": 8.666666
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 0.406944484,
-        "startPosition": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 7.66666651,
-          "normalized": {
-            "x": 0.6163001,
-            "y": 0.005135834,
-            "z": 0.7874946,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 9.735517,
-          "sqrMagnitude": 94.78027
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 0.7388889,
-        "timeSpentEnRoute": 0.331944436,
-        "waitingTime": 0.331944436
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 7.612986
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 4.647222,
-        "marginalCostEnRoute": 1.12666655
-      },
-      "droppedOffData": {
-        "totalTime": 0.6625,
-        "droppedOffTime": 1.06944454,
-        "timeSpentOnTrip": 0.330555618
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 7.581134,
-        "valueSurplus": 4.087269,
-        "utilitySurplus": 0.4677394,
-        "totalTimeCost": 15.1941195,
-        "totalCost": 31.1941185
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 4.62777853,
-        "marginalCostOnTrip": 1.04,
-        "grossProfit": 8.553333,
-        "valueSurplus": 3.92555475,
-        "utilitySurplus": 0.392555475
-      }
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
       "timeHours": 0.5295238,
@@ -504,7 +402,7 @@
       "moneyCost": 16.0,
       "totalCost": 28.1443729
     },
-    "state": 3,
+    "state": 4,
     "rideOffer": {
       "expectedWaitingTime": 0.290952355,
       "expectedTripTime": 0.238571435,
@@ -516,7 +414,7 @@
         "uberCut": 5.27999973
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 4.0,
       "y": 0.05,
@@ -557,10 +455,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.81098783,
-          "timeCost": 110.532326,
+          "timeHours": 0.6021236,
+          "timeCost": 82.0655,
           "moneyCost": 2.5,
-          "totalCost": 113.032326
+          "totalCost": 84.5655
         },
         {
           "type": 1,
@@ -618,8 +516,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 25.376543,
         "expectedTripTimeCost": 27.3235912,
-        "expectedValueSurplus": 46.33219,
-        "expectedUtilitySurplus": 1.26028442
+        "expectedValueSurplus": 17.8653641,
+        "expectedUtilitySurplus": 0.4859567
       },
       "driverAssignedData": {
         "matchedTime": 0.684722245,
@@ -661,8 +559,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 40.6987267,
-        "valueSurplus": 32.9678726,
-        "utilitySurplus": 0.8967608,
+        "valueSurplus": 4.501045,
+        "utilitySurplus": 0.122433171,
         "totalTimeCost": 66.06445,
         "totalCost": 80.06445
       },
@@ -735,10 +633,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.2634027,
-          "timeCost": 136.716217,
+          "timeHours": 1.82272208,
+          "timeCost": 110.0978,
           "moneyCost": 2.5,
-          "totalCost": 139.216217
+          "totalCost": 112.5978
         },
         {
           "type": 1,
@@ -803,8 +701,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 3.76799345,
         "expectedTripTimeCost": 24.765213,
-        "expectedValueSurplus": 85.6830139,
-        "expectedUtilitySurplus": 2.70661449
+        "expectedValueSurplus": 59.0645943,
+        "expectedUtilitySurplus": 1.86577332
       },
       "driverAssignedData": {
         "matchedTime": 0.8930556,
@@ -846,8 +744,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 31.0404053,
-        "valueSurplus": 80.74292,
-        "utilitySurplus": 2.55056334,
+        "valueSurplus": 54.1245,
+        "utilitySurplus": 1.70972228,
         "totalTimeCost": 33.4733,
         "totalCost": 58.4733
       },
@@ -927,10 +825,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.67298865,
-          "timeCost": 42.5828629,
+          "timeHours": 1.2810576,
+          "timeCost": 32.6069756,
           "moneyCost": 2.5,
-          "totalCost": 45.0828629
+          "totalCost": 35.1069756
         },
         {
           "type": 1,
@@ -988,8 +886,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 3.04225969,
         "expectedTripTimeCost": 4.13311,
-        "expectedValueSurplus": 19.6104126,
-        "expectedUtilitySurplus": 1.42020428
+        "expectedValueSurplus": 15.9316063,
+        "expectedUtilitySurplus": 1.15378177
       },
       "driverAssignedData": {
         "matchedTime": 1.10138893,
@@ -1031,8 +929,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 6.646106,
-        "valueSurplus": 16.95803,
-        "utilitySurplus": 1.22811639,
+        "valueSurplus": 13.2792244,
+        "utilitySurplus": 0.9616938,
         "totalTimeCost": 9.827752,
         "totalCost": 21.8277512
       },
@@ -1105,10 +1003,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.463601977,
-          "timeCost": 11.3636255,
+          "timeHours": 0.294881582,
+          "timeCost": 7.22801876,
           "moneyCost": 2.5,
-          "totalCost": 13.8636255
+          "totalCost": 9.728019
         },
         {
           "type": 1,
@@ -1119,120 +1017,18 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 1.3097223,
-        "pickUpPosition": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 9.333333,
-          "normalized": {
-            "x": 0.5407521,
-            "y": 0.00450626761,
-            "z": 0.8411699,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 11.0956573,
-          "sqrMagnitude": 123.1136
-        },
-        "destination": {
-          "x": 3.33333325,
-          "y": 0.05,
-          "z": 9.0,
-          "normalized": {
-            "x": 0.347309619,
-            "y": 0.005209645,
-            "z": 0.937736034,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 9.597584,
-          "sqrMagnitude": 92.11361
-        },
-        "tripDistance": 2.99999976,
-        "expectedWaitingTime": 0.109999992,
-        "expectedTripTime": 0.09571428,
-        "fare": {
-          "baseFare": 8.5,
-          "surgeMultiplier": 1.0,
-          "total": 8.5,
-          "driverCut": 5.695,
-          "uberCut": 2.80499983
-        },
-        "expectedPickupTime": 1.41972232
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 2.69627571,
-        "expectedTripTimeCost": 2.34610987,
-        "expectedValueSurplus": 0.321240425,
-        "expectedUtilitySurplus": 0.0408553034
-      },
-      "driverAssignedData": {
-        "matchedTime": 1.3097223,
-        "enRouteDistance": 2.333333
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 1.3097223,
-        "startPosition": {
-          "x": 4.0,
-          "y": 0.05,
-          "z": 9.0,
-          "normalized": {
-            "x": 0.406133235,
-            "y": 0.00507666543,
-            "z": 0.913799763,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 9.848985,
-          "sqrMagnitude": 97.0025
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 1.4375,
-        "timeSpentEnRoute": 0.1277777,
-        "waitingTime": 0.1277777
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 3.13203549
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 1.91666543,
-        "marginalCostEnRoute": 0.303333282
-      },
-      "droppedOffData": {
-        "totalTime": 0.319444418,
-        "droppedOffTime": 1.62916672,
-        "timeSpentOnTrip": 0.191666722
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 4.69805765,
-        "valueSurplus": -2.46646786,
-        "utilitySurplus": -0.31368497,
-        "totalTimeCost": 7.83009338,
-        "totalCost": 16.3300934
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 2.875001,
-        "marginalCostOnTrip": 0.389999956,
-        "grossProfit": 5.001667,
-        "valueSurplus": 2.126666,
-        "utilitySurplus": 0.2126666
-      }
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.20571427,
-      "timeCost": 5.04238558,
+      "timeHours": 0.186666667,
+      "timeCost": 4.575498,
       "moneyCost": 8.5,
-      "totalCost": 13.5423851
+      "totalCost": 13.0754986
     },
-    "state": 3,
+    "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.109999992,
+      "expectedWaitingTime": 0.09095238,
       "expectedTripTime": 0.09571428,
       "fare": {
         "baseFare": 8.5,
@@ -1242,7 +1038,7 @@
         "uberCut": 2.80499983
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 3.33333325,
       "y": 0.05,
@@ -1283,10 +1079,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.05615866,
-          "timeCost": 21.10293,
+          "timeHours": 0.792926967,
+          "timeCost": 15.8433418,
           "moneyCost": 2.5,
-          "totalCost": 23.60293
+          "totalCost": 18.3433418
         },
         {
           "type": 1,
@@ -1297,124 +1093,8 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 1.34444463,
-        "pickUpPosition": {
-          "x": 9.0,
-          "y": 0.05,
-          "z": 5.33333349,
-          "normalized": {
-            "x": 0.860281765,
-            "y": 0.004779343,
-            "z": 0.5097966,
-            "normalized": {
-              "x": 0.860281646,
-              "y": 0.00477934256,
-              "z": 0.50979656,
-              "normalized": {
-                "x": 0.8602817,
-                "y": 0.004779343,
-                "z": 0.5097966,
-                "magnitude": 1.0,
-                "sqrMagnitude": 1.0
-              },
-              "magnitude": 0.99999994,
-              "sqrMagnitude": 0.9999999
-            },
-            "magnitude": 1.00000012,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 10.461689,
-          "sqrMagnitude": 109.446945
-        },
-        "destination": {
-          "x": 3.66666675,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.5214368,
-            "y": 0.007110502,
-            "z": 0.8532603,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 7.03185225,
-          "sqrMagnitude": 49.4469452
-        },
-        "tripDistance": 5.99999952,
-        "expectedWaitingTime": 0.167142853,
-        "expectedTripTime": 0.181428552,
-        "fare": {
-          "baseFare": 12.999999,
-          "surgeMultiplier": 1.0,
-          "total": 12.999999,
-          "driverCut": 8.71,
-          "uberCut": 4.28999949
-        },
-        "expectedPickupTime": 1.5115875
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 3.33965349,
-        "expectedTripTimeCost": 3.6250937,
-        "expectedValueSurplus": 3.63818359,
-        "expectedUtilitySurplus": 0.3349178
-      },
-      "driverAssignedData": {
-        "matchedTime": 1.34444463,
-        "enRouteDistance": 4.333333
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 1.34444463,
-        "startPosition": {
-          "x": 5.33333349,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.664351,
-            "y": 0.0062282905,
-            "z": 0.7473948,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 8.027885,
-          "sqrMagnitude": 64.4469452
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 1.52361119,
-        "timeSpentEnRoute": 0.179166555,
-        "waitingTime": 0.179166555
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 3.579897
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 2.68749833,
-        "marginalCostEnRoute": 0.5633333
-      },
-      "droppedOffData": {
-        "totalTime": 0.4361111,
-        "droppedOffTime": 1.78055573,
-        "timeSpentOnTrip": 0.256944537
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 5.133966,
-        "valueSurplus": 1.8890667,
-        "utilitySurplus": 0.17390053,
-        "totalTimeCost": 8.713863,
-        "totalCost": 21.7138634
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 3.854168,
-        "marginalCostOnTrip": 0.7799999,
-        "grossProfit": 7.366667,
-        "valueSurplus": 3.51249886,
-        "utilitySurplus": 0.351249874
-      }
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
       "timeHours": 0.34857142,
@@ -1422,7 +1102,7 @@
       "moneyCost": 12.999999,
       "totalCost": 19.9647465
     },
-    "state": 3,
+    "state": 4,
     "rideOffer": {
       "expectedWaitingTime": 0.167142853,
       "expectedTripTime": 0.181428552,
@@ -1434,7 +1114,7 @@
         "uberCut": 4.28999949
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 3.66666675,
       "y": 0.05,
@@ -1489,10 +1169,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.5676592,
-          "timeCost": 25.84672,
+          "timeHours": 0.378127337,
+          "timeCost": 17.2169342,
           "moneyCost": 2.5,
-          "totalCost": 28.34672
+          "totalCost": 19.7169342
         },
         {
           "type": 1,
@@ -1564,8 +1244,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 4.141254,
         "expectedTripTimeCost": 4.35807371,
-        "expectedValueSurplus": 11.3473911,
-        "expectedUtilitySurplus": 0.346997738
+        "expectedValueSurplus": 2.71760559,
+        "expectedUtilitySurplus": 0.08310306
       },
       "driverAssignedData": {
         "matchedTime": 1.37916672,
@@ -1614,8 +1294,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 7.46220875,
-        "valueSurplus": 7.957779,
-        "utilitySurplus": 0.243345022,
+        "valueSurplus": -0.6720066,
+        "utilitySurplus": -0.0205496363,
         "totalTimeCost": 11.8889408,
         "totalCost": 20.38894
       },
@@ -1702,10 +1382,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.19101608,
-          "timeCost": 20.343317,
+          "timeHours": 0.8954795,
+          "timeCost": 15.2953634,
           "moneyCost": 2.5,
-          "totalCost": 22.843317
+          "totalCost": 17.7953644
         },
         {
           "type": 1,
@@ -1749,7 +1429,7 @@
           "sqrMagnitude": 21.7802753
         },
         "tripDistance": 5.33333349,
-        "expectedWaitingTime": 0.319523782,
+        "expectedWaitingTime": 0.138571441,
         "expectedTripTime": 0.162380964,
         "fare": {
           "baseFare": 12.0,
@@ -1758,78 +1438,78 @@
           "driverCut": 8.04,
           "uberCut": 3.9599998
         },
-        "expectedPickupTime": 1.69869053
+        "expectedPickupTime": 1.5177381
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 5.457671,
+        "expectedWaitingCost": 2.366889,
         "expectedTripTimeCost": 2.773571,
-        "expectedValueSurplus": 2.612074,
-        "expectedUtilitySurplus": 0.287559658
+        "expectedValueSurplus": 0.6549034,
+        "expectedUtilitySurplus": 0.07209743
       },
       "driverAssignedData": {
         "matchedTime": 1.37916672,
-        "enRouteDistance": 9.666666
+        "enRouteDistance": 3.33333349
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 1.37916672,
         "startPosition": {
-          "x": 0.0,
+          "x": 5.33333349,
           "y": 0.05,
-          "z": 0.333333343,
+          "z": 6.0,
           "normalized": {
-            "x": 0.0,
-            "y": 0.148340449,
-            "z": 0.988936365,
+            "x": 0.664351,
+            "y": 0.0062282905,
+            "z": 0.7473948,
             "magnitude": 1.0,
             "sqrMagnitude": 1.0
           },
-          "magnitude": 0.337062478,
-          "sqrMagnitude": 0.113611117
+          "magnitude": 8.027885,
+          "sqrMagnitude": 64.4469452
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 1.7166667,
-        "timeSpentEnRoute": 0.337499976,
-        "waitingTime": 0.337499976
+        "pickedUpTime": 1.54722226,
+        "timeSpentEnRoute": 0.168055534,
+        "waitingTime": 0.168055534
       },
       "pickedUpPassengerData": {
-        "waitingCost": 5.76471567
+        "waitingCost": 2.87049627
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 5.06249952,
-        "marginalCostEnRoute": 1.25666654
+        "timeCostEnRoute": 2.520833,
+        "marginalCostEnRoute": 0.433333337
       },
       "droppedOffData": {
-        "totalTime": 0.5916667,
-        "droppedOffTime": 1.97083342,
-        "timeSpentOnTrip": 0.254166722
+        "totalTime": 0.422222376,
+        "droppedOffTime": 1.8013891,
+        "timeSpentOnTrip": 0.254166842
       },
       "droppedOffPassengerData": {
-        "tripTimeCost": 4.34133053,
-        "valueSurplus": 0.737270355,
-        "utilitySurplus": 0.08116509,
-        "totalTimeCost": 10.1060467,
-        "totalCost": 22.1060467
+        "tripTimeCost": 4.34133244,
+        "valueSurplus": -1.41646385,
+        "utilitySurplus": -0.155936569,
+        "totalTimeCost": 7.21182871,
+        "totalCost": 19.2118282
       },
       "droppedOffDriverData": {
-        "timeCostOnTrip": 3.812501,
+        "timeCostOnTrip": 3.81250262,
         "marginalCostOnTrip": 0.6933333,
-        "grossProfit": 6.09,
-        "valueSurplus": 2.2774992,
-        "utilitySurplus": 0.227749914
+        "grossProfit": 6.91333342,
+        "valueSurplus": 3.10083079,
+        "utilitySurplus": 0.3100831
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.481904745,
-      "timeCost": 8.231242,
+      "timeHours": 0.3009524,
+      "timeCost": 5.14046,
       "moneyCost": 12.0,
-      "totalCost": 20.2312431
+      "totalCost": 17.140461
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.319523782,
+      "expectedWaitingTime": 0.138571441,
       "expectedTripTime": 0.162380964,
       "fare": {
         "baseFare": 12.0,
@@ -1880,10 +1560,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.4389416,
-          "timeCost": 90.0969,
+          "timeHours": 1.11781991,
+          "timeCost": 69.99041,
           "moneyCost": 2.5,
-          "totalCost": 92.5969
+          "totalCost": 72.49041
         },
         {
           "type": 1,
@@ -1894,12 +1574,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 1.44861126,
+        "pickUpPosition": {
+          "x": 2.33333325,
+          "y": 0.05,
+          "z": 6.0,
+          "normalized": {
+            "x": 0.3624353,
+            "y": 0.00776647171,
+            "z": 0.931976557,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 6.43793,
+          "sqrMagnitude": 41.4469452
+        },
+        "destination": {
+          "x": 9.0,
+          "y": 0.05,
+          "z": 4.33333349,
+          "normalized": {
+            "x": 0.900990367,
+            "y": 0.005005502,
+            "z": 0.4338102,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 9.989008,
+          "sqrMagnitude": 99.78028
+        },
+        "tripDistance": 8.333334,
+        "expectedWaitingTime": 0.19571428,
+        "expectedTripTime": 0.248095259,
+        "fare": {
+          "baseFare": 16.5,
+          "surgeMultiplier": 1.0,
+          "total": 16.5,
+          "driverCut": 11.055,
+          "uberCut": 5.44499969
+        },
+        "expectedPickupTime": 1.64432549
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 12.2543192,
+        "expectedTripTimeCost": 15.5340662,
+        "expectedValueSurplus": 28.2020264,
+        "expectedUtilitySurplus": 1.93747354
+      },
+      "driverAssignedData": {
+        "matchedTime": 1.44861126,
+        "enRouteDistance": 5.333333
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 1.44861126,
+        "startPosition": {
+          "x": 6.0,
+          "y": 0.05,
+          "z": 7.66666651,
+          "normalized": {
+            "x": 0.6163001,
+            "y": 0.005135834,
+            "z": 0.7874946,
+            "magnitude": 1.0,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 9.735517,
+          "sqrMagnitude": 94.78027
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 1.66111124,
+        "timeSpentEnRoute": 0.212499976,
+        "waitingTime": 0.212499976
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 13.3053274
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 3.18749952,
+        "marginalCostEnRoute": 0.693333268
+      },
+      "droppedOffData": {
+        "totalTime": 0.558333158,
+        "droppedOffTime": 2.00694442,
+        "timeSpentOnTrip": 0.345833182
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 21.65376,
+        "valueSurplus": 21.0313225,
+        "utilitySurplus": 1.44484758,
+        "totalTimeCost": 34.9590874,
+        "totalCost": 51.4590874
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 5.18749762,
+        "marginalCostOnTrip": 1.08333337,
+        "grossProfit": 9.278334,
+        "valueSurplus": 4.090836,
+        "utilitySurplus": 0.4090836
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.443809539,
+      "timeCost": 27.7883854,
+      "moneyCost": 16.5,
+      "totalCost": 44.2883835
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.19571428,
+      "expectedTripTime": 0.248095259,
+      "fare": {
+        "baseFare": 16.5,
+        "surgeMultiplier": 1.0,
+        "total": 16.5,
+        "driverCut": 11.055,
+        "uberCut": 5.44499969
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
       "y": 0.05,
@@ -1940,10 +1738,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.23042655,
-          "timeCost": 50.04632,
+          "timeHours": 0.9616746,
+          "timeCost": 39.1151161,
           "moneyCost": 2.5,
-          "totalCost": 52.54632
+          "totalCost": 41.6151161
         },
         {
           "type": 1,
@@ -1956,10 +1754,26 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.5866667,
+      "timeCost": 23.8620586,
+      "moneyCost": 18.5,
+      "totalCost": 42.36206
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.3004762,
+      "expectedTripTime": 0.28619048,
+      "fare": {
+        "baseFare": 18.5,
+        "surgeMultiplier": 1.0,
+        "total": 18.5,
+        "driverCut": 12.395,
+        "uberCut": 6.10499954
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 3.0,
       "y": 0.05,
@@ -2000,10 +1814,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.7286292,
-          "timeCost": 25.7394047,
+          "timeHours": 0.5469033,
+          "timeCost": 19.3197937,
           "moneyCost": 2.5,
-          "totalCost": 28.2394047
+          "totalCost": 21.8197937
         },
         {
           "type": 1,
@@ -2018,14 +1832,14 @@
     "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.520000041,
-      "timeCost": 18.3694153,
+      "timeHours": 0.453333348,
+      "timeCost": 16.01436,
       "moneyCost": 16.0,
-      "totalCost": 34.3694153
+      "totalCost": 32.0143623
     },
     "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.2814286,
+      "expectedWaitingTime": 0.214761913,
       "expectedTripTime": 0.238571435,
       "fare": {
         "baseFare": 16.0,
@@ -2083,10 +1897,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.13328147,
-          "timeCost": 237.230026,
+          "timeHours": 1.67595863,
+          "timeCost": 186.373764,
           "moneyCost": 2.5,
-          "totalCost": 239.730026
+          "totalCost": 188.873764
         },
         {
           "type": 1,
@@ -2130,7 +1944,7 @@
           "sqrMagnitude": 9.446944
         },
         "tripDistance": 8.666666,
-        "expectedWaitingTime": 0.06238095,
+        "expectedWaitingTime": 0.10047619,
         "expectedTripTime": 0.257619023,
         "fare": {
           "baseFare": 17.0,
@@ -2139,78 +1953,85 @@
           "driverCut": 11.39,
           "uberCut": 5.60999966
         },
-        "expectedPickupTime": 1.75404763
+        "expectedPickupTime": 1.79214287
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 6.93702841,
+        "expectedWaitingCost": 11.1733818,
         "expectedTripTimeCost": 28.6483364,
-        "expectedValueSurplus": 187.144653,
-        "expectedUtilitySurplus": 3.588199
+        "expectedValueSurplus": 132.052048,
+        "expectedUtilitySurplus": 2.53188634
       },
       "driverAssignedData": {
         "matchedTime": 1.69166672,
-        "enRouteDistance": 0.6666665
+        "enRouteDistance": 2.0
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 1.69166672,
         "startPosition": {
-          "x": 3.33333325,
+          "x": 0.6666667,
           "y": 0.05,
           "z": 9.0,
           "normalized": {
-            "x": 0.347309619,
-            "y": 0.005209645,
-            "z": 0.937736034,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
+            "x": 0.07387055,
+            "y": 0.00554029131,
+            "z": 0.9972524,
+            "normalized": {
+              "x": 0.0738705546,
+              "y": 0.005540292,
+              "z": 0.997252464,
+              "magnitude": 1.0,
+              "sqrMagnitude": 1.0
+            },
+            "magnitude": 0.99999994,
+            "sqrMagnitude": 0.99999994
           },
-          "magnitude": 9.597584,
-          "sqrMagnitude": 92.11361
+          "magnitude": 9.02479649,
+          "sqrMagnitude": 81.4469452
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 1.73055565,
-        "timeSpentEnRoute": 0.03888893,
-        "waitingTime": 0.03888893
+        "pickedUpTime": 1.78472233,
+        "timeSpentEnRoute": 0.0930556059,
+        "waitingTime": 0.0930556059
       },
       "pickedUpPassengerData": {
-        "waitingCost": 4.32461548
+        "waitingCost": 10.3481817
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 0.583333969,
-        "marginalCostEnRoute": 0.08666664
+        "timeCostEnRoute": 1.39583409,
+        "marginalCostEnRoute": 0.26
       },
       "droppedOffData": {
-        "totalTime": 0.39166677,
-        "droppedOffTime": 2.08333349,
-        "timeSpentOnTrip": 0.352777839
+        "totalTime": 0.445833325,
+        "droppedOffTime": 2.1375,
+        "timeSpentOnTrip": 0.352777719
       },
       "droppedOffPassengerData": {
-        "tripTimeCost": 39.2304039,
-        "valueSurplus": 179.175,
-        "utilitySurplus": 3.43539357,
-        "totalTimeCost": 43.55502,
-        "totalCost": 60.55502
+        "tripTimeCost": 39.2303925,
+        "valueSurplus": 122.2952,
+        "utilitySurplus": 2.3448143,
+        "totalTimeCost": 49.57857,
+        "totalCost": 66.57857
       },
       "droppedOffDriverData": {
-        "timeCostOnTrip": 5.29166746,
+        "timeCostOnTrip": 5.291666,
         "marginalCostOnTrip": 1.12666655,
-        "grossProfit": 10.1766672,
-        "valueSurplus": 4.88499975,
-        "utilitySurplus": 0.488499969
+        "grossProfit": 10.003334,
+        "valueSurplus": 4.711668,
+        "utilitySurplus": 0.4711668
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.319999963,
-      "timeCost": 35.5853653,
+      "timeHours": 0.358095229,
+      "timeCost": 39.8217163,
       "moneyCost": 17.0,
-      "totalCost": 52.5853653
+      "totalCost": 56.8217163
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.06238095,
+      "expectedWaitingTime": 0.10047619,
       "expectedTripTime": 0.257619023,
       "fare": {
         "baseFare": 17.0,
@@ -2261,10 +2082,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.9884635,
-          "timeCost": 17.68498,
+          "timeHours": 0.7281041,
+          "timeCost": 13.0267906,
           "moneyCost": 2.5,
-          "totalCost": 20.18498
+          "totalCost": 15.5267906
         },
         {
           "type": 1,
@@ -2275,127 +2096,18 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 1.69166672,
-        "pickUpPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 7.33333349,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.00681802351,
-            "z": 0.9999768,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 7.33350372,
-          "sqrMagnitude": 53.78028
-        },
-        "destination": {
-          "x": 3.33333325,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.485630035,
-            "y": 0.007284451,
-            "z": 0.874134064,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 6.86393547,
-          "sqrMagnitude": 47.11361
-        },
-        "tripDistance": 4.666667,
-        "expectedWaitingTime": 0.11,
-        "expectedTripTime": 0.143333346,
-        "fare": {
-          "baseFare": 11.0,
-          "surgeMultiplier": 1.0,
-          "total": 11.0,
-          "driverCut": 7.37000036,
-          "uberCut": 3.62999988
-        },
-        "expectedPickupTime": 1.80166674
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 1.96805227,
-        "expectedTripTimeCost": 2.564432,
-        "expectedValueSurplus": 4.65249634,
-        "expectedUtilitySurplus": 0.429810554
-      },
-      "driverAssignedData": {
-        "matchedTime": 1.69166672,
-        "enRouteDistance": 2.33333325
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 1.69166672,
-        "startPosition": {
-          "x": 0.6666667,
-          "y": 0.05,
-          "z": 9.0,
-          "normalized": {
-            "x": 0.07387055,
-            "y": 0.00554029131,
-            "z": 0.9972524,
-            "normalized": {
-              "x": 0.0738705546,
-              "y": 0.005540292,
-              "z": 0.997252464,
-              "magnitude": 1.0,
-              "sqrMagnitude": 1.0
-            },
-            "magnitude": 0.99999994,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 9.02479649,
-          "sqrMagnitude": 81.4469452
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 1.8013891,
-        "timeSpentEnRoute": 0.109722376,
-        "waitingTime": 0.109722376
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 1.96308517
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 1.64583564,
-        "marginalCostEnRoute": 0.3033333
-      },
-      "droppedOffData": {
-        "totalTime": 0.338889,
-        "droppedOffTime": 2.03055573,
-        "timeSpentOnTrip": 0.229166627
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 4.100108,
-        "valueSurplus": 3.121786,
-        "utilitySurplus": 0.288399279,
-        "totalTimeCost": 6.06319332,
-        "totalCost": 17.0631943
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 3.43749952,
-        "marginalCostOnTrip": 0.6066667,
-        "grossProfit": 6.46000051,
-        "valueSurplus": 3.022501,
-        "utilitySurplus": 0.3022501
-      }
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.25333333,
-      "timeCost": 4.532484,
+      "timeHours": 0.3866667,
+      "timeCost": 6.918002,
       "moneyCost": 11.0,
-      "totalCost": 15.5324841
+      "totalCost": 17.9180031
     },
-    "state": 3,
+    "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.11,
+      "expectedWaitingTime": 0.24333334,
       "expectedTripTime": 0.143333346,
       "fare": {
         "baseFare": 11.0,
@@ -2405,7 +2117,7 @@
         "uberCut": 3.62999988
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 3.33333325,
       "y": 0.05,
@@ -2446,10 +2158,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.6238172,
-          "timeCost": 124.61496,
+          "timeHours": 0.4443871,
+          "timeCost": 88.7716446,
           "moneyCost": 2.5,
-          "totalCost": 127.11496
+          "totalCost": 91.2716446
         },
         {
           "type": 1,
@@ -2460,18 +2172,127 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 1.69166672,
+        "pickUpPosition": {
+          "x": 1.33333337,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.999297559,
+            "y": 0.03747366,
+            "z": 0.0,
+            "normalized": {
+              "x": 0.9992976,
+              "y": 0.0374736637,
+              "z": 0.0,
+              "magnitude": 1.0,
+              "sqrMagnitude": 1.0
+            },
+            "magnitude": 0.99999994,
+            "sqrMagnitude": 0.9999999
+          },
+          "magnitude": 1.3342706,
+          "sqrMagnitude": 1.78027785
+        },
+        "destination": {
+          "x": 7.0,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.999974549,
+            "y": 0.007142675,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.00017834,
+          "sqrMagnitude": 49.0025
+        },
+        "tripDistance": 5.66666651,
+        "expectedWaitingTime": 0.09095239,
+        "expectedTripTime": 0.171904758,
+        "fare": {
+          "baseFare": 12.5,
+          "surgeMultiplier": 1.0,
+          "total": 12.5,
+          "driverCut": 8.375,
+          "uberCut": 4.125
+        },
+        "expectedPickupTime": 1.78261912
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 18.168829,
+        "expectedTripTimeCost": 34.3400345,
+        "expectedValueSurplus": 26.26278,
+        "expectedUtilitySurplus": 0.5974775
+      },
+      "driverAssignedData": {
+        "matchedTime": 1.69166672,
+        "enRouteDistance": 1.66666675
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 1.69166672,
+        "startPosition": {
+          "x": 0.0,
+          "y": 0.05,
+          "z": 0.333333343,
+          "normalized": {
+            "x": 0.0,
+            "y": 0.148340449,
+            "z": 0.988936365,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 0.337062478,
+          "sqrMagnitude": 0.113611117
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 1.80277789,
+        "timeSpentEnRoute": 0.111111164,
+        "waitingTime": 0.111111164
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 22.1957855
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 1.66666746,
+        "marginalCostEnRoute": 0.216666669
+      },
+      "droppedOffData": {
+        "totalTime": 0.35138905,
+        "droppedOffTime": 2.04305577,
+        "timeSpentOnTrip": 0.240277886
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 47.9983864,
+        "valueSurplus": 8.5774765,
+        "utilitySurplus": 0.195137352,
+        "totalTimeCost": 70.19417,
+        "totalCost": 82.69417
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 3.60416842,
+        "marginalCostOnTrip": 0.7366666,
+        "grossProfit": 7.42166662,
+        "valueSurplus": 3.81749821,
+        "utilitySurplus": 0.3817498
+      }
+    },
+    "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.5771429,
-      "timeCost": 115.291206,
+      "timeHours": 0.262857139,
+      "timeCost": 52.5088654,
       "moneyCost": 12.5,
-      "totalCost": 127.791206
+      "totalCost": 65.0088654
     },
-    "state": 4,
+    "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.405238122,
+      "expectedWaitingTime": 0.09095239,
       "expectedTripTime": 0.171904758,
       "fare": {
         "baseFare": 12.5,
@@ -2481,7 +2302,7 @@
         "uberCut": 4.125
       }
     },
-    "rideOfferStatus": 3,
+    "rideOfferStatus": 2,
     "destination": {
       "x": 7.0,
       "y": 0.05,
@@ -2529,10 +2350,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.77740765,
-          "timeCost": 84.41884,
+          "timeHours": 1.40459287,
+          "timeCost": 66.71182,
           "moneyCost": 2.5,
-          "totalCost": 86.91884
+          "totalCost": 69.21182
         },
         {
           "type": 1,
@@ -2590,8 +2411,8 @@
       "tripCreatedPassengerData": {
         "expectedWaitingCost": 17.889967,
         "expectedTripTimeCost": 14.4974318,
-        "expectedValueSurplus": 35.03144,
-        "expectedUtilitySurplus": 0.6793893
+        "expectedValueSurplus": 17.3244247,
+        "expectedUtilitySurplus": 0.3359847
       },
       "driverAssignedData": {
         "matchedTime": 1.72638893,
@@ -2633,8 +2454,8 @@
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 19.45996,
-        "valueSurplus": 29.8182411,
-        "utilitySurplus": 0.578286052,
+        "valueSurplus": 12.1112251,
+        "utilitySurplus": 0.234881476,
         "totalTimeCost": 37.6005974,
         "totalCost": 57.1005974
       },
@@ -2707,10 +2528,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.98778152,
-          "timeCost": 230.397812,
+          "timeHours": 1.53022516,
+          "timeCost": 177.363831,
           "moneyCost": 2.5,
-          "totalCost": 232.897812
+          "totalCost": 179.863831
         },
         {
           "type": 1,
@@ -2899,10 +2720,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.126473,
-          "timeCost": 98.88224,
+          "timeHours": 1.67851162,
+          "timeCost": 78.05177,
           "moneyCost": 2.5,
-          "totalCost": 101.38224
+          "totalCost": 80.55177
         },
         {
           "type": 1,
@@ -2959,10 +2780,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.771671,
-          "timeCost": 174.985779,
+          "timeHours": 1.38400352,
+          "timeCost": 136.696335,
           "moneyCost": 2.5,
-          "totalCost": 177.485779
+          "totalCost": 139.196335
         },
         {
           "type": 1,
@@ -3019,10 +2840,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.8287385,
-          "timeCost": 28.8580284,
+          "timeHours": 0.624324143,
+          "timeCost": 21.7399864,
           "moneyCost": 2.5,
-          "totalCost": 31.3580284
+          "totalCost": 24.2399864
         },
         {
           "type": 1,
@@ -3037,14 +2858,14 @@
     "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.5485714,
-      "timeCost": 19.1021519,
+      "timeHours": 0.6152381,
+      "timeCost": 21.4235935,
       "moneyCost": 15.5,
-      "totalCost": 34.60215
+      "totalCost": 36.92359
     },
     "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.319523782,
+      "expectedWaitingTime": 0.386190444,
       "expectedTripTime": 0.229047611,
       "fare": {
         "baseFare": 15.5,
@@ -3095,10 +2916,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.67050016,
-          "timeCost": 108.128448,
+          "timeHours": 1.29773355,
+          "timeCost": 83.99994,
           "moneyCost": 2.5,
-          "totalCost": 110.628448
+          "totalCost": 86.49994
         },
         {
           "type": 1,
@@ -3156,7 +2977,7 @@
           "sqrMagnitude": 57.7802773
         },
         "tripDistance": 7.66666651,
-        "expectedWaitingTime": 0.157619044,
+        "expectedWaitingTime": 0.262380958,
         "expectedTripTime": 0.229047611,
         "fare": {
           "baseFare": 15.5,
@@ -3165,78 +2986,78 @@
           "driverCut": 10.385,
           "uberCut": 5.115
         },
-        "expectedPickupTime": 2.057619
+        "expectedPickupTime": 2.16238117
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 10.2023954,
+        "expectedWaitingCost": 16.9834442,
         "expectedTripTimeCost": 14.8258371,
-        "expectedValueSurplus": 70.10022,
-        "expectedUtilitySurplus": 2.85073519
+        "expectedValueSurplus": 39.19066,
+        "expectedUtilitySurplus": 1.59374952
       },
       "driverAssignedData": {
         "matchedTime": 1.9000001,
-        "enRouteDistance": 3.99999976
+        "enRouteDistance": 7.66666651
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 1.9000001,
         "startPosition": {
-          "x": 3.66666675,
+          "x": 0.0,
           "y": 0.05,
-          "z": 6.0,
+          "z": 4.66666651,
           "normalized": {
-            "x": 0.5214368,
-            "y": 0.007110502,
-            "z": 0.8532603,
+            "x": 0.0,
+            "y": 0.0107136713,
+            "z": 0.9999426,
             "magnitude": 1.0,
             "sqrMagnitude": 1.0
           },
-          "magnitude": 7.03185225,
-          "sqrMagnitude": 49.4469452
+          "magnitude": 4.66693449,
+          "sqrMagnitude": 21.7802753
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 2.05694461,
-        "timeSpentEnRoute": 0.156944513,
-        "waitingTime": 0.156944513
+        "pickedUpTime": 2.188889,
+        "timeSpentEnRoute": 0.288888931,
+        "waitingTime": 0.288888931
       },
       "pickedUpPassengerData": {
-        "waitingCost": 10.1587343
+        "waitingCost": 18.6992569
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 2.82500124,
-        "marginalCostEnRoute": 0.5199999
+        "timeCostEnRoute": 5.200001,
+        "marginalCostEnRoute": 0.9966666
       },
       "droppedOffData": {
-        "totalTime": 0.477777719,
-        "droppedOffTime": 2.37777781,
-        "timeSpentOnTrip": 0.3208332
+        "totalTime": 0.6097224,
+        "droppedOffTime": 2.50972247,
+        "timeSpentOnTrip": 0.320833445
       },
       "droppedOffPassengerData": {
-        "tripTimeCost": 20.7669525,
-        "valueSurplus": 64.20276,
-        "utilitySurplus": 2.61090565,
-        "totalTimeCost": 30.9256859,
-        "totalCost": 46.4256859
+        "tripTimeCost": 20.7669678,
+        "valueSurplus": 31.5337143,
+        "utilitySurplus": 1.28236783,
+        "totalTimeCost": 39.4662247,
+        "totalCost": 54.9662247
       },
       "droppedOffDriverData": {
-        "timeCostOnTrip": 5.77499771,
+        "timeCostOnTrip": 5.775002,
         "marginalCostOnTrip": 0.9966666,
-        "grossProfit": 8.868334,
-        "valueSurplus": 3.093336,
-        "utilitySurplus": 0.309333622
+        "grossProfit": 8.391667,
+        "valueSurplus": 2.61666536,
+        "utilitySurplus": 0.261666536
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.386666656,
-      "timeCost": 25.0282326,
+      "timeHours": 0.491428554,
+      "timeCost": 31.80928,
       "moneyCost": 15.5,
-      "totalCost": 40.5282326
+      "totalCost": 47.30928
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.157619044,
+      "expectedWaitingTime": 0.262380958,
       "expectedTripTime": 0.229047611,
       "fare": {
         "baseFare": 15.5,
@@ -3301,10 +3122,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.005418,
-          "timeCost": 17.002142,
+          "timeHours": 1.55233443,
+          "timeCost": 13.1608524,
           "moneyCost": 2.5,
-          "totalCost": 19.502142
+          "totalCost": 15.6608524
         },
         {
           "type": 1,
@@ -3375,10 +3196,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.25130773,
-          "timeCost": 11.5146523,
+          "timeHours": 0.983712852,
+          "timeCost": 9.052219,
           "moneyCost": 2.5,
-          "totalCost": 14.0146523
+          "totalCost": 11.5522194
         },
         {
           "type": 1,
@@ -3435,10 +3256,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.67774761,
-          "timeCost": 33.2733841,
+          "timeHours": 1.28219807,
+          "timeCost": 25.4287758,
           "moneyCost": 2.5,
-          "totalCost": 35.7733841
+          "totalCost": 27.9287758
         },
         {
           "type": 1,
@@ -3450,7 +3271,7 @@
       ]
     },
     "trip": null,
-    "tripTypeChosen": 1,
+    "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
     "rideOffer": null,
@@ -3495,10 +3316,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.214943,
-          "timeCost": 17.8222485,
+          "timeHours": 1.730621,
+          "timeCost": 13.9252157,
           "moneyCost": 2.5,
-          "totalCost": 20.3222485
+          "totalCost": 16.4252167
         },
         {
           "type": 1,
@@ -3510,27 +3331,11 @@
       ]
     },
     "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.443809539,
-      "timeCost": 3.57105541,
-      "moneyCost": 15.0,
-      "totalCost": 18.5710564
-    },
-    "state": 4,
-    "rideOffer": {
-      "expectedWaitingTime": 0.224285722,
-      "expectedTripTime": 0.219523817,
-      "fare": {
-        "baseFare": 15.0,
-        "surgeMultiplier": 1.0,
-        "total": 15.0,
-        "driverCut": 10.05,
-        "uberCut": 4.95
-      }
-    },
-    "rideOfferStatus": 3,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 5.33333349,
       "y": 0.05,
@@ -3571,10 +3376,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.984613955,
-          "timeCost": 69.92243,
+          "timeHours": 0.7890245,
+          "timeCost": 56.03263,
           "moneyCost": 2.5,
-          "totalCost": 72.42243
+          "totalCost": 58.53263
         },
         {
           "type": 1,
@@ -3585,130 +3390,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 2.038889,
-        "pickUpPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 0.333333343,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.148340449,
-            "z": 0.988936365,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 0.337062478,
-          "sqrMagnitude": 0.113611117
-        },
-        "destination": {
-          "x": 7.0,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.759245455,
-            "y": 0.00542318169,
-            "z": 0.6507818,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 9.21968,
-          "sqrMagnitude": 85.0025
-        },
-        "tripDistance": 12.666666,
-        "expectedWaitingTime": 0.167142853,
-        "expectedTripTime": 0.371904731,
-        "fare": {
-          "baseFare": 23.0,
-          "surgeMultiplier": 1.0,
-          "total": 23.0,
-          "driverCut": 15.4100008,
-          "uberCut": 7.58999968
-        },
-        "expectedPickupTime": 2.2060318
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 11.8696623,
-        "expectedTripTimeCost": 26.4108429,
-        "expectedValueSurplus": 11.1419258,
-        "expectedUtilitySurplus": 0.308416665
-      },
-      "driverAssignedData": {
-        "matchedTime": 2.038889,
-        "enRouteDistance": 4.333333
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 2.038889,
-        "startPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 4.66666651,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.0107136713,
-            "z": 0.9999426,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 4.66693449,
-          "sqrMagnitude": 21.7802753
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 2.19861126,
-        "timeSpentEnRoute": 0.159722328,
-        "waitingTime": 0.159722328
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 11.3426933
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 2.875002,
-        "marginalCostEnRoute": 0.5633333
-      },
-      "droppedOffData": {
-        "totalTime": 0.612499952,
-        "droppedOffTime": 2.651389,
-        "timeSpentOnTrip": 0.452777624
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 32.1540375,
-        "valueSurplus": 5.92569733,
-        "utilitySurplus": 0.164027631,
-        "totalTimeCost": 43.49673,
-        "totalCost": 66.4967346
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 8.149998,
-        "marginalCostOnTrip": 1.64666653,
-        "grossProfit": 13.2000008,
-        "valueSurplus": 5.050003,
-        "utilitySurplus": 0.5050003
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.5390476,
-      "timeCost": 38.2805061,
-      "moneyCost": 23.0,
-      "totalCost": 61.2805061
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.167142853,
-      "expectedTripTime": 0.371904731,
-      "fare": {
-        "baseFare": 23.0,
-        "surgeMultiplier": 1.0,
-        "total": 23.0,
-        "driverCut": 15.4100008,
-        "uberCut": 7.58999968
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 7.0,
       "y": 0.05,
@@ -3749,10 +3436,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.9438386,
-          "timeCost": 78.21807,
+          "timeHours": 1.50040424,
+          "timeCost": 60.37473,
           "moneyCost": 2.5,
-          "totalCost": 80.71807
+          "totalCost": 62.87473
         },
         {
           "type": 1,
@@ -3796,7 +3483,7 @@
           "sqrMagnitude": 10.0025
         },
         "tripDistance": 5.666667,
-        "expectedWaitingTime": 0.05285715,
+        "expectedWaitingTime": 0.243333325,
         "expectedTripTime": 0.171904773,
         "fare": {
           "baseFare": 12.5,
@@ -3805,78 +3492,78 @@
           "driverCut": 8.375,
           "uberCut": 4.125
         },
-        "expectedPickupTime": 2.12646842
+        "expectedPickupTime": 2.3169446
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 2.1269176,
+        "expectedWaitingCost": 9.791484,
         "expectedTripTimeCost": 6.917272,
-        "expectedValueSurplus": 43.6046371,
-        "expectedUtilitySurplus": 1.78446651
+        "expectedValueSurplus": 33.6659737,
+        "expectedUtilitySurplus": 1.37773883
       },
       "driverAssignedData": {
         "matchedTime": 2.07361126,
-        "enRouteDistance": 0.3333335
+        "enRouteDistance": 6.99999952
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 2.07361126,
         "startPosition": {
-          "x": 3.33333325,
+          "x": 9.0,
           "y": 0.05,
-          "z": 6.0,
+          "z": 4.33333349,
           "normalized": {
-            "x": 0.485630035,
-            "y": 0.007284451,
-            "z": 0.874134064,
+            "x": 0.900990367,
+            "y": 0.005005502,
+            "z": 0.4338102,
             "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
+            "sqrMagnitude": 1.0
           },
-          "magnitude": 6.86393547,
-          "sqrMagnitude": 47.11361
+          "magnitude": 9.989008,
+          "sqrMagnitude": 99.78028
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 2.098611,
-        "timeSpentEnRoute": 0.0249998569,
-        "waitingTime": 0.0249998569
+        "pickedUpTime": 2.33472228,
+        "timeSpentEnRoute": 0.261111021,
+        "waitingTime": 0.261111021
       },
       "pickedUpPassengerData": {
-        "waitingCost": 1.00596869
+        "waitingCost": 10.50684
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 0.449997425,
-        "marginalCostEnRoute": 0.04333335
+        "timeCostEnRoute": 4.69999838,
+        "marginalCostEnRoute": 0.9099999
       },
       "droppedOffData": {
-        "totalTime": 0.2833333,
-        "droppedOffTime": 2.35694456,
+        "totalTime": 0.519444466,
+        "droppedOffTime": 2.59305573,
         "timeSpentOnTrip": 0.258333445
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 10.3950729,
-        "valueSurplus": 41.2477837,
-        "utilitySurplus": 1.68801522,
-        "totalTimeCost": 11.401042,
-        "totalCost": 23.9010429
+        "valueSurplus": 29.4728165,
+        "utilitySurplus": 1.20613909,
+        "totalTimeCost": 20.9019127,
+        "totalCost": 33.4019127
       },
       "droppedOffDriverData": {
         "timeCostOnTrip": 4.650002,
         "marginalCostOnTrip": 0.7366667,
-        "grossProfit": 7.595,
-        "valueSurplus": 2.94499779,
-        "utilitySurplus": 0.294499785
+        "grossProfit": 6.72833347,
+        "valueSurplus": 2.07833147,
+        "utilitySurplus": 0.207833141
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.224761918,
-      "timeCost": 9.044189,
+      "timeHours": 0.415238082,
+      "timeCost": 16.7087555,
       "moneyCost": 12.5,
-      "totalCost": 21.54419
+      "totalCost": 29.2087555
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.05285715,
+      "expectedWaitingTime": 0.243333325,
       "expectedTripTime": 0.171904773,
       "fare": {
         "baseFare": 12.5,
@@ -3927,10 +3614,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.63500381,
-          "timeCost": 100.979378,
+          "timeHours": 1.29066968,
+          "timeCost": 79.7129745,
           "moneyCost": 2.5,
-          "totalCost": 103.479378
+          "totalCost": 82.2129745
         },
         {
           "type": 1,
@@ -3987,10 +3674,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.07610691,
-          "timeCost": 36.53379,
+          "timeHours": 0.7688855,
+          "timeCost": 26.1036339,
           "moneyCost": 2.5,
-          "totalCost": 39.03379
+          "totalCost": 28.6036339
         },
         {
           "type": 1,
@@ -4001,12 +3688,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 2.10833335,
+        "pickUpPosition": {
+          "x": 8.333333,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.999982059,
+            "y": 0.00599989248,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 8.333483,
+          "sqrMagnitude": 69.44694
+        },
+        "destination": {
+          "x": 7.33333349,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.9999768,
+            "y": 0.00681802351,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.33350372,
+          "sqrMagnitude": 53.78028
+        },
+        "tripDistance": 0.9999995,
+        "expectedWaitingTime": 0.0814285651,
+        "expectedTripTime": 0.0385714173,
+        "fare": {
+          "baseFare": 5.499999,
+          "surgeMultiplier": 1.0,
+          "total": 5.499999,
+          "driverCut": 3.68499947,
+          "uberCut": 1.81499958
+        },
+        "expectedPickupTime": 2.18976188
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 2.7644968,
+        "expectedTripTimeCost": 1.30949819,
+        "expectedValueSurplus": 0.125990868,
+        "expectedUtilitySurplus": 0.004886906
+      },
+      "driverAssignedData": {
+        "matchedTime": 2.10833335,
+        "enRouteDistance": 1.333333
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 2.10833335,
+        "startPosition": {
+          "x": 7.0,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.999974549,
+            "y": 0.007142675,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.00017834,
+          "sqrMagnitude": 49.0025
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 2.18194461,
+        "timeSpentEnRoute": 0.07361126,
+        "waitingTime": 0.07361126
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 2.49909949
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 1.32500267,
+        "marginalCostEnRoute": 0.173333287
+      },
+      "droppedOffData": {
+        "totalTime": 0.168055534,
+        "droppedOffTime": 2.276389,
+        "timeSpentOnTrip": 0.0944442749
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 3.20637965,
+        "valueSurplus": -1.50549412,
+        "utilitySurplus": -0.0583947748,
+        "totalTimeCost": 5.705479,
+        "totalCost": 11.2054787
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 1.699997,
+        "marginalCostOnTrip": 0.129999936,
+        "grossProfit": 3.38166618,
+        "valueSurplus": 1.68166924,
+        "utilitySurplus": 0.168166921
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.119999982,
+      "timeCost": 4.073995,
+      "moneyCost": 5.499999,
+      "totalCost": 9.573994
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.0814285651,
+      "expectedTripTime": 0.0385714173,
+      "fare": {
+        "baseFare": 5.499999,
+        "surgeMultiplier": 1.0,
+        "total": 5.499999,
+        "driverCut": 3.68499947,
+        "uberCut": 1.81499958
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 7.33333349,
       "y": 0.05,
@@ -4047,10 +3852,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.54474783,
-          "timeCost": 186.478821,
+          "timeHours": 1.19446492,
+          "timeCost": 144.19339,
           "moneyCost": 2.5,
-          "totalCost": 188.978821
+          "totalCost": 146.69339
         },
         {
           "type": 1,
@@ -4107,10 +3912,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.71509171,
-          "timeCost": 13.4734554,
+          "timeHours": 1.36274,
+          "timeCost": 10.7054434,
           "moneyCost": 2.5,
-          "totalCost": 15.9734554
+          "totalCost": 13.2054434
         },
         {
           "type": 1,
@@ -4123,26 +3928,10 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.6057143,
-      "timeCost": 4.75838375,
-      "moneyCost": 21.0,
-      "totalCost": 25.7583847
-    },
-    "state": 4,
-    "rideOffer": {
-      "expectedWaitingTime": 0.271904767,
-      "expectedTripTime": 0.333809555,
-      "fare": {
-        "baseFare": 21.0,
-        "surgeMultiplier": 1.0,
-        "total": 21.0,
-        "driverCut": 14.0700006,
-        "uberCut": 6.93
-      }
-    },
-    "rideOfferStatus": 3,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
       "y": 0.05,
@@ -4183,10 +3972,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.554297,
-          "timeCost": 50.92529,
+          "timeHours": 1.19410419,
+          "timeCost": 39.1238632,
           "moneyCost": 2.5,
-          "totalCost": 53.42529
+          "totalCost": 41.6238632
         },
         {
           "type": 1,
@@ -4197,130 +3986,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 2.14305568,
-        "pickUpPosition": {
-          "x": 3.0,
-          "y": 0.05,
-          "z": 0.6666667,
-          "normalized": {
-            "x": 0.9760579,
-            "y": 0.0162676312,
-            "z": 0.216901764,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 3.07358813,
-          "sqrMagnitude": 9.446944
-        },
-        "destination": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 4.0,
-          "normalized": {
-            "x": 0.8320303,
-            "y": 0.00693358574,
-            "z": 0.554686844,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 7.211276,
-          "sqrMagnitude": 52.0025
-        },
-        "tripDistance": 6.333333,
-        "expectedWaitingTime": 0.0433333367,
-        "expectedTripTime": 0.190952376,
-        "fare": {
-          "baseFare": 13.5,
-          "surgeMultiplier": 1.0,
-          "total": 13.5,
-          "driverCut": 9.045,
-          "uberCut": 4.455
-        },
-        "expectedPickupTime": 2.186389
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 1.41978192,
-        "expectedTripTimeCost": 6.25640059,
-        "expectedValueSurplus": 32.2491074,
-        "expectedUtilitySurplus": 1.104831
-      },
-      "driverAssignedData": {
-        "matchedTime": 2.14305568,
-        "enRouteDistance": 0.0
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 2.14305568,
-        "startPosition": {
-          "x": 3.0,
-          "y": 0.05,
-          "z": 0.6666667,
-          "normalized": {
-            "x": 0.9760579,
-            "y": 0.0162676312,
-            "z": 0.216901764,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 3.07358813,
-          "sqrMagnitude": 9.446944
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 2.14583349,
-        "timeSpentEnRoute": 0.00277781487,
-        "waitingTime": 0.00277781487
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 0.0910128653
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 0.0500006676,
-        "marginalCostEnRoute": 0.0
-      },
-      "droppedOffData": {
-        "totalTime": 0.3097222,
-        "droppedOffTime": 2.45277786,
-        "timeSpentOnTrip": 0.30694437
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 10.0567846,
-        "valueSurplus": 29.7774925,
-        "utilitySurplus": 1.02015531,
-        "totalTimeCost": 10.1477976,
-        "totalCost": 23.6477966
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 5.52499866,
-        "marginalCostOnTrip": 0.823333263,
-        "grossProfit": 8.221666,
-        "valueSurplus": 2.69666767,
-        "utilitySurplus": 0.269666761
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.234285712,
-      "timeCost": 7.67618275,
-      "moneyCost": 13.5,
-      "totalCost": 21.1761818
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.0433333367,
-      "expectedTripTime": 0.190952376,
-      "fare": {
-        "baseFare": 13.5,
-        "surgeMultiplier": 1.0,
-        "total": 13.5,
-        "driverCut": 9.045,
-        "uberCut": 4.455
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
       "y": 0.05,
@@ -4361,10 +4032,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.784325,
-          "timeCost": 25.0524616,
+          "timeHours": 0.530126631,
+          "timeCost": 16.9330025,
           "moneyCost": 2.5,
-          "totalCost": 27.5524616
+          "totalCost": 19.4330025
         },
         {
           "type": 1,
@@ -4428,10 +4099,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.42178905,
-          "timeCost": 9.351511,
+          "timeHours": 0.250764549,
+          "timeCost": 5.5597167,
           "moneyCost": 2.5,
-          "totalCost": 11.851511
+          "totalCost": 8.059717
         },
         {
           "type": 1,
@@ -4443,11 +4114,27 @@
       ]
     },
     "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "tripTypeChosen": 2,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.4057143,
+      "timeCost": 8.995117,
+      "moneyCost": 6.50000048,
+      "totalCost": 15.4951172
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.348095238,
+      "expectedTripTime": 0.0576190576,
+      "fare": {
+        "baseFare": 6.50000048,
+        "surgeMultiplier": 1.0,
+        "total": 6.50000048,
+        "driverCut": 4.3550005,
+        "uberCut": 2.145
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 1.0,
       "y": 0.05,
@@ -4488,10 +4175,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.53018177,
-          "timeCost": 101.4415,
+          "timeHours": 1.18281209,
+          "timeCost": 78.4130554,
           "moneyCost": 2.5,
-          "totalCost": 103.9415
+          "totalCost": 80.9130554
         },
         {
           "type": 1,
@@ -4502,12 +4189,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 2.24722219,
+        "pickUpPosition": {
+          "x": 3.0,
+          "y": 0.05,
+          "z": 1.0,
+          "normalized": {
+            "x": 0.9485647,
+            "y": 0.0158094112,
+            "z": 0.316188246,
+            "magnitude": 1.0,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 3.162673,
+          "sqrMagnitude": 10.0025
+        },
+        "destination": {
+          "x": 0.0,
+          "y": 0.05,
+          "z": 0.6666667,
+          "normalized": {
+            "x": 0.0,
+            "y": 0.07478995,
+            "z": 0.9971993,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 0.668539047,
+          "sqrMagnitude": 0.446944475
+        },
+        "tripDistance": 7.333333,
+        "expectedWaitingTime": 0.0528571457,
+        "expectedTripTime": 0.2195238,
+        "fare": {
+          "baseFare": 15.0,
+          "surgeMultiplier": 1.0,
+          "total": 15.0,
+          "driverCut": 10.05,
+          "uberCut": 4.95
+        },
+        "expectedPickupTime": 2.30007935
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 3.50409865,
+        "expectedTripTimeCost": 14.5530567,
+        "expectedValueSurplus": 47.8559,
+        "expectedUtilitySurplus": 1.47969246
+      },
+      "driverAssignedData": {
+        "matchedTime": 2.24722219,
+        "enRouteDistance": 0.3333333
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 2.24722219,
+        "startPosition": {
+          "x": 3.0,
+          "y": 0.05,
+          "z": 0.6666667,
+          "normalized": {
+            "x": 0.9760579,
+            "y": 0.0162676312,
+            "z": 0.216901764,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 3.07358813,
+          "sqrMagnitude": 9.446944
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 2.27222228,
+        "timeSpentEnRoute": 0.0250000954,
+        "waitingTime": 0.0250000954
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 1.65735018
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 0.450001717,
+        "marginalCostEnRoute": 0.04333333
+      },
+      "droppedOffData": {
+        "totalTime": 0.354166985,
+        "droppedOffTime": 2.60138917,
+        "timeSpentOnTrip": 0.3291669
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 21.8217087,
+        "valueSurplus": 42.434,
+        "utilitySurplus": 1.31204855,
+        "totalTimeCost": 23.47906,
+        "totalCost": 38.4790573
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 5.925004,
+        "marginalCostOnTrip": 0.953333259,
+        "grossProfit": 9.053333,
+        "valueSurplus": 3.12832928,
+        "utilitySurplus": 0.312832922
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.272380948,
+      "timeCost": 18.0571556,
+      "moneyCost": 15.0,
+      "totalCost": 33.0571556
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.0528571457,
+      "expectedTripTime": 0.2195238,
+      "fare": {
+        "baseFare": 15.0,
+        "surgeMultiplier": 1.0,
+        "total": 15.0,
+        "driverCut": 10.05,
+        "uberCut": 4.95
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
       "y": 0.05,
@@ -4548,10 +4353,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.08473313,
-          "timeCost": 74.54106,
+          "timeHours": 0.8424532,
+          "timeCost": 57.891983,
           "moneyCost": 2.5,
-          "totalCost": 77.04106
+          "totalCost": 60.391983
         },
         {
           "type": 1,
@@ -4608,10 +4413,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.31485188,
-          "timeCost": 90.37381,
+          "timeHours": 1.02121484,
+          "timeCost": 70.19123,
           "moneyCost": 2.5,
-          "totalCost": 92.87381
+          "totalCost": 72.69123
         },
         {
           "type": 1,
@@ -4668,10 +4473,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.64483476,
-          "timeCost": 36.9465332,
+          "timeHours": 1.2425344,
+          "timeCost": 27.91,
           "moneyCost": 2.5,
-          "totalCost": 39.4465332
+          "totalCost": 30.41
         },
         {
           "type": 1,
@@ -4728,10 +4533,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.88255191,
-          "timeCost": 111.177834,
+          "timeHours": 1.43270814,
+          "timeCost": 84.61142,
           "moneyCost": 2.5,
-          "totalCost": 113.677834
+          "totalCost": 87.11142
         },
         {
           "type": 1,
@@ -4795,10 +4600,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.02834249,
-          "timeCost": 7.784364,
+          "timeHours": 0.786674,
+          "timeCost": 5.954978,
           "moneyCost": 2.5,
-          "totalCost": 10.2843647
+          "totalCost": 8.454978
         },
         {
           "type": 1,
@@ -4855,10 +4660,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.15442252,
-          "timeCost": 97.00288,
+          "timeHours": 0.8822047,
+          "timeCost": 74.12918,
           "moneyCost": 2.5,
-          "totalCost": 99.50288
+          "totalCost": 76.62918
         },
         {
           "type": 1,
@@ -4869,12 +4674,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 2.35138917,
+        "pickUpPosition": {
+          "x": 9.0,
+          "y": 0.05,
+          "z": 2.0,
+          "normalized": {
+            "x": 0.976172745,
+            "y": 0.00542318169,
+            "z": 0.216927275,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 9.21968,
+          "sqrMagnitude": 85.0025
+        },
+        "destination": {
+          "x": 3.0,
+          "y": 0.05,
+          "z": 3.33333325,
+          "normalized": {
+            "x": 0.6689232,
+            "y": 0.01114872,
+            "z": 0.743248,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 4.48482,
+          "sqrMagnitude": 20.1136112
+        },
+        "tripDistance": 7.333333,
+        "expectedWaitingTime": 0.148095235,
+        "expectedTripTime": 0.2195238,
+        "fare": {
+          "baseFare": 15.0,
+          "surgeMultiplier": 1.0,
+          "total": 15.0,
+          "driverCut": 10.05,
+          "uberCut": 4.95
+        },
+        "expectedPickupTime": 2.4994843
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 12.444025,
+        "expectedTripTimeCost": 18.4459667,
+        "expectedValueSurplus": 30.73919,
+        "expectedUtilitySurplus": 0.6538101
+      },
+      "driverAssignedData": {
+        "matchedTime": 2.35138917,
+        "enRouteDistance": 3.66666651
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 2.35138917,
+        "startPosition": {
+          "x": 7.33333349,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.9999768,
+            "y": 0.00681802351,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.33350372,
+          "sqrMagnitude": 53.78028
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 2.51666665,
+        "timeSpentEnRoute": 0.165277481,
+        "waitingTime": 0.165277481
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 13.8878012
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 2.97499466,
+        "marginalCostEnRoute": 0.476666629
+      },
+      "droppedOffData": {
+        "totalTime": 0.481944084,
+        "droppedOffTime": 2.83333325,
+        "timeSpentOnTrip": 0.3166666
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 26.6086025,
+        "valueSurplus": 21.1327782,
+        "utilitySurplus": 0.4494856,
+        "totalTimeCost": 40.4964027,
+        "totalCost": 55.4964027
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 5.699999,
+        "marginalCostOnTrip": 0.953333259,
+        "grossProfit": 8.62,
+        "valueSurplus": 2.920001,
+        "utilitySurplus": 0.292000115
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.367619038,
+      "timeCost": 30.8899918,
+      "moneyCost": 15.0,
+      "totalCost": 45.88999
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.148095235,
+      "expectedTripTime": 0.2195238,
+      "fare": {
+        "baseFare": 15.0,
+        "surgeMultiplier": 1.0,
+        "total": 15.0,
+        "driverCut": 10.05,
+        "uberCut": 4.95
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
       "y": 0.05,
@@ -4915,10 +4838,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.9866015,
-          "timeCost": 16.6716423,
+          "timeHours": 0.8039478,
+          "timeCost": 13.5851517,
           "moneyCost": 2.5,
-          "totalCost": 19.1716423
+          "totalCost": 16.0851517
         },
         {
           "type": 1,
@@ -4982,10 +4905,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.869259,
-          "timeCost": 249.695251,
+          "timeHours": 0.6407405,
+          "timeCost": 184.053162,
           "moneyCost": 2.5,
-          "totalCost": 252.195251
+          "totalCost": 186.553162
         },
         {
           "type": 1,
@@ -5049,10 +4972,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.552679,
-          "timeCost": 310.719818,
+          "timeHours": 1.16880977,
+          "timeCost": 233.900482,
           "moneyCost": 2.5,
-          "totalCost": 313.219818
+          "totalCost": 236.400482
         },
         {
           "type": 1,
@@ -5096,7 +5019,7 @@
           "sqrMagnitude": 64.4469452
         },
         "tripDistance": 3.33333325,
-        "expectedWaitingTime": 0.157619044,
+        "expectedWaitingTime": 0.32904762,
         "expectedTripTime": 0.105238095,
         "fare": {
           "baseFare": 9.0,
@@ -5105,92 +5028,78 @@
           "driverCut": 6.03,
           "uberCut": 2.96999979
         },
-        "expectedPickupTime": 2.61317468
+        "expectedPickupTime": 2.78460336
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 31.54249,
+        "expectedWaitingCost": 65.84852,
         "expectedTripTimeCost": 21.060091,
-        "expectedValueSurplus": 128.986481,
-        "expectedUtilitySurplus": 1.9848398
+        "expectedValueSurplus": 94.68046,
+        "expectedUtilitySurplus": 1.45693982
       },
       "driverAssignedData": {
         "matchedTime": 2.45555568,
-        "enRouteDistance": 4.0
+        "enRouteDistance": 10.0
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 2.45555568,
         "startPosition": {
-          "x": 6.0,
+          "x": 7.33333349,
           "y": 0.05,
-          "z": 4.66666651,
+          "z": 0.0,
           "normalized": {
-            "x": 0.7893352,
-            "y": 0.006577793,
-            "z": 0.613927364,
-            "normalized": {
-              "x": 0.7893351,
-              "y": 0.006577792,
-              "z": 0.6139273,
-              "normalized": {
-                "x": 0.789335132,
-                "y": 0.00657779258,
-                "z": 0.613927364,
-                "magnitude": 1.0,
-                "sqrMagnitude": 1.0
-              },
-              "magnitude": 0.99999994,
-              "sqrMagnitude": 0.9999999
-            },
-            "magnitude": 1.00000012,
+            "x": 0.9999768,
+            "y": 0.00681802351,
+            "z": 0.0,
+            "magnitude": 1.0,
             "sqrMagnitude": 1.00000012
           },
-          "magnitude": 7.60133362,
-          "sqrMagnitude": 57.7802773
+          "magnitude": 7.33350372,
+          "sqrMagnitude": 53.78028
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 2.62500024,
-        "timeSpentEnRoute": 0.169444561,
-        "waitingTime": 0.169444561
+        "pickedUpTime": 2.81944466,
+        "timeSpentEnRoute": 0.363888979,
+        "waitingTime": 0.363888979
       },
       "pickedUpPassengerData": {
-        "waitingCost": 33.9089928
+        "waitingCost": 72.82092
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 3.050002,
-        "marginalCostEnRoute": 0.52
+        "timeCostEnRoute": 6.55000162,
+        "marginalCostEnRoute": 1.3
       },
       "droppedOffData": {
-        "totalTime": 0.3444445,
-        "droppedOffTime": 2.80000019,
+        "totalTime": 0.538888931,
+        "droppedOffTime": 2.99444461,
         "timeSpentOnTrip": 0.174999952
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 35.02073,
-        "valueSurplus": 112.65934,
-        "utilitySurplus": 1.73359823,
-        "totalTimeCost": 68.9297256,
-        "totalCost": 77.9297256
+        "valueSurplus": 73.74741,
+        "utilitySurplus": 1.13482285,
+        "totalTimeCost": 107.841652,
+        "totalCost": 116.841652
       },
       "droppedOffDriverData": {
         "timeCostOnTrip": 3.14999914,
         "marginalCostOnTrip": 0.4333333,
-        "grossProfit": 5.076667,
-        "valueSurplus": 1.92666769,
-        "utilitySurplus": 0.192666769
+        "grossProfit": 4.296667,
+        "valueSurplus": 1.146668,
+        "utilitySurplus": 0.1146668
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.262857139,
-      "timeCost": 52.60258,
+      "timeHours": 0.4342857,
+      "timeCost": 86.90861,
       "moneyCost": 9.0,
-      "totalCost": 61.60258
+      "totalCost": 95.90861
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.157619044,
+      "expectedWaitingTime": 0.32904762,
       "expectedTripTime": 0.105238095,
       "fare": {
         "baseFare": 9.0,
@@ -5241,10 +5150,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.4842397,
-          "timeCost": 131.0014,
+          "timeHours": 1.17805839,
+          "timeCost": 103.977348,
           "moneyCost": 2.5,
-          "totalCost": 133.5014
+          "totalCost": 106.477348
         },
         {
           "type": 1,
@@ -5255,130 +5164,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 2.490278,
-        "pickUpPosition": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 8.666667,
-          "normalized": {
-            "x": 0.569203556,
-            "y": 0.00474336324,
-            "z": 0.822182953,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 10.5410442,
-          "sqrMagnitude": 111.113617
-        },
-        "destination": {
-          "x": 9.0,
-          "y": 0.05,
-          "z": 0.333333343,
-          "normalized": {
-            "x": 0.9992994,
-            "y": 0.00555166369,
-            "z": 0.03701109,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 9.00630951,
-          "sqrMagnitude": 81.11361
-        },
-        "tripDistance": 11.333334,
-        "expectedWaitingTime": 0.32904762,
-        "expectedTripTime": 0.333809555,
-        "fare": {
-          "baseFare": 21.0,
-          "surgeMultiplier": 1.0,
-          "total": 21.0,
-          "driverCut": 14.0700006,
-          "uberCut": 6.93
-        },
-        "expectedPickupTime": 2.81932569
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 29.0422783,
-        "expectedTripTimeCost": 29.462574,
-        "expectedValueSurplus": 53.99655,
-        "expectedUtilitySurplus": 3.18081641
-      },
-      "driverAssignedData": {
-        "matchedTime": 2.490278,
-        "enRouteDistance": 10.0
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 2.490278,
-        "startPosition": {
-          "x": 7.33333349,
-          "y": 0.05,
-          "z": 0.0,
-          "normalized": {
-            "x": 0.9999768,
-            "y": 0.00681802351,
-            "z": 0.0,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 7.33350372,
-          "sqrMagnitude": 53.78028
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 2.83055568,
-        "timeSpentEnRoute": 0.340277672,
-        "waitingTime": 0.340277672
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 30.03346
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 6.124998,
-        "marginalCostEnRoute": 1.3
-      },
-      "droppedOffData": {
-        "totalTime": 0.766666651,
-        "droppedOffTime": 3.25694466,
-        "timeSpentOnTrip": 0.426388979
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 37.6337852,
-        "valueSurplus": 44.83416,
-        "utilitySurplus": 2.64108038,
-        "totalTimeCost": 67.667244,
-        "totalCost": 88.667244
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 7.67500162,
-        "marginalCostOnTrip": 1.47333336,
-        "grossProfit": 11.2966671,
-        "valueSurplus": 3.62166548,
-        "utilitySurplus": 0.362166554
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.6628572,
-      "timeCost": 58.5048523,
-      "moneyCost": 21.0,
-      "totalCost": 79.50485
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.32904762,
-      "expectedTripTime": 0.333809555,
-      "fare": {
-        "baseFare": 21.0,
-        "surgeMultiplier": 1.0,
-        "total": 21.0,
-        "driverCut": 14.0700006,
-        "uberCut": 6.93
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
       "y": 0.05,
@@ -5419,10 +5210,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.09417868,
-          "timeCost": 172.012939,
+          "timeHours": 0.844676256,
+          "timeCost": 132.789322,
           "moneyCost": 2.5,
-          "totalCost": 174.512939
+          "totalCost": 135.289322
         },
         {
           "type": 1,
@@ -5433,130 +5224,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 2.490278,
-        "pickUpPosition": {
-          "x": 1.33333337,
-          "y": 0.05,
-          "z": 3.0,
-          "normalized": {
-            "x": 0.4060914,
-            "y": 0.015228427,
-            "z": 0.9137056,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 3.2833333,
-          "sqrMagnitude": 10.7802782
-        },
-        "destination": {
-          "x": 7.0,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.759245455,
-            "y": 0.00542318169,
-            "z": 0.6507818,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 9.21968,
-          "sqrMagnitude": 85.0025
-        },
-        "tripDistance": 8.666666,
-        "expectedWaitingTime": 0.0528571457,
-        "expectedTripTime": 0.257619023,
-        "fare": {
-          "baseFare": 17.0,
-          "surgeMultiplier": 1.0,
-          "total": 17.0,
-          "driverCut": 11.39,
-          "uberCut": 5.60999966
-        },
-        "expectedPickupTime": 2.54313517
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 8.309532,
-        "expectedTripTimeCost": 40.4996033,
-        "expectedValueSurplus": 108.703804,
-        "expectedUtilitySurplus": 0.8265219
-      },
-      "driverAssignedData": {
-        "matchedTime": 2.490278,
-        "enRouteDistance": 0.333333373
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 2.490278,
-        "startPosition": {
-          "x": 1.0,
-          "y": 0.05,
-          "z": 3.0,
-          "normalized": {
-            "x": 0.316188246,
-            "y": 0.0158094112,
-            "z": 0.9485647,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 3.162673,
-          "sqrMagnitude": 10.0025
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 2.51527786,
-        "timeSpentEnRoute": 0.0249998569,
-        "waitingTime": 0.0249998569
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 3.93016124
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 0.449997425,
-        "marginalCostEnRoute": 0.0433333367
-      },
-      "droppedOffData": {
-        "totalTime": 0.398611069,
-        "droppedOffTime": 2.888889,
-        "timeSpentOnTrip": 0.3736112
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 58.73443,
-        "valueSurplus": 94.84835,
-        "utilitySurplus": 0.721172869,
-        "totalTimeCost": 62.66459,
-        "totalCost": 79.66459
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 6.725002,
-        "marginalCostOnTrip": 1.12666655,
-        "grossProfit": 10.22,
-        "valueSurplus": 3.49499846,
-        "utilitySurplus": 0.349499851
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.310476184,
-      "timeCost": 48.8091354,
-      "moneyCost": 17.0,
-      "totalCost": 65.8091354
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.0528571457,
-      "expectedTripTime": 0.257619023,
-      "fare": {
-        "baseFare": 17.0,
-        "surgeMultiplier": 1.0,
-        "total": 17.0,
-        "driverCut": 11.39,
-        "uberCut": 5.60999966
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 7.0,
       "y": 0.05,
@@ -5597,10 +5270,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.18055248,
-          "timeCost": 122.593857,
+          "timeHours": 1.684442,
+          "timeCost": 94.7018,
           "moneyCost": 2.5,
-          "totalCost": 125.093857
+          "totalCost": 97.2018
         },
         {
           "type": 1,
@@ -5611,137 +5284,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 2.525,
-        "pickUpPosition": {
-          "x": 1.0,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.164393425,
-            "y": 0.008219671,
-            "z": 0.98636055,
-            "normalized": {
-              "x": 0.16439344,
-              "y": 0.008219672,
-              "z": 0.9863606,
-              "magnitude": 1.0,
-              "sqrMagnitude": 1.0
-            },
-            "magnitude": 0.99999994,
-            "sqrMagnitude": 0.9999999
-          },
-          "magnitude": 6.082968,
-          "sqrMagnitude": 37.0025
-        },
-        "destination": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 2.0,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.0249921922,
-            "z": 0.9996877,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 2.000625,
-          "sqrMagnitude": 4.0025
-        },
-        "tripDistance": 5.0,
-        "expectedWaitingTime": 0.24333334,
-        "expectedTripTime": 0.15285714,
-        "fare": {
-          "baseFare": 11.5,
-          "surgeMultiplier": 1.0,
-          "total": 11.5,
-          "driverCut": 7.7050004,
-          "uberCut": 3.79499984
-        },
-        "expectedPickupTime": 2.76833344
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 13.6805573,
-        "expectedTripTimeCost": 8.593852,
-        "expectedValueSurplus": 46.5419731,
-        "expectedUtilitySurplus": 2.47222424
-      },
-      "driverAssignedData": {
-        "matchedTime": 2.525,
-        "enRouteDistance": 7.0
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 2.525,
-        "startPosition": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 4.0,
-          "normalized": {
-            "x": 0.8320303,
-            "y": 0.00693358574,
-            "z": 0.554686844,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 7.211276,
-          "sqrMagnitude": 52.0025
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 2.79166675,
-        "timeSpentEnRoute": 0.266666651,
-        "waitingTime": 0.266666651
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 14.99239
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 4.79999971,
-        "marginalCostEnRoute": 0.909999967
-      },
-      "droppedOffData": {
-        "totalTime": 0.500000238,
-        "droppedOffTime": 3.02500033,
-        "timeSpentOnTrip": 0.233333588
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 13.1183567,
-        "valueSurplus": 40.7056351,
-        "utilitySurplus": 2.1622088,
-        "totalTimeCost": 28.1107464,
-        "totalCost": 39.61075
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 4.20000458,
-        "marginalCostOnTrip": 0.65,
-        "grossProfit": 6.14500046,
-        "valueSurplus": 1.94499588,
-        "utilitySurplus": 0.194499582
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.396190464,
-      "timeCost": 22.27441,
-      "moneyCost": 11.5,
-      "totalCost": 33.77441
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.24333334,
-      "expectedTripTime": 0.15285714,
-      "fare": {
-        "baseFare": 11.5,
-        "surgeMultiplier": 1.0,
-        "total": 11.5,
-        "driverCut": 7.7050004,
-        "uberCut": 3.79499984
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 1,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 0.0,
       "y": 0.05,
@@ -5789,10 +5337,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.08168674,
-          "timeCost": 210.980988,
+          "timeHours": 1.65601611,
+          "timeCost": 167.838852,
           "moneyCost": 2.5,
-          "totalCost": 213.480988
+          "totalCost": 170.338852
         },
         {
           "type": 1,
@@ -5836,7 +5384,7 @@
           "sqrMagnitude": 84.11362
         },
         "tripDistance": 11.333333,
-        "expectedWaitingTime": 0.433809549,
+        "expectedWaitingTime": 0.24333334,
         "expectedTripTime": 0.333809525,
         "fare": {
           "baseFare": 21.0,
@@ -5845,78 +5393,92 @@
           "driverCut": 14.0700006,
           "uberCut": 6.93
         },
-        "expectedPickupTime": 3.028254
+        "expectedPickupTime": 2.83777785
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 43.9670219,
+        "expectedWaitingCost": 24.6620712,
         "expectedTripTimeCost": 33.83192,
-        "expectedValueSurplus": 114.682045,
-        "expectedUtilitySurplus": 2.80707765
+        "expectedValueSurplus": 90.8448639,
+        "expectedUtilitySurplus": 2.223614
       },
       "driverAssignedData": {
         "matchedTime": 2.59444451,
-        "enRouteDistance": 13.666667
+        "enRouteDistance": 7.0
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 2.59444451,
         "startPosition": {
-          "x": 8.0,
+          "x": 6.0,
           "y": 0.05,
-          "z": 0.0,
+          "z": 4.66666651,
           "normalized": {
-            "x": 0.99998045,
-            "y": 0.006249878,
-            "z": 0.0,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
+            "x": 0.7893352,
+            "y": 0.006577793,
+            "z": 0.613927364,
+            "normalized": {
+              "x": 0.7893351,
+              "y": 0.006577792,
+              "z": 0.6139273,
+              "normalized": {
+                "x": 0.789335132,
+                "y": 0.00657779258,
+                "z": 0.613927364,
+                "magnitude": 1.0,
+                "sqrMagnitude": 1.0
+              },
+              "magnitude": 0.99999994,
+              "sqrMagnitude": 0.9999999
+            },
+            "magnitude": 1.00000012,
+            "sqrMagnitude": 1.00000012
           },
-          "magnitude": 8.000156,
-          "sqrMagnitude": 64.0025
+          "magnitude": 7.60133362,
+          "sqrMagnitude": 57.7802773
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 3.04583359,
-        "timeSpentEnRoute": 0.451389074,
-        "waitingTime": 0.451389074
+        "pickedUpTime": 2.848611,
+        "timeSpentEnRoute": 0.2541666,
+        "waitingTime": 0.2541666
       },
       "pickedUpPassengerData": {
-        "waitingCost": 45.7487221
+        "waitingCost": 25.7600327
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 9.02778149,
-        "marginalCostEnRoute": 1.77666664
+        "timeCostEnRoute": 4.574999,
+        "marginalCostEnRoute": 0.909999967
       },
       "droppedOffData": {
-        "totalTime": 0.8777778,
-        "droppedOffTime": 3.47222233,
-        "timeSpentOnTrip": 0.426388741
+        "totalTime": 0.6805558,
+        "droppedOffTime": 3.27500033,
+        "timeSpentOnTrip": 0.426389217
       },
       "droppedOffPassengerData": {
-        "tripTimeCost": 43.2149162,
-        "valueSurplus": 103.517349,
-        "utilitySurplus": 2.533799,
-        "totalTimeCost": 88.96364,
-        "totalCost": 109.963638
+        "tripTimeCost": 43.214962,
+        "valueSurplus": 80.36385,
+        "utilitySurplus": 1.96706975,
+        "totalTimeCost": 68.975,
+        "totalCost": 89.975
       },
       "droppedOffDriverData": {
-        "timeCostOnTrip": 8.527775,
+        "timeCostOnTrip": 7.675006,
         "marginalCostOnTrip": 1.47333324,
-        "grossProfit": 10.8200006,
-        "valueSurplus": 2.29222584,
-        "utilitySurplus": 0.229222581
+        "grossProfit": 11.6866674,
+        "valueSurplus": 4.01166153,
+        "utilitySurplus": 0.401166141
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.7676191,
-      "timeCost": 77.79894,
+      "timeHours": 0.577142835,
+      "timeCost": 58.49399,
       "moneyCost": 21.0,
-      "totalCost": 98.79894
+      "totalCost": 79.49399
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.433809549,
+      "expectedWaitingTime": 0.24333334,
       "expectedTripTime": 0.333809525,
       "fare": {
         "baseFare": 21.0,
@@ -5967,10 +5529,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.64954185,
-          "timeCost": 79.89474,
+          "timeHours": 1.27296674,
+          "timeCost": 61.65551,
           "moneyCost": 2.5,
-          "totalCost": 82.39474
+          "totalCost": 64.15551
         },
         {
           "type": 1,
@@ -5981,12 +5543,144 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 2.62916684,
+        "pickUpPosition": {
+          "x": 1.0,
+          "y": 0.05,
+          "z": 9.0,
+          "normalized": {
+            "x": 0.110429846,
+            "y": 0.00552149257,
+            "z": 0.9938686,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 9.055523,
+          "sqrMagnitude": 82.0025
+        },
+        "destination": {
+          "x": 4.66666651,
+          "y": 0.05,
+          "z": 6.0,
+          "normalized": {
+            "x": 0.613927364,
+            "y": 0.006577793,
+            "z": 0.7893352,
+            "normalized": {
+              "x": 0.6139273,
+              "y": 0.006577792,
+              "z": 0.7893351,
+              "normalized": {
+                "x": 0.613927364,
+                "y": 0.00657779258,
+                "z": 0.789335132,
+                "magnitude": 1.0,
+                "sqrMagnitude": 1.0
+              },
+              "magnitude": 0.99999994,
+              "sqrMagnitude": 0.9999999
+            },
+            "magnitude": 1.00000012,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.60133362,
+          "sqrMagnitude": 57.7802773
+        },
+        "tripDistance": 6.66666651,
+        "expectedWaitingTime": 0.5004762,
+        "expectedTripTime": 0.200476184,
+        "fare": {
+          "baseFare": 14.0,
+          "surgeMultiplier": 1.0,
+          "total": 14.0,
+          "driverCut": 9.38,
+          "uberCut": 4.62
+        },
+        "expectedPickupTime": 3.129643
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 24.2403145,
+        "expectedTripTimeCost": 9.709964,
+        "expectedValueSurplus": 16.20523,
+        "expectedUtilitySurplus": 1.11856973
+      },
+      "driverAssignedData": {
+        "matchedTime": 2.62916684,
+        "enRouteDistance": 16.0
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 2.62916684,
+        "startPosition": {
+          "x": 8.0,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.99998045,
+            "y": 0.006249878,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 8.000156,
+          "sqrMagnitude": 64.0025
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.15833354,
+        "timeSpentEnRoute": 0.5291667,
+        "waitingTime": 0.5291667
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 25.6299248
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 10.583334,
+        "marginalCostEnRoute": 2.08
+      },
+      "droppedOffData": {
+        "totalTime": 0.8388889,
+        "droppedOffTime": 3.46805573,
+        "timeSpentOnTrip": 0.3097222
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 15.00124,
+        "valueSurplus": 9.524345,
+        "utilitySurplus": 0.6574201,
+        "totalTimeCost": 40.6311646,
+        "totalCost": 54.6311646
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 6.1944437,
+        "marginalCostOnTrip": 0.8666666,
+        "grossProfit": 6.4333334,
+        "valueSurplus": 0.2388897,
+        "utilitySurplus": 0.02388897
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.700952351,
+      "timeCost": 33.95028,
+      "moneyCost": 14.0,
+      "totalCost": 47.95028
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.5004762,
+      "expectedTripTime": 0.200476184,
+      "fare": {
+        "baseFare": 14.0,
+        "surgeMultiplier": 1.0,
+        "total": 14.0,
+        "driverCut": 9.38,
+        "uberCut": 4.62
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 4.66666651,
       "y": 0.05,
@@ -6041,10 +5735,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.40942,
-          "timeCost": 79.9610443,
+          "timeHours": 1.03020263,
+          "timeCost": 58.4467926,
           "moneyCost": 2.5,
-          "totalCost": 82.4610443
+          "totalCost": 60.9467926
         },
         {
           "type": 1,
@@ -6101,10 +5795,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.69258475,
-          "timeCost": 42.6805458,
+          "timeHours": 1.33406782,
+          "timeCost": 33.6401138,
           "moneyCost": 2.5,
-          "totalCost": 45.1805458
+          "totalCost": 36.1401138
         },
         {
           "type": 1,
@@ -6115,12 +5809,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 2.66388917,
+        "pickUpPosition": {
+          "x": 6.66666651,
+          "y": 0.05,
+          "z": 9.0,
+          "normalized": {
+            "x": 0.595221639,
+            "y": 0.00446416251,
+            "z": 0.80354923,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 11.20031,
+          "sqrMagnitude": 125.446945
+        },
+        "destination": {
+          "x": 9.0,
+          "y": 0.05,
+          "z": 1.33333337,
+          "normalized": {
+            "x": 0.989188552,
+            "y": 0.005495492,
+            "z": 0.146546453,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 9.098367,
+          "sqrMagnitude": 82.78028
+        },
+        "tripDistance": 10.0,
+        "expectedWaitingTime": 0.376666665,
+        "expectedTripTime": 0.2957143,
+        "fare": {
+          "baseFare": 19.0,
+          "surgeMultiplier": 1.0,
+          "total": 19.0,
+          "driverCut": 12.7300005,
+          "uberCut": 6.2699995
+        },
+        "expectedPickupTime": 3.040556
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 9.498099,
+        "expectedTripTimeCost": 7.456789,
+        "expectedValueSurplus": 0.18522644,
+        "expectedUtilitySurplus": 0.0265123043
+      },
+      "driverAssignedData": {
+        "matchedTime": 2.66388917,
+        "enRouteDistance": 11.666666
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 2.66388917,
+        "startPosition": {
+          "x": 1.0,
+          "y": 0.05,
+          "z": 3.0,
+          "normalized": {
+            "x": 0.316188246,
+            "y": 0.0158094112,
+            "z": 0.9485647,
+            "magnitude": 1.0,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 3.162673,
+          "sqrMagnitude": 10.0025
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.0583334,
+        "timeSpentEnRoute": 0.394444227,
+        "waitingTime": 0.394444227
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 9.94638252
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 7.88888454,
+        "marginalCostEnRoute": 1.51666653
+      },
+      "droppedOffData": {
+        "totalTime": 0.794444561,
+        "droppedOffTime": 3.45833373,
+        "timeSpentOnTrip": 0.400000334
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 10.0864859,
+        "valueSurplus": -2.8927536,
+        "utilitySurplus": -0.414053,
+        "totalTimeCost": 20.0328674,
+        "totalCost": 39.0328674
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 8.000007,
+        "marginalCostOnTrip": 1.3,
+        "grossProfit": 9.913334,
+        "valueSurplus": 1.91332722,
+        "utilitySurplus": 0.191332728
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.6723809,
+      "timeCost": 16.9548874,
+      "moneyCost": 19.0,
+      "totalCost": 35.9548874
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.376666665,
+      "expectedTripTime": 0.2957143,
+      "fare": {
+        "baseFare": 19.0,
+        "surgeMultiplier": 1.0,
+        "total": 19.0,
+        "driverCut": 12.7300005,
+        "uberCut": 6.2699995
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
       "y": 0.05,
@@ -6161,10 +5973,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.21427536,
-          "timeCost": 59.78902,
+          "timeHours": 0.906087041,
+          "timeCost": 44.61431,
           "moneyCost": 2.5,
-          "totalCost": 62.28902
+          "totalCost": 47.11431
         },
         {
           "type": 1,
@@ -6208,7 +6020,7 @@
           "sqrMagnitude": 106.0025
         },
         "tripDistance": 4.333333,
-        "expectedWaitingTime": 0.233809531,
+        "expectedWaitingTime": 0.5290476,
         "expectedTripTime": 0.133809522,
         "fare": {
           "baseFare": 10.5,
@@ -6217,78 +6029,78 @@
           "driverCut": 7.03500032,
           "uberCut": 3.465
         },
-        "expectedPickupTime": 2.93242073
+        "expectedPickupTime": 3.22765875
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 11.5124159,
+        "expectedWaitingCost": 26.0494785,
         "expectedTripTimeCost": 6.588572,
-        "expectedValueSurplus": 32.3608856,
-        "expectedUtilitySurplus": 1.23896885
+        "expectedValueSurplus": 3.97626114,
+        "expectedUtilitySurplus": 0.152235121
       },
       "driverAssignedData": {
         "matchedTime": 2.69861126,
-        "enRouteDistance": 6.666667
+        "enRouteDistance": 17.0
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 2.69861126,
         "startPosition": {
-          "x": 7.0,
+          "x": 0.0,
           "y": 0.05,
-          "z": 6.0,
+          "z": 0.6666667,
           "normalized": {
-            "x": 0.759245455,
-            "y": 0.00542318169,
-            "z": 0.6507818,
+            "x": 0.0,
+            "y": 0.07478995,
+            "z": 0.9971993,
             "magnitude": 1.0,
             "sqrMagnitude": 1.0
           },
-          "magnitude": 9.21968,
-          "sqrMagnitude": 85.0025
+          "magnitude": 0.668539047,
+          "sqrMagnitude": 0.446944475
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 2.95,
-        "timeSpentEnRoute": 0.2513888,
-        "waitingTime": 0.2513888
+        "pickedUpTime": 3.238889,
+        "timeSpentEnRoute": 0.5402777,
+        "waitingTime": 0.5402777
       },
       "pickedUpPassengerData": {
-        "waitingCost": 12.3779907
+        "waitingCost": 26.60243
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 4.524998,
-        "marginalCostEnRoute": 0.8666667
+        "timeCostEnRoute": 10.8055544,
+        "marginalCostEnRoute": 2.21
       },
       "droppedOffData": {
-        "totalTime": 0.480555534,
-        "droppedOffTime": 3.17916679,
+        "totalTime": 0.769444466,
+        "droppedOffTime": 3.46805573,
         "timeSpentOnTrip": 0.229166746
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 11.2838125,
-        "valueSurplus": 26.8000679,
-        "utilitySurplus": 1.02606738,
-        "totalTimeCost": 23.6618042,
-        "totalCost": 34.1618042
+        "valueSurplus": -1.27193069,
+        "utilitySurplus": -0.0486971363,
+        "totalTimeCost": 37.8862419,
+        "totalCost": 48.3862419
       },
       "droppedOffDriverData": {
-        "timeCostOnTrip": 4.12500143,
+        "timeCostOnTrip": 4.583335,
         "marginalCostOnTrip": 0.5633333,
-        "grossProfit": 5.6050005,
-        "valueSurplus": 1.47999907,
-        "utilitySurplus": 0.147999913
+        "grossProfit": 4.26166725,
+        "valueSurplus": -0.321667671,
+        "utilitySurplus": -0.0321667679
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.367619038,
-      "timeCost": 18.1009884,
+      "timeHours": 0.6628571,
+      "timeCost": 32.63805,
       "moneyCost": 10.5,
-      "totalCost": 28.6009884
+      "totalCost": 43.13805
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.233809531,
+      "expectedWaitingTime": 0.5290476,
       "expectedTripTime": 0.133809522,
       "fare": {
         "baseFare": 10.5,
@@ -6339,10 +6151,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.34566176,
-          "timeCost": 19.1282158,
+          "timeHours": 1.01652932,
+          "timeCost": 14.449688,
           "moneyCost": 2.5,
-          "totalCost": 21.6282158
+          "totalCost": 16.949688
         },
         {
           "type": 1,
@@ -6354,7 +6166,7 @@
       ]
     },
     "trip": null,
-    "tripTypeChosen": 1,
+    "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
     "rideOffer": null,
@@ -6399,10 +6211,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.1850158,
-          "timeCost": 55.3431625,
+          "timeHours": 0.920012653,
+          "timeCost": 42.96686,
           "moneyCost": 2.5,
-          "totalCost": 57.8431625
+          "totalCost": 45.46686
         },
         {
           "type": 1,
@@ -6459,10 +6271,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.79710114,
-          "timeCost": 15.9457407,
+          "timeHours": 1.40434754,
+          "timeCost": 12.460824,
           "moneyCost": 2.5,
-          "totalCost": 18.44574
+          "totalCost": 14.960824
         },
         {
           "type": 1,
@@ -6519,10 +6331,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.52994227,
-          "timeCost": 13.1452112,
+          "timeHours": 1.15595376,
+          "timeCost": 9.931915,
           "moneyCost": 2.5,
-          "totalCost": 15.6452112
+          "totalCost": 12.4319153
         },
         {
           "type": 1,
@@ -6579,10 +6391,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.29870987,
-          "timeCost": 57.302536,
+          "timeHours": 1.84830129,
+          "timeCost": 46.07469,
           "moneyCost": 2.5,
-          "totalCost": 59.802536
+          "totalCost": 48.57469
         },
         {
           "type": 1,
@@ -6593,130 +6405,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 2.87222219,
-        "pickUpPosition": {
-          "x": 4.0,
-          "y": 0.05,
-          "z": 0.0,
-          "normalized": {
-            "x": 0.9999219,
-            "y": 0.0124990242,
-            "z": 0.0,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 4.00031233,
-          "sqrMagnitude": 16.0025
-        },
-        "destination": {
-          "x": 9.0,
-          "y": 0.05,
-          "z": 8.666667,
-          "normalized": {
-            "x": 0.720314443,
-            "y": 0.004001747,
-            "z": 0.6936362,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 12.4945431,
-          "sqrMagnitude": 156.113617
-        },
-        "tripDistance": 13.666667,
-        "expectedWaitingTime": 0.252857149,
-        "expectedTripTime": 0.4004762,
-        "fare": {
-          "baseFare": 24.5,
-          "surgeMultiplier": 1.0,
-          "total": 24.5,
-          "driverCut": 16.415,
-          "uberCut": 8.085
-        },
-        "expectedPickupTime": 3.12507939
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 6.30325556,
-        "expectedTripTimeCost": 9.983122,
-        "expectedValueSurplus": 19.01616,
-        "expectedUtilitySurplus": 1.75182617
-      },
-      "driverAssignedData": {
-        "matchedTime": 2.87222219,
-        "enRouteDistance": 7.33333349
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 2.87222219,
-        "startPosition": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 5.33333349,
-          "normalized": {
-            "x": 0.7473948,
-            "y": 0.0062282905,
-            "z": 0.664351,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 8.027885,
-          "sqrMagnitude": 64.4469452
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 3.12500024,
-        "timeSpentEnRoute": 0.252778053,
-        "waitingTime": 0.252778053
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 6.301284
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 5.055561,
-        "marginalCostEnRoute": 0.9533333
-      },
-      "droppedOffData": {
-        "totalTime": 0.7222223,
-        "droppedOffTime": 3.59444451,
-        "timeSpentOnTrip": 0.469444275
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 11.7023678,
-        "valueSurplus": 17.2988853,
-        "utilitySurplus": 1.59362566,
-        "totalTimeCost": 18.00365,
-        "totalCost": 42.50365
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 9.3888855,
-        "marginalCostOnTrip": 1.77666664,
-        "grossProfit": 13.6850014,
-        "valueSurplus": 4.296116,
-        "utilitySurplus": 0.4296116
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.6533333,
-      "timeCost": 16.286377,
-      "moneyCost": 24.5,
-      "totalCost": 40.786377
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.252857149,
-      "expectedTripTime": 0.4004762,
-      "fare": {
-        "baseFare": 24.5,
-        "surgeMultiplier": 1.0,
-        "total": 24.5,
-        "driverCut": 16.415,
-        "uberCut": 8.085
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 9.0,
       "y": 0.05,
@@ -6757,10 +6451,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.860806,
-          "timeCost": 264.491455,
+          "timeHours": 1.49264479,
+          "timeCost": 212.161728,
           "moneyCost": 2.5,
-          "totalCost": 266.991455
+          "totalCost": 214.661728
         },
         {
           "type": 1,
@@ -6817,10 +6511,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.9658633,
-          "timeCost": 39.3947678,
+          "timeHours": 0.7846906,
+          "timeCost": 32.00526,
           "moneyCost": 2.5,
-          "totalCost": 41.8947678
+          "totalCost": 34.50526
         },
         {
           "type": 1,
@@ -6835,14 +6529,14 @@
     "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.691428542,
-      "timeCost": 28.20137,
+      "timeHours": 0.7295238,
+      "timeCost": 29.7551651,
       "moneyCost": 25.0,
-      "totalCost": 53.20137
+      "totalCost": 54.7551651
     },
     "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.281428576,
+      "expectedWaitingTime": 0.319523782,
       "expectedTripTime": 0.41,
       "fare": {
         "baseFare": 25.0,
@@ -6893,10 +6587,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.1255331,
-          "timeCost": 19.1391525,
+          "timeHours": 0.8564264,
+          "timeCost": 14.5631218,
           "moneyCost": 2.5,
-          "totalCost": 21.6391525
+          "totalCost": 17.0631218
         },
         {
           "type": 1,
@@ -6911,14 +6605,14 @@
     "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.472380936,
-      "timeCost": 8.032612,
+      "timeHours": 0.415238082,
+      "timeCost": 7.06092548,
       "moneyCost": 14.499999,
-      "totalCost": 22.5326118
+      "totalCost": 21.5609245
     },
     "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.262380958,
+      "expectedWaitingTime": 0.2052381,
       "expectedTripTime": 0.21,
       "fare": {
         "baseFare": 14.499999,
@@ -6976,10 +6670,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.8802487,
-          "timeCost": 68.0593262,
+          "timeHours": 0.692199,
+          "timeCost": 53.51964,
           "moneyCost": 2.5,
-          "totalCost": 70.5593262
+          "totalCost": 56.01964
         },
         {
           "type": 1,
@@ -6990,120 +6684,18 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 3.115278,
-        "pickUpPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 9.333333,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.00535706664,
-            "z": 0.9999857,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 9.333467,
-          "sqrMagnitude": 87.1136
-        },
-        "destination": {
-          "x": 7.66666651,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.7874946,
-            "y": 0.005135834,
-            "z": 0.6163001,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 9.735517,
-          "sqrMagnitude": 94.78027
-        },
-        "tripDistance": 11.0,
-        "expectedWaitingTime": 0.252857149,
-        "expectedTripTime": 0.324285716,
-        "fare": {
-          "baseFare": 20.5,
-          "surgeMultiplier": 1.0,
-          "total": 20.5,
-          "driverCut": 13.7350006,
-          "uberCut": 6.765
-        },
-        "expectedPickupTime": 3.36813521
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 19.5504818,
-        "expectedTripTimeCost": 25.0732174,
-        "expectedValueSurplus": 5.435623,
-        "expectedUtilitySurplus": 0.139196277
-      },
-      "driverAssignedData": {
-        "matchedTime": 3.115278,
-        "enRouteDistance": 7.333333
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 3.115278,
-        "startPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 2.0,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.0249921922,
-            "z": 0.9996877,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 2.000625,
-          "sqrMagnitude": 4.0025
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 3.3611114,
-        "timeSpentEnRoute": 0.2458334,
-        "waitingTime": 0.2458334
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 19.0074177
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 4.916668,
-        "marginalCostEnRoute": 0.953333259
-      },
-      "droppedOffData": {
-        "totalTime": 0.651388645,
-        "droppedOffTime": 3.76666665,
-        "timeSpentOnTrip": 0.405555248
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 31.3568382,
-        "valueSurplus": -0.304931641,
-        "utilitySurplus": -0.00780873653,
-        "totalTimeCost": 50.3642578,
-        "totalCost": 70.86426
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 8.111105,
-        "marginalCostOnTrip": 1.43,
-        "grossProfit": 11.3516674,
-        "valueSurplus": 3.24056244,
-        "utilitySurplus": 0.324056238
-      }
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.577142835,
-      "timeCost": 44.6237,
+      "timeHours": 0.624761939,
+      "timeCost": 48.3055229,
       "moneyCost": 20.5,
-      "totalCost": 65.1237
+      "totalCost": 68.80553
     },
-    "state": 3,
+    "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.252857149,
+      "expectedWaitingTime": 0.3004762,
       "expectedTripTime": 0.324285716,
       "fare": {
         "baseFare": 20.5,
@@ -7113,7 +6705,7 @@
         "uberCut": 6.765
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 7.66666651,
       "y": 0.05,
@@ -7154,10 +6746,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.764033437,
-          "timeCost": 8.815328,
+          "timeHours": 0.58322674,
+          "timeCost": 6.72920132,
           "moneyCost": 2.5,
-          "totalCost": 11.3153276
+          "totalCost": 9.229201
         },
         {
           "type": 1,
@@ -7172,14 +6764,14 @@
     "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.577142835,
-      "timeCost": 6.659006,
+      "timeHours": 0.4247619,
+      "timeCost": 4.90085268,
       "moneyCost": 17.5,
-      "totalCost": 24.1590061
+      "totalCost": 22.4008522
     },
     "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.31,
+      "expectedWaitingTime": 0.157619044,
       "expectedTripTime": 0.267142862,
       "fare": {
         "baseFare": 17.5,
@@ -7230,10 +6822,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.98682547,
-          "timeCost": 82.9063339,
+          "timeHours": 1.51079369,
+          "timeCost": 63.04246,
           "moneyCost": 2.5,
-          "totalCost": 85.4063339
+          "totalCost": 65.5424652
         },
         {
           "type": 1,
@@ -7284,7 +6876,7 @@
           "sqrMagnitude": 64.4469452
         },
         "tripDistance": 2.666667,
-        "expectedWaitingTime": 0.167142868,
+        "expectedWaitingTime": 0.119523823,
         "expectedTripTime": 0.0861904845,
         "fare": {
           "baseFare": 8.0,
@@ -7293,78 +6885,78 @@
           "driverCut": 5.36,
           "uberCut": 2.63999987
         },
-        "expectedPickupTime": 3.3171432
+        "expectedPickupTime": 3.269524
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 6.97454453,
+        "expectedWaitingCost": 4.98749542,
         "expectedTripTimeCost": 3.59656024,
-        "expectedValueSurplus": 13.221693,
-        "expectedUtilitySurplus": 0.2958723
+        "expectedValueSurplus": 15.2087421,
+        "expectedUtilitySurplus": 0.340338081
       },
       "driverAssignedData": {
         "matchedTime": 3.15000033,
-        "enRouteDistance": 4.33333349
+        "enRouteDistance": 2.666667
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 3.15000033,
         "startPosition": {
-          "x": 7.0,
+          "x": 6.0,
           "y": 0.05,
-          "z": 6.0,
+          "z": 5.33333349,
           "normalized": {
-            "x": 0.759245455,
-            "y": 0.00542318169,
-            "z": 0.6507818,
+            "x": 0.7473948,
+            "y": 0.0062282905,
+            "z": 0.664351,
             "magnitude": 1.0,
             "sqrMagnitude": 1.0
           },
-          "magnitude": 9.21968,
-          "sqrMagnitude": 85.0025
+          "magnitude": 8.027885,
+          "sqrMagnitude": 64.4469452
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 3.33194447,
-        "timeSpentEnRoute": 0.181944132,
-        "waitingTime": 0.181944132
+        "pickedUpTime": 3.2625,
+        "timeSpentEnRoute": 0.112499714,
+        "waitingTime": 0.112499714
       },
       "pickedUpPassengerData": {
-        "waitingCost": 7.59217262
+        "waitingCost": 4.69439268
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 3.63888264,
-        "marginalCostEnRoute": 0.563333333
+        "timeCostEnRoute": 2.24999428,
+        "marginalCostEnRoute": 0.3466667
       },
       "droppedOffData": {
-        "totalTime": 0.363888741,
-        "droppedOffTime": 3.513889,
+        "totalTime": 0.294444323,
+        "droppedOffTime": 3.44444466,
         "timeSpentOnTrip": 0.181944609
       },
       "droppedOffPassengerData": {
         "tripTimeCost": 7.592192,
-        "valueSurplus": 8.608433,
-        "utilitySurplus": 0.192637727,
-        "totalTimeCost": 15.1843653,
-        "totalCost": 23.1843643
+        "valueSurplus": 11.5062122,
+        "utilitySurplus": 0.257483631,
+        "totalTimeCost": 12.2865849,
+        "totalCost": 20.2865849
       },
       "droppedOffDriverData": {
         "timeCostOnTrip": 3.63889217,
         "marginalCostOnTrip": 0.3466667,
-        "grossProfit": 4.45000029,
-        "valueSurplus": 0.8111081,
-        "utilitySurplus": 0.08111081
+        "grossProfit": 4.666667,
+        "valueSurplus": 1.02777481,
+        "utilitySurplus": 0.102777481
       }
     },
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.25333336,
-      "timeCost": 10.571105,
+      "timeHours": 0.205714315,
+      "timeCost": 8.584056,
       "moneyCost": 8.0,
-      "totalCost": 18.571104
+      "totalCost": 16.5840549
     },
     "state": 3,
     "rideOffer": {
-      "expectedWaitingTime": 0.167142868,
+      "expectedWaitingTime": 0.119523823,
       "expectedTripTime": 0.0861904845,
       "fare": {
         "baseFare": 8.0,
@@ -7422,10 +7014,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.95805,
-          "timeCost": 106.35482,
+          "timeHours": 1.52244,
+          "timeCost": 82.693924,
           "moneyCost": 2.5,
-          "totalCost": 108.85482
+          "totalCost": 85.193924
         },
         {
           "type": 1,
@@ -7436,12 +7028,144 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 3.15000033,
+        "pickUpPosition": {
+          "x": 5.33333349,
+          "y": 0.05,
+          "z": 9.0,
+          "normalized": {
+            "x": 0.5097966,
+            "y": 0.004779343,
+            "z": 0.860281765,
+            "normalized": {
+              "x": 0.50979656,
+              "y": 0.00477934256,
+              "z": 0.860281646,
+              "normalized": {
+                "x": 0.5097966,
+                "y": 0.004779343,
+                "z": 0.8602817,
+                "magnitude": 1.0,
+                "sqrMagnitude": 1.0
+              },
+              "magnitude": 0.99999994,
+              "sqrMagnitude": 0.9999999
+            },
+            "magnitude": 1.00000012,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 10.461689,
+          "sqrMagnitude": 109.446945
+        },
+        "destination": {
+          "x": 0.0,
+          "y": 0.05,
+          "z": 7.33333349,
+          "normalized": {
+            "x": 0.0,
+            "y": 0.00681802351,
+            "z": 0.9999768,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.33350372,
+          "sqrMagnitude": 53.78028
+        },
+        "tripDistance": 7.0,
+        "expectedWaitingTime": 0.271904767,
+        "expectedTripTime": 0.21,
+        "fare": {
+          "baseFare": 14.5,
+          "surgeMultiplier": 1.0,
+          "total": 14.5,
+          "driverCut": 9.715,
+          "uberCut": 4.785
+        },
+        "expectedPickupTime": 3.421905
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 14.7689705,
+        "expectedTripTimeCost": 11.4065075,
+        "expectedValueSurplus": 44.5184479,
+        "expectedUtilitySurplus": 3.8781116
+      },
+      "driverAssignedData": {
+        "matchedTime": 3.15000033,
+        "enRouteDistance": 8.0
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 3.15000033,
+        "startPosition": {
+          "x": 3.0,
+          "y": 0.05,
+          "z": 3.33333325,
+          "normalized": {
+            "x": 0.6689232,
+            "y": 0.01114872,
+            "z": 0.743248,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 4.48482,
+          "sqrMagnitude": 20.1136112
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.427778,
+        "timeSpentEnRoute": 0.277777672,
+        "waitingTime": 0.277777672
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 15.0879679
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 5.55555344,
+        "marginalCostEnRoute": 1.04
+      },
+      "droppedOffData": {
+        "totalTime": 0.5625,
+        "droppedOffTime": 3.71250033,
+        "timeSpentOnTrip": 0.284722328
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 15.4651785,
+        "valueSurplus": 40.1407776,
+        "utilitySurplus": 3.4967618,
+        "totalTimeCost": 30.5531464,
+        "totalCost": 45.0531464
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 5.69444656,
+        "marginalCostOnTrip": 0.909999967,
+        "grossProfit": 7.76500034,
+        "valueSurplus": 2.07055378,
+        "utilitySurplus": 0.207055375
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.481904745,
+      "timeCost": 26.175478,
+      "moneyCost": 14.5,
+      "totalCost": 40.6754761
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.271904767,
+      "expectedTripTime": 0.21,
+      "fare": {
+        "baseFare": 14.5,
+        "surgeMultiplier": 1.0,
+        "total": 14.5,
+        "driverCut": 9.715,
+        "uberCut": 4.785
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
       "y": 0.05,
@@ -7496,10 +7220,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.061334,
-          "timeCost": 112.160439,
+          "timeHours": 1.5890671,
+          "timeCost": 86.46365,
           "moneyCost": 2.5,
-          "totalCost": 114.660439
+          "totalCost": 88.96365
         },
         {
           "type": 1,
@@ -7510,130 +7234,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 5,
-      "tripCreatedData": {
-        "createdTime": 3.25416684,
-        "pickUpPosition": {
-          "x": 3.0,
-          "y": 0.05,
-          "z": 4.33333349,
-          "normalized": {
-            "x": 0.569184363,
-            "y": 0.009486406,
-            "z": 0.822155237,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 5.2707,
-          "sqrMagnitude": 27.78028
-        },
-        "destination": {
-          "x": 3.66666675,
-          "y": 0.05,
-          "z": 0.0,
-          "normalized": {
-            "x": 0.999907,
-            "y": 0.0136350961,
-            "z": 0.0,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 3.66700768,
-          "sqrMagnitude": 13.4469452
-        },
-        "tripDistance": 5.0,
-        "expectedWaitingTime": 0.290952355,
-        "expectedTripTime": 0.15285714,
-        "fare": {
-          "baseFare": 11.5,
-          "surgeMultiplier": 1.0,
-          "total": 11.5,
-          "driverCut": 7.7050004,
-          "uberCut": 3.79499984
-        },
-        "expectedPickupTime": 3.54511929
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 15.8311777,
-        "expectedTripTimeCost": 8.317199,
-        "expectedValueSurplus": 42.08246,
-        "expectedUtilitySurplus": 1.7968632
-      },
-      "driverAssignedData": {
-        "matchedTime": 3.25416684,
-        "enRouteDistance": 8.666666
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 3.25416684,
-        "startPosition": {
-          "x": 9.0,
-          "y": 0.05,
-          "z": 5.0,
-          "normalized": {
-            "x": 0.874146938,
-            "y": 0.00485637225,
-            "z": 0.485637218,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 10.2957516,
-          "sqrMagnitude": 106.0025
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 3.57361126,
-        "timeSpentEnRoute": 0.319444418,
-        "waitingTime": 0.319444418
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 17.3814774
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 6.38888836,
-        "marginalCostEnRoute": 1.12666655
-      },
-      "droppedOffData": {
-        "totalTime": 0.5708332,
-        "droppedOffTime": 3.825,
-        "timeSpentOnTrip": 0.2513888
-      },
-      "droppedOffPassengerData": {
-        "tripTimeCost": 13.678462,
-        "valueSurplus": 35.1709,
-        "utilitySurplus": 1.50174916,
-        "totalTimeCost": 31.0599384,
-        "totalCost": 42.5599365
-      },
-      "droppedOffDriverData": {
-        "timeCostOnTrip": 5.027776,
-        "marginalCostOnTrip": 0.65,
-        "grossProfit": 5.92833376,
-        "valueSurplus": 0.900558,
-        "utilitySurplus": 0.0900558
-      }
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.4438095,
-      "timeCost": 24.1483765,
-      "moneyCost": 11.5,
-      "totalCost": 35.6483765
-    },
-    "state": 3,
-    "rideOffer": {
-      "expectedWaitingTime": 0.290952355,
-      "expectedTripTime": 0.15285714,
-      "fare": {
-        "baseFare": 11.5,
-        "surgeMultiplier": 1.0,
-        "total": 11.5,
-        "driverCut": 7.7050004,
-        "uberCut": 3.79499984
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 1,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 3.66666675,
       "y": 0.05,
@@ -7674,10 +7280,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.55779684,
-          "timeCost": 54.94905,
+          "timeHours": 1.2049042,
+          "timeCost": 42.50127,
           "moneyCost": 2.5,
-          "totalCost": 57.44905
+          "totalCost": 45.00127
         },
         {
           "type": 1,
@@ -7734,10 +7340,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.8629367,
-          "timeCost": 94.49002,
+          "timeHours": 0.665016,
+          "timeCost": 72.81806,
           "moneyCost": 2.5,
-          "totalCost": 96.99002
+          "totalCost": 75.31806
         },
         {
           "type": 1,
@@ -7748,111 +7354,18 @@
         }
       ]
     },
-    "trip": {
-      "state": 4,
-      "tripCreatedData": {
-        "createdTime": 3.32361126,
-        "pickUpPosition": {
-          "x": 8.0,
-          "y": 0.05,
-          "z": 9.0,
-          "normalized": {
-            "x": 0.6643581,
-            "y": 0.00415223837,
-            "z": 0.747402847,
-            "normalized": {
-              "x": 0.664358139,
-              "y": 0.004152239,
-              "z": 0.7474029,
-              "magnitude": 1.0,
-              "sqrMagnitude": 1.00000012
-            },
-            "magnitude": 0.99999994,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 12.0416985,
-          "sqrMagnitude": 145.0025
-        },
-        "destination": {
-          "x": 3.0,
-          "y": 0.05,
-          "z": 4.66666651,
-          "normalized": {
-            "x": 0.540735662,
-            "y": 0.00901226047,
-            "z": 0.8411443,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 5.54799747,
-          "sqrMagnitude": 30.7802753
-        },
-        "tripDistance": 9.333334,
-        "expectedWaitingTime": 0.3195238,
-        "expectedTripTime": 0.276666671,
-        "fare": {
-          "baseFare": 18.0,
-          "surgeMultiplier": 1.0,
-          "total": 18.0,
-          "driverCut": 12.06,
-          "uberCut": 5.93999958
-        },
-        "expectedPickupTime": 3.643135
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 34.9872856,
-        "expectedTripTimeCost": 30.2945042,
-        "expectedValueSurplus": 13.7082291,
-        "expectedUtilitySurplus": 0.317961961
-      },
-      "driverAssignedData": {
-        "matchedTime": 3.32361126,
-        "enRouteDistance": 9.666667
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 3.32361126,
-        "startPosition": {
-          "x": 9.0,
-          "y": 0.05,
-          "z": 0.333333343,
-          "normalized": {
-            "x": 0.9992994,
-            "y": 0.00555166369,
-            "z": 0.03701109,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 9.00630951,
-          "sqrMagnitude": 81.11361
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 3.661111,
-        "timeSpentEnRoute": 0.337499857,
-        "waitingTime": 0.337499857
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 36.9556274
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 6.749997,
-        "marginalCostEnRoute": 1.25666666
-      },
-      "droppedOffData": null,
-      "droppedOffPassengerData": null,
-      "droppedOffDriverData": null
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.596190453,
-      "timeCost": 65.28179,
+      "timeHours": 0.529523849,
+      "timeCost": 57.98191,
       "moneyCost": 18.0,
-      "totalCost": 83.28179
+      "totalCost": 75.98191
     },
-    "state": 2,
+    "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.3195238,
+      "expectedWaitingTime": 0.252857149,
       "expectedTripTime": 0.276666671,
       "fare": {
         "baseFare": 18.0,
@@ -7862,7 +7375,7 @@
         "uberCut": 5.93999958
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 3.0,
       "y": 0.05,
@@ -7910,10 +7423,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.02742553,
-          "timeCost": 96.9638062,
+          "timeHours": 1.56460714,
+          "timeCost": 74.82902,
           "moneyCost": 2.5,
-          "totalCost": 99.4638062
+          "totalCost": 77.32902
         },
         {
           "type": 1,
@@ -7924,12 +7437,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 3.35833359,
+        "pickUpPosition": {
+          "x": 4.33333349,
+          "y": 0.05,
+          "z": 3.0,
+          "normalized": {
+            "x": 0.822155237,
+            "y": 0.009486406,
+            "z": 0.569184363,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 5.2707,
+          "sqrMagnitude": 27.78028
+        },
+        "destination": {
+          "x": 2.0,
+          "y": 0.05,
+          "z": 6.0,
+          "normalized": {
+            "x": 0.3162179,
+            "y": 0.007905448,
+            "z": 0.9486537,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 6.324753,
+          "sqrMagnitude": 40.0025
+        },
+        "tripDistance": 5.33333349,
+        "expectedWaitingTime": 0.167142868,
+        "expectedTripTime": 0.162380964,
+        "fare": {
+          "baseFare": 12.0,
+          "surgeMultiplier": 1.0,
+          "total": 12.0,
+          "driverCut": 8.04,
+          "uberCut": 3.9599998
+        },
+        "expectedPickupTime": 3.52547646
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 7.993788,
+        "expectedTripTimeCost": 7.76604462,
+        "expectedValueSurplus": 45.1179962,
+        "expectedUtilitySurplus": 0.7206542
+      },
+      "driverAssignedData": {
+        "matchedTime": 3.35833359,
+        "enRouteDistance": 4.33333349
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 3.35833359,
+        "startPosition": {
+          "x": 8.666667,
+          "y": 0.05,
+          "z": 3.0,
+          "normalized": {
+            "x": 0.944972038,
+            "y": 0.00545176165,
+            "z": 0.3271057,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 9.171348,
+          "sqrMagnitude": 84.11362
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.51805568,
+        "timeSpentEnRoute": 0.15972209,
+        "waitingTime": 0.15972209
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 7.63888073
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 3.1944418,
+        "marginalCostEnRoute": 0.563333333
+      },
+      "droppedOffData": {
+        "totalTime": 0.420833349,
+        "droppedOffTime": 3.779167,
+        "timeSpentOnTrip": 0.261111259
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 12.4879274,
+        "valueSurplus": 40.7510223,
+        "utilitySurplus": 0.650902033,
+        "totalTimeCost": 20.1268082,
+        "totalCost": 32.12681
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 5.222225,
+        "marginalCostOnTrip": 0.6933333,
+        "grossProfit": 6.7833333,
+        "valueSurplus": 1.56110811,
+        "utilitySurplus": 0.156110808
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.329523832,
+      "timeCost": 15.7598324,
+      "moneyCost": 12.0,
+      "totalCost": 27.7598324
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.167142868,
+      "expectedTripTime": 0.162380964,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 2.0,
       "y": 0.05,
@@ -7970,10 +7601,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.156274,
-          "timeCost": 119.944481,
+          "timeHours": 1.69168591,
+          "timeCost": 94.10139,
           "moneyCost": 2.5,
-          "totalCost": 122.444481
+          "totalCost": 96.60139
         },
         {
           "type": 1,
@@ -8030,10 +7661,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.36281216,
-          "timeCost": 34.0516472,
+          "timeHours": 1.07824969,
+          "timeCost": 26.94148,
           "moneyCost": 2.5,
-          "totalCost": 36.5516472
+          "totalCost": 29.44148
         },
         {
           "type": 1,
@@ -8090,10 +7721,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.19204748,
-          "timeCost": 5.921002,
+          "timeHours": 0.9149713,
+          "timeCost": 4.544741,
           "moneyCost": 2.5,
-          "totalCost": 8.421001
+          "totalCost": 7.044741
         },
         {
           "type": 1,
@@ -8150,10 +7781,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.95170343,
-          "timeCost": 361.9962,
+          "timeHours": 1.48002934,
+          "timeCost": 274.511475,
           "moneyCost": 2.5,
-          "totalCost": 364.4962
+          "totalCost": 277.011475
         },
         {
           "type": 1,
@@ -8210,10 +7841,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.01797581,
-          "timeCost": 101.336151,
+          "timeHours": 0.735714,
+          "timeCost": 73.237915,
           "moneyCost": 2.5,
-          "totalCost": 103.836151
+          "totalCost": 75.737915
         },
         {
           "type": 1,
@@ -8225,7 +7856,7 @@
       ]
     },
     "trip": null,
-    "tripTypeChosen": 1,
+    "tripTypeChosen": 2,
     "uberTripOption": null,
     "state": 5,
     "rideOffer": null,
@@ -8270,10 +7901,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.15137553,
-          "timeCost": 65.59774,
+          "timeHours": 1.67443371,
+          "timeCost": 51.055275,
           "moneyCost": 2.5,
-          "totalCost": 68.09774
+          "totalCost": 53.555275
         },
         {
           "type": 1,
@@ -8284,12 +7915,130 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 5,
+      "tripCreatedData": {
+        "createdTime": 3.49722219,
+        "pickUpPosition": {
+          "x": 6.0,
+          "y": 0.05,
+          "z": 4.0,
+          "normalized": {
+            "x": 0.8320303,
+            "y": 0.00693358574,
+            "z": 0.554686844,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 7.211276,
+          "sqrMagnitude": 52.0025
+        },
+        "destination": {
+          "x": 1.33333337,
+          "y": 0.05,
+          "z": 6.0,
+          "normalized": {
+            "x": 0.216923282,
+            "y": 0.008134623,
+            "z": 0.976154745,
+            "magnitude": 1.0,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 6.14656639,
+          "sqrMagnitude": 37.7802773
+        },
+        "tripDistance": 6.66666651,
+        "expectedWaitingTime": 0.08142858,
+        "expectedTripTime": 0.200476184,
+        "fare": {
+          "baseFare": 14.0,
+          "surgeMultiplier": 1.0,
+          "total": 14.0,
+          "driverCut": 9.38,
+          "uberCut": 4.62
+        },
+        "expectedPickupTime": 3.57865071
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 2.48284459,
+        "expectedTripTimeCost": 6.11273336,
+        "expectedValueSurplus": 30.9596977,
+        "expectedUtilitySurplus": 3.06763363
+      },
+      "driverAssignedData": {
+        "matchedTime": 3.49722219,
+        "enRouteDistance": 1.33333349
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 3.49722219,
+        "startPosition": {
+          "x": 6.0,
+          "y": 0.05,
+          "z": 5.33333349,
+          "normalized": {
+            "x": 0.7473948,
+            "y": 0.0062282905,
+            "z": 0.664351,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 8.027885,
+          "sqrMagnitude": 64.4469452
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.57083344,
+        "timeSpentEnRoute": 0.07361126,
+        "waitingTime": 0.07361126
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 2.244486
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 1.47222519,
+        "marginalCostEnRoute": 0.173333347
+      },
+      "droppedOffData": {
+        "totalTime": 0.372222424,
+        "droppedOffTime": 3.86944461,
+        "timeSpentOnTrip": 0.298611164
+      },
+      "droppedOffPassengerData": {
+        "tripTimeCost": 9.104974,
+        "valueSurplus": 28.2058144,
+        "utilitySurplus": 2.794766,
+        "totalTimeCost": 11.34946,
+        "totalCost": 25.34946
+      },
+      "droppedOffDriverData": {
+        "timeCostOnTrip": 5.97222328,
+        "marginalCostOnTrip": 0.8666666,
+        "grossProfit": 8.34,
+        "valueSurplus": 2.36777687,
+        "utilitySurplus": 0.2367777
+      }
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.281904757,
+      "timeCost": 8.595578,
+      "moneyCost": 14.0,
+      "totalCost": 22.5955772
+    },
+    "state": 3,
+    "rideOffer": {
+      "expectedWaitingTime": 0.08142858,
+      "expectedTripTime": 0.200476184,
+      "fare": {
+        "baseFare": 14.0,
+        "surgeMultiplier": 1.0,
+        "total": 14.0,
+        "driverCut": 9.38,
+        "uberCut": 4.62
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 1.33333337,
       "y": 0.05,
@@ -8330,10 +8079,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.039664,
-          "timeCost": 66.28222,
+          "timeHours": 0.7770646,
+          "timeCost": 49.5405922,
           "moneyCost": 2.5,
-          "totalCost": 68.78222
+          "totalCost": 52.0405922
         },
         {
           "type": 1,
@@ -8390,10 +8139,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.947268,
-          "timeCost": 73.17775,
+          "timeHours": 1.55914772,
+          "timeCost": 58.5923042,
           "moneyCost": 2.5,
-          "totalCost": 75.67775
+          "totalCost": 61.0923042
         },
         {
           "type": 1,
@@ -8444,7 +8193,7 @@
           "sqrMagnitude": 58.7802734
         },
         "tripDistance": 12.666666,
-        "expectedWaitingTime": 0.176666677,
+        "expectedWaitingTime": 0.224285722,
         "expectedTripTime": 0.371904731,
         "fare": {
           "baseFare": 23.0,
@@ -8453,46 +8202,60 @@
           "driverCut": 15.4100008,
           "uberCut": 7.58999968
         },
-        "expectedPickupTime": 3.70861125
+        "expectedPickupTime": 3.75623035
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 6.639081,
+        "expectedWaitingCost": 8.42859,
         "expectedTripTimeCost": 13.9760685,
-        "expectedValueSurplus": 32.0626,
-        "expectedUtilitySurplus": 3.858304
+        "expectedValueSurplus": 15.687645,
+        "expectedUtilitySurplus": 1.88779771
       },
       "driverAssignedData": {
         "matchedTime": 3.53194451,
-        "enRouteDistance": 4.666667
+        "enRouteDistance": 6.33333349
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 3.53194451,
         "startPosition": {
-          "x": 8.666667,
+          "x": 4.66666651,
           "y": 0.05,
-          "z": 3.0,
+          "z": 6.0,
           "normalized": {
-            "x": 0.944972038,
-            "y": 0.00545176165,
-            "z": 0.3271057,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
+            "x": 0.613927364,
+            "y": 0.006577793,
+            "z": 0.7893352,
+            "normalized": {
+              "x": 0.6139273,
+              "y": 0.006577792,
+              "z": 0.7893351,
+              "normalized": {
+                "x": 0.613927364,
+                "y": 0.00657779258,
+                "z": 0.789335132,
+                "magnitude": 1.0,
+                "sqrMagnitude": 1.0
+              },
+              "magnitude": 0.99999994,
+              "sqrMagnitude": 0.9999999
+            },
+            "magnitude": 1.00000012,
+            "sqrMagnitude": 1.00000012
           },
-          "magnitude": 9.171348,
-          "sqrMagnitude": 84.11362
+          "magnitude": 7.60133362,
+          "sqrMagnitude": 57.7802773
         }
       },
       "pickedUpData": {
-        "pickedUpTime": 3.70277786,
-        "timeSpentEnRoute": 0.170833349,
-        "waitingTime": 0.170833349
+        "pickedUpTime": 3.76805568,
+        "timeSpentEnRoute": 0.236111164,
+        "waitingTime": 0.236111164
       },
       "pickedUpPassengerData": {
-        "waitingCost": 6.419866
+        "waitingCost": 8.872987
       },
       "pickedUpDriverData": {
-        "timeCostEnRoute": 3.416667,
-        "marginalCostEnRoute": 0.6066667
+        "timeCostEnRoute": 4.72222328,
+        "marginalCostEnRoute": 0.8233333
       },
       "droppedOffData": null,
       "droppedOffPassengerData": null,
@@ -8501,14 +8264,14 @@
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.5485714,
-      "timeCost": 20.61515,
+      "timeHours": 0.596190453,
+      "timeCost": 22.40466,
       "moneyCost": 23.0,
-      "totalCost": 43.61515
+      "totalCost": 45.40466
     },
     "state": 2,
     "rideOffer": {
-      "expectedWaitingTime": 0.176666677,
+      "expectedWaitingTime": 0.224285722,
       "expectedTripTime": 0.371904731,
       "fare": {
         "baseFare": 23.0,
@@ -8566,10 +8329,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.8860954,
-          "timeCost": 37.8405952,
+          "timeHours": 1.41954291,
+          "timeCost": 28.4801865,
           "moneyCost": 2.5,
-          "totalCost": 40.3405952
+          "totalCost": 30.9801865
         },
         {
           "type": 1,
@@ -8582,10 +8345,26 @@
     },
     "trip": null,
     "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.300952375,
+      "timeCost": 6.03798628,
+      "moneyCost": 6.0,
+      "totalCost": 12.0379858
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.252857149,
+      "expectedTripTime": 0.04809524,
+      "fare": {
+        "baseFare": 6.0,
+        "surgeMultiplier": 1.0,
+        "total": 6.0,
+        "driverCut": 4.02,
+        "uberCut": 1.9799999
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 1.33333337,
       "y": 0.05,
@@ -8626,10 +8405,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.02467036,
-          "timeCost": 34.3309631,
+          "timeHours": 0.7864029,
+          "timeCost": 26.3479557,
           "moneyCost": 2.5,
-          "totalCost": 36.8309631
+          "totalCost": 28.8479557
         },
         {
           "type": 1,
@@ -8640,104 +8419,18 @@
         }
       ]
     },
-    "trip": {
-      "state": 4,
-      "tripCreatedData": {
-        "createdTime": 3.601389,
-        "pickUpPosition": {
-          "x": 1.0,
-          "y": 0.05,
-          "z": 0.0,
-          "normalized": {
-            "x": 0.998752356,
-            "y": 0.04993762,
-            "z": 0.0,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 1.00124919,
-          "sqrMagnitude": 1.0025
-        },
-        "destination": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 3.33333325,
-          "normalized": {
-            "x": 0.874134064,
-            "y": 0.007284451,
-            "z": 0.485630035,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 6.86393547,
-          "sqrMagnitude": 47.11361
-        },
-        "tripDistance": 8.333333,
-        "expectedWaitingTime": 0.338571459,
-        "expectedTripTime": 0.248095229,
-        "fare": {
-          "baseFare": 16.5,
-          "surgeMultiplier": 1.0,
-          "total": 16.5,
-          "driverCut": 11.055,
-          "uberCut": 5.44499969
-        },
-        "expectedPickupTime": 3.93996048
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 11.3436327,
-        "expectedTripTimeCost": 8.312282,
-        "expectedValueSurplus": 0.6750488,
-        "expectedUtilitySurplus": 0.0268228352
-      },
-      "driverAssignedData": {
-        "matchedTime": 3.601389,
-        "enRouteDistance": 10.333334
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 3.601389,
-        "startPosition": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 5.33333349,
-          "normalized": {
-            "x": 0.7473948,
-            "y": 0.0062282905,
-            "z": 0.664351,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 8.027885,
-          "sqrMagnitude": 64.4469452
-        }
-      },
-      "pickedUpData": {
-        "pickedUpTime": 3.940278,
-        "timeSpentEnRoute": 0.338889122,
-        "waitingTime": 0.338889122
-      },
-      "pickedUpPassengerData": {
-        "waitingCost": 11.3542757
-      },
-      "pickedUpDriverData": {
-        "timeCostEnRoute": 6.77778244,
-        "marginalCostEnRoute": 1.34333336
-      },
-      "droppedOffData": null,
-      "droppedOffPassengerData": null,
-      "droppedOffDriverData": null
-    },
-    "tripTypeChosen": 3,
+    "trip": null,
+    "tripTypeChosen": 2,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.5866667,
-      "timeCost": 19.6559143,
+      "timeHours": 0.5580952,
+      "timeCost": 18.6986465,
       "moneyCost": 16.5,
-      "totalCost": 36.1559143
+      "totalCost": 35.1986465
     },
-    "state": 2,
+    "state": 4,
     "rideOffer": {
-      "expectedWaitingTime": 0.338571459,
+      "expectedWaitingTime": 0.31,
       "expectedTripTime": 0.248095229,
       "fare": {
         "baseFare": 16.5,
@@ -8747,7 +8440,7 @@
         "uberCut": 5.44499969
       }
     },
-    "rideOfferStatus": 2,
+    "rideOfferStatus": 3,
     "destination": {
       "x": 6.0,
       "y": 0.05,
@@ -8788,10 +8481,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.2687757,
-          "timeCost": 11.951539,
+          "timeHours": 1.02968729,
+          "timeCost": 9.6993885,
           "moneyCost": 2.5,
-          "totalCost": 14.451539
+          "totalCost": 12.1993885
         },
         {
           "type": 1,
@@ -8804,10 +8497,26 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.5866667,
+      "timeCost": 5.52624846,
+      "moneyCost": 25.5,
+      "totalCost": 31.0262489
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.167142853,
+      "expectedTripTime": 0.419523835,
+      "fare": {
+        "baseFare": 25.5,
+        "surgeMultiplier": 1.0,
+        "total": 25.5,
+        "driverCut": 17.085001,
+        "uberCut": 8.415
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 0.0,
       "y": 0.05,
@@ -8848,10 +8557,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.64092731,
-          "timeCost": 55.50934,
+          "timeHours": 1.25540853,
+          "timeCost": 42.468,
           "moneyCost": 2.5,
-          "totalCost": 58.00934
+          "totalCost": 44.968
         },
         {
           "type": 1,
@@ -8862,12 +8571,114 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 1,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 4,
+      "tripCreatedData": {
+        "createdTime": 3.601389,
+        "pickUpPosition": {
+          "x": 4.66666651,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.9999426,
+            "y": 0.0107136713,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 4.66693449,
+          "sqrMagnitude": 21.7802753
+        },
+        "destination": {
+          "x": 3.0,
+          "y": 0.05,
+          "z": 3.66666675,
+          "normalized": {
+            "x": 0.633202553,
+            "y": 0.0105533758,
+            "z": 0.7739142,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 4.73782063,
+          "sqrMagnitude": 22.4469452
+        },
+        "tripDistance": 5.333333,
+        "expectedWaitingTime": 0.2052381,
+        "expectedTripTime": 0.162380949,
+        "fare": {
+          "baseFare": 12.0,
+          "surgeMultiplier": 1.0,
+          "total": 12.0,
+          "driverCut": 8.04,
+          "uberCut": 3.9599998
+        },
+        "expectedPickupTime": 3.806627
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 6.94280052,
+        "expectedTripTimeCost": 5.49302769,
+        "expectedValueSurplus": 20.53217,
+        "expectedUtilitySurplus": 0.649920464
+      },
+      "driverAssignedData": {
+        "matchedTime": 3.601389,
+        "enRouteDistance": 5.666667
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 3.601389,
+        "startPosition": {
+          "x": 9.0,
+          "y": 0.05,
+          "z": 1.33333337,
+          "normalized": {
+            "x": 0.989188552,
+            "y": 0.005495492,
+            "z": 0.146546453,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 9.098367,
+          "sqrMagnitude": 82.78028
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.81805587,
+        "timeSpentEnRoute": 0.216666937,
+        "waitingTime": 0.216666937
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 7.329416
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 4.33333874,
+        "marginalCostEnRoute": 0.7366667
+      },
+      "droppedOffData": null,
+      "droppedOffPassengerData": null,
+      "droppedOffDriverData": null
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.367619038,
+      "timeCost": 12.4358282,
+      "moneyCost": 12.0,
+      "totalCost": 24.43583
+    },
+    "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.2052381,
+      "expectedTripTime": 0.162380949,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 3.0,
       "y": 0.05,
@@ -8908,10 +8719,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.48469472,
-          "timeCost": 70.28308,
+          "timeHours": 1.18375576,
+          "timeCost": 56.03711,
           "moneyCost": 2.5,
-          "totalCost": 72.78308
+          "totalCost": 58.53711
         },
         {
           "type": 1,
@@ -8922,12 +8733,114 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 4,
+      "tripCreatedData": {
+        "createdTime": 3.63611126,
+        "pickUpPosition": {
+          "x": 8.666667,
+          "y": 0.05,
+          "z": 0.0,
+          "normalized": {
+            "x": 0.9999834,
+            "y": 0.005769135,
+            "z": 0.0,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 8.666811,
+          "sqrMagnitude": 75.11362
+        },
+        "destination": {
+          "x": 0.0,
+          "y": 0.05,
+          "z": 3.33333325,
+          "normalized": {
+            "x": 0.0,
+            "y": 0.014998313,
+            "z": 0.9998875,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 3.33370829,
+          "sqrMagnitude": 11.11361
+        },
+        "tripDistance": 12.0,
+        "expectedWaitingTime": 0.19571428,
+        "expectedTripTime": 0.352857143,
+        "fare": {
+          "baseFare": 22.0,
+          "surgeMultiplier": 1.0,
+          "total": 22.0,
+          "driverCut": 14.7400007,
+          "uberCut": 7.25999975
+        },
+        "expectedPickupTime": 3.83182549
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 9.264802,
+        "expectedTripTimeCost": 16.7036953,
+        "expectedValueSurplus": 10.5686111,
+        "expectedUtilitySurplus": 0.398369044
+      },
+      "driverAssignedData": {
+        "matchedTime": 3.63611126,
+        "enRouteDistance": 5.333333
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 3.63611126,
+        "startPosition": {
+          "x": 9.0,
+          "y": 0.05,
+          "z": 5.0,
+          "normalized": {
+            "x": 0.874146938,
+            "y": 0.00485637225,
+            "z": 0.485637218,
+            "magnitude": 1.0,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 10.2957516,
+          "sqrMagnitude": 106.0025
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.82916665,
+        "timeSpentEnRoute": 0.193055391,
+        "waitingTime": 0.193055391
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 9.138934
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 3.86110783,
+        "marginalCostEnRoute": 0.693333268
+      },
+      "droppedOffData": null,
+      "droppedOffPassengerData": null,
+      "droppedOffDriverData": null
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.5485714,
+      "timeCost": 25.9684982,
+      "moneyCost": 22.0,
+      "totalCost": 47.9685
+    },
+    "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.19571428,
+      "expectedTripTime": 0.352857143,
+      "fare": {
+        "baseFare": 22.0,
+        "surgeMultiplier": 1.0,
+        "total": 22.0,
+        "driverCut": 14.7400007,
+        "uberCut": 7.25999975
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 0.0,
       "y": 0.05,
@@ -8968,10 +8881,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.92608881,
-          "timeCost": 73.64672,
+          "timeHours": 1.49687111,
+          "timeCost": 57.2349739,
           "moneyCost": 2.5,
-          "totalCost": 76.14672
+          "totalCost": 59.7349739
         },
         {
           "type": 1,
@@ -9028,10 +8941,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.44710934,
-          "timeCost": 30.6843185,
+          "timeHours": 1.08435416,
+          "timeCost": 22.992506,
           "moneyCost": 2.5,
-          "totalCost": 33.18432
+          "totalCost": 25.492506
         },
         {
           "type": 1,
@@ -9088,10 +9001,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.15068126,
-          "timeCost": 63.4099045,
+          "timeHours": 0.868545,
+          "timeCost": 47.8623924,
           "moneyCost": 2.5,
-          "totalCost": 65.9099045
+          "totalCost": 50.3623924
         },
         {
           "type": 1,
@@ -9155,10 +9068,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.9386703,
-          "timeCost": 166.344666,
+          "timeHours": 0.712269545,
+          "timeCost": 126.223488,
           "moneyCost": 2.5,
-          "totalCost": 168.844666
+          "totalCost": 128.72348
         },
         {
           "type": 1,
@@ -9169,105 +9082,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 2,
-      "tripCreatedData": {
-        "createdTime": 3.67083359,
-        "pickUpPosition": {
-          "x": 0.6666667,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.110427745,
-            "y": 0.00828208,
-            "z": 0.9938497,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 6.03713036,
-          "sqrMagnitude": 36.4469452
-        },
-        "destination": {
-          "x": 6.0,
-          "y": 0.05,
-          "z": 8.333333,
-          "normalized": {
-            "x": 0.584297836,
-            "y": 0.0048691486,
-            "z": 0.811524749,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 10.2687359,
-          "sqrMagnitude": 105.446938
-        },
-        "tripDistance": 7.66666651,
-        "expectedWaitingTime": 0.357619047,
-        "expectedTripTime": 0.229047611,
-        "fare": {
-          "baseFare": 15.5,
-          "surgeMultiplier": 1.0,
-          "total": 15.5,
-          "driverCut": 10.385,
-          "uberCut": 5.115
-        },
-        "expectedPickupTime": 4.028453
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 63.3747749,
-        "expectedTripTimeCost": 40.5902328,
-        "expectedValueSurplus": 49.3796539,
-        "expectedUtilitySurplus": 0.7747536
-      },
-      "driverAssignedData": {
-        "matchedTime": 3.67083359,
-        "enRouteDistance": 11.0
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 3.67083359,
-        "startPosition": {
-          "x": 9.0,
-          "y": 0.05,
-          "z": 8.666667,
-          "normalized": {
-            "x": 0.720314443,
-            "y": 0.004001747,
-            "z": 0.6936362,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.00000012
-          },
-          "magnitude": 12.4945431,
-          "sqrMagnitude": 156.113617
-        }
-      },
-      "pickedUpData": null,
-      "pickedUpPassengerData": null,
-      "pickedUpDriverData": null,
-      "droppedOffData": null,
-      "droppedOffPassengerData": null,
-      "droppedOffDriverData": null
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.586666644,
-      "timeCost": 103.965012,
-      "moneyCost": 15.5,
-      "totalCost": 119.465012
-    },
-    "state": 2,
-    "rideOffer": {
-      "expectedWaitingTime": 0.357619047,
-      "expectedTripTime": 0.229047611,
-      "fare": {
-        "baseFare": 15.5,
-        "surgeMultiplier": 1.0,
-        "total": 15.5,
-        "driverCut": 10.385,
-        "uberCut": 5.115
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 6.0,
       "y": 0.05,
@@ -9308,10 +9128,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.35269785,
-          "timeCost": 47.10179,
+          "timeHours": 1.87282491,
+          "timeCost": 37.4945755,
           "moneyCost": 2.5,
-          "totalCost": 49.60179
+          "totalCost": 39.9945755
         },
         {
           "type": 1,
@@ -9368,10 +9188,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.73634052,
-          "timeCost": 20.7343464,
+          "timeHours": 1.32640576,
+          "timeCost": 15.8391485,
           "moneyCost": 2.5,
-          "totalCost": 23.2343464
+          "totalCost": 18.33915
         },
         {
           "type": 1,
@@ -9435,10 +9255,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 2.190732,
-          "timeCost": 83.2911148,
+          "timeHours": 1.78858566,
+          "timeCost": 68.0016,
           "moneyCost": 2.5,
-          "totalCost": 85.7911148
+          "totalCost": 70.5016
         },
         {
           "type": 1,
@@ -9449,12 +9269,121 @@
         }
       ]
     },
-    "trip": null,
-    "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "trip": {
+      "state": 4,
+      "tripCreatedData": {
+        "createdTime": 3.77500033,
+        "pickUpPosition": {
+          "x": 0.0,
+          "y": 0.05,
+          "z": 8.666667,
+          "normalized": {
+            "x": 0.0,
+            "y": 0.005769135,
+            "z": 0.9999834,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.0
+          },
+          "magnitude": 8.666811,
+          "sqrMagnitude": 75.11362
+        },
+        "destination": {
+          "x": 9.0,
+          "y": 0.05,
+          "z": 0.6666667,
+          "normalized": {
+            "x": 0.9972524,
+            "y": 0.00554029131,
+            "z": 0.07387055,
+            "normalized": {
+              "x": 0.997252464,
+              "y": 0.005540292,
+              "z": 0.0738705546,
+              "magnitude": 1.0,
+              "sqrMagnitude": 1.0
+            },
+            "magnitude": 0.99999994,
+            "sqrMagnitude": 0.99999994
+          },
+          "magnitude": 9.02479649,
+          "sqrMagnitude": 81.4469452
+        },
+        "tripDistance": 17.0,
+        "expectedWaitingTime": 0.08142858,
+        "expectedTripTime": 0.495714277,
+        "fare": {
+          "baseFare": 29.5,
+          "surgeMultiplier": 1.0,
+          "total": 29.5,
+          "driverCut": 19.7650013,
+          "uberCut": 9.735
+        },
+        "expectedPickupTime": 3.85642886
+      },
+      "tripCreatedPassengerData": {
+        "expectedWaitingCost": 3.09589529,
+        "expectedTripTimeCost": 18.84694,
+        "expectedValueSurplus": 19.05877,
+        "expectedUtilitySurplus": 1.56897807
+      },
+      "driverAssignedData": {
+        "matchedTime": 3.77500033,
+        "enRouteDistance": 1.33333349
+      },
+      "driverDispatchedData": {
+        "driverDispatchedTime": 3.77500033,
+        "startPosition": {
+          "x": 0.0,
+          "y": 0.05,
+          "z": 7.33333349,
+          "normalized": {
+            "x": 0.0,
+            "y": 0.00681802351,
+            "z": 0.9999768,
+            "magnitude": 1.0,
+            "sqrMagnitude": 1.00000012
+          },
+          "magnitude": 7.33350372,
+          "sqrMagnitude": 53.78028
+        }
+      },
+      "pickedUpData": {
+        "pickedUpTime": 3.848611,
+        "timeSpentEnRoute": 0.07361078,
+        "waitingTime": 0.07361078
+      },
+      "pickedUpPassengerData": {
+        "waitingCost": 2.79866457
+      },
+      "pickedUpDriverData": {
+        "timeCostEnRoute": 1.47221565,
+        "marginalCostEnRoute": 0.173333347
+      },
+      "droppedOffData": null,
+      "droppedOffPassengerData": null,
+      "droppedOffDriverData": null
+    },
+    "tripTypeChosen": 3,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.577142835,
+      "timeCost": 21.9428349,
+      "moneyCost": 29.5,
+      "totalCost": 51.4428329
+    },
+    "state": 2,
+    "rideOffer": {
+      "expectedWaitingTime": 0.08142858,
+      "expectedTripTime": 0.495714277,
+      "fare": {
+        "baseFare": 29.5,
+        "surgeMultiplier": 1.0,
+        "total": 29.5,
+        "driverCut": 19.7650013,
+        "uberCut": 9.735
+      }
+    },
+    "rideOfferStatus": 2,
     "destination": {
       "x": 9.0,
       "y": 0.05,
@@ -9502,10 +9431,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.23263574,
-          "timeCost": 69.72921,
+          "timeHours": 0.9341087,
+          "timeCost": 52.84177,
           "moneyCost": 2.5,
-          "totalCost": 72.22921
+          "totalCost": 55.34177
         },
         {
           "type": 1,
@@ -9562,10 +9491,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.752218068,
-          "timeCost": 88.25238,
+          "timeHours": 0.5631078,
+          "timeCost": 66.06542,
           "moneyCost": 2.5,
-          "totalCost": 90.75238
+          "totalCost": 68.56542
         },
         {
           "type": 1,
@@ -9622,10 +9551,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.7524416,
-          "timeCost": 52.11434,
+          "timeHours": 0.5312866,
+          "timeCost": 36.7970772,
           "moneyCost": 2.5,
-          "totalCost": 54.61434
+          "totalCost": 39.2970772
         },
         {
           "type": 1,
@@ -9689,10 +9618,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.8580232,
-          "timeCost": 18.9031067,
+          "timeHours": 0.6397519,
+          "timeCost": 14.0943718,
           "moneyCost": 2.5,
-          "totalCost": 21.4031067
+          "totalCost": 16.5943718
         },
         {
           "type": 1,
@@ -9705,26 +9634,10 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.358095229,
-      "timeCost": 7.889195,
-      "moneyCost": 14.0,
-      "totalCost": 21.8891945
-    },
-    "state": 4,
-    "rideOffer": {
-      "expectedWaitingTime": 0.157619044,
-      "expectedTripTime": 0.2004762,
-      "fare": {
-        "baseFare": 14.0,
-        "surgeMultiplier": 1.0,
-        "total": 14.0,
-        "driverCut": 9.38,
-        "uberCut": 4.62
-      }
-    },
-    "rideOfferStatus": 3,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 5.66666651,
       "y": 0.05,
@@ -9772,10 +9685,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.423945,
-          "timeCost": 196.172012,
+          "timeHours": 1.14315593,
+          "timeCost": 157.488678,
           "moneyCost": 2.5,
-          "totalCost": 198.672012
+          "totalCost": 159.988678
         },
         {
           "type": 1,
@@ -9786,112 +9699,12 @@
         }
       ]
     },
-    "trip": {
-      "state": 2,
-      "tripCreatedData": {
-        "createdTime": 3.80972219,
-        "pickUpPosition": {
-          "x": 0.0,
-          "y": 0.05,
-          "z": 7.66666651,
-          "normalized": {
-            "x": 0.0,
-            "y": 0.00652160076,
-            "z": 0.9999787,
-            "magnitude": 1.0,
-            "sqrMagnitude": 1.0
-          },
-          "magnitude": 7.66682959,
-          "sqrMagnitude": 58.7802734
-        },
-        "destination": {
-          "x": 5.33333349,
-          "y": 0.05,
-          "z": 0.0,
-          "normalized": {
-            "x": 0.999956,
-            "y": 0.009374588,
-            "z": 0.0,
-            "normalized": {
-              "x": 0.9999561,
-              "y": 0.009374589,
-              "z": 0.0,
-              "magnitude": 1.0,
-              "sqrMagnitude": 1.0
-            },
-            "magnitude": 0.99999994,
-            "sqrMagnitude": 0.9999999
-          },
-          "magnitude": 5.333568,
-          "sqrMagnitude": 28.4469452
-        },
-        "tripDistance": 13.0,
-        "expectedWaitingTime": 0.31,
-        "expectedTripTime": 0.38142857,
-        "fare": {
-          "baseFare": 23.5,
-          "surgeMultiplier": 1.0,
-          "total": 23.5,
-          "driverCut": 15.7450008,
-          "uberCut": 7.75499964
-        },
-        "expectedPickupTime": 4.11972237
-      },
-      "tripCreatedPassengerData": {
-        "expectedWaitingCost": 42.7076378,
-        "expectedTripTimeCost": 52.5481071,
-        "expectedValueSurplus": 79.91627,
-        "expectedUtilitySurplus": 2.56478357
-      },
-      "driverAssignedData": {
-        "matchedTime": 3.80972219,
-        "enRouteDistance": 9.333333
-      },
-      "driverDispatchedData": {
-        "driverDispatchedTime": 3.80972219,
-        "startPosition": {
-          "x": 7.66666651,
-          "y": 0.05,
-          "z": 6.0,
-          "normalized": {
-            "x": 0.7874946,
-            "y": 0.005135834,
-            "z": 0.6163001,
-            "magnitude": 1.0,
-            "sqrMagnitude": 0.99999994
-          },
-          "magnitude": 9.735517,
-          "sqrMagnitude": 94.78027
-        }
-      },
-      "pickedUpData": null,
-      "pickedUpPassengerData": null,
-      "pickedUpDriverData": null,
-      "droppedOffData": null,
-      "droppedOffPassengerData": null,
-      "droppedOffDriverData": null
-    },
-    "tripTypeChosen": 3,
-    "uberTripOption": {
-      "type": 3,
-      "timeHours": 0.691428542,
-      "timeCost": 95.2557449,
-      "moneyCost": 23.5,
-      "totalCost": 118.755745
-    },
-    "state": 2,
-    "rideOffer": {
-      "expectedWaitingTime": 0.31,
-      "expectedTripTime": 0.38142857,
-      "fare": {
-        "baseFare": 23.5,
-        "surgeMultiplier": 1.0,
-        "total": 23.5,
-        "driverCut": 15.7450008,
-        "uberCut": 7.75499964
-      }
-    },
-    "rideOfferStatus": 2,
+    "trip": null,
+    "tripTypeChosen": 2,
+    "uberTripOption": null,
+    "state": 5,
+    "rideOffer": null,
+    "rideOfferStatus": 1,
     "destination": {
       "x": 5.33333349,
       "y": 0.05,
@@ -9939,10 +9752,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.108529,
-          "timeCost": 18.6210651,
+          "timeHours": 0.8668232,
+          "timeCost": 14.5608931,
           "moneyCost": 2.5,
-          "totalCost": 21.1210651
+          "totalCost": 17.060894
         },
         {
           "type": 1,
@@ -9955,10 +9768,26 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.596190453,
+      "timeCost": 10.0148058,
+      "moneyCost": 19.0,
+      "totalCost": 29.0148048
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.3004762,
+      "expectedTripTime": 0.2957143,
+      "fare": {
+        "baseFare": 19.0,
+        "surgeMultiplier": 1.0,
+        "total": 19.0,
+        "driverCut": 12.7300005,
+        "uberCut": 6.2699995
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 4.0,
       "y": 0.05,
@@ -10006,10 +9835,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.754397,
-          "timeCost": 54.9164162,
+          "timeHours": 1.38085091,
+          "timeCost": 43.2236176,
           "moneyCost": 2.5,
-          "totalCost": 57.4164162
+          "totalCost": 45.7236176
         },
         {
           "type": 1,
@@ -10060,7 +9889,7 @@
           "sqrMagnitude": 145.0025
         },
         "tripDistance": 9.666666,
-        "expectedWaitingTime": 0.357619047,
+        "expectedWaitingTime": 0.119523823,
         "expectedTripTime": 0.28619045,
         "fare": {
           "baseFare": 18.5,
@@ -10069,33 +9898,33 @@
           "driverCut": 12.395,
           "uberCut": 6.10499954
         },
-        "expectedPickupTime": 4.30623055
+        "expectedPickupTime": 4.06813526
       },
       "tripCreatedPassengerData": {
-        "expectedWaitingCost": 11.1942492,
+        "expectedWaitingCost": 3.741354,
         "expectedTripTimeCost": 8.95838,
-        "expectedValueSurplus": 18.7637863,
-        "expectedUtilitySurplus": 0.849405169
+        "expectedValueSurplus": 14.5238838,
+        "expectedUtilitySurplus": 0.6574719
       },
       "driverAssignedData": {
         "matchedTime": 3.94861126,
-        "enRouteDistance": 11.0
+        "enRouteDistance": 2.666667
       },
       "driverDispatchedData": {
         "driverDispatchedTime": 3.94861126,
         "startPosition": {
-          "x": 3.66666675,
+          "x": 1.33333337,
           "y": 0.05,
-          "z": 0.0,
+          "z": 6.0,
           "normalized": {
-            "x": 0.999907,
-            "y": 0.0136350961,
-            "z": 0.0,
+            "x": 0.216923282,
+            "y": 0.008134623,
+            "z": 0.976154745,
             "magnitude": 1.0,
             "sqrMagnitude": 0.99999994
           },
-          "magnitude": 3.66700768,
-          "sqrMagnitude": 13.4469452
+          "magnitude": 6.14656639,
+          "sqrMagnitude": 37.7802773
         }
       },
       "pickedUpData": null,
@@ -10108,14 +9937,14 @@
     "tripTypeChosen": 3,
     "uberTripOption": {
       "type": 3,
-      "timeHours": 0.6438095,
-      "timeCost": 20.15263,
+      "timeHours": 0.405714273,
+      "timeCost": 12.6997337,
       "moneyCost": 18.5,
-      "totalCost": 38.65263
+      "totalCost": 31.1997337
     },
     "state": 2,
     "rideOffer": {
-      "expectedWaitingTime": 0.357619047,
+      "expectedWaitingTime": 0.119523823,
       "expectedTripTime": 0.28619045,
       "fare": {
         "baseFare": 18.5,
@@ -10173,10 +10002,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.681186259,
-          "timeCost": 15.6178341,
+          "timeHours": 0.495615631,
+          "timeCost": 11.3631811,
           "moneyCost": 2.5,
-          "totalCost": 18.1178341
+          "totalCost": 13.8631811
         },
         {
           "type": 1,
@@ -10189,10 +10018,26 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.310476184,
+      "timeCost": 7.118414,
+      "moneyCost": 13.5,
+      "totalCost": 20.6184139
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.119523808,
+      "expectedTripTime": 0.19095239,
+      "fare": {
+        "baseFare": 13.5,
+        "surgeMultiplier": 1.0,
+        "total": 13.5,
+        "driverCut": 9.045,
+        "uberCut": 4.455
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 9.0,
       "y": 0.05,
@@ -10247,10 +10092,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.904920936,
-          "timeCost": 17.79638,
+          "timeHours": 0.666603446,
+          "timeCost": 13.1095734,
           "moneyCost": 2.5,
-          "totalCost": 20.29638
+          "totalCost": 15.6095734
         },
         {
           "type": 1,
@@ -10263,10 +10108,26 @@
     },
     "trip": null,
     "tripTypeChosen": 2,
-    "uberTripOption": null,
-    "state": 5,
-    "rideOffer": null,
-    "rideOfferStatus": 1,
+    "uberTripOption": {
+      "type": 3,
+      "timeHours": 0.4247619,
+      "timeCost": 8.353464,
+      "moneyCost": 12.0,
+      "totalCost": 20.3534641
+    },
+    "state": 4,
+    "rideOffer": {
+      "expectedWaitingTime": 0.262380958,
+      "expectedTripTime": 0.162380949,
+      "fare": {
+        "baseFare": 12.0,
+        "surgeMultiplier": 1.0,
+        "total": 12.0,
+        "driverCut": 8.04,
+        "uberCut": 3.9599998
+      }
+    },
+    "rideOfferStatus": 3,
     "destination": {
       "x": 3.0,
       "y": 0.05,
@@ -10307,10 +10168,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.77554846,
-          "timeCost": 197.923615,
+          "timeHours": 1.36310542,
+          "timeCost": 151.94783,
           "moneyCost": 2.5,
-          "totalCost": 200.423615
+          "totalCost": 154.44783
         },
         {
           "type": 1,
@@ -10367,10 +10228,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 0.7189273,
-          "timeCost": 11.5674229,
+          "timeHours": 0.5444752,
+          "timeCost": 8.760517,
           "moneyCost": 2.5,
-          "totalCost": 14.0674229
+          "totalCost": 11.2605171
         },
         {
           "type": 1,
@@ -10434,10 +10295,10 @@
       "substitutes": [
         {
           "type": 2,
-          "timeHours": 1.23085916,
-          "timeCost": 20.9658165,
+          "timeHours": 0.932687342,
+          "timeCost": 15.8869123,
           "moneyCost": 2.5,
-          "totalCost": 23.4658165
+          "totalCost": 18.3869133
         },
         {
           "type": 1,

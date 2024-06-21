@@ -11,6 +11,8 @@ public class AgentOverheadReaction : MonoBehaviour
     string text;
     bool isBold;
 
+    bool receivedOffer;
+
     bool addPadding;
 
     float durationBeforeFade = 0.8f;
@@ -20,6 +22,7 @@ public class AgentOverheadReaction : MonoBehaviour
         Transform textContainer = transform.GetChild(0);
         canvasGroup = transform.GetComponent<CanvasGroup>();
         Transform textComponent = textContainer.Find("Text");
+        Transform text2Component = textContainer.Find("Text2");
         textMeshPro = textComponent.GetComponent<TextMeshProUGUI>();
         textMeshPro.color = color;
         textMeshPro.text = text;
@@ -28,6 +31,14 @@ public class AgentOverheadReaction : MonoBehaviour
         {
             HorizontalLayoutGroup horizontalLayoutGroup = textContainer.GetComponent<HorizontalLayoutGroup>();
             horizontalLayoutGroup.padding = new RectOffset(30, 30, 0, 0);
+        }
+        if (!receivedOffer)
+        {
+            text2Component.gameObject.SetActive(true);
+            TextMeshProUGUI text2 = text2Component.GetComponent<TextMeshProUGUI>();
+            text2.color = ColorScheme.red;
+            text2.text = "🚫";
+            text2.fontStyle = FontStyles.Bold;
         }
 
         StartCoroutine(ScheduleActions());
@@ -72,7 +83,7 @@ public class AgentOverheadReaction : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false, float durationBeforeFade = 0.8f, bool addPadding = false)
+    public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false, float durationBeforeFade = 0.8f, bool addPadding = false, bool receivedOffer = true)
     {
         Transform statTextPrefab = Resources.Load<Transform>("AgentReaction");
         Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity, parent);
@@ -84,6 +95,7 @@ public class AgentOverheadReaction : MonoBehaviour
         agentStatusTextComponent.GetComponent<Canvas>().sortingOrder = 1;
         // Set font style
         agentStatusTextComponent.isBold = isBold;
+        agentStatusTextComponent.receivedOffer = receivedOffer;
         agentStatusTextComponent.addPadding = addPadding;
         return agentStatusTextComponent;
     }

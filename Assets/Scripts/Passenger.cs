@@ -39,6 +39,8 @@ public class Passenger : MonoBehaviour
 
     Animator passengerAnimator;
 
+
+
     public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, SimulationSettings simSettings, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f)
     {
 
@@ -197,6 +199,8 @@ public class Passenger : MonoBehaviour
             person.tripTypeChosen = person.economicParameters.GetBestSubstitute().type;
             person.rideOfferStatus = RideOfferStatus.NoneReceived;
             StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.NoRideOffer));
+            ShowPassengerReaction(person.tripTypeChosen, receivedRideOffer: false);
+
         }
         else
         {
@@ -261,6 +265,8 @@ public class Passenger : MonoBehaviour
                 // Debug.Log("Passenger " + id + " is hailing a taxi");
                 person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
                 person.SetState(PassengerState.AssignedToTrip);
+                ShowPassengerReaction(TripType.Uber, receivedRideOffer: true);
+
             }
             else
             {
@@ -268,6 +274,8 @@ public class Passenger : MonoBehaviour
                 // Debug.Log("Passenger " + id + " is giving up");
                 person.SetState(PassengerState.RejectedRideOffer);
                 StartCoroutine(DespawnPassenger(duration: 1.5f, DespawnReason.RejectedRideOffer));
+                ShowPassengerReaction(person.tripTypeChosen, receivedRideOffer: true);
+
             }
         }
 
@@ -387,47 +395,62 @@ public class Passenger : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator DespawnPassenger(float duration, DespawnReason reason)
+    public void ShowPassengerReaction(TripType tripType, bool receivedRideOffer)
     {
-        if (city.simulationSettings.showPassengerReactions)
-        {
-
-            Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
+        Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
         {
             { TripType.Uber, "🚕" },
             { TripType.Walking, "🚶" },
             { TripType.PublicTransport, "🚌" },
         };
-            Vector3 reactionPosition = Vector3.up * (passengerScale * 0.3f + 0.2f);
-            if (reason == DespawnReason.RejectedRideOffer)
-            {
-                string reaction = tripTypeToEmoji[person.tripTypeChosen];
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.purple);
-            }
-            else if (reason == DespawnReason.NoRideOffer)
-            {
-                string reaction = tripTypeToEmoji[person.tripTypeChosen] + "📵";
-                AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.red);
-            }
-            else if (reason == DespawnReason.DroppedOff)
-            {
-                float surplus = person.trip.droppedOffPassengerData.utilitySurplus;
-                int surplusCeil = Mathf.CeilToInt(surplus);
-                // Add one smiley face per unit of utility surplus
-                if (surplusCeil > 0)
-                {
-                    string reaction = new string('+', surplusCeil);
-
-                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.green, isBold: true, addPadding: true);
-                }
-                else
-                {
-                    string reaction = "😐";
-                    AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.yellow, isBold: false);
-
-                }
-            }
+        Vector3 reactionPosition = new Vector3(-0.5f, passengerScale * 0.3f + 0.2f, 0);
+        // if (receivedRideOffer)
+        // {
+        if (tripType == TripType.Uber)
+        {
+            string reaction = tripTypeToEmoji[tripType];
+            AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.yellow);
         }
+        else
+        {
+            string reaction = tripTypeToEmoji[tripType];
+            AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.purple, receivedOffer: receivedRideOffer);
+        }
+        // }
+        // else
+        // {
+        //     string tripTypeReaction = tripTypeToEmoji[tripType];
+        //     Vector3 tripTypeReactionPosition = reactionPosition + Vector3.right * -0.2f;
+        //     string noOfferReaction = "🚫";
+        //     Vector3 noOfferReactionPosition = reactionPosition + Vector3.right * 0.2f;
+        //     AgentOverheadReaction.Create(transform, tripTypeReactionPosition, tripTypeReaction, ColorScheme.purple);
+
+        // }
+    }
+
+    public IEnumerator DespawnPassenger(float duration, DespawnReason reason)
+    {
+        // if (city.simulationSettings.showPassengerReactions)
+        // {
+        // if (reason == DespawnReason.DroppedOff)
+        // {
+        //     float surplus = person.trip.droppedOffPassengerData.utilitySurplus;
+        //     int surplusCeil = Mathf.CeilToInt(surplus);
+        //     // Add one smiley face per unit of utility surplus
+        //     if (surplusCeil > 0)
+        //     {
+        //         string reaction = new string('+', surplusCeil);
+
+        //         AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.green, isBold: true, addPadding: true);
+        //     }
+        //     else
+        //     {
+        //         string reaction = "😐";
+        //         AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.yellow, isBold: false);
+
+        //     }
+        // }
+        // }
 
         Transform despawnAnimationPrefab = Resources.Load<Transform>("DespawnAnimation");
 
