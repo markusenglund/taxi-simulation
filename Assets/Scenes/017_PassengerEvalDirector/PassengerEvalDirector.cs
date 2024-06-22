@@ -107,15 +107,21 @@ public class PassengerEvalDirector : MonoBehaviour
 
             if (passenger.person.id == 44 || passenger.person.id == 3)
             {
-                Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
-                Vector3 statsPosition = new Vector3(-0.24f, 0.19f, -0.02f);
-                Quaternion rotation = Quaternion.Euler(0, 5, 0);
-
-                PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
-                spawnedPassengerStats.Add(passenger.person.id);
+                StartCoroutine(SpawnPassengerStats(passenger));
             }
 
 
         }
+    }
+
+    IEnumerator SpawnPassengerStats(Passenger passenger)
+    {
+        spawnedPassengerStats.Add(passenger.person.id);
+        yield return new WaitForSeconds(0.5f);
+        Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
+        Vector3 statsPosition = new Vector3(-0.24f, 0.19f, -0.02f);
+        Quaternion rotation = Quaternion.Euler(0, 5, 0);
+
+        PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
     }
 }
