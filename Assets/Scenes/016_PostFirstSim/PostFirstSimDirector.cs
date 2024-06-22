@@ -54,8 +54,28 @@ public class PostFirstSimDirector : MonoBehaviour
         // PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
         // Debug.Log(savedPersons.Length);
         simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
-
         StartCoroutine(Scene());
+        LogFocusPassengerOptions();
+    }
+
+    void LogFocusPassengerOptions()
+    {
+        PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
+        Debug.Log(savedPersons.Length);
+        // Sort passengers by the totalCost of bestSubstitute, starting from the higher cost
+        List<PassengerPerson> sortedPersons = savedPersons
+            .Where(person => person.rideOfferStatus == RideOfferStatus.NoneReceived)
+            .OrderByDescending(person => person.economicParameters.timePreference)
+            .ToList();
+        // Show the best substitute cost, timeSensitivity, hourlyIncome, and time cost of best substitute for the top 5 passengers
+        Debug.Log("Top 5 passengers who were screwed by not getting a ride offer:");
+        for (int i = 0; i < 5; i++)
+        {
+            PassengerPerson person = sortedPersons[i];
+            TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
+            Debug.Log($"Person {person.id} - Spawn position: {person.startPosition} Best substitute cost: {bestSubstitute.totalCost}, timeSensitivity: {person.economicParameters.timePreference}, hourlyIncome: {person.economicParameters.hourlyIncome}, time of best substitute: {bestSubstitute.timeHours}");
+        }
+
     }
 
     IEnumerator Scene()
