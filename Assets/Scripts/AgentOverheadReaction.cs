@@ -46,7 +46,7 @@ public class AgentOverheadReaction : MonoBehaviour
 
     void Update()
     {
-        transform.rotation = Quaternion.Euler(-Camera.main.transform.rotation.eulerAngles.x / 2, Camera.main.transform.rotation.eulerAngles.y + 180, 0);
+        transform.rotation = Quaternion.LookRotation(-Camera.main.transform.forward);
     }
 
     private IEnumerator ScheduleActions()
