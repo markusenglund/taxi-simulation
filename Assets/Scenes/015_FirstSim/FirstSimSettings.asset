@@ -15,7 +15,7 @@ MonoBehaviour:
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
-  randomSeed: 1
+  randomSeed: 3
   simulationLengthHours: 4
   driverSpeed: 35
   walkingSpeed: 3.5
@@ -28,7 +28,7 @@ MonoBehaviour:
   numDrivers: 6
   maxSessionLength: 4
   passengerMedianIncome: 20
-  passengerIncomeSigma: 0.85
+  passengerIncomeSigma: 0.9
   demandIndexMultiplier: 1
   expectedPassengersByHour:
   - 10
@@ -38,5 +38,7 @@ MonoBehaviour:
   - 37
   - 0
   showDriverEarnings: 0
+  showPassengerCosts: 1
   showPassengerReactions: 1
   passengerScale: 4
+  driverScale: 1
