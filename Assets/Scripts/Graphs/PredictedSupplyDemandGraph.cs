@@ -355,8 +355,8 @@ public class PredictedSupplyDemandGraph : MonoBehaviour
         passengersLegendLine = Instantiate(lrPrefab);
         actualPassengersLegendLine = Instantiate(lrPrefab);
 
-        CreateLegend(x: 30, passengersLegendLine, predictedPassengersLineColor, "Predicted passengers/hr");
-        CreateLegend(x: 570, actualPassengersLegendLine, actualPassengersLineColor, "Actual passengers/hr");
+        CreateLegend(x: 100, passengersLegendLine, predictedPassengersLineColor, "Predicted agents/hr");
+        CreateLegend(x: 570, actualPassengersLegendLine, actualPassengersLineColor, "Actual agents/hr");
     }
 
     private void CreateLegend(float x, LineRenderer legendDot, Color color, string text)

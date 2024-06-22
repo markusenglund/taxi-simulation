@@ -33,7 +33,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
     float maxX;
     float minX = 0f;
 
-    string headingText = "Passenger decision";
+    string headingText = "Uber vs Substitutes";
 
     City city;
 
@@ -318,8 +318,8 @@ public class PassengerTripTypeGraph : MonoBehaviour
         substituteLegendLine = Instantiate(lrPrefab);
 
 
-        CreateLegend(x: 240, uberLegendLine, uberLineColor, "Uber");
-        CreateLegend(x: 620, substituteLegendLine, substituteLineColor, "Substitute");
+        CreateLegend(x: 80, uberLegendLine, uberLineColor, "Ubers requested/hr");
+        CreateLegend(x: 560, substituteLegendLine, substituteLineColor, "Substitutes taken/hr");
 
     }
 
