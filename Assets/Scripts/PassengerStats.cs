@@ -227,9 +227,12 @@ public class PassengerStats : MonoBehaviour
         {
             for (int i = 1; i < 4; i++)
             {
-                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().font = notoEmoji;
-                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().fontSize = 12;
-                uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>().text = "📵";
+                TextMeshProUGUI uberRowText = uberRow.GetChild(i).Find("Text").GetComponent<TextMeshProUGUI>();
+                uberRowText.font = notoEmoji;
+                uberRowText.fontSize = 10;
+                uberRowText.color = ColorScheme.red;
+                uberRowText.fontStyle = FontStyles.Bold;
+                uberRowText.text = "🚫";
             }
         }
 
