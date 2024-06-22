@@ -244,7 +244,6 @@ public class City : MonoBehaviour
     public Passenger[] SpawnSavedPassengers(float scaleFactor)
     {
         PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simulationSettings.randomSeed + "_016");
-        Debug.Log(savedPersons.Length);
 
         foreach (PassengerPerson person in savedPersons)
         {

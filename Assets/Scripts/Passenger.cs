@@ -65,6 +65,11 @@ public class Passenger : MonoBehaviour
         return passenger;
     }
 
+    public void SetMode(PassengerMode mode)
+    {
+        this.mode = mode;
+    }
+
     static private void SetDressColor(Passenger passenger, float hourlyIncome)
     {
 
@@ -419,16 +424,6 @@ public class Passenger : MonoBehaviour
             string reaction = tripTypeToEmoji[tripType];
             AgentOverheadReaction.Create(transform, reactionPosition, reaction, ColorScheme.purple, receivedOffer: receivedRideOffer);
         }
-        // }
-        // else
-        // {
-        //     string tripTypeReaction = tripTypeToEmoji[tripType];
-        //     Vector3 tripTypeReactionPosition = reactionPosition + Vector3.right * -0.2f;
-        //     string noOfferReaction = "🚫";
-        //     Vector3 noOfferReactionPosition = reactionPosition + Vector3.right * 0.2f;
-        //     AgentOverheadReaction.Create(transform, tripTypeReactionPosition, tripTypeReaction, ColorScheme.purple);
-
-        // }
     }
 
     public IEnumerator DespawnPassenger(float duration, DespawnReason reason)

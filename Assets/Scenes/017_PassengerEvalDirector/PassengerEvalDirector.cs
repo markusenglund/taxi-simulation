@@ -40,7 +40,7 @@ public class PassengerEvalDirector : MonoBehaviour
         finalLookAtPosition = new Vector3(5.5f, 5.7f, cityRightEdge);
     }
 
-    void Start()
+    async void Start()
     {
 
         Camera.main.transform.position = finalCameraPosition;
@@ -52,6 +52,8 @@ public class PassengerEvalDirector : MonoBehaviour
         // Debug.Log(savedPersons.Length);
         simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
         StartCoroutine(Scene());
+
+
     }
     IEnumerator Scene()
     {
@@ -69,11 +71,14 @@ public class PassengerEvalDirector : MonoBehaviour
         float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
 
         Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
-        Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
 
         Camera.main.transform.position = passengerCameraPosition;
         Camera.main.transform.LookAt(focusPassengerPosition);
         Camera.main.fieldOfView = 75;
+
+        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns);
+        // Set time to 1/10th of the simulation time
+        Time.timeScale = 0.1f;
     }
 
     void Update()
@@ -86,6 +91,10 @@ public class PassengerEvalDirector : MonoBehaviour
             {
                 continue;
             }
+            if (passengers[i].person.id == 44 || passengers[i].person.id == 3)
+            {
+                passengers[i].SetMode(PassengerMode.Inactive);
+            }
             // Skip passengers that hasn't received a ride offer yet
             if (passengers[i].person.state == PassengerState.BeforeSpawn || passengers[i].person.state == PassengerState.Idling)
             {
@@ -96,7 +105,7 @@ public class PassengerEvalDirector : MonoBehaviour
             Passenger passenger = passengers[i];
 
 
-            if (passenger.person.id == 44)
+            if (passenger.person.id == 44 || passenger.person.id == 3)
             {
                 Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
                 Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
