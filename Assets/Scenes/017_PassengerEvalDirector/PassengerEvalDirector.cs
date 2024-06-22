@@ -1,0 +1,110 @@
+using System.Collections;
+using UnityEngine;
+using Random = System.Random;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using System;
+
+public class PassengerEvalDirector : MonoBehaviour
+{
+    [SerializeField] private Transform cityPrefab;
+    [SerializeField] public SimulationSettings simSettings;
+    [SerializeField] public GraphSettings graphSettings;
+
+    float simulationStartTime = 0;
+
+    City city;
+
+    Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
+    float timeWhenFocusPassengerSpawns = 2.3f;
+
+
+    Vector3 finalCameraPosition;
+    Vector3 finalLookAtPosition;
+
+    SimulationInfoGroup simulationInfoGroup;
+
+    // A set of passenger IDs that have already spawned a PassengerStats object
+    HashSet<int> spawnedPassengerStats = new HashSet<int>();
+
+    void Awake()
+    {
+        city = City.Create(cityPrefab, cityPosition.x, cityPosition.y, simSettings, graphSettings);
+        Time.captureFramerate = 60;
+
+        float cityRightEdge = cityPosition.z + 8;
+
+        finalCameraPosition = new Vector3(14, 16, cityRightEdge);
+        finalLookAtPosition = new Vector3(5.5f, 5.7f, cityRightEdge);
+    }
+
+    void Start()
+    {
+
+        Camera.main.transform.position = finalCameraPosition;
+        Camera.main.transform.LookAt(finalLookAtPosition);
+        Camera.main.fieldOfView = 30;
+        TimeUtils.SetSimulationStartTime(simulationStartTime);
+        Time.timeScale = 1f;
+        // PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
+        // Debug.Log(savedPersons.Length);
+        simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
+        StartCoroutine(Scene());
+    }
+    IEnumerator Scene()
+    {
+        PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Regular);
+        PassengerTripTypeGraph.Create(city);
+        StartCoroutine(simulationInfoGroup.FadeInSchedule());
+
+        // Set the canvas to world space
+        yield return new WaitForSeconds(simulationStartTime);
+        Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        StartCoroutine(city.StartSimulation());
+
+
+        float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
+
+        Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
+        Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
+
+        Camera.main.transform.position = passengerCameraPosition;
+        Camera.main.transform.LookAt(focusPassengerPosition);
+        Camera.main.fieldOfView = 75;
+    }
+
+    void Update()
+    {
+        Passenger[] passengers = city.GetPassengers();
+        // For each passenger, create a PassengerStats object next to them
+        for (int i = 0; i < passengers.Length; i++)
+        {
+            if (spawnedPassengerStats.Contains(passengers[i].person.id))
+            {
+                continue;
+            }
+            // Skip passengers that hasn't received a ride offer yet
+            if (passengers[i].person.state == PassengerState.BeforeSpawn || passengers[i].person.state == PassengerState.Idling)
+            {
+                continue;
+            }
+
+
+            Passenger passenger = passengers[i];
+
+
+            if (passenger.person.id == 44)
+            {
+                Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
+                Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
+                PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person);
+                spawnedPassengerStats.Add(passenger.person.id);
+            }
+
+
+        }
+    }
+}
