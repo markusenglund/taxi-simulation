@@ -18,6 +18,8 @@ public class FirstSimDirector : MonoBehaviour
     Vector3 cityPositionAfterMove = new Vector3(4.5f, 0, 0f);
     public Random driverSpawnRandom;
 
+    SimulationInfoGroup simulationInfoGroup;
+
     void Awake()
     {
         city = City.Create(cityPrefab, 0, 0, simSettings, graphSettings, spawnInitialDrivers: false);
@@ -36,6 +38,7 @@ public class FirstSimDirector : MonoBehaviour
         Camera.main.transform.LookAt(cityMiddlePositionBeforeMove);
         StartCoroutine(SetSimulationStart());
         StartCoroutine(Scene());
+        simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
     }
 
     IEnumerator Scene()
@@ -61,6 +64,7 @@ public class FirstSimDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, 8, Ease.QuadraticOut, 30));
         yield return new WaitForSeconds(7);
         PassengerTripTypeGraph.Create(city);
+        StartCoroutine(simulationInfoGroup.FadeInSchedule());
         yield return new WaitForSeconds(2);
 
 

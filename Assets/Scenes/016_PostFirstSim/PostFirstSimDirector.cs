@@ -24,6 +24,7 @@ public class PostFirstSimDirector : MonoBehaviour
     Vector3 finalLookAtPosition;
 
     public Random driverSpawnRandom;
+    SimulationInfoGroup simulationInfoGroup;
 
     bool hasSavedPassengerData = false;
 
@@ -52,6 +53,8 @@ public class PostFirstSimDirector : MonoBehaviour
         Time.timeScale = 1f;
         // PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
         // Debug.Log(savedPersons.Length);
+        simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
+
         StartCoroutine(Scene());
     }
 
@@ -59,6 +62,8 @@ public class PostFirstSimDirector : MonoBehaviour
     {
         PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Regular);
         PassengerTripTypeGraph.Create(city);
+        StartCoroutine(simulationInfoGroup.FadeInSchedule());
+
         yield return new WaitForSeconds(0.1f);
         // Set the canvas to world space
         Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();

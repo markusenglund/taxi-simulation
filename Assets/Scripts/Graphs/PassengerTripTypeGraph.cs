@@ -24,7 +24,7 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(3100, 600);
+    Vector3 graphPosition = new Vector3(3100, 700);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;

@@ -9,28 +9,26 @@ public class SimulationInfoGroup : MonoBehaviour
     City city;
     TMP_Text numPassengersWhoGotRidesValueText;
     TMP_Text numPassengersWhoDidNotGetRidesValueText;
-    TMP_Text ridesCompletedValueText;
 
     void Start()
     {
         city = GameObject.Find("City(Clone)").GetComponent<City>();
         numPassengersWhoGotRidesValueText = transform.Find("Group1").Find("ValueText").GetComponent<TMP_Text>();
+        // Set color of the text
+        numPassengersWhoGotRidesValueText.color = ColorScheme.yellow;
         numPassengersWhoDidNotGetRidesValueText = transform.Find("Group2").Find("ValueText").GetComponent<TMP_Text>();
-        ridesCompletedValueText = transform.Find("Group3").Find("ValueText").GetComponent<TMP_Text>();
-        StartCoroutine(FadeInSchedule());
+        numPassengersWhoDidNotGetRidesValueText.color = ColorScheme.purple;
+        // StartCoroutine(FadeInSchedule());
     }
 
-    IEnumerator FadeInSchedule()
+    public IEnumerator FadeInSchedule()
     {
-        yield return new WaitForSeconds(33f);
         CanvasGroup group1CanvasGroup = transform.Find("Group1").GetComponent<CanvasGroup>();
         CanvasGroup group2CanvasGroup = transform.Find("Group2").GetComponent<CanvasGroup>();
-        CanvasGroup group3CanvasGroup = transform.Find("Group3").GetComponent<CanvasGroup>();
         StartCoroutine(FadeInGroup(group1CanvasGroup, 1f));
-        yield return new WaitForSeconds(0.4f);
+        // yield return new WaitForSeconds(0.4f);
         StartCoroutine(FadeInGroup(group2CanvasGroup, 1f));
-        yield return new WaitForSeconds(0.4f);
-        StartCoroutine(FadeInGroup(group3CanvasGroup, 1f));
+        yield return null;
     }
 
     IEnumerator FadeInGroup(CanvasGroup group, float duration)
@@ -55,8 +53,6 @@ public class SimulationInfoGroup : MonoBehaviour
         int numCompletedTrips = completedTrips.Count;
         float totalFare = completedTrips.Sum(trip => trip.tripCreatedData.fare.total);
         float totalDistance = completedTrips.Sum(trip => trip.tripCreatedData.tripDistance);
-
-        ridesCompletedValueText.text = numCompletedTrips.ToString();
 
         PassengerPerson[] passengers = city.GetPassengerPeople();
         int numPassengersWhoGotRides = passengers.Count(passenger => passenger.tripTypeChosen == TripType.Uber);
