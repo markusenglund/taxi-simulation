@@ -3,6 +3,7 @@ using UnityEngine;
 using Random = System.Random;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using System;
 
 public class PostFirstSimDirector : MonoBehaviour
@@ -11,9 +12,11 @@ public class PostFirstSimDirector : MonoBehaviour
     [SerializeField] public SimulationSettings simSettings;
     [SerializeField] public GraphSettings graphSettings;
 
-    [SerializeField] public float simulationStartTime = 4;
+    float simulationStartTime = 0;
 
     City city;
+
+    // private float simulationStartTime = 0.1f;
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
     Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
@@ -84,11 +87,10 @@ public class PostFirstSimDirector : MonoBehaviour
         PassengerTripTypeGraph.Create(city);
         StartCoroutine(simulationInfoGroup.FadeInSchedule());
 
-        yield return new WaitForSeconds(0.1f);
         // Set the canvas to world space
+        yield return new WaitForSeconds(simulationStartTime);
         Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
-        yield return new WaitForSeconds(simulationStartTime);
         StartCoroutine(city.StartSimulation());
 
 
@@ -107,16 +109,14 @@ public class PostFirstSimDirector : MonoBehaviour
         yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
         yield return new WaitForSeconds(1.5f);
 
-
-
         Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
-        float duration = -1 + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
+        float duration = -1.5f + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
         StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
         StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
         StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
         // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
+        yield return new WaitForSeconds(duration);
 
-        yield return null;
     }
 
     void Update()
