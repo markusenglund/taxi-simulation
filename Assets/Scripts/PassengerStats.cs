@@ -75,34 +75,37 @@ public class PassengerStats : MonoBehaviour
     private IEnumerator ScheduleActions()
     {
         StartCoroutine(SpawnCard(duration: 1f));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(optionsHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
-        yield return new WaitForSeconds(3);
+        yield return WaitIfSlowMode(3);
         yield return StartCoroutine(SetTripOptions());
-        yield return new WaitForSeconds(9);
+        yield return WaitIfSlowMode(9);
 
         yield return StartCoroutine(ExpandCard(duration: 1f));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(attributesHeadingText, mode == PassengerStatMode.Slow ? 0.5f : 0.1f));
 
-        if (mode == PassengerStatMode.Slow)
-        {
-            yield return new WaitForSeconds(1);
-        }
+        yield return WaitIfSlowMode(1);
         yield return StartCoroutine(InstantiateStats());
-        if (mode == PassengerStatMode.Slow)
-        {
-            yield return new WaitForSeconds(19);
-        }
+        yield return WaitIfSlowMode(19);
         // Reveal total Uber cost
         StartCoroutine(FadeInText(uberRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         // Reveal total bus cost
         StartCoroutine(FadeInText(busRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         // Reveal total walking cost
         StartCoroutine(FadeInText(walkingRow.GetChild(3).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
         yield return null;
+    }
+
+    WaitForSeconds WaitIfSlowMode(float seconds)
+    {
+        if (mode == PassengerStatMode.Slow)
+        {
+            return new WaitForSeconds(seconds);
+        }
+        return null;
     }
 
     private IEnumerator SpawnCard(float duration)
@@ -128,12 +131,16 @@ public class PassengerStats : MonoBehaviour
         RectTransform passengerStatsSheetRect = transform.GetChild(0).GetComponent<RectTransform>();
         // Set dividing line to active
         dividingLine.gameObject.SetActive(true);
-        while (Time.time < startTime + duration)
+        if (mode == PassengerStatMode.Slow)
         {
-            float t = (Time.time - startTime) / duration;
-            float scaleFactor = EaseUtils.EaseInOutCubic(t);
-            passengerStatsSheetRect.sizeDelta = new Vector2(Mathf.Lerp(startWidth, finalWidth, scaleFactor), passengerStatsSheetRect.sizeDelta.y);
-            yield return null;
+            while (Time.time < startTime + duration)
+            {
+                float t = (Time.time - startTime) / duration;
+                float scaleFactor = EaseUtils.EaseInOutCubic(t);
+                passengerStatsSheetRect.sizeDelta = new Vector2(Mathf.Lerp(startWidth, finalWidth, scaleFactor), passengerStatsSheetRect.sizeDelta.y);
+                yield return null;
+            }
+
         }
         passengerStatsSheetRect.sizeDelta = new Vector2(finalWidth, passengerStatsSheetRect.sizeDelta.y);
     }
@@ -244,21 +251,21 @@ public class PassengerStats : MonoBehaviour
         StartCoroutine(FadeInCanvasGroup(head.GetComponent<CanvasGroup>(), 1));
         StartCoroutine(FadeInCanvasGroup(walkingRow.GetComponent<CanvasGroup>(), 1));
 
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(walkingRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(walkingRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(3);
+        yield return WaitIfSlowMode(3);
         StartCoroutine(FadeInCanvasGroup(busRow.GetComponent<CanvasGroup>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(busRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(busRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(3);
+        yield return WaitIfSlowMode(3);
         StartCoroutine(FadeInCanvasGroup(uberRow.GetComponent<CanvasGroup>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(uberRow.GetChild(1).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
-        yield return new WaitForSeconds(1);
+        yield return WaitIfSlowMode(1);
         StartCoroutine(FadeInText(uberRow.GetChild(2).Find("Text").GetComponent<TextMeshProUGUI>(), 1));
 
 
