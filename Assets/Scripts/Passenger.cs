@@ -164,7 +164,7 @@ public class Passenger : MonoBehaviour
     {
         StartCoroutine(SpawnPassenger());
         yield return new WaitForSeconds(1);
-        if (mode == PassengerMode.Active)
+        if (mode == PassengerMode.Active && !city.simulationEnded)
         {
             MakeTripDecision();
         }

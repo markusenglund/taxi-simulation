@@ -119,6 +119,11 @@ public class City : MonoBehaviour
 
     }
 
+    public void PauseSimulation()
+    {
+        simulationEnded = true;
+    }
+
     public Driver CreateDriver(DriverPerson driverPerson, Vector3 position)
     {
         Driver driver = Driver.Create(driverPerson, taxiPrefab, transform, position.x, position.z, simulationSettings, this);
@@ -210,7 +215,7 @@ public class City : MonoBehaviour
     IEnumerator createPassengers()
     {
         float simulationTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
-        while (simulationTime < simulationSettings.simulationLengthHours)
+        while (simulationTime < simulationSettings.simulationLengthHours && !simulationEnded)
         {
 
             float expectedPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
@@ -241,7 +246,7 @@ public class City : MonoBehaviour
         }
     }
 
-    public Passenger[] SpawnSavedPassengers(float scaleFactor)
+    public Passenger[] SpawnSavedPassengers()
     {
         PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simulationSettings.randomSeed + "_016");
 

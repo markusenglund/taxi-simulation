@@ -81,7 +81,7 @@ public class LineUpDirector : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         // Get all passenger who don't have state BeforeSpawn or Idling
-        Passenger[] passengers = city.SpawnSavedPassengers(1).Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
+        Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         Vector3 cameraPosition = new Vector3(0f, 4, -12);
         Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));

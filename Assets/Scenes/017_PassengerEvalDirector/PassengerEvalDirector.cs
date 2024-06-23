@@ -18,6 +18,8 @@ public class PassengerEvalDirector : MonoBehaviour
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
     Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
+    Vector3 firstCameraOffset = new Vector3(-1.8f, -0.1f, 0f);
+    Vector3 zoomedInCameraOffset = new Vector3(-0.3f, -0.7f, 0);
     float timeWhenFocusPassengerSpawns = 2.3f;
 
 
@@ -70,7 +72,7 @@ public class PassengerEvalDirector : MonoBehaviour
 
         float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
 
-        Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
+        Vector3 passengerCameraPosition = focusPassengerPosition + firstCameraOffset;
 
         Camera.main.transform.position = passengerCameraPosition;
         Camera.main.transform.LookAt(focusPassengerPosition);
@@ -78,8 +80,8 @@ public class PassengerEvalDirector : MonoBehaviour
 
         yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns);
         // Set time to 1/10th of the simulation time
-        yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(SlowTime(2));
+        // yield return new WaitForSeconds(0.5f);
+        // yield return StartCoroutine(SlowTime(2));
 
     }
 
@@ -93,27 +95,11 @@ public class PassengerEvalDirector : MonoBehaviour
             {
                 continue;
             }
-            if (passengers[i].person.id == 44)
-            {
-                passengers[i].SetMode(PassengerMode.Inactive);
-            }
-            // Skip passengers that hasn't received a ride offer yet
-            // if (passengers[i].person.state == PassengerState.BeforeSpawn || passengers[i].person.state == PassengerState.Idling)
-            // {
-            //     continue;
-            // }
-
-
             Passenger passenger = passengers[i];
-
-
-            if (passenger.person.id == 44 || passenger.person.id == 3)
+            if (passenger.person.id == 44)// || passenger.person.id == 3)
             {
-                StartCoroutine(SpawnPassengerStats(passenger));
-                StartCoroutine(ShrinkAndHoverPassengers(passengers));
+                StartCoroutine(FocusPassengerSchedule(passenger));
             }
-
-
         }
     }
 
@@ -130,7 +116,36 @@ public class PassengerEvalDirector : MonoBehaviour
         }
     }
 
-    IEnumerator ShrinkAndHoverPassengers(Passenger[] passengers)
+    IEnumerator FocusPassengerSchedule(Passenger passenger)
+    {
+        passenger.SetMode(PassengerMode.Inactive);
+        spawnedPassengerStats.Add(passenger.person.id);
+
+        city.PauseSimulation();
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(SpawnPassengerStats(passenger));
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 15, 3, Ease.Cubic));
+        yield return new WaitForSeconds(2f);
+        Animator animator = passenger.GetComponentInChildren<Animator>();
+        animator.SetTrigger("BeDisappointed");
+        yield return new WaitForSeconds(26f);
+        StartCoroutine(HoverPassengers(city.GetPassengers()));
+
+        StartCoroutine(ShrinkPassengers(city.GetPassengers()));
+        Vector3 zoomedInCameraPosition = focusPassengerPosition + zoomedInCameraOffset;
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(CameraUtils.MoveCamera(zoomedInCameraPosition, 2, Ease.Cubic));
+
+        float originalScale = simSettings.passengerScale;
+        simSettings.passengerScale = 1;
+        yield return new WaitForSeconds(0.5f);
+        city.SpawnSavedPassengers();
+        yield return new WaitForSeconds(2);
+        simSettings.passengerScale = originalScale;
+    }
+
+
+    IEnumerator ShrinkPassengers(Passenger[] passengers)
     {
         foreach (Passenger passenger in passengers)
         {
@@ -139,12 +154,28 @@ public class PassengerEvalDirector : MonoBehaviour
             {
                 continue;
             }
-            StartCoroutine(ShrinkAndHoverPassenger(passenger));
+            StartCoroutine(ShrinkPassenger(passenger));
+            yield return new WaitForSeconds(0.1f);
         }
         yield return null;
     }
 
-    IEnumerator ShrinkAndHoverPassenger(Passenger passenger)
+    IEnumerator HoverPassengers(Passenger[] passengers)
+    {
+        foreach (Passenger passenger in passengers)
+        {
+            bool isPassengerDestroyed = passenger == null;
+            if (isPassengerDestroyed)
+            {
+                continue;
+            }
+            StartCoroutine(HoverPassenger(passenger));
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield return null;
+    }
+
+    IEnumerator ShrinkPassenger(Passenger passenger)
     {
         passenger.SetMode(PassengerMode.Inactive);
         yield return new WaitForSeconds(1);
@@ -167,7 +198,11 @@ public class PassengerEvalDirector : MonoBehaviour
             passenger.transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
             yield return null;
         }
+    }
 
+    IEnumerator HoverPassenger(Passenger passenger)
+    {
+        yield return new WaitForSeconds(0.5f);
         float hoverDuration = 1;
         Vector3 startPosition = passenger.transform.position;
         Vector3 hoverPosition = startPosition + new Vector3(0, 6f, 0);
@@ -179,17 +214,15 @@ public class PassengerEvalDirector : MonoBehaviour
             passenger.transform.position = Vector3.Lerp(startPosition, hoverPosition, hoverFactor);
             yield return null;
         }
-
     }
 
     IEnumerator SpawnPassengerStats(Passenger passenger)
     {
-        spawnedPassengerStats.Add(passenger.person.id);
-        yield return new WaitForSeconds(0.5f);
         Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
         Vector3 statsPosition = new Vector3(-0.24f, 0.19f, -0.02f);
-        Quaternion rotation = Quaternion.Euler(0, 5, 0);
+        Quaternion rotation = Quaternion.Euler(0, 25, 0);
 
         PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
+        yield return null;
     }
 }
