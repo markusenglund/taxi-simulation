@@ -78,7 +78,9 @@ public class PassengerEvalDirector : MonoBehaviour
 
         yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns);
         // Set time to 1/10th of the simulation time
-        Time.timeScale = 0.1f;
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(SlowTime(2));
+
     }
 
     void Update()
@@ -91,7 +93,7 @@ public class PassengerEvalDirector : MonoBehaviour
             {
                 continue;
             }
-            if (passengers[i].person.id == 44 || passengers[i].person.id == 3)
+            if (passengers[i].person.id == 44)
             {
                 passengers[i].SetMode(PassengerMode.Inactive);
             }
@@ -111,6 +113,19 @@ public class PassengerEvalDirector : MonoBehaviour
             }
 
 
+        }
+    }
+
+    IEnumerator SlowTime(float duration)
+    {
+        float startTimeScale = Time.timeScale;
+        float startTime = Time.time;
+        float finalTimeScale = 0.1f;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            Time.timeScale = Mathf.Lerp(startTimeScale, finalTimeScale, t);
+            yield return null;
         }
     }
 
