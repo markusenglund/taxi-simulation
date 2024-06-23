@@ -110,6 +110,7 @@ public class PassengerEvalDirector : MonoBehaviour
             if (passenger.person.id == 44 || passenger.person.id == 3)
             {
                 StartCoroutine(SpawnPassengerStats(passenger));
+                StartCoroutine(ShrinkAndHoverPassengers(passengers));
             }
 
 
@@ -127,6 +128,58 @@ public class PassengerEvalDirector : MonoBehaviour
             Time.timeScale = Mathf.Lerp(startTimeScale, finalTimeScale, t);
             yield return null;
         }
+    }
+
+    IEnumerator ShrinkAndHoverPassengers(Passenger[] passengers)
+    {
+        foreach (Passenger passenger in passengers)
+        {
+            bool isPassengerDestroyed = passenger == null;
+            if (isPassengerDestroyed)
+            {
+                continue;
+            }
+            StartCoroutine(ShrinkAndHoverPassenger(passenger));
+        }
+        yield return null;
+    }
+
+    IEnumerator ShrinkAndHoverPassenger(Passenger passenger)
+    {
+        passenger.SetMode(PassengerMode.Inactive);
+        yield return new WaitForSeconds(1);
+        float shrinkDuration = 1;
+        if (passenger == null)
+        {
+            yield break;
+        }
+        Vector3 startScale = passenger.transform.localScale;
+        Vector3 finalScale = Vector3.one;
+        float shrinkStartTime = Time.time;
+        while (Time.time < shrinkStartTime + shrinkDuration)
+        {
+            float t = (Time.time - shrinkStartTime) / shrinkDuration;
+            float scaleFactor = EaseUtils.EaseInOutCubic(t);
+            if (passenger == null)
+            {
+                yield break;
+            }
+            passenger.transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
+            yield return null;
+        }
+
+        float hoverDuration = 1;
+        Vector3 startPosition = passenger.transform.position;
+        Vector3 hoverPosition = startPosition + new Vector3(0, 6f, 0);
+        float hoverStartTime = Time.time;
+        while (Time.time < hoverStartTime + hoverDuration)
+        {
+            float t = (Time.time - hoverStartTime) / hoverDuration;
+            float hoverFactor = EaseUtils.EaseInOutCubic(t);
+            passenger.transform.position = Vector3.Lerp(startPosition, hoverPosition, hoverFactor);
+            yield return null;
+        }
+
     }
 
     IEnumerator SpawnPassengerStats(Passenger passenger)
