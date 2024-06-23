@@ -5,6 +5,7 @@ using Random = System.Random;
 using System.Linq;
 using System;
 using TMPro;
+using Unity.VisualScripting;
 
 
 public class LineUpDirector : MonoBehaviour
@@ -49,7 +50,7 @@ public class LineUpDirector : MonoBehaviour
     List<Passenger> passengersWhoRejectedRideOffer = new List<Passenger>();
     List<Passenger> passengersWhoDidNotReceiveRideOffer = new List<Passenger>();
 
-    Color uberColor = ColorScheme.blue;
+    Color uberColor = ColorScheme.yellow;
     Color rejectedColor = ColorScheme.purple;
     Color noOfferColor = ColorScheme.red;
 
@@ -82,6 +83,8 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         // Get all passenger who don't have state BeforeSpawn or Idling
         Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
+        Passenger focusPassenger = Array.Find(passengers, p => p.person.id == 44);
+        StartCoroutine(SpawnPassengerStats(focusPassenger));
         Vector3 cameraPosition = new Vector3(0f, 4, -12);
         Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
@@ -113,6 +116,16 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(currentCameraPosition, currentCameraRotation, 2.5f, Ease.Cubic));
         yield return new WaitForSeconds(8f);
         StartCoroutine(ChangeGraphToBestSubstitute(passengers));
+    }
+
+    IEnumerator SpawnPassengerStats(Passenger passenger)
+    {
+        Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
+        Vector3 statsPosition = new Vector3(-0.24f, 0.19f, -0.02f);
+        Quaternion rotation = Quaternion.Euler(0, 5, 0);
+
+        PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
+        yield return null;
     }
 
     IEnumerator FadeInCanvas()
@@ -314,7 +327,7 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(8f);
 
         StartCoroutine(FadeInLegend("Legend/NoOfferLegend"));
-        string noOfferReactionEmoji = "📵";
+        string noOfferReactionEmoji = "🚫";
         foreach (Passenger passenger in passengersWhoDidNotReceiveRideOffer)
         {
             Vector3 reactionPosition = Vector3.up * (passenger.passengerScale * 0.3f + 0.1f);
