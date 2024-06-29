@@ -149,17 +149,17 @@ public class PostFirstSimDirector : MonoBehaviour
 
 
             // }
-            if (city.simulationEnded && !hasSavedPassengerData)
+        }
+        if (city.simulationEnded && !hasSavedPassengerData)
+        {
+            List<PassengerPerson> persons = new List<PassengerPerson>();
+            foreach (Passenger p in passengers)
             {
-                List<PassengerPerson> persons = new List<PassengerPerson>();
-                foreach (Passenger p in passengers)
-                {
-                    persons.Add(p.person);
-                }
-                Debug.Log($"Saving passenger data from {persons.Count} passengers");
-                SaveData.SaveObject(simSettings.randomSeed + "_016", persons);
-                hasSavedPassengerData = true;
+                persons.Add(p.person);
             }
+            Debug.Log($"Saving passenger data from {persons.Count} passengers");
+            SaveData.SaveObject(simSettings.randomSeed + "_016", persons);
+            hasSavedPassengerData = true;
         }
     }
 }

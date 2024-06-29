@@ -2,9 +2,6 @@ using System.Collections;
 using UnityEngine;
 using Random = System.Random;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using System;
 
 public class SecondSimDirector : MonoBehaviour
 {
@@ -14,152 +11,61 @@ public class SecondSimDirector : MonoBehaviour
 
     float simulationStartTime = 0;
 
-    City city;
+    City city1;
+    City city2;
 
-    // private float simulationStartTime = 0.1f;
-
-    Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
-    float timeWhenFocusPassengerSpawns = 2.3f;
-
-
-    Vector3 finalCameraPosition;
-    Vector3 finalLookAtPosition;
-
+    Vector3 city1Position = new Vector3(0f, 0, 0f);
+    Vector3 city2Position = new Vector3(12f, 0, 0f);
+    Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
+    Vector3 cameraPosition = new Vector3(10.5f, 11f, -6f);
     public Random driverSpawnRandom;
     SimulationInfoGroup simulationInfoGroup;
 
     bool hasSavedPassengerData = false;
 
     // A set of passenger IDs that have already spawned a PassengerStats object
-    HashSet<int> spawnedPassengerStats = new HashSet<int>();
-
     void Awake()
     {
-        city = City.Create(cityPrefab, cityPosition.x, cityPosition.y, simSettings, graphSettings);
         Time.captureFramerate = 60;
-
-        float cityRightEdge = cityPosition.z + 8;
-
-        finalCameraPosition = new Vector3(14, 16, cityRightEdge);
-        finalLookAtPosition = new Vector3(5.5f, 5.7f, cityRightEdge);
+        city1 = City.Create(cityPrefab, city1Position.x, city1Position.y, simSettings, graphSettings);
+        city2 = City.Create(cityPrefab, city2Position.x, city2Position.y, simSettings, graphSettings);
     }
 
     void Start()
     {
 
         driverSpawnRandom = new Random(simSettings.randomSeed);
-        Camera.main.transform.position = finalCameraPosition;
-        Camera.main.transform.LookAt(finalLookAtPosition);
-        Camera.main.fieldOfView = 30;
+        Camera.main.transform.position = cameraPosition;
+        Camera.main.transform.LookAt(middlePosition);
         TimeUtils.SetSimulationStartTime(simulationStartTime);
-        Time.timeScale = 1f;
-        // PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
-        // Debug.Log(savedPersons.Length);
         simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
         StartCoroutine(Scene());
-        LogFocusPassengerOptions();
-    }
-
-    void LogFocusPassengerOptions()
-    {
-        PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
-        Debug.Log(savedPersons.Length);
-        // Sort passengers by the totalCost of bestSubstitute, starting from the higher cost
-        List<PassengerPerson> sortedPersons = savedPersons
-            .Where(person => person.rideOfferStatus == RideOfferStatus.NoneReceived)
-            .OrderByDescending(person => person.economicParameters.timePreference)
-            .ToList();
-        // Show the best substitute cost, timeSensitivity, hourlyIncome, and time cost of best substitute for the top 5 passengers
-        Debug.Log("Top 5 passengers who were screwed by not getting a ride offer:");
-        for (int i = 0; i < 5; i++)
-        {
-            PassengerPerson person = sortedPersons[i];
-            TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
-            Debug.Log($"Person {person.id} - Spawn position: {person.startPosition} Spawn time: {person.timeSpawned} Best substitute cost: {bestSubstitute.totalCost}, timeSensitivity: {person.economicParameters.timePreference}, hourlyIncome: {person.economicParameters.hourlyIncome}, time of best substitute: {bestSubstitute.timeHours}");
-        }
-
     }
 
     IEnumerator Scene()
     {
-        PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Regular);
-        PassengerTripTypeGraph.Create(city);
-        StartCoroutine(simulationInfoGroup.FadeInSchedule());
+        // PredictedSupplyDemandGraph.Create(city, PassengerSpawnGraphMode.Regular);
+        // PassengerTripTypeGraph.Create(city);
+        // StartCoroutine(simulationInfoGroup.FadeInSchedule());
 
-        // Set the canvas to world space
-        yield return new WaitForSeconds(simulationStartTime);
-        Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        StartCoroutine(city.StartSimulation());
-
-
-        float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
-
-        Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
-        Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
-
-        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passengerCameraPosition, passengerCameraRotation, realTimeWhenFocusPassengerSpawns, Ease.Cubic, 60));
-
-        StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, realTimeWhenFocusPassengerSpawns, Ease.Cubic));
-        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns / 3f);
-
-        StartCoroutine(CameraUtils.RotateCamera(passengerCameraRotation, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
-        StartCoroutine(CameraUtils.ZoomCamera(75, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
-        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
-        yield return new WaitForSeconds(1.5f);
-
-        Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
-        float duration = -1.5f + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
-        StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
-        StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
-        StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
-        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
-        yield return new WaitForSeconds(duration);
-
+        StartCoroutine(city1.StartSimulation());
+        StartCoroutine(city2.StartSimulation());
+        yield return null;
     }
 
     void Update()
     {
-        Passenger[] passengers = city.GetPassengers();
-        // For each passenger, create a PassengerStats object next to them
-        for (int i = 0; i < passengers.Length; i++)
+        Passenger[] passengers = city2.GetPassengers();
+        if (city1.simulationEnded && !hasSavedPassengerData)
         {
-            if (spawnedPassengerStats.Contains(passengers[i].person.id))
+            List<PassengerPerson> persons = new List<PassengerPerson>();
+            foreach (Passenger p in passengers)
             {
-                continue;
+                persons.Add(p.person);
             }
-            // Skip passengers that hasn't received a ride offer yet
-            if (passengers[i].person.state == PassengerState.BeforeSpawn || passengers[i].person.state == PassengerState.Idling)
-            {
-                continue;
-            }
-
-
-            Passenger passenger = passengers[i];
-            // List<PassengerPerson> savedPersons = SaveData.LoadObject<List<PassengerPerson>>(simSettings.randomSeed + "_016");
-            // Debug.Log(savedPersons.Count);
-
-            // if (passenger.person.id == 44)
-            // {
-            //     Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
-            //     Vector3 statsPosition = new Vector3(-0.15f, 0.2f, 0);
-            //     PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, Quaternion.identity, passenger.person);
-            //     spawnedPassengerStats.Add(passenger.person.id);
-
-
-            // }
-            if (city.simulationEnded && !hasSavedPassengerData)
-            {
-                List<PassengerPerson> persons = new List<PassengerPerson>();
-                foreach (Passenger p in passengers)
-                {
-                    persons.Add(p.person);
-                }
-                Debug.Log($"Saving passenger data from {persons.Count} passengers");
-                SaveData.SaveObject(simSettings.randomSeed + "_016", persons);
-                hasSavedPassengerData = true;
-            }
+            Debug.Log($"Saving passenger data from {persons.Count} passengers");
+            SaveData.SaveObject(simSettings.randomSeed + "_020", persons);
+            hasSavedPassengerData = true;
         }
     }
 }
