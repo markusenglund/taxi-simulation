@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
+using System;
 
 
 public class FareGraph : MonoBehaviour
@@ -52,6 +53,10 @@ public class FareGraph : MonoBehaviour
     Color axisColor = new Color(192f / 255f, 192f / 255f, 192f / 255f, 1f);
 
     CanvasGroup canvasGroup;
+
+    TMP_Text staticValueText;
+    TMP_Text surgeValueText;
+
 
     float defaultLineWidth;
 
@@ -202,6 +207,15 @@ public class FareGraph : MonoBehaviour
             surgeLine.SetPosition(surgeLine.positionCount - 1, surgePosition);
             surgeLineDot.SetPosition(0, surgePosition);
             surgeLineDot.SetPosition(1, surgePosition);
+            bool isSurgeHigher = smoothedAverageSurgeFare > smoothedAverageStaticFare;
+            float avoidanceOffset = isSurgeHigher ? 15 : -15;
+            staticValueText.text = "$" + Math.Round(averageStaticFare, 1).ToString("F2");
+            Vector3 staticValuePosition = new Vector3(staticPosition.x + 18, Mathf.Max(staticPosition.y, zeroGraphPosition.y + 25) - avoidanceOffset, 0);
+            staticValueText.rectTransform.anchoredPosition = staticValuePosition;
+
+            surgeValueText.text = "$" + Math.Round(averageSurgeFare, 1).ToString("F2");
+            Vector3 surgeValuePosition = new Vector3(surgePosition.x + 18, Mathf.Max(surgePosition.y, zeroGraphPosition.y + 25) + avoidanceOffset, 0);
+            surgeValueText.rectTransform.anchoredPosition = surgeValuePosition;
 
             yield return null;
         }
@@ -391,6 +405,27 @@ public class FareGraph : MonoBehaviour
         surgeLineDot.widthCurve = AnimationCurve.Constant(0, 1, 6f);
         surgeLineDot.sortingOrder = 4;
         surgeLineDot.SetPositions(new Vector3[] { originPosition, originPosition });
+
+        staticValueText = Instantiate(legendTextPrefab, graphContainer);
+        staticValueText.rectTransform.pivot = new Vector2(0, 0);
+        staticValueText.rectTransform.anchorMin = new Vector2(0, 0);
+        staticValueText.rectTransform.anchorMax = new Vector2(0, 0);
+        staticValueText.text = "";
+        staticValueText.rectTransform.sizeDelta = new Vector2(300, 30);
+        staticValueText.fontSize = 42;
+        staticValueText.color = staticLineColor;
+        staticValueText.fontStyle = FontStyles.Bold;
+
+        surgeValueText = Instantiate(legendTextPrefab, graphContainer);
+        surgeValueText.rectTransform.pivot = new Vector2(0, 0);
+        surgeValueText.rectTransform.anchorMin = new Vector2(0, 0);
+        surgeValueText.rectTransform.anchorMax = new Vector2(0, 0);
+        surgeValueText.text = "";
+        surgeValueText.rectTransform.sizeDelta = new Vector2(300, 30);
+        surgeValueText.fontSize = 42;
+        surgeValueText.color = surgeLineColor;
+        surgeValueText.fontStyle = FontStyles.Bold;
+
 
     }
 
