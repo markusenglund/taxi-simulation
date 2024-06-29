@@ -82,7 +82,7 @@ public class City : MonoBehaviour
         }
         if (simulationSettings.showSurgeMultiplier)
         {
-            InstantiateSurgeMultiplierGraphic();
+            StartCoroutine(StartSurgeMultiplierGraphic());
         }
         if (spawnInitialDrivers)
         {
@@ -94,10 +94,6 @@ public class City : MonoBehaviour
     {
         SpawnAndRemoveDrivers();
         EndSimulation();
-        if (!simulationEnded)
-        {
-            UpdateSurgeMultiplier();
-        }
     }
 
     public IEnumerator StartSimulation()
@@ -111,10 +107,19 @@ public class City : MonoBehaviour
         resultsInfoBox = ResultsInfoBox.Create(ResultsInfoBoxPrefab, graphSettings.resultsInfoPos, this);
     }
 
-    void InstantiateSurgeMultiplierGraphic()
+    IEnumerator StartSurgeMultiplierGraphic()
     {
         surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
-
+        float intervalSimulationTime = 5f / 60f;
+        float intervalRealTime = TimeUtils.ConvertSimulationHoursDurationToRealSeconds(intervalSimulationTime);
+        yield return null; // Wait one tick so that drivers exist before starting the surge multiplier calculation
+        while (!simulationEnded)
+        {
+            UpdateSurgeMultiplier();
+            Debug.Log("Surge multiplier: " + surgeMultiplier);
+            surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
+            yield return new WaitForSeconds(intervalRealTime);
+        }
     }
 
     private void EndSimulation()
@@ -208,10 +213,6 @@ public class City : MonoBehaviour
 
             surgeMultiplier = newSurgeMultiplier;
 
-        }
-        if (simulationSettings.showSurgeMultiplier)
-        {
-            surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
         }
     }
 
