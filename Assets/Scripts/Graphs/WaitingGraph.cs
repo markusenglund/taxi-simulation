@@ -57,6 +57,8 @@ public class WaitingGraph : MonoBehaviour
     TMP_Text staticValueText;
     TMP_Text surgeValueText;
 
+    TMP_Text staticTotalValueText;
+    TMP_Text surgeTotalValueText;
 
     float defaultLineWidth;
 
@@ -88,7 +90,7 @@ public class WaitingGraph : MonoBehaviour
         graphContainer.sizeDelta = graphSize;
         defaultLineWidth = lrPrefab.widthMultiplier;
         InstantiateGraph();
-
+        InstantiateInfoGroup();
 
 
         StartCoroutine(Schedule());
@@ -111,6 +113,7 @@ public class WaitingGraph : MonoBehaviour
         StartCoroutine(SpawnCard(duration: 1));
         yield return new WaitForSeconds(1);
         StartCoroutine(UpdateCurves());
+        StartCoroutine(UpdateInfoGroup());
         yield return null;
     }
 
@@ -219,6 +222,19 @@ public class WaitingGraph : MonoBehaviour
             Vector3 surgeValuePosition = new Vector3(surgePosition.x + 18, Mathf.Max(surgePosition.y, zeroGraphPosition.y + 25) + avoidanceOffset, 0);
             surgeValueText.rectTransform.anchoredPosition = surgeValuePosition;
 
+            yield return null;
+        }
+    }
+
+    private IEnumerator UpdateInfoGroup()
+    {
+        while (true)
+        {
+            float staticTotalWaitTime = GetAverageExpectedWaitTime(staticCity.GetTrips()) * 60;
+            float surgeTotalWaitTime = GetAverageExpectedWaitTime(surgeCity.GetTrips()) * 60;
+
+            staticTotalValueText.text = Math.Round(staticTotalWaitTime).ToString() + " min";
+            surgeTotalValueText.text = Math.Round(surgeTotalWaitTime).ToString() + " min";
             yield return null;
         }
     }
@@ -438,6 +454,14 @@ public class WaitingGraph : MonoBehaviour
         CreateAxisValues();
         CreateHeaderText();
         CreateLegends();
+    }
+
+    private void InstantiateInfoGroup()
+    {
+        staticTotalValueText = transform.Find("SimulationInfoGroup/Group1/ValueText").GetComponent<TMP_Text>();
+        staticTotalValueText.color = staticLineColor;
+        surgeTotalValueText = transform.Find("SimulationInfoGroup/Group2/ValueText").GetComponent<TMP_Text>();
+        surgeTotalValueText.color = surgeLineColor;
     }
 
 

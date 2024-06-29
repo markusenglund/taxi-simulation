@@ -19,7 +19,6 @@ public class SecondSimDirector : MonoBehaviour
     Vector3 city2Position = new Vector3(12f, 0, 0f);
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
     Vector3 cameraPosition = new Vector3(10.5f, 11f, -6f);
-    SimulationInfoGroup simulationInfoGroup;
 
     bool hasSavedPassengerData = false;
 
@@ -37,7 +36,6 @@ public class SecondSimDirector : MonoBehaviour
         Camera.main.transform.position = cameraPosition;
         Camera.main.transform.LookAt(middlePosition);
         TimeUtils.SetSimulationStartTime(simulationStartTime);
-        simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
         StartCoroutine(Scene());
     }
 
