@@ -47,6 +47,7 @@ public class SecondSimDirector : MonoBehaviour
         // PassengerTripTypeGraph.Create(city);
         // StartCoroutine(simulationInfoGroup.FadeInSchedule());
         FareGraph.Create(city1, city2);
+        WaitingGraph.Create(city1, city2);
         StartCoroutine(city1.StartSimulation());
         StartCoroutine(city2.StartSimulation());
         yield return null;
