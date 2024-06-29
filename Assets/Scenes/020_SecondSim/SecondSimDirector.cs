@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class SecondSimDirector : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;
-    [SerializeField] public SimulationSettings simSettings;
+    [SerializeField] public SimulationSettings staticPriceSettings;
+    [SerializeField] public SimulationSettings surgePriceSettings;
     [SerializeField] public GraphSettings graphSettings;
 
     float simulationStartTime = 0;
@@ -18,7 +19,6 @@ public class SecondSimDirector : MonoBehaviour
     Vector3 city2Position = new Vector3(12f, 0, 0f);
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
     Vector3 cameraPosition = new Vector3(10.5f, 11f, -6f);
-    public Random driverSpawnRandom;
     SimulationInfoGroup simulationInfoGroup;
 
     bool hasSavedPassengerData = false;
@@ -27,14 +27,13 @@ public class SecondSimDirector : MonoBehaviour
     void Awake()
     {
         Time.captureFramerate = 60;
-        city1 = City.Create(cityPrefab, city1Position.x, city1Position.y, simSettings, graphSettings);
-        city2 = City.Create(cityPrefab, city2Position.x, city2Position.y, simSettings, graphSettings);
+        city1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
+        city2 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
     }
 
     void Start()
     {
 
-        driverSpawnRandom = new Random(simSettings.randomSeed);
         Camera.main.transform.position = cameraPosition;
         Camera.main.transform.LookAt(middlePosition);
         TimeUtils.SetSimulationStartTime(simulationStartTime);
@@ -64,7 +63,7 @@ public class SecondSimDirector : MonoBehaviour
                 persons.Add(p.person);
             }
             Debug.Log($"Saving passenger data from {persons.Count} passengers");
-            SaveData.SaveObject(simSettings.randomSeed + "_020", persons);
+            SaveData.SaveObject(surgePriceSettings.randomSeed + "_020", persons);
             hasSavedPassengerData = true;
         }
     }

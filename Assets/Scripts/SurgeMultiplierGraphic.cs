@@ -5,10 +5,7 @@ public class SurgeMultiplierGraphic : MonoBehaviour
 {
 
     private RectTransform textContainer;
-
-    [SerializeField] private TMP_Text textPrefab;
-
-    TMP_Text text;
+    private TMP_Text text;
 
     public static SurgeMultiplierGraphic Create(Transform prefab, Vector3 screenPos)
     {
@@ -24,18 +21,9 @@ public class SurgeMultiplierGraphic : MonoBehaviour
     void Start()
     {
         textContainer = transform.Find("TextContainer").GetComponent<RectTransform>();
-        InstantiateText();
-    }
 
-    private void InstantiateText()
-    {
-        text = Instantiate(textPrefab, textContainer);
-        text.text = "";
-        text.fontSize = 20;
-        text.rectTransform.anchoredPosition = new Vector2(0, 0);
-        text.alignment = TextAlignmentOptions.Center;
+        text = textContainer.Find("Text").GetComponent<TMP_Text>();
     }
-
     public void SetNewValue(float surgeMultiplier)
     {
         string surgeMultiplierString = surgeMultiplier.ToString("0.0");

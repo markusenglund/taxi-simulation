@@ -80,6 +80,10 @@ public class City : MonoBehaviour
         {
             InstantiateGraphs();
         }
+        if (simulationSettings.showSurgeMultiplier)
+        {
+            InstantiateSurgeMultiplierGraphic();
+        }
         if (spawnInitialDrivers)
         {
             SpawnInitialDrivers();
@@ -105,7 +109,12 @@ public class City : MonoBehaviour
     void InstantiateGraphs()
     {
         resultsInfoBox = ResultsInfoBox.Create(ResultsInfoBoxPrefab, graphSettings.resultsInfoPos, this);
+    }
+
+    void InstantiateSurgeMultiplierGraphic()
+    {
         surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
+
     }
 
     private void EndSimulation()
@@ -176,11 +185,6 @@ public class City : MonoBehaviour
 
     void UpdateSurgeMultiplier()
     {
-        // Recalculate only 4 times per hour
-        if (Time.frameCount % 900 != 0)
-        {
-            return;
-        }
         if (!simulationSettings.useConstantSurgeMultiplier)
         {
             float maxSurgeMultiplier = 5f;
@@ -205,7 +209,7 @@ public class City : MonoBehaviour
             surgeMultiplier = newSurgeMultiplier;
 
         }
-        if (graphSettings.showGraphs)
+        if (simulationSettings.showSurgeMultiplier)
         {
             surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
         }
