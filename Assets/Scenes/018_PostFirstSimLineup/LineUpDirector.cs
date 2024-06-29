@@ -14,6 +14,7 @@ public class LineUpDirector : MonoBehaviour
     [SerializeField] public SimulationSettings simSettings;
     [SerializeField] public GraphSettings graphSettings;
 
+    PassengerStats focusPassengerStats;
     Vector3 cityMiddlePosition = new Vector3(4.5f, -3.5f, 4.5f);
     City city;
 
@@ -84,7 +85,7 @@ public class LineUpDirector : MonoBehaviour
         // Get all passenger who don't have state BeforeSpawn or Idling
         Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         Passenger focusPassenger = Array.Find(passengers, p => p.person.id == 44);
-        StartCoroutine(SpawnPassengerStats(focusPassenger));
+        StartCoroutine(SpawnFocusPassengerStats(focusPassenger));
         Vector3 cameraPosition = new Vector3(0f, 4, -12);
         Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
         StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
@@ -100,6 +101,7 @@ public class LineUpDirector : MonoBehaviour
         yield return new WaitForSeconds(1f);
         StartCoroutine(TriggerIdleVariations(passengers));
         yield return new WaitForSeconds(2f);
+        StartCoroutine(focusPassengerStats.DespawnCard());
         yield return StartCoroutine(ShowPassengerResults(passengers));
         // StartCoroutine(ChangeGraphToSurplusValue(passengers));
         // StartCoroutine(ChangeGraphToExpectedWaitingTime(passengers));
@@ -118,13 +120,13 @@ public class LineUpDirector : MonoBehaviour
         StartCoroutine(ChangeGraphToBestSubstitute(passengers));
     }
 
-    IEnumerator SpawnPassengerStats(Passenger passenger)
+    IEnumerator SpawnFocusPassengerStats(Passenger passenger)
     {
         Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
         Vector3 statsPosition = new Vector3(-0.24f, 0.19f, -0.02f);
         Quaternion rotation = Quaternion.Euler(0, 5, 0);
 
-        PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
+        focusPassengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
         yield return null;
     }
 
@@ -405,7 +407,7 @@ public class LineUpDirector : MonoBehaviour
     private IEnumerator ChangeGraphToBestSubstituteTime(Passenger[] passengers)
     {
         Func<Passenger, float> selectPassengerValue = (Passenger passenger) => passenger.person.economicParameters.GetBestSubstitute().timeHours * 60f;
-        StartCoroutine(ChangeGraphAxis(passengers, "Time of best substitute", selectPassengerValue, stepSize: 25f, "min"));
+        StartCoroutine(ChangeGraphAxis(passengers, "Time of best substitute", selectPassengerValue, stepSize: 25f, "", " min"));
         yield return null;
     }
 
@@ -431,7 +433,7 @@ public class LineUpDirector : MonoBehaviour
         // All passengers who got a ride offer
         Passenger[] passengersWhoGotARideOffer = passengers.Where(p => p.person.state != PassengerState.NoRideOffer).ToArray();
 
-        StartCoroutine(ChangeGraphAxis(passengersWhoGotARideOffer, "Expected waiting time", selectPassengerValue, stepSize: 5f, "min"));
+        StartCoroutine(ChangeGraphAxis(passengersWhoGotARideOffer, "Expected waiting time", selectPassengerValue, stepSize: 5f, "", " min"));
         yield return null;
     }
 
@@ -450,7 +452,7 @@ public class LineUpDirector : MonoBehaviour
     }
 
 
-    private IEnumerator ChangeGraphAxis(Passenger[] passengers, string labelText, Func<Passenger, float> selectPassengerValue, float stepSize, string axisLabelPrefix = "")
+    private IEnumerator ChangeGraphAxis(Passenger[] passengers, string labelText, Func<Passenger, float> selectPassengerValue, float stepSize, string axisLabelPrefix = "", string axisLabelSuffix = "")
     {
         Transform mainLabel = canvas.transform.Find("Graph/Label");
 
@@ -458,7 +460,7 @@ public class LineUpDirector : MonoBehaviour
         for (int i = 0; i < 7; i++)
         {
             Transform label = canvas.transform.Find($"Graph/AxisValue{i}");
-            StartCoroutine(ChangeLabel(label, $"{axisLabelPrefix}{i * stepSize}"));
+            StartCoroutine(ChangeLabel(label, $"{axisLabelPrefix}{i * stepSize}{axisLabelSuffix}"));
         }
 
         // float uberAverageIncome = passengersWhoGotAnUber.Average(selectPassengerValue);
