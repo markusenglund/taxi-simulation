@@ -25,7 +25,7 @@ public class WaitingGraph : MonoBehaviour
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(1100, 700);
+    Vector3 graphPosition = new Vector3(1100, 400);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
