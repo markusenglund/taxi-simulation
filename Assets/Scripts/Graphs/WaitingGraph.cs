@@ -160,7 +160,7 @@ public class WaitingGraph : MonoBehaviour
     private IEnumerator UpdateCurves()
     {
         float numPositions = 200;
-        float timeResolution = 0.4f;
+        float timeResolution = 0.5f;
 
         Queue<(float value, float time)> lastSurgeValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastStaticValues = new Queue<(float value, float time)>();
@@ -183,7 +183,7 @@ public class WaitingGraph : MonoBehaviour
             {
                 staticLine.positionCount++;
             }
-            if (lastStaticValues.Count > 100)
+            if (lastStaticValues.Count > 50)
             {
                 lastStaticValues.Dequeue();
             }
@@ -192,7 +192,7 @@ public class WaitingGraph : MonoBehaviour
             {
                 surgeLine.positionCount++;
             }
-            if (lastSurgeValues.Count > 100)
+            if (lastSurgeValues.Count > 50)
             {
                 lastSurgeValues.Dequeue();
             }

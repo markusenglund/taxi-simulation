@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Random = System.Random;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SecondSimDirector : MonoBehaviour
 {
@@ -28,7 +29,10 @@ public class SecondSimDirector : MonoBehaviour
         Time.captureFramerate = 60;
         city1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         city2 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
+
     }
+
+
 
     void Start()
     {
@@ -37,6 +41,30 @@ public class SecondSimDirector : MonoBehaviour
         Camera.main.transform.LookAt(middlePosition);
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
+        InstatiateTimeSensitivityInfoBox();
+
+
+    }
+
+
+    void InstatiateTimeSensitivityInfoBox()
+    {
+        GetValue GetAverageTimeSensitivityOfPassengers = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoTookUber = passengers.Where(p => p.tripTypeChosen == TripType.Uber).ToArray();
+            if (passengersWhoTookUber.Length == 0)
+            {
+                return 0;
+            }
+            float averageTimeSensitivity = passengersWhoTookUber.Average(p => p.economicParameters.timePreference);
+            return averageTimeSensitivity;
+        };
+
+        FormatValue FormatTimeSensitivity = value => value.ToString("0.00") + "x";
+        InfoBox timeSensitivityStatic = InfoBox.Create(city1, new Vector3(200, -200), "Time sensitivity", GetAverageTimeSensitivityOfPassengers, FormatTimeSensitivity);
+
+        Debug.Log("Time sensitivity info box created");
     }
 
     IEnumerator Scene()
