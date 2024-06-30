@@ -41,15 +41,17 @@ public class SecondSimDirector : MonoBehaviour
         Camera.main.transform.LookAt(middlePosition);
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
-        InstatiateTimeSensitivityInfoBox();
+        InstatiateTimeSensitivityInfoBoxes();
+        InstantiateIncomeInfoBoxes();
+        InstantiateTimeOfBestSubstituteInfoBoxes();
 
 
     }
 
 
-    void InstatiateTimeSensitivityInfoBox()
+    void InstantiateTimeOfBestSubstituteInfoBoxes()
     {
-        GetValue GetAverageTimeSensitivityOfPassengers = city =>
+        GetValue GetTimeOfBestSubstitute = city =>
         {
             PassengerPerson[] passengers = city.GetPassengerPeople();
             PassengerPerson[] passengersWhoTookUber = passengers.Where(p => p.tripTypeChosen == TripType.Uber).ToArray();
@@ -57,14 +59,98 @@ public class SecondSimDirector : MonoBehaviour
             {
                 return 0;
             }
-            float averageTimeSensitivity = passengersWhoTookUber.Average(p => p.economicParameters.timePreference);
-            return averageTimeSensitivity;
+            float timeOfBestSubstitute = StatisticsUtils.CalculateMedian(passengersWhoTookUber.Select(p => p.economicParameters.GetBestSubstitute().timeHours).ToList());
+            return timeOfBestSubstitute;
+        };
+
+        FormatValue FormatTimeOfBestSubstitute = value => (value * 60).ToString("0") + " min";
+
+        GetValue GetTimeOfBestSubstituteOfNonPassengers = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoDidNotTakeUber = passengers.Where(p => p.tripTypeChosen == TripType.Walking || p.tripTypeChosen == TripType.PublicTransport).ToArray();
+            if (passengersWhoDidNotTakeUber.Length == 0)
+            {
+                return 0;
+            }
+            float timeOfBestSubstitute = StatisticsUtils.CalculateMedian(passengersWhoDidNotTakeUber.Select(p => p.economicParameters.GetBestSubstitute().timeHours).ToList());
+            return timeOfBestSubstitute;
+        };
+
+        InfoBox timeOfBestSubstituteStatic = InfoBox.Create(city1, new Vector3(800, 1000), "Time of best substitute (Uber)", GetTimeOfBestSubstitute, FormatTimeOfBestSubstitute, ColorScheme.blue);
+        InfoBox timeOfBestSubstituteSubstituteStatic = InfoBox.Create(city1, new Vector3(1300, 1000), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.blue);
+
+        InfoBox timeOfBestSubstituteSurge = InfoBox.Create(city2, new Vector3(800, 700), "Time of best substitute (Uber)", GetTimeOfBestSubstitute, FormatTimeOfBestSubstitute, ColorScheme.orange);
+        InfoBox timeOfBestSubstituteSubstituteSurge = InfoBox.Create(city2, new Vector3(1300, 700), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.orange);
+    }
+
+    void InstantiateIncomeInfoBoxes()
+    {
+        GetValue GetMedianIncomeOfPassengers = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoTookUber = passengers.Where(p => p.tripTypeChosen == TripType.Uber).ToArray();
+            if (passengersWhoTookUber.Length == 0)
+            {
+                return 0;
+            }
+            float medianIncome = StatisticsUtils.CalculateMedian(passengersWhoTookUber.Select(p => p.economicParameters.hourlyIncome).ToList());
+            return medianIncome;
+        };
+
+        FormatValue FormatIncome = value => "$" + value.ToString("0.00");
+
+        GetValue GetMedianIncomeOfNonPassengers = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoDidNotTakeUber = passengers.Where(p => p.tripTypeChosen == TripType.Walking || p.tripTypeChosen == TripType.PublicTransport).ToArray();
+            if (passengersWhoDidNotTakeUber.Length == 0)
+            {
+                return 0;
+            }
+            float medianIncome = StatisticsUtils.CalculateMedian(passengersWhoDidNotTakeUber.Select(p => p.economicParameters.hourlyIncome).ToList());
+            return medianIncome;
+        };
+
+        InfoBox incomeStatic = InfoBox.Create(city1, new Vector3(-200, 1000), "Income (Uber)", GetMedianIncomeOfPassengers, FormatIncome, ColorScheme.blue);
+        InfoBox incomeSubstituteStatic = InfoBox.Create(city1, new Vector3(300, 1000), "Income (Substitute)", GetMedianIncomeOfNonPassengers, FormatIncome, ColorScheme.blue);
+
+        InfoBox incomeSurge = InfoBox.Create(city2, new Vector3(-200, 700), "Income (Uber)", GetMedianIncomeOfPassengers, FormatIncome, ColorScheme.orange);
+        InfoBox incomeSubstituteSurge = InfoBox.Create(city2, new Vector3(300, 700), "Income (Substitute)", GetMedianIncomeOfNonPassengers, FormatIncome, ColorScheme.orange);
+    }
+    void InstatiateTimeSensitivityInfoBoxes()
+    {
+        GetValue GetMedianTimeSensitivityOfPassengers = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoTookUber = passengers.Where(p => p.tripTypeChosen == TripType.Uber).ToArray();
+            if (passengersWhoTookUber.Length == 0)
+            {
+                return 0;
+            }
+            float medianTimeSensitivity = StatisticsUtils.CalculateMedian(passengersWhoTookUber.Select(p => p.economicParameters.timePreference).ToList());
+            return medianTimeSensitivity;
         };
 
         FormatValue FormatTimeSensitivity = value => value.ToString("0.00") + "x";
-        InfoBox timeSensitivityStatic = InfoBox.Create(city1, new Vector3(200, -200), "Time sensitivity", GetAverageTimeSensitivityOfPassengers, FormatTimeSensitivity);
 
-        Debug.Log("Time sensitivity info box created");
+        GetValue GetMedianTimeSensitivityOfNonPassengers = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoDidNotTakeUber = passengers.Where(p => p.tripTypeChosen == TripType.Walking || p.tripTypeChosen == TripType.PublicTransport).ToArray();
+            if (passengersWhoDidNotTakeUber.Length == 0)
+            {
+                return 0;
+            }
+            float medianTimeSensitivity = StatisticsUtils.CalculateMedian(passengersWhoDidNotTakeUber.Select(p => p.economicParameters.timePreference).ToList());
+            return medianTimeSensitivity;
+        };
+
+        InfoBox timeSensitivityStatic = InfoBox.Create(city1, new Vector3(-1200, 1000), "Time sensitivity (Uber)", GetMedianTimeSensitivityOfPassengers, FormatTimeSensitivity, ColorScheme.blue);
+        InfoBox timeSensitivitySubstituteStatic = InfoBox.Create(city1, new Vector3(-700, 1000), "Time sensitivity (Substitute)", GetMedianTimeSensitivityOfNonPassengers, FormatTimeSensitivity, ColorScheme.blue);
+
+        InfoBox timeSensitivitySurge = InfoBox.Create(city2, new Vector3(-1200, 700), "Time sensitivity (Uber)", GetMedianTimeSensitivityOfPassengers, FormatTimeSensitivity, ColorScheme.orange);
+        InfoBox timeSensitivitySubstituteSurge = InfoBox.Create(city2, new Vector3(-700, 700), "Time sensitivity (Substitute)", GetMedianTimeSensitivityOfNonPassengers, FormatTimeSensitivity, ColorScheme.orange);
     }
 
     IEnumerator Scene()

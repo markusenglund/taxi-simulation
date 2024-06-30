@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
-
+using System.Linq;
+using System.Collections.Generic;
 using Random = System.Random;
 
 public class StatisticsUtils : MonoBehaviour
@@ -43,5 +44,19 @@ public class StatisticsUtils : MonoBehaviour
         double logNormalVariable = Math.Exp(mu + sigma * standardNormalVariable);
 
         return (float)logNormalVariable;
+    }
+
+    public static float CalculateMedian(List<float> values)
+    {
+        List<float> sortedList = values.OrderBy(x => x).ToList();
+        int count = sortedList.Count;
+        if (count % 2 == 0)
+        {
+            return (sortedList[count / 2 - 1] + sortedList[count / 2]) / 2;
+        }
+        else
+        {
+            return sortedList[count / 2];
+        }
     }
 }

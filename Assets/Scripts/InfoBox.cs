@@ -10,7 +10,7 @@ public class InfoBox : MonoBehaviour
     City city;
     GetValue getValue;
     FormatValue formatValue;
-    public static InfoBox Create(City city, Vector3 position, string labelText, GetValue getValue, FormatValue formatValue)
+    public static InfoBox Create(City city, Vector3 position, string labelText, GetValue getValue, FormatValue formatValue, Color color)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform prefab = Resources.Load<Transform>("InfoBox");
@@ -26,6 +26,9 @@ public class InfoBox : MonoBehaviour
 
         // Set label text
         infoBoxTransform.Find("Label").GetComponent<TMPro.TMP_Text>().text = labelText;
+
+        // Set color of the text
+        infoBoxTransform.Find("Value").GetComponent<TMPro.TMP_Text>().color = color;
 
         return infoBox;
     }

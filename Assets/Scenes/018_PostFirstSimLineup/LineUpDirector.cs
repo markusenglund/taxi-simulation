@@ -298,7 +298,7 @@ public class LineUpDirector : MonoBehaviour
             yield return new WaitForSeconds(0.04f);
         }
         // float averageUberTimePreference = passengersWhoGotAnUber.Average(p => p.person.economicParameters.timePreference);
-        float medianUberTimePreference = CalculateMedian(passengersWhoGotAnUber.Select(p => p.person.economicParameters.timePreference).ToList());
+        float medianUberTimePreference = StatisticsUtils.CalculateMedian(passengersWhoGotAnUber.Select(p => p.person.economicParameters.timePreference).ToList());
         Transform averageLineTransform = canvas.transform.Find("Graph/AverageLine");
         Transform averageDotTransform = canvas.transform.Find("Graph/AverageDot");
         Transform averageLabelTransform = canvas.transform.Find("Graph/AverageLabel");
@@ -320,7 +320,7 @@ public class LineUpDirector : MonoBehaviour
         }
 
         // float averageRejectedTimePreference = passengersWhoRejectedRideOffer.Average(p => p.person.economicParameters.timePreference);
-        float medianRejectedTimePreference = CalculateMedian(passengersWhoRejectedRideOffer.Select(p => p.person.economicParameters.timePreference).ToList());
+        float medianRejectedTimePreference = StatisticsUtils.CalculateMedian(passengersWhoRejectedRideOffer.Select(p => p.person.economicParameters.timePreference).ToList());
         rejectedAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         rejectedAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         rejectedAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
@@ -339,7 +339,7 @@ public class LineUpDirector : MonoBehaviour
 
 
         // float averageNoOfferTimePreference = passengersWhoDidNotReceiveRideOffer.Average(p => p.person.economicParameters.timePreference);
-        float medianNoOfferTimePreference = CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(p => p.person.economicParameters.timePreference).ToList());
+        float medianNoOfferTimePreference = StatisticsUtils.CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(p => p.person.economicParameters.timePreference).ToList());
         noOfferAverageLineTransform = Instantiate(averageLineTransform, canvas.transform);
         noOfferAverageDotTransform = Instantiate(averageDotTransform, canvas.transform);
         noOfferAverageLabelTransform = Instantiate(averageLabelTransform, canvas.transform);
@@ -464,11 +464,11 @@ public class LineUpDirector : MonoBehaviour
         }
 
         // float uberAverageIncome = passengersWhoGotAnUber.Average(selectPassengerValue);
-        float uberMedianValue = CalculateMedian(passengersWhoGotAnUber.Select(selectPassengerValue).ToList());
+        float uberMedianValue = StatisticsUtils.CalculateMedian(passengersWhoGotAnUber.Select(selectPassengerValue).ToList());
         // float rejectedAverageIncome = passengersWhoRejectedRideOffer.Average(selectPassengerValue);
-        float rejectedMedianValue = CalculateMedian(passengersWhoRejectedRideOffer.Select(selectPassengerValue).ToList());
+        float rejectedMedianValue = StatisticsUtils.CalculateMedian(passengersWhoRejectedRideOffer.Select(selectPassengerValue).ToList());
         // float noOfferAverageIncome = passengersWhoDidNotReceiveRideOffer.Average(selectPassengerValue);
-        float noOfferMedianValue = CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(selectPassengerValue).ToList());
+        float noOfferMedianValue = StatisticsUtils.CalculateMedian(passengersWhoDidNotReceiveRideOffer.Select(selectPassengerValue).ToList());
 
         // Set the average line label of uber to the average of the hourly income
         TMP_Text uberAverageTmp = uberAverageLabelTransform.GetComponent<TMP_Text>();
@@ -672,18 +672,6 @@ public class LineUpDirector : MonoBehaviour
         return timePreference * linePositionStep + linePositionStart;
     }
 
-    private float CalculateMedian(List<float> values)
-    {
-        List<float> sortedList = values.OrderBy(x => x).ToList();
-        int count = sortedList.Count;
-        if (count % 2 == 0)
-        {
-            return (sortedList[count / 2 - 1] + sortedList[count / 2]) / 2;
-        }
-        else
-        {
-            return sortedList[count / 2];
-        }
-    }
+
 
 }
