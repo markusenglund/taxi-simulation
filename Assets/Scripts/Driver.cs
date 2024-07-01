@@ -43,8 +43,8 @@ public class Driver : MonoBehaviour
 
     private float spawnDuration = 1;
 
-    private Trip currentTrip = null;
-    private Trip nextTrip = null;
+    public Trip currentTrip = null;
+    public Trip nextTrip = null;
 
     const float y = 0.05f;
 
@@ -111,10 +111,6 @@ public class Driver : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
-        if (mode == DriverMode.Active)
-        {
-            city.AssignDriverToNextTrip(this);
-        }
     }
 
     IEnumerator PickUpPassenger()
@@ -135,7 +131,7 @@ public class Driver : MonoBehaviour
         PickedUpDriverData pickedUpDriverData = new PickedUpDriverData
         {
             timeCostEnRoute = timeSpentEnRoute * opportunityCostPerHour,
-            marginalCostEnRoute = currentTrip.driverAssignedData.enRouteDistance * simulationSettings.driverMarginalCostPerKm
+            marginalCostEnRoute = currentTrip.driverDispatchedData.enRouteDistance * simulationSettings.driverMarginalCostPerKm
         };
 
         if (simulationSettings.showDriverEarnings)
@@ -158,13 +154,22 @@ public class Driver : MonoBehaviour
 
     public void HandleDriverAssigned(Trip trip)
     {
-        nextTrip = trip;
         SetState(TaxiState.AssignedToTrip);
+        if (currentTrip == null)
+        {
+            DispatchDriver(trip);
+        }
+        else
+        {
+            nextTrip = trip;
+        }
         Debug.Log($"Driver {id} assigned to trip at {TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time)}");
     }
 
-    public void HandleDriverDispatched(Trip trip)
+    public void DispatchDriver(Trip trip)
     {
+        float enRouteDistance = GridUtils.GetDistance(transform.localPosition, trip.tripCreatedData.pickUpPosition);
+        trip.DispatchDriver(transform.localPosition, enRouteDistance);
         currentTrip = trip;
         nextTrip = null;
         SetDestination(trip.tripCreatedData.pickUpPosition);
@@ -218,6 +223,10 @@ public class Driver : MonoBehaviour
         {
             city.HandleTripCompleted(this);
             Debug.Log($"Driver {id} completed trip at {droppedOffTime}");
+            if (nextTrip != null)
+            {
+                DispatchDriver(nextTrip);
+            }
         }
 
     }

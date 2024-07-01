@@ -195,7 +195,7 @@ public class Passenger : MonoBehaviour
 
     void MakeTripDecision()
     {
-        RideOffer? rideOffer = city.RequestRideOffer(person.startPosition, person.destination);
+        (RideOffer? rideOffer, Driver? driver) = city.RequestRideOffer(person.startPosition, person.destination);
 
 
         if (rideOffer == null)
@@ -268,7 +268,7 @@ public class Passenger : MonoBehaviour
             {
                 person.rideOfferStatus = RideOfferStatus.Accepted;
                 // Debug.Log("Passenger " + id + " is hailing a taxi");
-                person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData);
+                person.trip = city.AcceptRideOffer(tripCreatedData, tripCreatedPassengerData, driver!);
                 person.SetState(PassengerState.AssignedToTrip);
                 ShowPassengerReaction(TripType.Uber, receivedRideOffer: true);
 

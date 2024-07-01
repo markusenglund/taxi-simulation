@@ -22,6 +22,7 @@ public class RideOffer
 
     public float expectedTripTime { get; set; }
     public Fare fare { get; set; }
+
 }
 
 public class City : MonoBehaviour
@@ -32,7 +33,6 @@ public class City : MonoBehaviour
     [SerializeField] public Transform SurgeMultiplierGraphicPrefab;
 
     private List<Driver> drivers = new List<Driver>();
-    private Queue<Trip> queuedTrips = new Queue<Trip>();
 
     private List<Trip> trips = new List<Trip>();
 
@@ -192,10 +192,9 @@ public class City : MonoBehaviour
     {
         if (!simulationSettings.useConstantSurgeMultiplier)
         {
-            float maxSurgeMultiplier = 5f;
             float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
 
-            int numWaitingPassengers = queuedTrips.Count;
+            int numWaitingPassengers = trips.Count(trip => trip.state == TripState.Queued || trip.state == TripState.DriverAssigned);
             int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
             float tripCapacityNextHour = Math.Max(drivers.Count * simulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
 
@@ -284,16 +283,6 @@ public class City : MonoBehaviour
         float weighting = EaseUtils.EaseInOutQuadratic(percentOfHour);
         float expectedPassengersPerHour = Mathf.Lerp(expectedPassengersByHour[currentHour], expectedPassengersByHour[(currentHour + 1) % 24], weighting);
         return expectedPassengersPerHour;
-    }
-
-    public Trip GetNextTrip()
-    {
-        // TODO: This creates an inefficiency, since the passenger at the front of the queue might not be the closest one to the taxi
-        if (queuedTrips.Count > 0)
-        {
-            return queuedTrips.Dequeue();
-        }
-        return null;
     }
 
     public int CalculateNumStartedTripsInLastInterval(float intervalHours)
@@ -395,55 +384,30 @@ public class City : MonoBehaviour
         return trips;
     }
 
-    private void DispatchDriver(Driver driver, Trip trip)
-    {
-        trip.DispatchDriver(driver.transform.localPosition);
-        driver.HandleDriverDispatched(trip);
-        // Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
-    }
+    // private void DispatchDriver(Driver driver, Trip trip)
+    // {
+    //     trip.DispatchDriver(driver.transform.localPosition);
+    //     driver.HandleDriverDispatched(trip);
+    //     // Debug.Log("Dispatching taxi " + driver.id + " to passenger " + passenger.id + " at " + passenger.positionActual);
+    // }
 
-    public Trip AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData)
+    public Trip AcceptRideOffer(TripCreatedData tripCreatedData, TripCreatedPassengerData tripCreatedPassengerData, Driver driver)
     {
-        // TODO: Driver will be assigned in the RequestTripOffer method and set in as an argument to this function
-        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(tripCreatedData.pickUpPosition);
-
         Trip trip = new Trip(tripCreatedData, tripCreatedPassengerData);
 
         trips.Add(trip);
 
-        if (closestTaxi != null)
-        {
-            trip.AssignDriver(closestTaxi, closestTaxiDistance);
-            closestTaxi.HandleDriverAssigned(trip);
-            DispatchDriver(closestTaxi, trip);
-        }
-        else
-        {
-            queuedTrips.Enqueue(trip);
-            // Debug.Log("No taxis available for passenger " + passenger.id + ", queued in waiting list at number " + queuedTrips.Count);
-        }
+        trip.AssignDriver(driver);
+        driver.HandleDriverAssigned(trip);
+
+        // TODO: Figure out how to keep track of the number of currently queued trips for the surge calculation
 
         return trip;
     }
 
     public void HandleTripCompleted(Driver driver)
     {
-        AssignDriverToNextTrip(driver);
         LogAverageTripTime();
-    }
-
-    public void AssignDriverToNextTrip(Driver driver)
-    {
-        Debug.Log("Assigning driver to next trip");
-        // Assign driver to next trip if there is one
-        Trip trip = GetNextTrip();
-        if (trip != null)
-        {
-            float enRouteDistance = GridUtils.GetDistance(driver.transform.localPosition, trip.tripCreatedData.pickUpPosition);
-            trip.AssignDriver(driver, enRouteDistance);
-            driver.HandleDriverAssigned(trip);
-            DispatchDriver(driver, trip);
-        }
     }
 
     private void LogAverageTripTime()
@@ -468,48 +432,61 @@ public class City : MonoBehaviour
         // Debug.Log($"Average enroute time: {averageEnrouteTime} average on trip time: {averageOnTripTime}, based on {numTrips} trips");
     }
 
-    private (Driver, float) GetClosestAvailableDriver(Vector3 position)
+    public class GetFastestDriverResponse
     {
-        float closestTaxiDistance = Mathf.Infinity;
-        Driver closestTaxi = null;
+        public bool areDriversAvailable;
+        public Driver fastestDriver;
+        public float fastestTime;
 
-        foreach (Driver driver in drivers)
-        {
-            if (driver.state != TaxiState.Idling)
-            {
-                continue;
-            }
-            float distance = GridUtils.GetDistance(driver.transform.localPosition, position);
-            if (distance < closestTaxiDistance)
-            {
-                closestTaxiDistance = distance;
-                closestTaxi = driver;
-            }
-        }
-        return (closestTaxi, closestTaxiDistance);
+        public float enRouteDistance;
     }
 
-    private float? GetExpectedWaitingTime(Vector3 position)
+    public GetFastestDriverResponse GetFastestDriver(Vector3 pickUpPosition)
     {
-        (Driver closestTaxi, float closestTaxiDistance) = GetClosestAvailableDriver(position);
-        if (closestTaxi != null)
+        Driver[] availableDrivers = drivers.Where(driver => driver.nextTrip == null).ToArray();
+        if (availableDrivers.Length < drivers.Count / 2)
         {
-            float extraPickUpTime = simulationSettings.timeSpentWaitingForPassenger + 0.6f / 60f;
-            float expectedWaitingTime = (closestTaxiDistance / simulationSettings.driverSpeed) + extraPickUpTime;
-            return expectedWaitingTime;
+            return new GetFastestDriverResponse { areDriversAvailable = false };
         }
 
-        return null;
+        float fastestTime = Mathf.Infinity;
+        float enRouteDistance = Mathf.Infinity;
+        Driver? fastestDriver = null;
+        foreach (Driver driver in availableDrivers)
+        {
+            bool isDriverIdle = driver.state == TaxiState.Idling;
+            if (isDriverIdle)
+            {
+                float distance = GridUtils.GetDistance(driver.transform.localPosition, pickUpPosition);
+                float drivingTime = distance / simulationSettings.driverSpeed;
+                float extraPickUpTime = simulationSettings.timeSpentWaitingForPassenger;
+                float totalTime = drivingTime + extraPickUpTime;
+                if (totalTime < fastestTime)
+                {
+                    fastestTime = totalTime;
+                    fastestDriver = driver;
+                    enRouteDistance = distance;
+                }
+            }
+            else
+            {
+                float expectedDropOffTime = driver.currentTrip.tripCreatedData.expectedPickupTime + driver.currentTrip.tripCreatedData.expectedTripTime;
+                float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
+                float timeLeftOnTrip = expectedDropOffTime - currentTime;
 
-        // ! These approximations that will change based on how efficient the queueing algorithm is
-        // float avgTimeEnRoute = 11f / 60f;
-        // float avgTimeOnTrip = 10f / 60f;
-        // float numTaxis = drivers.Count;
-        // float queueSize = queuedTrips.Count;
-
-        // float expectedWaitingTimeForQueue = ((avgTimeEnRoute + avgTimeOnTrip) * queueSize / numTaxis) + avgTimeEnRoute;
-        // return expectedWaitingTimeForQueue;
-
+                float distanceToPickUp = GridUtils.GetDistance(driver.currentTrip.tripCreatedData.destination, pickUpPosition);
+                float drivingTime = distanceToPickUp / simulationSettings.driverSpeed;
+                float extraPickUpTime = simulationSettings.timeSpentWaitingForPassenger;
+                float totalTime = drivingTime + extraPickUpTime + timeLeftOnTrip;
+                if (totalTime < fastestTime)
+                {
+                    fastestTime = totalTime;
+                    fastestDriver = driver;
+                    enRouteDistance = distanceToPickUp;
+                }
+            }
+        }
+        return new GetFastestDriverResponse { areDriversAvailable = true, fastestDriver = fastestDriver!, fastestTime = fastestTime, enRouteDistance = enRouteDistance };
     }
 
     private Fare GetFare(float distance)
@@ -530,27 +507,30 @@ public class City : MonoBehaviour
         return fare;
     }
 
-    public RideOffer? RequestRideOffer(Vector3 position, Vector3 destination)
+    public (RideOffer?, Driver?) RequestRideOffer(Vector3 position, Vector3 destination)
     {
         float tripDistance = GridUtils.GetDistance(position, destination);
         Fare fare = GetFare(tripDistance);
-        float? expectedWaitingTime = GetExpectedWaitingTime(position);
-
-        if (expectedWaitingTime == null)
+        GetFastestDriverResponse fastestDriverResponse = GetFastestDriver(position);
+        bool areDriversAvailable = fastestDriverResponse.areDriversAvailable;
+        if (!areDriversAvailable)
         {
-            return null;
+            return (null, null);
         }
+        float expectedWaitingTime = fastestDriverResponse.fastestTime;
+        Driver fastestDriver = fastestDriverResponse.fastestDriver;
+
 
         float expectedTripTime = tripDistance / simulationSettings.driverSpeed + 0.6f / 60f;
 
-        RideOffer tripOffer = new RideOffer
+        RideOffer rideOffer = new RideOffer
         {
-            expectedWaitingTime = (float)expectedWaitingTime,
+            expectedWaitingTime = expectedWaitingTime,
             expectedTripTime = expectedTripTime,
             fare = fare,
         };
 
-        return tripOffer;
+        return (rideOffer, fastestDriver);
 
     }
 

@@ -44,7 +44,6 @@ public class DriverAssignedData
     [JsonIgnore]
     public Driver driver { get; set; }
 
-    public float enRouteDistance { get; set; }
 
 }
 
@@ -52,6 +51,7 @@ public class DriverDispatchedData
 {
     public float driverDispatchedTime { get; set; }
     public Vector3 startPosition { get; set; }
+    public float enRouteDistance { get; set; }
 }
 
 public class PickedUpData
@@ -131,8 +131,7 @@ public class Trip
     }
 
     public void AssignDriver(
-        Driver driver,
-        float enRouteDistance
+        Driver driver
     )
     {
         state = TripState.DriverAssigned;
@@ -141,11 +140,10 @@ public class Trip
         {
             matchedTime = matchedTime,
             driver = driver,
-            enRouteDistance = enRouteDistance
         };
     }
 
-    public void DispatchDriver(Vector3 startPosition)
+    public void DispatchDriver(Vector3 startPosition, float enRouteDistance)
     {
         state = TripState.DriverEnRoute;
         float driverDispatchedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
@@ -153,7 +151,8 @@ public class Trip
         driverDispatchedData = new DriverDispatchedData
         {
             startPosition = startPosition,
-            driverDispatchedTime = driverDispatchedTime
+            driverDispatchedTime = driverDispatchedTime,
+            enRouteDistance = enRouteDistance
         };
     }
 

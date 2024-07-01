@@ -19,4 +19,4 @@ MonoBehaviour:
   passengerSurplusGraphPos: {x: 200, y: -715, z: 0}
   passengerScatterPlotPos: {x: 557, y: -150, z: 0}
   resultsInfoPos: {x: 560, y: -420, z: 0}
-  surgeMultiplierGraphicPos: {x: 2800, y: -50, z: 0}
+  surgeMultiplierGraphicPos: {x: 3300, y: -50, z: 0}
