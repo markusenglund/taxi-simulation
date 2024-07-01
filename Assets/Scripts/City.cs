@@ -196,16 +196,15 @@ public class City : MonoBehaviour
 
             int numWaitingPassengers = trips.Count(trip => trip.state == TripState.Queued || trip.state == TripState.DriverAssigned);
             int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
-            float tripCapacityNextHour = Math.Max(drivers.Count * simulationSettings.driverAverageTripsPerHour - numOccupiedDrivers * 0.5f, 0);
+            float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - 1.2f * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
 
-            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f + numWaitingPassengers;
+            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f;
 
-            float minMultiplier = 0.7f;
-            float uncertaintyModifier = Math.Min(1f / drivers.Count, 1f);
 
             float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
-            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.8f, minMultiplier);
+            float minMultiplier = 0.7f;
+            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.5f, minMultiplier);
 
             // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
             // Debug.Log("New surge multiplier: " + newSurgeMultiplier);

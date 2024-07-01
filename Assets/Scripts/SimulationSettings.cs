@@ -125,7 +125,7 @@ public class SimulationSettings : ScriptableObject
     public float demandIndexMultiplier = 5;
 
     // The following variables are approximations of in-simulation values that will change over time - in the future they should be regularly updated
-    public readonly float driverAverageTripsPerHour = 2.85f;
+    public readonly float driverAverageTripsPerHour = 2f;
 
     // Computed values
     public float[] expectedPassengersByHour;
