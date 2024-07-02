@@ -168,6 +168,8 @@ public class Trip
         this.pickedUpData = pickedUpData;
         this.pickedUpDriverData = pickedUpDriverData;
         this.pickedUpPassengerData = this.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
+        string minutesLate = ((pickedUpData.pickedUpTime - this.tripCreatedData.expectedPickupTime) * 60).ToString("F2");
+        Debug.Log($"PICKUP DIFF: {minutesLate} Driver {this.driverAssignedData.driver.id} Picked up passenger {this.tripCreatedData.passenger.person.id} at {pickedUpData.pickedUpTime}, expected pickup time was {this.tripCreatedData.expectedPickupTime}");
     }
 
     public void DropOffPassenger(DroppedOffData droppedOffData, DroppedOffDriverData droppedOffDriverData)

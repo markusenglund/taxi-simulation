@@ -5,12 +5,6 @@ using System.Linq;
 using UnityEngine;
 
 
-public enum TaxiState
-{
-    Idling,
-    AssignedToTrip
-}
-
 public class WaypointSegment
 {
     public float startTime;
@@ -36,8 +30,6 @@ public class Driver : MonoBehaviour
 
     [SerializeField] private Queue<Vector3> waypoints = new Queue<Vector3>();
     [SerializeField] private Vector3 destination;
-    public TaxiState state = TaxiState.Idling;
-
     static int incrementalId = 1;
     public int id;
 
@@ -154,7 +146,6 @@ public class Driver : MonoBehaviour
 
     public void HandleDriverAssigned(Trip trip)
     {
-        SetState(TaxiState.AssignedToTrip);
         if (currentTrip == null)
         {
             DispatchDriver(trip);
@@ -163,7 +154,6 @@ public class Driver : MonoBehaviour
         {
             nextTrip = trip;
         }
-        Debug.Log($"Driver {id} assigned to trip at {TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time)}");
     }
 
     public void DispatchDriver(Trip trip)
@@ -173,7 +163,6 @@ public class Driver : MonoBehaviour
         currentTrip = trip;
         nextTrip = null;
         SetDestination(trip.tripCreatedData.pickUpPosition);
-        Debug.Log($"Driver {id} dispatched at {TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time)}");
     }
 
     private IEnumerator DropOffPassenger()
@@ -212,7 +201,6 @@ public class Driver : MonoBehaviour
         // Debug.Log($"On trip time: {droppedOffData.timeSpentOnTrip} On trip distance: {currentTrip.tripCreatedData.tripDistance} km, En route time: {currentTrip.pickedUpData.timeSpentEnRoute} En route distance: {currentTrip.driverAssignedData.enRouteDistance} km");
         yield return new WaitForSeconds(0.5f);
 
-        SetState(TaxiState.Idling);
         driverPerson.completedTrips.Add(currentTrip);
         currentTrip = null;
         if (isEndingSession)
@@ -245,15 +233,10 @@ public class Driver : MonoBehaviour
         return grossProfitInterval;
     }
 
-    public void SetState(TaxiState newState)
-    {
-        this.state = newState;
-    }
-
     public void HandleEndOfSession()
     {
         isEndingSession = true;
-        if (state == TaxiState.Idling)
+        if (currentTrip == null)
         {
             EndSession();
         }
@@ -274,7 +257,6 @@ public class Driver : MonoBehaviour
 
         this.destination = destination;
         SetWaypoints();
-        Debug.Log($"Driver {id} set destination to {destination}");
     }
 
     public void SetWaypoints()
@@ -306,10 +288,6 @@ public class Driver : MonoBehaviour
                     StartCoroutine(DropOffPassenger());
 
                 }
-            }
-            else if (state == TaxiState.Idling)
-            {
-                // Just stay still
             }
         }
         else

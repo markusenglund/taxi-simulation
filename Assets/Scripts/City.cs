@@ -116,7 +116,6 @@ public class City : MonoBehaviour
         while (!simulationEnded)
         {
             UpdateSurgeMultiplier();
-            Debug.Log("Surge multiplier: " + surgeMultiplier);
             surgeMultiplierGraphic.SetNewValue(surgeMultiplier);
             yield return new WaitForSeconds(intervalRealTime);
         }
@@ -195,7 +194,7 @@ public class City : MonoBehaviour
             float expectedNumPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
 
             int numWaitingPassengers = trips.Count(trip => trip.state == TripState.Queued || trip.state == TripState.DriverAssigned);
-            int numOccupiedDrivers = drivers.Count(driver => driver.state == TaxiState.AssignedToTrip);
+            int numOccupiedDrivers = drivers.Count(driver => driver.currentTrip != null);
             float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - 1.2f * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
 
             float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f;
@@ -205,9 +204,6 @@ public class City : MonoBehaviour
 
             float minMultiplier = 0.7f;
             float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.5f, minMultiplier);
-
-            // float[] expectedPassengersByHour = simulationSettings.expectedPassengersByHour;
-            // Debug.Log("New surge multiplier: " + newSurgeMultiplier);
 
             surgeMultiplier = newSurgeMultiplier;
 
@@ -453,7 +449,7 @@ public class City : MonoBehaviour
         Driver? fastestDriver = null;
         foreach (Driver driver in availableDrivers)
         {
-            bool isDriverIdle = driver.state == TaxiState.Idling;
+            bool isDriverIdle = driver.currentTrip == null;
             if (isDriverIdle)
             {
                 float distance = GridUtils.GetDistance(driver.transform.localPosition, pickUpPosition);
@@ -469,7 +465,7 @@ public class City : MonoBehaviour
             }
             else
             {
-                float expectedDropOffTime = driver.currentTrip.tripCreatedData.expectedPickupTime + driver.currentTrip.tripCreatedData.expectedTripTime;
+                float expectedDropOffTime = driver.currentTrip!.tripCreatedData.expectedPickupTime + driver.currentTrip.tripCreatedData.expectedTripTime;
                 float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
                 float timeLeftOnTrip = expectedDropOffTime - currentTime;
 

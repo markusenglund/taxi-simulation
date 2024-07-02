@@ -45,7 +45,6 @@ public class AgentOverheadText : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
-        Debug.Log($"Distance to camera: {distanceToCamera}, scale: {transform.localScale}");
     }
 
     private IEnumerator FadeIntoTheSky(float duration)
