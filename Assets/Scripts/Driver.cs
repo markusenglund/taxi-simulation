@@ -53,6 +53,8 @@ public class Driver : MonoBehaviour
     private float acceleration = 1000;
     private float maxSpeed;
 
+    private float prevDistance = 0;
+
     private WaypointSegment currentWaypointSegment;
 
     [SerializeField] public Transform agentStatusTextPrefab;
@@ -273,6 +275,7 @@ public class Driver : MonoBehaviour
 
         if (waypoints.Count == 0)
         {
+            prevDistance = 0;
             if (currentTrip != null)
             {
                 if (currentTrip.state == TripState.DriverEnRoute)
@@ -333,7 +336,8 @@ public class Driver : MonoBehaviour
         }
         else
         {
-            return maxSpeed - acceleration * (currentTime - currentWaypointSegment.startTime - currentWaypointSegment.duration + currentWaypointSegment.accelerationDuration);
+            float extraFudgeSpeed = 1f; // This is a fudge factor to make sure the taxi reaches the destination, wasn't able to figure out a clean fix for this
+            return extraFudgeSpeed + maxSpeed - acceleration * (currentTime - currentWaypointSegment.startTime - currentWaypointSegment.duration + currentWaypointSegment.accelerationDuration);
         }
     }
 
