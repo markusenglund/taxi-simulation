@@ -74,8 +74,7 @@ public class Driver : MonoBehaviour
         Quaternion rotation = x % GridUtils.blockSize == 0 ? Quaternion.identity : Quaternion.Euler(0, 90, 0);
 
         Transform taxi = Instantiate(prefab, parentTransform, false);
-        taxi.localPosition = new Vector3(x, y, z);
-        taxi.localRotation = rotation;
+        taxi.SetLocalPositionAndRotation(new Vector3(x, y, z), rotation);
         Driver driver = taxi.GetComponent<Driver>();
         driver.city = city;
         driver.driverPerson = person;
@@ -256,13 +255,8 @@ public class Driver : MonoBehaviour
     {
 
         this.destination = destination;
-        SetWaypoints();
-    }
-
-    public void SetWaypoints()
-    {
         waypoints = GridUtils.GetWaypoints(transform.localPosition, destination);
-        SetNewSegment();
+        currentWaypointSegment = CalculateWaypointSegment(transform.localPosition, destination);
     }
 
     void Update()
@@ -343,16 +337,10 @@ public class Driver : MonoBehaviour
         }
     }
 
-    private void SetNewSegment()
+
+    public WaypointSegment CalculateWaypointSegment(Vector3 startPosition, Vector3 destination)
     {
-        if (waypoints.Count == 0)
-        {
-            return;
-        }
-        // Get last element from waypoints queue
-        Vector3 lastWaypoint = waypoints.Last();
-        // float distance = (nextWaypoint - transform.localPosition).magnitude;
-        float distance = GridUtils.GetDistance(transform.localPosition, lastWaypoint);
+        float distance = GridUtils.GetDistance(startPosition, destination);
 
         float accelerationDistance = Mathf.Min(0.5f * acceleration * Mathf.Pow(maxSpeed / acceleration, 2), distance / 2);
         float maxSpeedDistance = distance - 2 * accelerationDistance;
@@ -362,7 +350,7 @@ public class Driver : MonoBehaviour
 
         float totalDuration = 2 * accelerationDuration + maxSpeedDuration;
 
-        currentWaypointSegment = new WaypointSegment
+        WaypointSegment waypointSegment = new WaypointSegment
         {
             startTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time),
             distance = distance,
@@ -370,8 +358,9 @@ public class Driver : MonoBehaviour
             duration = totalDuration,
             accelerationDuration = accelerationDuration,
             startPosition = transform.localPosition,
-            endPosition = lastWaypoint
+            endPosition = destination
         };
+        return waypointSegment;
     }
 
 

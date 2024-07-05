@@ -452,14 +452,13 @@ public class City : MonoBehaviour
             bool isDriverIdle = driver.currentTrip == null;
             if (isDriverIdle)
             {
-                float distance = GridUtils.GetDistance(driver.transform.localPosition, pickUpPosition);
-                float drivingTime = distance / simulationSettings.driverSpeed;
-                float totalTime = drivingTime;
-                if (totalTime < fastestTime)
+                WaypointSegment segment = driver.CalculateWaypointSegment(driver.transform.localPosition, pickUpPosition);
+                float drivingTime = segment.duration;
+                if (drivingTime < fastestTime)
                 {
-                    fastestTime = totalTime;
+                    fastestTime = drivingTime;
                     fastestDriver = driver;
-                    enRouteDistance = distance;
+                    enRouteDistance = segment.distance;
                 }
             }
             else
@@ -469,15 +468,14 @@ public class City : MonoBehaviour
                 float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
                 float timeLeftOnTrip = expectedDropOffTime - currentTime;
 
-                float distanceToPickUp = GridUtils.GetDistance(driver.currentTrip.tripCreatedData.destination, pickUpPosition);
-                float drivingTime = distanceToPickUp / simulationSettings.driverSpeed;
+                WaypointSegment enRouteSegment = driver.CalculateWaypointSegment(driver.currentTrip.tripCreatedData.destination, pickUpPosition);
                 float timeSpentBetweenTrips = simulationSettings.timeSpentWaitingForPassenger;
-                float totalTime = drivingTime + timeSpentBetweenTrips + timeLeftOnTrip;
+                float totalTime = enRouteSegment.duration + timeSpentBetweenTrips + timeLeftOnTrip;
                 if (totalTime < fastestTime)
                 {
                     fastestTime = totalTime;
                     fastestDriver = driver;
-                    enRouteDistance = distanceToPickUp;
+                    enRouteDistance = enRouteSegment.distance;
                 }
             }
         }
@@ -515,8 +513,8 @@ public class City : MonoBehaviour
         float expectedWaitingTime = fastestDriverResponse.fastestTime;
         Driver fastestDriver = fastestDriverResponse.fastestDriver;
 
-
-        float expectedTripTime = tripDistance / simulationSettings.driverSpeed + simulationSettings.timeSpentWaitingForPassenger;
+        WaypointSegment tripSegment = fastestDriver.CalculateWaypointSegment(position, destination);
+        float expectedTripTime = tripSegment.duration + simulationSettings.timeSpentWaitingForPassenger;
 
         RideOffer rideOffer = new RideOffer
         {
