@@ -454,8 +454,7 @@ public class City : MonoBehaviour
             {
                 float distance = GridUtils.GetDistance(driver.transform.localPosition, pickUpPosition);
                 float drivingTime = distance / simulationSettings.driverSpeed;
-                float extraPickUpTime = simulationSettings.timeSpentWaitingForPassenger;
-                float totalTime = drivingTime + extraPickUpTime;
+                float totalTime = drivingTime;
                 if (totalTime < fastestTime)
                 {
                     fastestTime = totalTime;
@@ -465,14 +464,15 @@ public class City : MonoBehaviour
             }
             else
             {
-                float expectedDropOffTime = driver.currentTrip!.tripCreatedData.expectedPickupTime + driver.currentTrip.tripCreatedData.expectedTripTime;
+                float prevPassengerPickupTime = driver.currentTrip!.pickedUpData != null ? driver.currentTrip.pickedUpData.pickedUpTime : driver.currentTrip.tripCreatedData.expectedPickupTime;
+                float expectedDropOffTime = prevPassengerPickupTime + driver.currentTrip.tripCreatedData.expectedTripTime;
                 float currentTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
                 float timeLeftOnTrip = expectedDropOffTime - currentTime;
 
                 float distanceToPickUp = GridUtils.GetDistance(driver.currentTrip.tripCreatedData.destination, pickUpPosition);
                 float drivingTime = distanceToPickUp / simulationSettings.driverSpeed;
-                float extraPickUpTime = simulationSettings.timeSpentWaitingForPassenger;
-                float totalTime = drivingTime + extraPickUpTime + timeLeftOnTrip;
+                float timeSpentBetweenTrips = simulationSettings.timeSpentWaitingForPassenger;
+                float totalTime = drivingTime + timeSpentBetweenTrips + timeLeftOnTrip;
                 if (totalTime < fastestTime)
                 {
                     fastestTime = totalTime;
@@ -516,7 +516,7 @@ public class City : MonoBehaviour
         Driver fastestDriver = fastestDriverResponse.fastestDriver;
 
 
-        float expectedTripTime = tripDistance / simulationSettings.driverSpeed + 0.6f / 60f;
+        float expectedTripTime = tripDistance / simulationSettings.driverSpeed + simulationSettings.timeSpentWaitingForPassenger;
 
         RideOffer rideOffer = new RideOffer
         {

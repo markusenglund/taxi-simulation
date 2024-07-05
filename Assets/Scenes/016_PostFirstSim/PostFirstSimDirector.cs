@@ -58,7 +58,7 @@ public class PostFirstSimDirector : MonoBehaviour
         // Debug.Log(savedPersons.Length);
         simulationInfoGroup = GameObject.Find("SimulationInfoGroup").GetComponent<SimulationInfoGroup>();
         StartCoroutine(Scene());
-        LogFocusPassengerOptions();
+        // LogFocusPassengerOptions();
     }
 
     void LogFocusPassengerOptions()
@@ -94,28 +94,27 @@ public class PostFirstSimDirector : MonoBehaviour
         StartCoroutine(city.StartSimulation());
 
 
-        float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
+        // float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
 
-        Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
-        Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
+        // Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
+        // Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
 
-        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(passengerCameraPosition, passengerCameraRotation, realTimeWhenFocusPassengerSpawns, Ease.Cubic, 60));
 
-        StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, realTimeWhenFocusPassengerSpawns, Ease.Cubic));
-        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns / 3f);
+        // StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, realTimeWhenFocusPassengerSpawns, Ease.Cubic));
+        // yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns / 3f);
 
-        StartCoroutine(CameraUtils.RotateCamera(passengerCameraRotation, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
-        StartCoroutine(CameraUtils.ZoomCamera(75, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
-        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
-        yield return new WaitForSeconds(1.5f);
+        // StartCoroutine(CameraUtils.RotateCamera(passengerCameraRotation, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
+        // StartCoroutine(CameraUtils.ZoomCamera(75, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
+        // yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
+        // yield return new WaitForSeconds(1.5f);
 
-        Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
-        float duration = -1.5f + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
-        StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
-        StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
-        StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
-        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
-        yield return new WaitForSeconds(duration);
+        // Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
+        // float duration = -1.5f + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
+        // StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
+        // StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
+        // StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
+        // // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
+        // yield return new WaitForSeconds(duration);
 
     }
 

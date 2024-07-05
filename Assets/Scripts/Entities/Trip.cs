@@ -162,6 +162,7 @@ public class Trip
         this.tripCreatedData.passenger.HandleDriverArrivedAtPickUp();
     }
 
+    // The moment of pickup is when the pick up waiting time starts, so the trip time includes the waiting time
     public void PickUpPassenger(PickedUpData pickedUpData, PickedUpDriverData pickedUpDriverData)
     {
         state = TripState.OnTrip;
@@ -169,7 +170,10 @@ public class Trip
         this.pickedUpDriverData = pickedUpDriverData;
         this.pickedUpPassengerData = this.tripCreatedData.passenger.HandlePassengerPickedUp(pickedUpData);
         string minutesLate = ((pickedUpData.pickedUpTime - this.tripCreatedData.expectedPickupTime) * 60).ToString("F2");
-        Debug.Log($"PICKUP DIFF: {minutesLate} Driver {this.driverAssignedData.driver.id} Picked up passenger {this.tripCreatedData.passenger.person.id} at {pickedUpData.pickedUpTime}, expected pickup time was {this.tripCreatedData.expectedPickupTime}");
+        if (this.driverAssignedData.driver.id == 3)
+        {
+            Debug.Log($"PICKUP DIFF: {minutesLate} Driver {this.driverAssignedData.driver.id} Picked up passenger {this.tripCreatedData.passenger.person.id} at {pickedUpData.pickedUpTime}, expected pickup time was {this.tripCreatedData.expectedPickupTime}");
+        }
     }
 
     public void DropOffPassenger(DroppedOffData droppedOffData, DroppedOffDriverData droppedOffDriverData)
@@ -178,6 +182,11 @@ public class Trip
         this.droppedOffData = droppedOffData;
         this.droppedOffDriverData = droppedOffDriverData;
         this.droppedOffPassengerData = this.tripCreatedData.passenger.HandlePassengerDroppedOff(droppedOffData);
+        if (this.driverAssignedData.driver.id == 3)
+        {
+            string minutesLate = ((droppedOffData.timeSpentOnTrip - tripCreatedData.expectedTripTime) * 60).ToString("F2");
+            Debug.Log($"DROPOFF DIFF: {minutesLate} {this.driverAssignedData.driver.id} Dropped off passenger at {droppedOffData.droppedOffTime}");
+        }
         // this.tripCreatedData.passenger = null;
     }
 }

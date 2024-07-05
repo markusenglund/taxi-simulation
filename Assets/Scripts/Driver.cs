@@ -133,10 +133,7 @@ public class Driver : MonoBehaviour
 
         Passenger passenger = currentTrip.tripCreatedData.passenger;
         StartCoroutine(passenger.JumpToCarRoof(duration: 0.5f, this));
-        yield return new WaitForSeconds(0.5f);
-
-        // TODO: Figure out how to handle the passenger jump delay, it's now 0.8 seconds
-        // yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursToRealSeconds(simulationSettings.timeSpentWaitingForPassenger));
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(simulationSettings.timeSpentWaitingForPassenger));
 
         currentTrip.PickUpPassenger(pickedUpData, pickedUpDriverData);
 
@@ -199,7 +196,7 @@ public class Driver : MonoBehaviour
         currentTrip.DropOffPassenger(droppedOffData, droppedOffDriverData);
 
         // Debug.Log($"On trip time: {droppedOffData.timeSpentOnTrip} On trip distance: {currentTrip.tripCreatedData.tripDistance} km, En route time: {currentTrip.pickedUpData.timeSpentEnRoute} En route distance: {currentTrip.driverAssignedData.enRouteDistance} km");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(simulationSettings.timeSpentWaitingForPassenger));
 
         driverPerson.completedTrips.Add(currentTrip);
         currentTrip = null;
@@ -210,7 +207,10 @@ public class Driver : MonoBehaviour
         else
         {
             city.HandleTripCompleted(this);
-            Debug.Log($"Driver {id} completed trip at {droppedOffTime}");
+            if (id == 3)
+            {
+                Debug.Log($"Driver {id} completed trip at {droppedOffTime}");
+            }
             if (nextTrip != null)
             {
                 DispatchDriver(nextTrip);
@@ -267,7 +267,10 @@ public class Driver : MonoBehaviour
 
     void Update()
     {
-        Debug.DrawLine(transform.position, destination, Color.red);
+        if (this.id == 3)
+        {
+            Debug.DrawLine(transform.position, destination, Color.red);
+        }
 
         if (city.simulationEnded)
         {
