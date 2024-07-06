@@ -15,9 +15,10 @@ MonoBehaviour:
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
-  randomSeed: 1
+  randomSeed: 5
   simulationLengthHours: 4
   driverMaxSpeed: 40
+  driverAcceleration: 1000
   walkingSpeed: 3.5
   publicTransportAverageSpeed: 20
   publicTransportCost: 2.5

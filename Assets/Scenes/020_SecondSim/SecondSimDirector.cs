@@ -41,11 +41,12 @@ public class SecondSimDirector : MonoBehaviour
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
         InstatiateTimeSensitivityInfoBoxes();
-        InstantiateIncomeInfoBoxes();
-        InstantiateTimeOfBestSubstituteInfoBoxes();
-        InstantiateMaxTimeSavingInfoBoxes();
+        // InstantiateIncomeInfoBoxes();
+        // InstantiateTimeOfBestSubstituteInfoBoxes();
+        // InstantiateMaxTimeSavingInfoBoxes();
         InstantiatePassengerNumberInfoBoxes();
-        InstantiateNoOfferPassengerNumberInfoBoxes();
+        // InstantiateNoOfferPassengerNumberInfoBoxes();
+        InstantiateBucketInfoBoxes();
 
 
     }
@@ -136,6 +137,52 @@ public class SecondSimDirector : MonoBehaviour
 
         InfoBox timeOfBestSubstituteSurge = InfoBox.Create(city2, new Vector3(700, 750), "Max time savings", GetMaxTimeSavingsOfUberOverBestSubstitute, FormatTimeSavings, ColorScheme.orange);
         // InfoBox timeOfBestSubstituteSubstituteSurge = InfoBox.Create(city2, new Vector3(700, 750), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.orange);
+    }
+
+    public delegate float GetBucket(City city, int quartile);
+
+
+    void InstantiateBucketInfoBoxes()
+    {
+        float[] timeSensitivityQuartileThresholds = new float[] { 1.428f, 2f, 2.801f, float.PositiveInfinity };
+        GetBucket GetQuartileOfPassengersByTimeSensitivity = (City city, int quartile) =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople().Where(p => p.state != PassengerState.Idling && p.state != PassengerState.BeforeSpawn).ToArray();
+            PassengerPerson[] quartilePassengers = passengers.Where(p =>
+            {
+                float timeSensitivity = p.economicParameters.timePreference;
+                if (timeSensitivity < timeSensitivityQuartileThresholds[quartile])
+                {
+                    if (quartile == 0)
+                    {
+                        return true;
+                    }
+                    if (timeSensitivity >= timeSensitivityQuartileThresholds[quartile - 1])
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }).ToArray();
+            float percentageWhoGotAnUber = quartilePassengers.Length == 0 ? 0 : (float)quartilePassengers.Count(p => p.tripTypeChosen == TripType.Uber) / quartilePassengers.Length;
+            // Debug.Log($"Bottom quartile: {quartilePassengers.Length}, {percentageWhoGotAnUber}");
+            return percentageWhoGotAnUber;
+        };
+
+        GetValue GetBottomQuartile = city => GetQuartileOfPassengersByTimeSensitivity(city, 0);
+        GetValue GetSecondQuartile = city => GetQuartileOfPassengersByTimeSensitivity(city, 1);
+        GetValue GetThirdQuartile = city => GetQuartileOfPassengersByTimeSensitivity(city, 2);
+        GetValue GetTopQuartile = city => GetQuartileOfPassengersByTimeSensitivity(city, 3);
+
+        FormatValue FormatPercentage = value => (value * 100).ToString("0") + "%";
+        InfoBox bottomQuartileStatic = InfoBox.Create(city1, new Vector3(-500, 1000), "Bottom quartile time sense", GetBottomQuartile, FormatPercentage, ColorScheme.blue);
+        InfoBox bottomQuartileSurge = InfoBox.Create(city2, new Vector3(-500, 750), "Bottom quartile time sense", GetBottomQuartile, FormatPercentage, ColorScheme.orange);
+        InfoBox secondQuartileStatic = InfoBox.Create(city1, new Vector3(-100, 1000), "Second quartile time sense", GetSecondQuartile, FormatPercentage, ColorScheme.blue);
+        InfoBox secondQuartileSurge = InfoBox.Create(city2, new Vector3(-100, 750), "Second quartile time sense", GetSecondQuartile, FormatPercentage, ColorScheme.orange);
+        InfoBox thirdQuartileStatic = InfoBox.Create(city1, new Vector3(300, 1000), "Third quartile time sense", GetThirdQuartile, FormatPercentage, ColorScheme.blue);
+        InfoBox thirdQuartileSurge = InfoBox.Create(city2, new Vector3(300, 750), "Third quartile time sense", GetThirdQuartile, FormatPercentage, ColorScheme.orange);
+        InfoBox topQuartileStatic = InfoBox.Create(city1, new Vector3(700, 1000), "Top quartile time sense", GetTopQuartile, FormatPercentage, ColorScheme.blue);
+        InfoBox topQuartileSurge = InfoBox.Create(city2, new Vector3(700, 750), "Top quartile time sense", GetTopQuartile, FormatPercentage, ColorScheme.orange);
     }
 
     void InstantiateIncomeInfoBoxes()

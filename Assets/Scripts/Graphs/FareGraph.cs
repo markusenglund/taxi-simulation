@@ -29,7 +29,7 @@ public class FareGraph : MonoBehaviour
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
-    float maxY = 50f;
+    float maxY = 60f;
     float minY = 0f;
     float maxX;
     float minX = 0f;
