@@ -43,6 +43,7 @@ public class SecondSimDirector : MonoBehaviour
         InstatiateTimeSensitivityInfoBoxes();
         InstantiateIncomeInfoBoxes();
         InstantiateTimeOfBestSubstituteInfoBoxes();
+        InstantiateMaxTimeSavingInfoBoxes();
         InstantiatePassengerNumberInfoBoxes();
         InstantiateNoOfferPassengerNumberInfoBoxes();
 
@@ -59,8 +60,8 @@ public class SecondSimDirector : MonoBehaviour
         };
         FormatValue formatValue = value => value.ToString();
 
-        InfoBox numPassengersWhoDidNotGetRidesStatic = InfoBox.Create(city1, new Vector3(1200, 1000), "No offer static", GetNumPassengersWhoWereNotOfferedARide, formatValue, ColorScheme.blue);
-        InfoBox numPassengersWhoDidNotGetRidesSurge = InfoBox.Create(city2, new Vector3(1200, 750), "No offer surge", GetNumPassengersWhoWereNotOfferedARide, formatValue, ColorScheme.orange);
+        InfoBox numPassengersWhoDidNotGetRidesStatic = InfoBox.Create(city1, new Vector3(1500, 1000), "No offer static", GetNumPassengersWhoWereNotOfferedARide, formatValue, ColorScheme.blue);
+        InfoBox numPassengersWhoDidNotGetRidesSurge = InfoBox.Create(city2, new Vector3(1500, 750), "No offer surge", GetNumPassengersWhoWereNotOfferedARide, formatValue, ColorScheme.orange);
     }
 
 
@@ -74,8 +75,8 @@ public class SecondSimDirector : MonoBehaviour
         };
         FormatValue formatValue = value => value.ToString();
 
-        InfoBox numPassengersWhoGotRidesStatic = InfoBox.Create(city1, new Vector3(900, 1000), "Passengers static", GetNumPassengersWhoGotRides, formatValue, ColorScheme.blue);
-        InfoBox numPassengersWhoGotRidesSurge = InfoBox.Create(city2, new Vector3(900, 750), "Passengers surge", GetNumPassengersWhoGotRides, formatValue, ColorScheme.orange);
+        InfoBox numPassengersWhoGotRidesStatic = InfoBox.Create(city1, new Vector3(1100, 1000), "Passengers static", GetNumPassengersWhoGotRides, formatValue, ColorScheme.blue);
+        InfoBox numPassengersWhoGotRidesSurge = InfoBox.Create(city2, new Vector3(1100, 750), "Passengers surge", GetNumPassengersWhoGotRides, formatValue, ColorScheme.orange);
     }
 
 
@@ -108,10 +109,33 @@ public class SecondSimDirector : MonoBehaviour
         };
 
         InfoBox timeOfBestSubstituteStatic = InfoBox.Create(city1, new Vector3(300, 1000), "Time of best substitute (Uber)", GetTimeOfBestSubstitute, FormatTimeOfBestSubstitute, ColorScheme.blue);
-        InfoBox timeOfBestSubstituteSubstituteStatic = InfoBox.Create(city1, new Vector3(600, 1000), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.blue);
+        // InfoBox timeOfBestSubstituteSubstituteStatic = InfoBox.Create(city1, new Vector3(600, 1000), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.blue);
 
         InfoBox timeOfBestSubstituteSurge = InfoBox.Create(city2, new Vector3(300, 750), "Time of best substitute (Uber)", GetTimeOfBestSubstitute, FormatTimeOfBestSubstitute, ColorScheme.orange);
-        InfoBox timeOfBestSubstituteSubstituteSurge = InfoBox.Create(city2, new Vector3(600, 750), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.orange);
+        // InfoBox timeOfBestSubstituteSubstituteSurge = InfoBox.Create(city2, new Vector3(600, 750), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.orange);
+    }
+
+    void InstantiateMaxTimeSavingInfoBoxes()
+    {
+        GetValue GetMaxTimeSavingsOfUberOverBestSubstitute = city =>
+        {
+            PassengerPerson[] passengers = city.GetPassengerPeople();
+            PassengerPerson[] passengersWhoTookUber = passengers.Where(p => p.tripTypeChosen == TripType.Uber).ToArray();
+            if (passengersWhoTookUber.Length == 0)
+            {
+                return 0;
+            }
+            float medianTimeSavingsOfUber = StatisticsUtils.CalculateMedian(passengersWhoTookUber.Select(p => p.economicParameters.GetBestSubstitute().maxTimeSavedByUber).ToList());
+            return medianTimeSavingsOfUber;
+        };
+
+        FormatValue FormatTimeSavings = value => (value * 60).ToString("0") + " min";
+
+        InfoBox timeOfBestSubstituteStatic = InfoBox.Create(city1, new Vector3(700, 1000), "Max time savings", GetMaxTimeSavingsOfUberOverBestSubstitute, FormatTimeSavings, ColorScheme.blue);
+        // InfoBox timeOfBestSubstituteSubstituteStatic = InfoBox.Create(city1, new Vector3(700, 1000), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.blue);
+
+        InfoBox timeOfBestSubstituteSurge = InfoBox.Create(city2, new Vector3(700, 750), "Max time savings", GetMaxTimeSavingsOfUberOverBestSubstitute, FormatTimeSavings, ColorScheme.orange);
+        // InfoBox timeOfBestSubstituteSubstituteSurge = InfoBox.Create(city2, new Vector3(700, 750), "Time of best substitute (Substitute)", GetTimeOfBestSubstituteOfNonPassengers, FormatTimeOfBestSubstitute, ColorScheme.orange);
     }
 
     void InstantiateIncomeInfoBoxes()

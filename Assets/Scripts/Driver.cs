@@ -50,10 +50,8 @@ public class Driver : MonoBehaviour
 
     SimulationSettings simulationSettings;
 
-    private float acceleration = 1000;
+    private float acceleration;
     private float maxSpeed;
-
-    private float prevDistance = 0;
 
     private WaypointSegment currentWaypointSegment;
 
@@ -82,6 +80,7 @@ public class Driver : MonoBehaviour
         driver.driverPerson = person;
         driver.driverPerson.isCurrentlyDriving = true;
         driver.maxSpeed = simSettings.driverMaxSpeed;
+        driver.acceleration = simSettings.driverAcceleration;
         driver.mode = mode;
         driver.simulationSettings = simSettings;
         taxi.name = "Taxi";
@@ -258,7 +257,7 @@ public class Driver : MonoBehaviour
 
         this.destination = destination;
         waypoints = GridUtils.GetWaypoints(transform.localPosition, destination);
-        currentWaypointSegment = CalculateWaypointSegment(transform.localPosition, destination);
+        currentWaypointSegment = CalculateWaypointSegment(transform.localPosition, destination, maxSpeed, acceleration);
     }
 
     void Update()
@@ -275,7 +274,6 @@ public class Driver : MonoBehaviour
 
         if (waypoints.Count == 0)
         {
-            prevDistance = 0;
             if (currentTrip != null)
             {
                 if (currentTrip.state == TripState.DriverEnRoute)
@@ -344,6 +342,12 @@ public class Driver : MonoBehaviour
 
     public WaypointSegment CalculateWaypointSegment(Vector3 startPosition, Vector3 destination)
     {
+        return CalculateWaypointSegment(startPosition, destination, maxSpeed, acceleration);
+    }
+
+
+    public static WaypointSegment CalculateWaypointSegment(Vector3 startPosition, Vector3 destination, float maxSpeed, float acceleration)
+    {
         float distance = GridUtils.GetDistance(startPosition, destination);
 
         float accelerationDistance = Mathf.Min(0.5f * acceleration * Mathf.Pow(maxSpeed / acceleration, 2), distance / 2);
@@ -361,7 +365,7 @@ public class Driver : MonoBehaviour
             accelerationDistance = accelerationDistance,
             duration = totalDuration,
             accelerationDuration = accelerationDuration,
-            startPosition = transform.localPosition,
+            startPosition = startPosition,
             endPosition = destination
         };
         return waypointSegment;

@@ -243,7 +243,7 @@ public class Passenger : MonoBehaviour
                 timeHours = expectedTotalTime,
                 timeCost = expectedTotalTimeCost,
                 moneyCost = rideOffer.fare.total,
-                totalCost = totalCost,
+                totalCost = totalCost
             };
             person.uberTripOption = uberTripOption;
 

@@ -39,6 +39,7 @@ public class TripOption
     [field: SerializeField] public float timeCost { get; set; }
     [field: SerializeField] public float moneyCost { get; set; }
     [field: SerializeField] public float totalCost { get; set; }
+    [field: SerializeField] public float maxTimeSavedByUber { get; set; }
 }
 
 [Serializable]
@@ -85,6 +86,8 @@ public class PassengerPerson
 
     public float distanceToDestination { get; set; }
 
+    public float hypotheticalTripDuration { get; set; }
+
     public PassengerPerson() { }
     public PassengerPerson(Vector3 startPosition, SimulationSettings simSettings, Random random)
     {
@@ -97,6 +100,7 @@ public class PassengerPerson
         state = PassengerState.BeforeSpawn;
         destination = GridUtils.GetRandomPosition(random);
         distanceToDestination = GridUtils.GetDistance(startPosition, destination);
+        hypotheticalTripDuration = Driver.CalculateWaypointSegment(startPosition, destination, simSettings.driverMaxSpeed, simSettings.driverAcceleration).duration + simSettings.timeSpentWaitingForPassenger;
         economicParameters = GenerateEconomicParameters();
         rideOfferStatus = RideOfferStatus.NotYetRequested;
     }
@@ -134,6 +138,7 @@ public class PassengerPerson
         float publicTransportDuration = distanceToDestination / simSettings.publicTransportAverageSpeed + Mathf.Lerp(minPublicTransportExtraDuration, maxPublicTransportExtraDuration, (float)random.NextDouble());
         float publicTransportTimeCost = publicTransportDuration * waitingCostPerHour;
         float publicTransportUtilityCost = publicTransportTimeCost + simSettings.publicTransportCost;
+        float maxTimeSavedByUberOverPublicTransport = publicTransportDuration - hypotheticalTripDuration;
         TripOption publicTransportSubstitute = new TripOption()
         {
             type = TripType.PublicTransport,
@@ -141,6 +146,7 @@ public class PassengerPerson
             timeCost = publicTransportTimeCost,
             moneyCost = simSettings.publicTransportCost,
             totalCost = publicTransportUtilityCost,
+            maxTimeSavedByUber = maxTimeSavedByUberOverPublicTransport
         };
 
         // Walking
@@ -148,6 +154,7 @@ public class PassengerPerson
         float timeCostOfWalking = walkingTime * waitingCostPerHour;
         float moneyCostOfWalking = 0;
         float totalCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
+        float maxTimeSavedByUberOverWalking = walkingTime - hypotheticalTripDuration;
         TripOption walkingSubstitute = new TripOption()
         {
             type = TripType.Walking,
@@ -155,6 +162,7 @@ public class PassengerPerson
             timeCost = timeCostOfWalking,
             moneyCost = moneyCostOfWalking,
             totalCost = totalCostOfWalking,
+            maxTimeSavedByUber = maxTimeSavedByUberOverWalking
         };
 
         List<TripOption> substitutes = new List<TripOption> { publicTransportSubstitute, walkingSubstitute };

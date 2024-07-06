@@ -20,6 +20,9 @@ public class SimulationSettings : ScriptableObject
     // 30km/hr is a reasonable average speed for a taxi in an urban area (including stopping at traffic lights etc) - setting the max speed to 40km/hr will land the average speed around 30km/hr
     // Real data from Atlanta: https://www.researchgate.net/figure/Average-speed-in-miles-per-hour-for-rural-and-urban-roads_tbl3_238594974
     public float driverMaxSpeed = 40f;
+
+    // Acceleration in km/hr^2 - 1000 km/hr^2 is unrealistically slow but it looks good visually
+    public float driverAcceleration = 1000f;
     public float walkingSpeed = 3.5f;
 
     // Average speed of buses in Toronto is around 15-20 km/hr https://stevemunro.ca/2023/06/17/a-few-decades-of-ttc-stats/
