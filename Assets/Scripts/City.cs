@@ -195,15 +195,18 @@ public class City : MonoBehaviour
 
             int numWaitingPassengers = trips.Count(trip => trip.state == TripState.Queued || trip.state == TripState.DriverAssigned);
             int numOccupiedDrivers = drivers.Count(driver => driver.currentTrip != null);
-            float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - 1.0f * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
+            // Bias the calculation in favor of more aggressively increasing prices when many cabs are occupied
+            float numCurrentPassengersBias = 1.2f;
+            float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - numCurrentPassengersBias * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
 
-            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f;
+            // Account for some passenger agents not finding Uber to be the best option for them
+            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.5f;
 
 
             float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
             float minMultiplier = 0.7f;
-            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.0f, minMultiplier);
+            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1), minMultiplier);
 
             surgeMultiplier = newSurgeMultiplier;
 
