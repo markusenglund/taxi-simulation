@@ -84,3 +84,4 @@ Plugins
 # Manim
 manim/media
 manim/__pycache__
+savedData

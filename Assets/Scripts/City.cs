@@ -439,7 +439,8 @@ public class City : MonoBehaviour
     public GetFastestDriverResponse GetFastestDriver(Vector3 pickUpPosition)
     {
         Driver[] availableDrivers = drivers.Where(driver => driver.nextTrip == null).ToArray();
-        if (availableDrivers.Length < drivers.Count / 2)
+        // If there are less than half of the drivers available, don't assign any drivers. This is to prevent the "Wild goose chase" effect where drivers are assigned to passengers that are too far away
+        if (availableDrivers.Length <= Mathf.Max(drivers.Count / 2, 3))
         {
             return new GetFastestDriverResponse { areDriversAvailable = false };
         }

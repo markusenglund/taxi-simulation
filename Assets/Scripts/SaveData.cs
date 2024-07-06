@@ -7,7 +7,7 @@ public class SaveData
 {
     private static string GetFilePath(string key)
     {
-        return Application.dataPath + "/" + key + ".json";
+        return $"{Application.dataPath}/savedData/{key}.json";
     }
     public static void SaveObject<T>(string key, List<T> data)
     {
