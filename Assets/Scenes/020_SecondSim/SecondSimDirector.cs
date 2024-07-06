@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using Random = System.Random;
 using System.Collections.Generic;
 using System.Linq;
 

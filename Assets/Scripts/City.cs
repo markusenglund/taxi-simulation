@@ -195,7 +195,7 @@ public class City : MonoBehaviour
 
             int numWaitingPassengers = trips.Count(trip => trip.state == TripState.Queued || trip.state == TripState.DriverAssigned);
             int numOccupiedDrivers = drivers.Count(driver => driver.currentTrip != null);
-            float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - 1.2f * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
+            float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - 1.0f * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
 
             float totalExpectedPassengers = expectedNumPassengersPerHour / 1.3f;
 
@@ -203,7 +203,7 @@ public class City : MonoBehaviour
             float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
             float minMultiplier = 0.7f;
-            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.5f, minMultiplier);
+            float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1) * 1.0f, minMultiplier);
 
             surgeMultiplier = newSurgeMultiplier;
 
