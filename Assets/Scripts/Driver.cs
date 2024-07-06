@@ -81,7 +81,7 @@ public class Driver : MonoBehaviour
         driver.city = city;
         driver.driverPerson = person;
         driver.driverPerson.isCurrentlyDriving = true;
-        driver.maxSpeed = simSettings.driverSpeed;
+        driver.maxSpeed = simSettings.driverMaxSpeed;
         driver.mode = mode;
         driver.simulationSettings = simSettings;
         taxi.name = "Taxi";

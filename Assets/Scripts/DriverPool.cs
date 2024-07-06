@@ -486,7 +486,7 @@ public class DriverPool
 
     private float CalculateExpectedGrossProfitForOneHourOfWork(int hourOfTheDay, float expectedTripCapacityIncludingDriver)
     {
-        float driverSpeed = city.simulationSettings.driverSpeed;
+        float driverMaxSpeed = city.simulationSettings.driverMaxSpeed;
         // TODO: FIX ME - actually calculate the expected surge multiplier to get a realistic perKmFare - this is currenly incorrect!
         float surgeMultiplier = 1f;
         float perKmFare = city.simulationSettings.baseFarePerKm * surgeMultiplier;
@@ -494,7 +494,7 @@ public class DriverPool
         float marginalCostPerKm = city.simulationSettings.driverMarginalCostPerKm;
 
         // Theoretical earnings ceiling per hour, assuming that the driver is always driving a passenger or on the way to a passenger who is on average startingBaseFare/baseFarePerKm kms away
-        float maxGrossProfitPerHour = driverSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
+        float maxGrossProfitPerHour = driverMaxSpeed * (perKmFare * driverFareCutPercentage - marginalCostPerKm);
 
         float expectedNumPassengers = (city.simulationSettings.expectedPassengersByHour[hourOfTheDay % city.simulationSettings.simulationLengthHours] + city.simulationSettings.expectedPassengersByHour[(hourOfTheDay + 1) % city.simulationSettings.simulationLengthHours]) / 2;
 

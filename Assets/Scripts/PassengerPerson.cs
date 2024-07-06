@@ -128,17 +128,16 @@ public class PassengerPerson
 
     public List<TripOption> GenerateSubstitutes(float waitingCostPerHour, float hourlyIncome)
     {
-        // Public transport
-        float minPublicTransportExtraTime = 10f / 60f;
-        float maxPublicTransportExtraTime = 90 / 60f;
-        float publicTransportTime = distanceToDestination / simSettings.publicTransportSpeed + Mathf.Lerp(minPublicTransportExtraTime, maxPublicTransportExtraTime, (float)random.NextDouble());
-        // Public transport adds a random time between 20 minutes and 2 hours to the arrival time due to going to the bus stop, waiting for the bus, and walking to the destination
-        float publicTransportTimeCost = publicTransportTime * waitingCostPerHour;
+        // Public transport adds a random duration between 10 minutes and 80 minutes to the arrival time due to going to the bus stop, waiting for the bus, switching buses, and walking to the destination
+        float minPublicTransportExtraDuration = 10f / 60f;
+        float maxPublicTransportExtraDuration = 80 / 60f;
+        float publicTransportDuration = distanceToDestination / simSettings.publicTransportAverageSpeed + Mathf.Lerp(minPublicTransportExtraDuration, maxPublicTransportExtraDuration, (float)random.NextDouble());
+        float publicTransportTimeCost = publicTransportDuration * waitingCostPerHour;
         float publicTransportUtilityCost = publicTransportTimeCost + simSettings.publicTransportCost;
         TripOption publicTransportSubstitute = new TripOption()
         {
             type = TripType.PublicTransport,
-            timeHours = publicTransportTime,
+            timeHours = publicTransportDuration,
             timeCost = publicTransportTimeCost,
             moneyCost = simSettings.publicTransportCost,
             totalCost = publicTransportUtilityCost,
