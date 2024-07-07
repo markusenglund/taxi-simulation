@@ -644,6 +644,10 @@ PrefabInstance:
       propertyPath: m_text
       value: Rides completed
       objectReference: {fileID: 0}
+    - target: {fileID: 907878643232689179, guid: f1331cfcbbca7cb48983d2d519fa174c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 912108122842067494, guid: f1331cfcbbca7cb48983d2d519fa174c, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
@@ -759,6 +763,10 @@ PrefabInstance:
     - target: {fileID: 3577307107976592251, guid: f1331cfcbbca7cb48983d2d519fa174c, type: 3}
       propertyPath: m_Name
       value: SimulationInfoGroup
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577307107976592251, guid: f1331cfcbbca7cb48983d2d519fa174c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4612452472075621317, guid: f1331cfcbbca7cb48983d2d519fa174c, type: 3}
       propertyPath: m_SizeDelta.x

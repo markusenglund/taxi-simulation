@@ -25,7 +25,7 @@ public class FareGraph : MonoBehaviour
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(3250, 400);
+    Vector3 graphPosition = new Vector3(2690, 1730);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
@@ -71,6 +71,7 @@ public class FareGraph : MonoBehaviour
         graph.maxX = city1.simulationSettings.simulationLengthHours;
         graph.staticCity = city1;
         graph.surgeCity = city2;
+        graph.transform.localScale = Vector3.one * 0.95f;
         return graph;
     }
 

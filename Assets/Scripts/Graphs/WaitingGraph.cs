@@ -25,7 +25,7 @@ public class WaitingGraph : MonoBehaviour
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(1100, 400);
+    Vector3 graphPosition = new Vector3(1150, 1730);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
@@ -34,7 +34,7 @@ public class WaitingGraph : MonoBehaviour
     float maxX;
     float minX = 0f;
 
-    string headingText = "Average expected waiting time";
+    string headingText = "Average waiting time";
 
     City staticCity;
     City surgeCity;
@@ -73,6 +73,8 @@ public class WaitingGraph : MonoBehaviour
         graph.maxX = city1.simulationSettings.simulationLengthHours;
         graph.staticCity = city1;
         graph.surgeCity = city2;
+        graph.transform.localScale = Vector3.one * 0.95f;
+
         return graph;
     }
 

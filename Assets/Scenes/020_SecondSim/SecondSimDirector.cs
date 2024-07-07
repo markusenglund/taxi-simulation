@@ -18,7 +18,7 @@ public class SecondSimDirector : MonoBehaviour
     Vector3 city1Position = new Vector3(0f, 0, 0f);
     Vector3 city2Position = new Vector3(12f, 0, 0f);
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
-    Vector3 cameraPosition = new Vector3(10.5f, 11f, -6f);
+    Vector3 cameraPosition = new Vector3(10.5f, 15f, -10f);
 
     bool hasSavedPassengerData = false;
 
@@ -37,16 +37,18 @@ public class SecondSimDirector : MonoBehaviour
     {
 
         Camera.main.transform.position = cameraPosition;
-        Camera.main.transform.LookAt(middlePosition);
+        Vector3 cameraLookAtPosition = middlePosition + Vector3.up * 3f;
+        Camera.main.transform.LookAt(cameraLookAtPosition);
+        Camera.main.fieldOfView = 45f;
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
-        InstatiateTimeSensitivityInfoBoxes();
+        // InstatiateTimeSensitivityInfoBoxes();
         // InstantiateIncomeInfoBoxes();
         // InstantiateTimeOfBestSubstituteInfoBoxes();
         // InstantiateMaxTimeSavingInfoBoxes();
-        InstantiatePassengerNumberInfoBoxes();
+        // InstantiatePassengerNumberInfoBoxes();
         // InstantiateNoOfferPassengerNumberInfoBoxes();
-        InstantiateBucketInfoBoxes();
+        // InstantiateBucketInfoBoxes();
 
 
     }
