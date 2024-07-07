@@ -39,7 +39,7 @@ public class WaitingGraph : MonoBehaviour
     City staticCity;
     City surgeCity;
 
-    Color surgeLineColor = ColorScheme.orange;
+    Color surgeLineColor = ColorScheme.red;
     Color staticLineColor = ColorScheme.blue;
 
     Color separatorColor = new Color(96 / 255f, 96 / 255f, 96 / 255f, 1f);

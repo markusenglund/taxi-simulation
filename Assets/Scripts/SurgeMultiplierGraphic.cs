@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI; // Add this line
 using TMPro;
 
 public class SurgeMultiplierGraphic : MonoBehaviour
@@ -23,6 +24,10 @@ public class SurgeMultiplierGraphic : MonoBehaviour
         textContainer = transform.Find("TextContainer").GetComponent<RectTransform>();
 
         text = textContainer.Find("Text").GetComponent<TMP_Text>();
+        Transform background = transform.Find("Background");
+        Image backgroundImage = background.GetComponent<Image>();
+        // Darken color slightly to make the text more readable
+        backgroundImage.color = ColorScheme.surgeRed * 0.92f;
     }
     public void SetNewValue(float surgeMultiplier)
     {
