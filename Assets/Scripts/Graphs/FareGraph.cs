@@ -320,8 +320,8 @@ public class FareGraph : MonoBehaviour
         surgeLegendLine = Instantiate(lrPrefab);
 
 
-        CreateLegend(x: 80, staticLegendLine, staticLineColor, "Static average ($)");
-        CreateLegend(x: 560, surgeLegendLine, surgeLineColor, "Surge average ($)");
+        CreateLegend(x: 50, staticLegendLine, staticLineColor, "Static simulation");
+        CreateLegend(x: 560, surgeLegendLine, surgeLineColor, "Surge simulation");
 
     }
 
@@ -344,7 +344,7 @@ public class FareGraph : MonoBehaviour
         legendRectTransform.anchorMax = new Vector2(0, 0);
 
         // Set size delta of the legend
-        float legendHeight = 42;
+        float legendHeight = 52;
         float legendWidth = 600;
         float legendMargin = 20;
         legend.transform.localPosition = new Vector3(-legendWidth + margin + x, graphSize.y / 2 - marginTop + legendMargin, 0);

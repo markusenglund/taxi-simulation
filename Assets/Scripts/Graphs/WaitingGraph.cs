@@ -29,7 +29,7 @@ public class WaitingGraph : MonoBehaviour
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
-    float maxY = 50f;
+    float maxY = 30f;
     float minY = 0f;
     float maxX;
     float minX = 0f;
@@ -39,7 +39,7 @@ public class WaitingGraph : MonoBehaviour
     City staticCity;
     City surgeCity;
 
-    Color surgeLineColor = ColorScheme.red;
+    Color surgeLineColor = ColorScheme.surgeRed;
     Color staticLineColor = ColorScheme.blue;
 
     Color separatorColor = new Color(96 / 255f, 96 / 255f, 96 / 255f, 1f);
@@ -339,8 +339,8 @@ public class WaitingGraph : MonoBehaviour
         surgeLegendLine = Instantiate(lrPrefab);
 
 
-        CreateLegend(x: 80, staticLegendLine, staticLineColor, "Static average");
-        CreateLegend(x: 560, surgeLegendLine, surgeLineColor, "Surge average");
+        CreateLegend(x: 50, staticLegendLine, staticLineColor, "Static simulation");
+        CreateLegend(x: 560, surgeLegendLine, surgeLineColor, "Surge simulation");
 
     }
 
@@ -363,7 +363,7 @@ public class WaitingGraph : MonoBehaviour
         legendRectTransform.anchorMax = new Vector2(0, 0);
 
         // Set size delta of the legend
-        float legendHeight = 42;
+        float legendHeight = 52;
         float legendWidth = 600;
         float legendMargin = 20;
         legend.transform.localPosition = new Vector3(-legendWidth + margin + x, graphSize.y / 2 - marginTop + legendMargin, 0);
@@ -385,6 +385,7 @@ public class WaitingGraph : MonoBehaviour
         legendText.rectTransform.anchoredPosition = textPosition;
         legendText.rectTransform.sizeDelta = new Vector2(legendWidth, legendHeight);
         legendText.fontSize = legendHeight;
+        // legendText.fontStyle = FontStyles.Bold;
         legendText.color = color;
 
     }
