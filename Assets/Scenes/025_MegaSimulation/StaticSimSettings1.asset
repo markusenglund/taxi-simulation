@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c895f3cd3ce74493b83c995efd1ee3bb, type: 3}
-  m_Name: StaticSimSettings
+  m_Name: StaticSimSettings1
   m_EditorClassIdentifier: 
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
