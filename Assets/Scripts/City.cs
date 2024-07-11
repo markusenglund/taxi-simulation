@@ -225,7 +225,7 @@ public class City : MonoBehaviour
 
             float expectedPassengersPerHour = GetNumExpectedPassengersPerHour(TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time));
 
-            float interval = 1f / 30f;
+            float interval = 1f / 60f;
             yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(interval));
 
             float expectedPassengersInInterval = expectedPassengersPerHour * interval;
