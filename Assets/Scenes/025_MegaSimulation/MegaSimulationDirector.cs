@@ -34,7 +34,7 @@ public class MegaSimulationDirector : MonoBehaviour
         Time.captureFramerate = 60;
         // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
-        for (int i = 30; i < 40; i++)
+        for (int i = 0; i < 20; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
@@ -70,7 +70,22 @@ public class MegaSimulationDirector : MonoBehaviour
 
     private BucketInfo GetBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
     {
-        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.state != PassengerState.Idling && p.state != PassengerState.BeforeSpawn).ToArray();
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
+        {
+            bool passengerHasNotRequestedTripYet = p.state == PassengerState.Idling || p.state == PassengerState.BeforeSpawn;
+            if (passengerHasNotRequestedTripYet)
+            {
+                return false;
+            }
+
+            // If the passenger's driver is assigned but not yet driving to the passenger, we don't want to count them to prevent bias in favor of having a large queue of waiting passengers
+            bool passengerIsQueued = p.trip != null && (p.trip.state == TripState.Queued || p.trip.state == TripState.DriverAssigned);
+            if (passengerIsQueued)
+            {
+                return false;
+            }
+            return true;
+        }).ToArray();
         List<PassengerPerson> quartileList = new List<PassengerPerson>();
         foreach (PassengerPerson passenger in passengers)
         {
