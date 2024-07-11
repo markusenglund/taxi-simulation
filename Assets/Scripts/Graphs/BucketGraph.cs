@@ -13,11 +13,13 @@ public class BucketGraph : MonoBehaviour
     GetBucketGraphValues getValues;
     FormatBucketGraphValue formatValue;
 
+    string[] labels;
+
     private RectTransform graphContainer;
 
     float minValue = 0;
     float maxValue = 1;
-    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, Color staticColor, Color surgeColor)
+    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, string[] labels, Color staticColor, Color surgeColor)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform prefab = Resources.Load<Transform>("Graphs/BucketGraph");
@@ -27,6 +29,7 @@ public class BucketGraph : MonoBehaviour
         bucketGraph.surgeCities = surgeCities;
         bucketGraph.getValues = getValues;
         bucketGraph.formatValue = formatValue;
+        bucketGraph.labels = labels;
 
         RectTransform rt = bucketGraphTransform.GetComponent<RectTransform>();
         rt.anchoredPosition = position;
@@ -42,6 +45,15 @@ public class BucketGraph : MonoBehaviour
         bucketGraph.graphContainer.Find("BarGroup3/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
         bucketGraph.graphContainer.Find("BarGroup4/StaticBar").GetComponent<UnityEngine.UI.Image>().color = staticColor;
         bucketGraph.graphContainer.Find("BarGroup4/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
+
+
+        // Set labels
+        for (int i = 0; i < 4; i++)
+        {
+            bucketGraph.graphContainer.Find($"BarGroup{i + 1}/Label").GetComponent<TMPro.TMP_Text>().text = labels[i];
+        }
+
+
         return bucketGraph;
     }
 

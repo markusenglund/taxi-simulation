@@ -60,7 +60,7 @@ public class MegaSimulationDirector : MonoBehaviour
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
         InstantiateTimeSensitivityBucketGraph();
-        // InstantiateHourlyIncomeBucketGraph();
+        InstantiateHourlyIncomeBucketGraph();
         // InstantiateMaxTimeSavingsBucketGraph();
     }
 
@@ -125,32 +125,30 @@ public class MegaSimulationDirector : MonoBehaviour
         {
             return (value * 100).ToString("F0") + "%";
         };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 800), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, ColorScheme.blue, ColorScheme.surgeRed);
-        // BucketGraph.Create(staticCities.ToArray(), new Vector3(700, 800), "Time Sensitivity fixed", getBucketedTimeSensitivityValues, formatValue, ColorScheme.blue);
-        // BucketGraph.Create(surgeCities.ToArray(), new Vector3(700, 1600), "Time Sensitivity surge", getBucketedTimeSensitivityValues, formatValue, ColorScheme.surgeRed);
-
+        string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 800), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
     }
 
-    // private void InstantiateHourlyIncomeBucketGraph()
-    // {
-    //     float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
-    //     GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
-    //     GetBucketGraphValues getBucketedHourlyIncomeValues = (City[] cities) =>
-    //     {
-    //         BucketInfo[] bucketInfos = new BucketInfo[4];
-    //         for (int i = 0; i < 4; i++)
-    //         {
-    //             bucketInfos[i] = GetBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
-    //         }
-    //         return bucketInfos;
-    //     };
-    //     FormatBucketGraphValue formatValue = (float value) =>
-    //     {
-    //         return (value * 100).ToString("F0") + "%";
-    //     };
-    //     BucketGraph.Create(staticCities.ToArray(), new Vector3(2000, 800), "Hourly Income fixed", getBucketedHourlyIncomeValues, formatValue, ColorScheme.blue);
-    //     BucketGraph.Create(surgeCities.ToArray(), new Vector3(2000, 1600), "Hourly Income surge", getBucketedHourlyIncomeValues, formatValue, ColorScheme.surgeRed);
-    // }
+    private void InstantiateHourlyIncomeBucketGraph()
+    {
+        float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
+        GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
+        GetBucketGraphValues getBucketedHourlyIncomeValues = (City[] cities) =>
+        {
+            BucketInfo[] bucketInfos = new BucketInfo[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bucketInfos[i] = GetBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+            }
+            return bucketInfos;
+        };
+        FormatBucketGraphValue formatValue = (float value) =>
+        {
+            return (value * 100).ToString("F0") + "%";
+        };
+        string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2000, 800), "Hourly Income", getBucketedHourlyIncomeValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
+    }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
     // {
