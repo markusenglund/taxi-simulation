@@ -267,7 +267,7 @@ public class Driver : MonoBehaviour
             Debug.DrawLine(transform.position, destination, Color.red);
         }
 
-        if (city.simulationEnded)
+        if (city != null && city.simulationEnded)
         {
             return;
         }
