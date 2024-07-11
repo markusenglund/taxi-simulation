@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-public delegate (float, float, float, float) GetBucketGraphValues(City[] cities);
+public delegate BucketInfo[] GetBucketGraphValues(City[] cities);
 public delegate string FormatBucketGraphValue(float value);
 
 public class BucketGraph : MonoBehaviour
@@ -52,23 +52,22 @@ public class BucketGraph : MonoBehaviour
         Transform graphContainerTransform = transform.Find("GraphContainer");
         while (true)
         {
-            (float value1, float value2, float value3, float value4) = getValues(cities);
-            Debug.Log($"value1: {value1}, value2: {value2}, value3: {value3}, value4: {value4}");
+            BucketInfo[] buckets = getValues(cities);
             RectTransform bar1 = graphContainerTransform.Find("Bar1").GetComponent<RectTransform>();
             RectTransform bar2 = graphContainerTransform.Find("Bar2").GetComponent<RectTransform>();
             RectTransform bar3 = graphContainerTransform.Find("Bar3").GetComponent<RectTransform>();
             RectTransform bar4 = graphContainerTransform.Find("Bar4").GetComponent<RectTransform>();
-            bar1.sizeDelta = new Vector2(bar1.sizeDelta.x, ConvertValueToGraphPosition(value1));
-            bar2.sizeDelta = new Vector2(bar2.sizeDelta.x, ConvertValueToGraphPosition(value2));
-            bar3.sizeDelta = new Vector2(bar3.sizeDelta.x, ConvertValueToGraphPosition(value3));
-            bar4.sizeDelta = new Vector2(bar4.sizeDelta.x, ConvertValueToGraphPosition(value4));
-            string formattedValue1 = formatValue(value1);
+            bar1.sizeDelta = new Vector2(bar1.sizeDelta.x, ConvertValueToGraphPosition(buckets[0].percentageWhoGotAnUber));
+            bar2.sizeDelta = new Vector2(bar2.sizeDelta.x, ConvertValueToGraphPosition(buckets[1].percentageWhoGotAnUber));
+            bar3.sizeDelta = new Vector2(bar3.sizeDelta.x, ConvertValueToGraphPosition(buckets[2].percentageWhoGotAnUber));
+            bar4.sizeDelta = new Vector2(bar4.sizeDelta.x, ConvertValueToGraphPosition(buckets[3].percentageWhoGotAnUber));
+            string formattedValue1 = formatValue(buckets[0].percentageWhoGotAnUber);
             graphContainerTransform.Find("Bar1/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue1;
-            string formattedValue2 = formatValue(value2);
+            string formattedValue2 = formatValue(buckets[1].percentageWhoGotAnUber);
             graphContainerTransform.Find("Bar2/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue2;
-            string formattedValue3 = formatValue(value3);
+            string formattedValue3 = formatValue(buckets[2].percentageWhoGotAnUber);
             graphContainerTransform.Find("Bar3/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue3;
-            string formattedValue4 = formatValue(value4);
+            string formattedValue4 = formatValue(buckets[3].percentageWhoGotAnUber);
             graphContainerTransform.Find("Bar4/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue4;
             yield return new WaitForSeconds(0.1f);
         }

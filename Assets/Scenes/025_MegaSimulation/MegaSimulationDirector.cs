@@ -3,6 +3,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+public class BucketInfo
+{
+    public float percentageWhoGotAnUber;
+    public int sampleSize;
+}
+
 public class MegaSimulationDirector : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;
@@ -54,45 +60,49 @@ public class MegaSimulationDirector : MonoBehaviour
         TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
         InstantiateTimeSensitivityBucketGraph();
+        InstantiateHourlyIncomeBucketGraph();
+    }
+
+
+
+    public delegate float GetPassengerValue(PassengerPerson passenger);
+
+    private BucketInfo GetBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
+    {
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.state != PassengerState.Idling && p.state != PassengerState.BeforeSpawn).ToArray();
+        List<PassengerPerson> quartileList = new List<PassengerPerson>();
+        foreach (PassengerPerson passenger in passengers)
+        {
+            float value = getValue(passenger);
+            if (value < quartileThresholds[quartile])
+            {
+                if (quartile == 0)
+                {
+                    quartileList.Add(passenger);
+                }
+                else if (value >= quartileThresholds[quartile - 1])
+                {
+                    quartileList.Add(passenger);
+                }
+            }
+        }
+        int sampleSize = quartileList.Count;
+        float percentageWhoGotAnUber = sampleSize == 0 ? 0 : (float)quartileList.Count(p => p.tripTypeChosen == TripType.Uber) / sampleSize;
+        return new BucketInfo { percentageWhoGotAnUber = percentageWhoGotAnUber, sampleSize = sampleSize };
     }
 
     private void InstantiateTimeSensitivityBucketGraph()
     {
         float[] timeSensitivityQuartileThresholds = new float[] { 1.428f, 2f, 2.801f, float.PositiveInfinity };
+        GetPassengerValue getTimeSensitivity = (PassengerPerson passenger) => passenger.economicParameters.timePreference;
         GetBucketGraphValues getBucketedTimeSensitivityValues = (City[] cities) =>
         {
-            PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.state != PassengerState.Idling && p.state != PassengerState.BeforeSpawn).ToArray();
-            List<PassengerPerson> firstQuartile = new List<PassengerPerson>();
-            List<PassengerPerson> secondQuartile = new List<PassengerPerson>();
-            List<PassengerPerson> thirdQuartile = new List<PassengerPerson>();
-            List<PassengerPerson> fourthQuartile = new List<PassengerPerson>();
-            foreach (PassengerPerson passenger in passengers)
+            BucketInfo[] bucketInfos = new BucketInfo[4];
+            for (int i = 0; i < 4; i++)
             {
-                float timeSensitivity = passenger.economicParameters.timePreference;
-                if (timeSensitivity < timeSensitivityQuartileThresholds[0])
-                {
-                    firstQuartile.Add(passenger);
-                }
-                else if (timeSensitivity < timeSensitivityQuartileThresholds[1])
-                {
-                    secondQuartile.Add(passenger);
-                }
-                else if (timeSensitivity < timeSensitivityQuartileThresholds[2])
-                {
-                    thirdQuartile.Add(passenger);
-                }
-                else
-                {
-                    fourthQuartile.Add(passenger);
-                }
+                bucketInfos[i] = GetBucketInfo(cities, i, getTimeSensitivity, timeSensitivityQuartileThresholds);
             }
-
-            float percentageWhoGotAnUberFirstQuartile = firstQuartile.Count == 0 ? 0 : (float)firstQuartile.Count(p => p.tripTypeChosen == TripType.Uber) / firstQuartile.Count;
-            float percentageWhoGotAnUberSecondQuartile = secondQuartile.Count == 0 ? 0 : (float)secondQuartile.Count(p => p.tripTypeChosen == TripType.Uber) / secondQuartile.Count;
-            float percentageWhoGotAnUberThirdQuartile = thirdQuartile.Count == 0 ? 0 : (float)thirdQuartile.Count(p => p.tripTypeChosen == TripType.Uber) / thirdQuartile.Count;
-            float percentageWhoGotAnUberFourthQuartile = fourthQuartile.Count == 0 ? 0 : (float)fourthQuartile.Count(p => p.tripTypeChosen == TripType.Uber) / fourthQuartile.Count;
-
-            return (percentageWhoGotAnUberFirstQuartile, percentageWhoGotAnUberSecondQuartile, percentageWhoGotAnUberThirdQuartile, percentageWhoGotAnUberFourthQuartile);
+            return bucketInfos;
         };
 
         FormatBucketGraphValue formatValue = (float value) =>
@@ -103,6 +113,28 @@ public class MegaSimulationDirector : MonoBehaviour
         BucketGraph.Create(surgeCities.ToArray(), new Vector3(2000, 800), "Time Sensitivity surge", getBucketedTimeSensitivityValues, formatValue, ColorScheme.surgeRed);
 
     }
+
+    private void InstantiateHourlyIncomeBucketGraph()
+    {
+        float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
+        GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
+        GetBucketGraphValues getBucketedHourlyIncomeValues = (City[] cities) =>
+        {
+            BucketInfo[] bucketInfos = new BucketInfo[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bucketInfos[i] = GetBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+            }
+            return bucketInfos;
+        };
+        FormatBucketGraphValue formatValue = (float value) =>
+        {
+            return (value * 100).ToString("F0") + "%";
+        };
+        BucketGraph.Create(staticCities.ToArray(), new Vector3(700, 1600), "Hourly Income fixed", getBucketedHourlyIncomeValues, formatValue, ColorScheme.blue);
+        BucketGraph.Create(surgeCities.ToArray(), new Vector3(2000, 1600), "Hourly Income surge", getBucketedHourlyIncomeValues, formatValue, ColorScheme.surgeRed);
+    }
+
     IEnumerator Scene()
     {
         foreach (City city in staticCities)
