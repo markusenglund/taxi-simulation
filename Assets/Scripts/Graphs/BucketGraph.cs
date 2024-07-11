@@ -33,6 +33,12 @@ public class BucketGraph : MonoBehaviour
         // Set label text
         bucketGraphTransform.Find("MainLabel").GetComponent<TMPro.TMP_Text>().text = labelText;
         bucketGraph.graphContainer = bucketGraphTransform.Find("GraphContainer").GetComponent<RectTransform>();
+
+        // Set the color of the bars to the color argument
+        bucketGraph.graphContainer.Find("Bar1").GetComponent<UnityEngine.UI.Image>().color = color;
+        bucketGraph.graphContainer.Find("Bar2").GetComponent<UnityEngine.UI.Image>().color = color;
+        bucketGraph.graphContainer.Find("Bar3").GetComponent<UnityEngine.UI.Image>().color = color;
+        bucketGraph.graphContainer.Find("Bar4").GetComponent<UnityEngine.UI.Image>().color = color;
         return bucketGraph;
     }
 

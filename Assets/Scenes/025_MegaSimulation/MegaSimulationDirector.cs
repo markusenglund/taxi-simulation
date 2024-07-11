@@ -12,7 +12,8 @@ public class MegaSimulationDirector : MonoBehaviour
 
     float simulationStartTime = 0;
 
-    List<City> cities = new List<City>();
+    List<City> staticCities = new List<City>();
+    List<City> surgeCities = new List<City>();
 
     Vector3 city1Position = new Vector3(0f, 0, 0f);
     Vector3 city2Position = new Vector3(12f, 0, 0f);
@@ -35,8 +36,8 @@ public class MegaSimulationDirector : MonoBehaviour
             SimulationSettings surgePriceSettingsClone = Instantiate(surgePriceSettings);
             surgePriceSettingsClone.randomSeed = i;
             City surgeCity = City.Create(cityPrefab, city2Position.x, city2Position.y + 12 * i, surgePriceSettingsClone, graphSettings);
-            cities.Add(staticCity);
-            cities.Add(surgeCity);
+            staticCities.Add(staticCity);
+            surgeCities.Add(surgeCity);
         }
     }
 
@@ -98,12 +99,18 @@ public class MegaSimulationDirector : MonoBehaviour
         {
             return (value * 100).ToString("F0") + "%";
         };
-        BucketGraph.Create(cities.ToArray(), new Vector3(700, 800), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, ColorScheme.surgeRed);
+        BucketGraph.Create(staticCities.ToArray(), new Vector3(700, 800), "Time Sensitivity fixed", getBucketedTimeSensitivityValues, formatValue, ColorScheme.blue);
+        BucketGraph.Create(surgeCities.ToArray(), new Vector3(2000, 800), "Time Sensitivity surge", getBucketedTimeSensitivityValues, formatValue, ColorScheme.surgeRed);
 
     }
     IEnumerator Scene()
     {
-        foreach (City city in cities)
+        foreach (City city in staticCities)
+        {
+            StartCoroutine(city.StartSimulation());
+        }
+
+        foreach (City city in surgeCities)
         {
             StartCoroutine(city.StartSimulation());
         }
