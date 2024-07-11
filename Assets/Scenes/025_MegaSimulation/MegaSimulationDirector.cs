@@ -28,7 +28,7 @@ public class MegaSimulationDirector : MonoBehaviour
         Time.captureFramerate = 60;
         // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 10; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;

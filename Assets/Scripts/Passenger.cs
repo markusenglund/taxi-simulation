@@ -174,6 +174,7 @@ public class Passenger : MonoBehaviour
     IEnumerator SpawnPassenger()
     {
         Transform spawnAnimation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
+        StartCoroutine(DestroySpawnAnimation(spawnAnimation));
         spawnAnimation.localScale = Vector3.one * Mathf.Sqrt(passengerScale) * 2.5f;
 
         transform.localScale = Vector3.zero;
@@ -191,6 +192,12 @@ public class Passenger : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
+    }
+
+    IEnumerator DestroySpawnAnimation(Transform spawnAnimation)
+    {
+        yield return new WaitForSeconds(3);
+        Destroy(spawnAnimation.gameObject);
     }
 
     void MakeTripDecision()
@@ -471,6 +478,7 @@ public class Passenger : MonoBehaviour
             transform.localRotation = newRotation;
             yield return null;
         }
+        Destroy(despawnAnimation.gameObject);
         Destroy(gameObject);
     }
 }

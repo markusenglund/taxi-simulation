@@ -92,6 +92,8 @@ public class Driver : MonoBehaviour
         Transform spawnAnimationPrefab = Resources.Load<Transform>("RespawnAnimation");
         Transform animation = Instantiate(spawnAnimationPrefab, transform.position, Quaternion.identity);
         animation.localScale = Vector3.one * 7f;
+        StartCoroutine(DestroySpawnAnimation(animation));
+
         Vector3 finalScale = simulationSettings.driverScale * 0.15f * Vector3.one;
         transform.localScale = Vector3.zero;
         float startTime = Time.time;
@@ -103,6 +105,12 @@ public class Driver : MonoBehaviour
             yield return null;
         }
         transform.localScale = finalScale;
+    }
+
+    IEnumerator DestroySpawnAnimation(Transform spawnAnimation)
+    {
+        yield return new WaitForSeconds(3);
+        Destroy(spawnAnimation.gameObject);
     }
 
     IEnumerator PickUpPassenger()
