@@ -24,7 +24,7 @@ public class MegaSimulationDirector : MonoBehaviour
     Vector3 city1Position = new Vector3(0f, 0, 0f);
     Vector3 city2Position = new Vector3(12f, 0, 0f);
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
-    Vector3 cameraPosition = new Vector3(10.5f, 10f, -10f);
+    Vector3 cameraPosition = new Vector3(10.5f, 15f, -10f);
 
     bool hasSavedPassengerData = false;
 
@@ -54,7 +54,7 @@ public class MegaSimulationDirector : MonoBehaviour
     {
 
         Camera.main.transform.position = cameraPosition;
-        Vector3 cameraLookAtPosition = middlePosition + Vector3.up * 2f;
+        Vector3 cameraLookAtPosition = middlePosition + Vector3.up * -3f;
         Camera.main.transform.LookAt(cameraLookAtPosition);
         Camera.main.fieldOfView = 45f;
         TimeUtils.SetSimulationStartTime(simulationStartTime);
@@ -183,6 +183,12 @@ public class MegaSimulationDirector : MonoBehaviour
         {
             StartCoroutine(city.StartSimulation());
         }
+        Quaternion originalRotation = Camera.main.transform.rotation;
+        Vector3 rotateAroundPoint = middlePosition + Vector3.up * 10f;
+        StartCoroutine(CameraUtils.RotateCameraAround(rotateAroundPoint, new Vector3(1, 0, 0), -40, 5, Ease.Cubic));
+        yield return new WaitForSeconds(5);
+        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 40, Ease.QuadraticIn));
         yield return null;
     }
 }
