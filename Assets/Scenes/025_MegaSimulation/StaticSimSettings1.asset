@@ -39,8 +39,8 @@ MonoBehaviour:
   - 37
   - 0
   showDriverEarnings: 0
-  showPassengerCosts: 1
-  showPassengerReactions: 1
+  showPassengerCosts: 0
+  showPassengerReactions: 0
   showSurgeMultiplier: 0
   passengerScale: 4
   driverScale: 1

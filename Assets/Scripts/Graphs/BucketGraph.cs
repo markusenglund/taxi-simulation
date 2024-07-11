@@ -8,7 +8,8 @@ public delegate string FormatBucketGraphValue(float value);
 
 public class BucketGraph : MonoBehaviour
 {
-    City[] cities;
+    City[] staticCities;
+    City[] surgeCities;
     GetBucketGraphValues getValues;
     FormatBucketGraphValue formatValue;
 
@@ -16,29 +17,31 @@ public class BucketGraph : MonoBehaviour
 
     float minValue = 0;
     float maxValue = 1;
-    public static BucketGraph Create(City[] cities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, Color color)
+    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, Color staticColor, Color surgeColor)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform prefab = Resources.Load<Transform>("Graphs/BucketGraph");
         Transform bucketGraphTransform = Instantiate(prefab, canvas);
         BucketGraph bucketGraph = bucketGraphTransform.GetComponent<BucketGraph>();
-        bucketGraph.cities = cities;
+        bucketGraph.staticCities = staticCities;
+        bucketGraph.surgeCities = surgeCities;
         bucketGraph.getValues = getValues;
         bucketGraph.formatValue = formatValue;
 
-        // Set position
         RectTransform rt = bucketGraphTransform.GetComponent<RectTransform>();
         rt.anchoredPosition = position;
 
-        // Set label text
         bucketGraphTransform.Find("MainLabel").GetComponent<TMPro.TMP_Text>().text = labelText;
         bucketGraph.graphContainer = bucketGraphTransform.Find("GraphContainer").GetComponent<RectTransform>();
 
-        // Set the color of the bars to the color argument
-        bucketGraph.graphContainer.Find("Bar1").GetComponent<UnityEngine.UI.Image>().color = color;
-        bucketGraph.graphContainer.Find("Bar2").GetComponent<UnityEngine.UI.Image>().color = color;
-        bucketGraph.graphContainer.Find("Bar3").GetComponent<UnityEngine.UI.Image>().color = color;
-        bucketGraph.graphContainer.Find("Bar4").GetComponent<UnityEngine.UI.Image>().color = color;
+        bucketGraph.graphContainer.Find("BarGroup1/StaticBar").GetComponent<UnityEngine.UI.Image>().color = staticColor;
+        bucketGraph.graphContainer.Find("BarGroup1/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
+        bucketGraph.graphContainer.Find("BarGroup2/StaticBar").GetComponent<UnityEngine.UI.Image>().color = staticColor;
+        bucketGraph.graphContainer.Find("BarGroup2/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
+        bucketGraph.graphContainer.Find("BarGroup3/StaticBar").GetComponent<UnityEngine.UI.Image>().color = staticColor;
+        bucketGraph.graphContainer.Find("BarGroup3/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
+        bucketGraph.graphContainer.Find("BarGroup4/StaticBar").GetComponent<UnityEngine.UI.Image>().color = staticColor;
+        bucketGraph.graphContainer.Find("BarGroup4/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
         return bucketGraph;
     }
 
@@ -52,32 +55,30 @@ public class BucketGraph : MonoBehaviour
         Transform graphContainerTransform = transform.Find("GraphContainer");
         while (true)
         {
-            BucketInfo[] buckets = getValues(cities);
-            RectTransform bar1 = graphContainerTransform.Find("Bar1").GetComponent<RectTransform>();
-            RectTransform bar2 = graphContainerTransform.Find("Bar2").GetComponent<RectTransform>();
-            RectTransform bar3 = graphContainerTransform.Find("Bar3").GetComponent<RectTransform>();
-            RectTransform bar4 = graphContainerTransform.Find("Bar4").GetComponent<RectTransform>();
-            bar1.sizeDelta = new Vector2(bar1.sizeDelta.x, ConvertValueToGraphPosition(buckets[0].percentageWhoGotAnUber));
-            bar2.sizeDelta = new Vector2(bar2.sizeDelta.x, ConvertValueToGraphPosition(buckets[1].percentageWhoGotAnUber));
-            bar3.sizeDelta = new Vector2(bar3.sizeDelta.x, ConvertValueToGraphPosition(buckets[2].percentageWhoGotAnUber));
-            bar4.sizeDelta = new Vector2(bar4.sizeDelta.x, ConvertValueToGraphPosition(buckets[3].percentageWhoGotAnUber));
-            string formattedValue1 = formatValue(buckets[0].percentageWhoGotAnUber);
-            graphContainerTransform.Find("Bar1/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue1;
-            string formattedValue2 = formatValue(buckets[1].percentageWhoGotAnUber);
-            graphContainerTransform.Find("Bar2/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue2;
-            string formattedValue3 = formatValue(buckets[2].percentageWhoGotAnUber);
-            graphContainerTransform.Find("Bar3/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue3;
-            string formattedValue4 = formatValue(buckets[3].percentageWhoGotAnUber);
-            graphContainerTransform.Find("Bar4/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue4;
+            BucketInfo[] staticBuckets = getValues(staticCities);
+            BucketInfo[] surgeBuckets = getValues(surgeCities);
+            RectTransform[] staticBars = new RectTransform[4];
+            RectTransform[] surgeBars = new RectTransform[4];
 
-            string sampleSize1 = $"n = {buckets[0].sampleSize}";
-            graphContainerTransform.Find("Bar1/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize1;
-            string sampleSize2 = $"n = {buckets[1].sampleSize}";
-            graphContainerTransform.Find("Bar2/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize2;
-            string sampleSize3 = $"n = {buckets[2].sampleSize}";
-            graphContainerTransform.Find("Bar3/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize3;
-            string sampleSize4 = $"n = {buckets[3].sampleSize}";
-            graphContainerTransform.Find("Bar4/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize4;
+            for (int i = 0; i < 4; i++)
+            {
+                staticBars[i] = graphContainerTransform.Find($"BarGroup{i + 1}/StaticBar").GetComponent<RectTransform>();
+                surgeBars[i] = graphContainerTransform.Find($"BarGroup{i + 1}/SurgeBar").GetComponent<RectTransform>();
+
+                staticBars[i].sizeDelta = new Vector2(staticBars[i].sizeDelta.x, ConvertValueToGraphPosition(staticBuckets[i].percentageWhoGotAnUber));
+                surgeBars[i].sizeDelta = new Vector2(surgeBars[i].sizeDelta.x, ConvertValueToGraphPosition(surgeBuckets[i].percentageWhoGotAnUber));
+
+                string formattedStaticValue = formatValue(staticBuckets[i].percentageWhoGotAnUber);
+                graphContainerTransform.Find($"BarGroup{i + 1}/StaticBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedStaticValue;
+
+                string formattedSurgeValue = formatValue(surgeBuckets[i].percentageWhoGotAnUber);
+                graphContainerTransform.Find($"BarGroup{i + 1}/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedSurgeValue;
+
+                string staticSampleSize = $"n = {staticBuckets[i].sampleSize}";
+                graphContainerTransform.Find($"BarGroup{i + 1}/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = staticSampleSize;
+                string surgeSampleSize = $"n = {surgeBuckets[i].sampleSize}";
+                graphContainerTransform.Find($"BarGroup{i + 1}/SurgeBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = surgeSampleSize;
+            }
             yield return new WaitForSeconds(0.1f);
         }
     }
