@@ -34,7 +34,7 @@ public class MegaSimulationDirector : MonoBehaviour
         Time.captureFramerate = 60;
         // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
-        for (int i = 0; i < 10; i++)
+        for (int i = 30; i < 40; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
@@ -61,6 +61,7 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateTimeSensitivityBucketGraph();
         InstantiateHourlyIncomeBucketGraph();
+        InstantiateMaxTimeSavingsBucketGraph();
     }
 
 
@@ -110,7 +111,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         BucketGraph.Create(staticCities.ToArray(), new Vector3(700, 800), "Time Sensitivity fixed", getBucketedTimeSensitivityValues, formatValue, ColorScheme.blue);
-        BucketGraph.Create(surgeCities.ToArray(), new Vector3(2000, 800), "Time Sensitivity surge", getBucketedTimeSensitivityValues, formatValue, ColorScheme.surgeRed);
+        BucketGraph.Create(surgeCities.ToArray(), new Vector3(700, 1600), "Time Sensitivity surge", getBucketedTimeSensitivityValues, formatValue, ColorScheme.surgeRed);
 
     }
 
@@ -131,8 +132,30 @@ public class MegaSimulationDirector : MonoBehaviour
         {
             return (value * 100).ToString("F0") + "%";
         };
-        BucketGraph.Create(staticCities.ToArray(), new Vector3(700, 1600), "Hourly Income fixed", getBucketedHourlyIncomeValues, formatValue, ColorScheme.blue);
+        BucketGraph.Create(staticCities.ToArray(), new Vector3(2000, 800), "Hourly Income fixed", getBucketedHourlyIncomeValues, formatValue, ColorScheme.blue);
         BucketGraph.Create(surgeCities.ToArray(), new Vector3(2000, 1600), "Hourly Income surge", getBucketedHourlyIncomeValues, formatValue, ColorScheme.surgeRed);
+    }
+
+    private void InstantiateMaxTimeSavingsBucketGraph()
+    {
+        // Just a guess, no distribution to go off of
+        float[] maxTimeSavingsQuartileThresholds = new float[] { 29f / 60f, 47f / 60f, 65f / 60f, float.PositiveInfinity };
+        GetPassengerValue getMaxTimeSavings = (PassengerPerson passenger) => passenger.economicParameters.GetBestSubstitute().maxTimeSavedByUber;
+        GetBucketGraphValues getBucketedMaxTimeSavingsValues = (City[] cities) =>
+        {
+            BucketInfo[] bucketInfos = new BucketInfo[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bucketInfos[i] = GetBucketInfo(cities, i, getMaxTimeSavings, maxTimeSavingsQuartileThresholds);
+            }
+            return bucketInfos;
+        };
+        FormatBucketGraphValue formatValue = (float value) =>
+        {
+            return (value * 100).ToString("F0") + "%";
+        };
+        BucketGraph.Create(staticCities.ToArray(), new Vector3(3300, 800), "Max Time Savings fixed", getBucketedMaxTimeSavingsValues, formatValue, ColorScheme.blue);
+        BucketGraph.Create(surgeCities.ToArray(), new Vector3(3300, 1600), "Max Time Savings surge", getBucketedMaxTimeSavingsValues, formatValue, ColorScheme.surgeRed);
     }
 
     IEnumerator Scene()

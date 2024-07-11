@@ -69,6 +69,15 @@ public class BucketGraph : MonoBehaviour
             graphContainerTransform.Find("Bar3/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue3;
             string formattedValue4 = formatValue(buckets[3].percentageWhoGotAnUber);
             graphContainerTransform.Find("Bar4/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue4;
+
+            string sampleSize1 = $"n = {buckets[0].sampleSize}";
+            graphContainerTransform.Find("Bar1/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize1;
+            string sampleSize2 = $"n = {buckets[1].sampleSize}";
+            graphContainerTransform.Find("Bar2/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize2;
+            string sampleSize3 = $"n = {buckets[2].sampleSize}";
+            graphContainerTransform.Find("Bar3/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize3;
+            string sampleSize4 = $"n = {buckets[3].sampleSize}";
+            graphContainerTransform.Find("Bar4/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = sampleSize4;
             yield return new WaitForSeconds(0.1f);
         }
     }
