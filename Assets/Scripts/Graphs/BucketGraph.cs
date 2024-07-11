@@ -50,8 +50,14 @@ public class BucketGraph : MonoBehaviour
             bar2.sizeDelta = new Vector2(bar2.sizeDelta.x, 10 + value2 * 100 * 5);
             bar3.sizeDelta = new Vector2(bar3.sizeDelta.x, 10 + value3 * 100 * 5);
             bar4.sizeDelta = new Vector2(bar4.sizeDelta.x, 10 + value4 * 100 * 5);
-            // string formattedValue = formatValue(value);
-            // transform.Find("Value").GetComponent<TMPro.TMP_Text>().text = formattedValue;
+            string formattedValue1 = formatValue(value1);
+            graphContent.Find("Bar1/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue1;
+            string formattedValue2 = formatValue(value2);
+            graphContent.Find("Bar2/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue2;
+            string formattedValue3 = formatValue(value3);
+            graphContent.Find("Bar3/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue3;
+            string formattedValue4 = formatValue(value4);
+            graphContent.Find("Bar4/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue4;
             yield return new WaitForSeconds(0.1f);
         }
     }
