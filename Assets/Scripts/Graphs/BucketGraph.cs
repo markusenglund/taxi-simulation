@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -10,6 +11,11 @@ public class BucketGraph : MonoBehaviour
     City[] cities;
     GetBucketGraphValues getValues;
     FormatBucketGraphValue formatValue;
+
+    private RectTransform graphContainer;
+
+    float minValue = 0;
+    float maxValue = 1;
     public static BucketGraph Create(City[] cities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, Color color)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
@@ -25,8 +31,8 @@ public class BucketGraph : MonoBehaviour
         rt.anchoredPosition = position;
 
         // Set label text
-        bucketGraphTransform.Find("GraphContainer/MainLabel").GetComponent<TMPro.TMP_Text>().text = labelText;
-
+        bucketGraphTransform.Find("MainLabel").GetComponent<TMPro.TMP_Text>().text = labelText;
+        bucketGraph.graphContainer = bucketGraphTransform.Find("GraphContainer").GetComponent<RectTransform>();
         return bucketGraph;
     }
 
@@ -37,28 +43,35 @@ public class BucketGraph : MonoBehaviour
 
     IEnumerator UpdateValueLoop()
     {
-        Transform graphContent = transform.Find("GraphContainer/Content");
+        Transform graphContainerTransform = transform.Find("GraphContainer");
         while (true)
         {
             (float value1, float value2, float value3, float value4) = getValues(cities);
             Debug.Log($"value1: {value1}, value2: {value2}, value3: {value3}, value4: {value4}");
-            RectTransform bar1 = graphContent.Find("Bar1").GetComponent<RectTransform>();
-            RectTransform bar2 = graphContent.Find("Bar2").GetComponent<RectTransform>();
-            RectTransform bar3 = graphContent.Find("Bar3").GetComponent<RectTransform>();
-            RectTransform bar4 = graphContent.Find("Bar4").GetComponent<RectTransform>();
-            bar1.sizeDelta = new Vector2(bar1.sizeDelta.x, 10 + value1 * 100 * 5);
-            bar2.sizeDelta = new Vector2(bar2.sizeDelta.x, 10 + value2 * 100 * 5);
-            bar3.sizeDelta = new Vector2(bar3.sizeDelta.x, 10 + value3 * 100 * 5);
-            bar4.sizeDelta = new Vector2(bar4.sizeDelta.x, 10 + value4 * 100 * 5);
+            RectTransform bar1 = graphContainerTransform.Find("Bar1").GetComponent<RectTransform>();
+            RectTransform bar2 = graphContainerTransform.Find("Bar2").GetComponent<RectTransform>();
+            RectTransform bar3 = graphContainerTransform.Find("Bar3").GetComponent<RectTransform>();
+            RectTransform bar4 = graphContainerTransform.Find("Bar4").GetComponent<RectTransform>();
+            bar1.sizeDelta = new Vector2(bar1.sizeDelta.x, ConvertValueToGraphPosition(value1));
+            bar2.sizeDelta = new Vector2(bar2.sizeDelta.x, ConvertValueToGraphPosition(value2));
+            bar3.sizeDelta = new Vector2(bar3.sizeDelta.x, ConvertValueToGraphPosition(value3));
+            bar4.sizeDelta = new Vector2(bar4.sizeDelta.x, ConvertValueToGraphPosition(value4));
             string formattedValue1 = formatValue(value1);
-            graphContent.Find("Bar1/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue1;
+            graphContainerTransform.Find("Bar1/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue1;
             string formattedValue2 = formatValue(value2);
-            graphContent.Find("Bar2/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue2;
+            graphContainerTransform.Find("Bar2/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue2;
             string formattedValue3 = formatValue(value3);
-            graphContent.Find("Bar3/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue3;
+            graphContainerTransform.Find("Bar3/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue3;
             string formattedValue4 = formatValue(value4);
-            graphContent.Find("Bar4/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue4;
+            graphContainerTransform.Find("Bar4/Value").GetComponent<TMPro.TMP_Text>().text = formattedValue4;
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    private float ConvertValueToGraphPosition(float value)
+    {
+        float graphHeight = graphContainer.sizeDelta.y;
+        // 10 is the minimum height of the bar so it can still be seen when the value is zero
+        return Mathf.Max(value * graphHeight / maxValue, 10);
     }
 }
