@@ -14,8 +14,6 @@ public class BucketGraph : MonoBehaviour
     FormatBucketGraphValue formatValue;
     CanvasGroup canvasGroup;
 
-    string[] labels;
-
     private RectTransform graphContainer;
 
     float minValue = 0;
@@ -30,7 +28,6 @@ public class BucketGraph : MonoBehaviour
         bucketGraph.surgeCities = surgeCities;
         bucketGraph.getValues = getValues;
         bucketGraph.formatValue = formatValue;
-        bucketGraph.labels = labels;
 
         RectTransform rt = bucketGraphTransform.GetComponent<RectTransform>();
         rt.anchoredPosition = position;

@@ -33,11 +33,11 @@ public class MegaSimulationDirector : MonoBehaviour
         Time.captureFramerate = 60;
         // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 20; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
-            Vector3 cityPositionOffset = i == 0 ? Vector3.zero : new Vector3(-100, 0, i * 12);
+            Vector3 cityPositionOffset = i == 0 ? Vector3.zero : new Vector3(-1000, 0, i * 12);
             Vector3 staticCityPosition = city1Position + cityPositionOffset;
             City staticCity = City.Create(cityPrefab, staticCityPosition.x, staticCityPosition.z, staticPriceSettingsClone, graphSettings);
             SimulationSettings surgePriceSettingsClone = Instantiate(surgePriceSettings);
