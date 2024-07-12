@@ -184,11 +184,11 @@ public class MegaSimulationDirector : MonoBehaviour
             StartCoroutine(city.StartSimulation());
         }
         Quaternion originalRotation = Camera.main.transform.rotation;
-        Vector3 rotateAroundPoint = middlePosition + Vector3.up * 10f;
-        StartCoroutine(CameraUtils.RotateCameraAround(rotateAroundPoint, new Vector3(1, 0, 0), -40, 5, Ease.Cubic));
-        yield return new WaitForSeconds(5);
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 40, Ease.QuadraticIn));
+        Quaternion newRotation = Quaternion.Euler(15, 0, 0);
+        yield return new WaitForSeconds(2);
+        StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));
         yield return null;
     }
 }
