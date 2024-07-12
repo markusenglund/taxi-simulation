@@ -17,7 +17,7 @@ public class MegaSimulationDirector : MonoBehaviour
     [SerializeField] public SimulationSettings surgePriceSettings;
     [SerializeField] public GraphSettings graphSettings;
 
-    float simulationStartTime = 0;
+    float simulationStartTime = 4;
 
     List<City> staticCities = new List<City>();
     List<City> surgeCities = new List<City>();
@@ -59,7 +59,6 @@ public class MegaSimulationDirector : MonoBehaviour
         Vector3 cameraLookAtPosition = middlePosition + Vector3.up * -3f;
         Camera.main.transform.LookAt(cameraLookAtPosition);
         Camera.main.fieldOfView = 45f;
-        TimeUtils.SetSimulationStartTime(simulationStartTime);
         StartCoroutine(Scene());
         InstantiateTimeSensitivityBucketGraph();
         InstantiateHourlyIncomeBucketGraph();
@@ -176,15 +175,7 @@ public class MegaSimulationDirector : MonoBehaviour
 
     IEnumerator Scene()
     {
-        foreach (City city in staticCities)
-        {
-            StartCoroutine(city.StartSimulation());
-        }
-
-        foreach (City city in surgeCities)
-        {
-            StartCoroutine(city.StartSimulation());
-        }
+        StartCoroutine(SetSimulationStart());
         Quaternion originalRotation = Camera.main.transform.rotation;
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 40, Ease.QuadraticIn));
@@ -194,6 +185,21 @@ public class MegaSimulationDirector : MonoBehaviour
         yield return new WaitForSeconds(1);
         StartCoroutine(SpawnCities());
         yield return null;
+    }
+
+    IEnumerator SetSimulationStart()
+    {
+        TimeUtils.SetSimulationStartTime(simulationStartTime);
+        yield return new WaitForSeconds(simulationStartTime);
+        foreach (City city in staticCities)
+        {
+            StartCoroutine(city.StartSimulation());
+        }
+
+        foreach (City city in surgeCities)
+        {
+            StartCoroutine(city.StartSimulation());
+        }
     }
 
     IEnumerator SpawnCities()
