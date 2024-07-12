@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class BucketInfo
 {
@@ -26,22 +27,23 @@ public class MegaSimulationDirector : MonoBehaviour
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
     Vector3 cameraPosition = new Vector3(10.5f, 15f, -10f);
 
-    bool hasSavedPassengerData = false;
-
     // A set of passenger IDs that have already spawned a PassengerStats object
     void Awake()
     {
         Time.captureFramerate = 60;
         // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 8; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
-            City staticCity = City.Create(cityPrefab, city1Position.x, city1Position.y + 12 * i, staticPriceSettingsClone, graphSettings);
+            Vector3 cityPositionOffset = i == 0 ? Vector3.zero : new Vector3(-100, 0, i * 12);
+            Vector3 staticCityPosition = city1Position + cityPositionOffset;
+            City staticCity = City.Create(cityPrefab, staticCityPosition.x, staticCityPosition.z, staticPriceSettingsClone, graphSettings);
             SimulationSettings surgePriceSettingsClone = Instantiate(surgePriceSettings);
             surgePriceSettingsClone.randomSeed = i;
-            City surgeCity = City.Create(cityPrefab, city2Position.x, city2Position.y + 12 * i, surgePriceSettingsClone, graphSettings);
+            Vector3 surgeCityPosition = city2Position + cityPositionOffset;
+            City surgeCity = City.Create(cityPrefab, surgeCityPosition.x, surgeCityPosition.z + 12 * i, surgePriceSettingsClone, graphSettings);
             staticCities.Add(staticCity);
             surgeCities.Add(surgeCity);
         }
@@ -189,6 +191,39 @@ public class MegaSimulationDirector : MonoBehaviour
         Quaternion newRotation = Quaternion.Euler(15, 0, 0);
         yield return new WaitForSeconds(2);
         StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));
+        yield return new WaitForSeconds(1);
+        StartCoroutine(SpawnCities());
         yield return null;
+    }
+
+    IEnumerator SpawnCities()
+    {
+        for (int i = 1; i < staticCities.Count; i++)
+        {
+            float waitTime = i == 1 ? 0.5f : 0.2f;
+            City staticCity = staticCities[i];
+            float z = i * 13;
+            StartCoroutine(SpawnCity(staticCity, 2f, new Vector3(0, 0, z)));
+            yield return new WaitForSeconds(waitTime);
+            City surgeCity = surgeCities[i];
+            StartCoroutine(SpawnCity(surgeCity, 2f, new Vector3(12, 0, z)));
+            yield return new WaitForSeconds(waitTime);
+        }
+    }
+
+    IEnumerator SpawnCity(City city, float duration, Vector3 position)
+    {
+        float startTime = Time.time;
+        Vector3 startScale = Vector3.zero;
+        Vector3 finalScale = Vector3.one;
+        city.transform.position = position;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float scaleFactor = EaseUtils.EaseInOutCubic(t);
+            city.transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
+            yield return null;
+        }
+        city.transform.localScale = finalScale;
     }
 }
