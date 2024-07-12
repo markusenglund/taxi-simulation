@@ -126,7 +126,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 800), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
     }
 
     private void InstantiateHourlyIncomeBucketGraph()
@@ -147,7 +147,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2000, 800), "Hourly Income", getBucketedHourlyIncomeValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1100), "Hourly Income", getBucketedHourlyIncomeValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
@@ -177,7 +177,7 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(SetSimulationStart());
         Quaternion originalRotation = Camera.main.transform.rotation;
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
-        StartCoroutine(CameraUtils.MoveCamera(newPosition, 40, Ease.QuadraticIn));
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 55, Ease.Quadratic));
         Quaternion newRotation = Quaternion.Euler(15, 0, 0);
         yield return new WaitForSeconds(2);
         StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));

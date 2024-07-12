@@ -25,6 +25,10 @@ public class CameraUtils : MonoBehaviour
             {
                 t = EaseUtils.EaseInQuadratic(t);
             }
+            else if (ease == Ease.Quadratic)
+            {
+                t = EaseUtils.EaseInOutQuadratic(t);
+            }
             else if (ease == Ease.Linear)
             {
             }
