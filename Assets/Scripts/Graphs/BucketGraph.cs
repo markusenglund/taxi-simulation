@@ -12,6 +12,7 @@ public class BucketGraph : MonoBehaviour
     City[] surgeCities;
     GetBucketGraphValues getValues;
     FormatBucketGraphValue formatValue;
+    CanvasGroup canvasGroup;
 
     string[] labels;
 
@@ -59,6 +60,8 @@ public class BucketGraph : MonoBehaviour
 
     private void Start()
     {
+        canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        StartCoroutine(FadeIn(1));
         StartCoroutine(UpdateValueLoop());
     }
 
@@ -95,6 +98,29 @@ public class BucketGraph : MonoBehaviour
         }
     }
 
+    private IEnumerator FadeIn(float duration)
+    {
+        float startTime = Time.time;
+        float startAlpha = 0;
+        float finalAlpha = 1;
+        while (Time.time < startTime + duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            float percentage = EaseUtils.EaseInQuadratic(t);
+            float alpha = Mathf.Lerp(startAlpha, finalAlpha, percentage);
+            canvasGroup.alpha = alpha;
+            // Loop through all line renderers and set the alpha value
+            foreach (LineRenderer line in GetComponentsInChildren<LineRenderer>())
+            {
+                Color color = line.startColor;
+                color.a = alpha;
+                line.startColor = color;
+                line.endColor = color;
+            }
+            yield return null;
+        }
+        canvasGroup.alpha = finalAlpha;
+    }
     private float ConvertValueToGraphPosition(float value)
     {
         float graphHeight = graphContainer.sizeDelta.y;

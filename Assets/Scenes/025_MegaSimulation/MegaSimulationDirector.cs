@@ -60,8 +60,7 @@ public class MegaSimulationDirector : MonoBehaviour
         Camera.main.transform.LookAt(cameraLookAtPosition);
         Camera.main.fieldOfView = 45f;
         StartCoroutine(Scene());
-        InstantiateTimeSensitivityBucketGraph();
-        InstantiateHourlyIncomeBucketGraph();
+
         // InstantiateMaxTimeSavingsBucketGraph();
     }
 
@@ -184,6 +183,9 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));
         yield return new WaitForSeconds(1);
         StartCoroutine(SpawnCities());
+        yield return new WaitForSeconds(3);
+        InstantiateTimeSensitivityBucketGraph();
+        InstantiateHourlyIncomeBucketGraph();
         yield return null;
     }
 
