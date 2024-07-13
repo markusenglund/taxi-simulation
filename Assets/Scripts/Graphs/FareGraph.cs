@@ -158,7 +158,7 @@ public class FareGraph : MonoBehaviour
     private IEnumerator UpdateCurves()
     {
         float numPositions = 200;
-        float timeResolution = 0.4f;
+        float timeResolution = 0.6f;
 
         Queue<(float value, float time)> lastSurgeValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastStaticValues = new Queue<(float value, float time)>();

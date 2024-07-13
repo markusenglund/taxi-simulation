@@ -162,7 +162,7 @@ public class WaitingGraph : MonoBehaviour
     private IEnumerator UpdateCurves()
     {
         float numPositions = 200;
-        float timeResolution = 0.5f;
+        float timeResolution = 0.6f;
 
         Queue<(float value, float time)> lastSurgeValues = new Queue<(float value, float time)>();
         Queue<(float value, float time)> lastStaticValues = new Queue<(float value, float time)>();
