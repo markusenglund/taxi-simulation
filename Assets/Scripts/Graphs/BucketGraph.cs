@@ -21,7 +21,7 @@ public class BucketGraph : MonoBehaviour
 
     static Color staticColor = ColorScheme.blue;
     static Color surgeColor = ColorScheme.surgeRed;
-    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, string[] labels, float maxValue)
+    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, string axisLabelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, string[] labels, float maxValue)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform prefab = Resources.Load<Transform>("Graphs/BucketGraph");
@@ -48,7 +48,7 @@ public class BucketGraph : MonoBehaviour
         bucketGraph.graphContainer.Find("BarGroup4/StaticBar").GetComponent<UnityEngine.UI.Image>().color = staticColor;
         bucketGraph.graphContainer.Find("BarGroup4/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
 
-
+        bucketGraph.graphContainer.Find("Axis/AxisLabel").GetComponent<TMPro.TMP_Text>().text = axisLabelText;
         // Set labels
         for (int i = 0; i < 4; i++)
         {

@@ -37,7 +37,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         Time.captureFramerate = 60;
         // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
         // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
-        for (int i = 0; i < 20; i++)
+        for (int i = 40; i < 80; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
@@ -65,8 +65,6 @@ public class SurplusSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateSurplusBucketGraph();
         InstantiateSurplusDividedByIncomeBucketGraph();
-        // InstantiatePassengerSurplusInfoBoxes();
-        // TODO: START HERE - figure out why this method crashes the game
     }
 
     private SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
@@ -150,10 +148,14 @@ public class SurplusSimulationDirector : MonoBehaviour
         };
         FormatBucketGraphValue formatValue = (float value) =>
         {
+            if (value > 1000)
+            {
+                return "$" + (value / 1000).ToString("F1") + "k";
+            }
             return "$" + value.ToString("F0");
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1400), "Hourly Income", getBucketedSurplusValues, formatValue, labels, 10000);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1400), "Surplus by income", "Total surplus $", getBucketedSurplusValues, formatValue, labels, 50000);
     }
 
 
@@ -175,7 +177,7 @@ public class SurplusSimulationDirector : MonoBehaviour
             return value.ToString("F0");
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 1400), "Surplus controlled for income", getBucketedSurplusValues, formatValue, labels, 500);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 1400), "Surplus/income by income", "Surplus utils", getBucketedSurplusValues, formatValue, labels, 1000);
     }
 
     // void InstantiatePassengerSurplusInfoBoxes()

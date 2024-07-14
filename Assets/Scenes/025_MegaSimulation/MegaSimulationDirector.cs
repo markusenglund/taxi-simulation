@@ -122,7 +122,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, labels, 1);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", "% served by Uber", getBucketedTimeSensitivityValues, formatValue, labels, 1);
     }
 
     private void InstantiateHourlyIncomeBucketGraph()
@@ -143,7 +143,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1100), "Hourly Income", getBucketedHourlyIncomeValues, formatValue, labels, 1);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1100), "Hourly Income", "% served by Uber", getBucketedHourlyIncomeValues, formatValue, labels, 1);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
