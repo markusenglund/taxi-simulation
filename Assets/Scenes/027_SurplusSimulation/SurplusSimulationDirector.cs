@@ -65,6 +65,9 @@ public class SurplusSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateSurplusBucketGraph();
         InstantiateSurplusDividedByIncomeBucketGraph();
+        InstantiateSurplusMinusFareByIncomeBucketGraph();
+        InstantiateTotalFaresPaidByIncomeBucketGraph();
+        InstantiateTotalTimeCostByIncomeBucketGraph();
     }
 
     private SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
@@ -90,6 +93,39 @@ public class SurplusSimulationDirector : MonoBehaviour
         }
 
         float aggregateSurplus = passengersInQuartileWhoCompletedJourney.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus) + passengersInQuartileWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedPassengerData.expectedValueSurplus);
+        // float aggregateExpectedSurplus = passengersWhoAreWaitingOrInTransit
+        int sampleSize = passengersInQuartileWhoCompletedJourney.Count + passengersInQuartileWhoAreWaitingOrInTransit.Count;
+
+        return new SimStatistic
+        {
+            value = aggregateSurplus,
+            sampleSize = sampleSize
+        };
+    }
+
+    private SimStatistic GetSurplusMinusFareBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
+    {
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+        PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+        // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+        PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+
+        List<PassengerPerson> passengersInQuartileWhoCompletedJourney = new List<PassengerPerson>();
+        List<PassengerPerson> passengersInQuartileWhoAreWaitingOrInTransit = new List<PassengerPerson>();
+        if (quartile == 0)
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+        else
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+
+        float aggregateSurplus = passengersInQuartileWhoCompletedJourney.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus + passenger.trip.tripCreatedData.fare.total) + passengersInQuartileWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedPassengerData.expectedValueSurplus + passenger.trip.tripCreatedData.fare.total);
         // float aggregateExpectedSurplus = passengersWhoAreWaitingOrInTransit
         int sampleSize = passengersInQuartileWhoCompletedJourney.Count + passengersInQuartileWhoAreWaitingOrInTransit.Count;
 
@@ -133,6 +169,72 @@ public class SurplusSimulationDirector : MonoBehaviour
             sampleSize = sampleSize
         };
     }
+
+    private SimStatistic GetTotalFaresPaidBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
+    {
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+        PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+        // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+        PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+
+        List<PassengerPerson> passengersInQuartileWhoCompletedJourney = new List<PassengerPerson>();
+        List<PassengerPerson> passengersInQuartileWhoAreWaitingOrInTransit = new List<PassengerPerson>();
+        if (quartile == 0)
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+        else
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+
+        float aggregateSurplus = passengersInQuartileWhoCompletedJourney.Sum(passenger => passenger.trip.tripCreatedData.fare.total) + passengersInQuartileWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedData.fare.total);
+        // float aggregateExpectedSurplus = passengersWhoAreWaitingOrInTransit
+        int sampleSize = passengersInQuartileWhoCompletedJourney.Count + passengersInQuartileWhoAreWaitingOrInTransit.Count;
+
+        return new SimStatistic
+        {
+            value = aggregateSurplus,
+            sampleSize = sampleSize
+        };
+    }
+
+    private SimStatistic GetTotalTimeCostBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
+    {
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+        PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+        // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+        PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+
+        List<PassengerPerson> passengersInQuartileWhoCompletedJourney = new List<PassengerPerson>();
+        List<PassengerPerson> passengersInQuartileWhoAreWaitingOrInTransit = new List<PassengerPerson>();
+        if (quartile == 0)
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+        else
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+
+        float aggregateTimeCost = passengersInQuartileWhoCompletedJourney.Sum(passenger => passenger.trip.droppedOffPassengerData.totalTimeCost) + passengersInQuartileWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedPassengerData.expectedTripTimeCost + passenger.trip.tripCreatedPassengerData.expectedWaitingCost);
+        // float aggregateExpectedSurplus = passengersWhoAreWaitingOrInTransit
+        int sampleSize = passengersInQuartileWhoCompletedJourney.Count + passengersInQuartileWhoAreWaitingOrInTransit.Count;
+
+        return new SimStatistic
+        {
+            value = aggregateTimeCost,
+            sampleSize = sampleSize
+        };
+    }
     void InstantiateSurplusBucketGraph()
     {
         float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
@@ -155,7 +257,7 @@ public class SurplusSimulationDirector : MonoBehaviour
             return "$" + value.ToString("F0");
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1400), "Surplus by income", "Total surplus $", getBucketedSurplusValues, formatValue, labels, 50000);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3200, 1700), "Surplus by income", "Total surplus $", getBucketedSurplusValues, formatValue, labels, 50000);
     }
 
 
@@ -177,9 +279,91 @@ public class SurplusSimulationDirector : MonoBehaviour
             return value.ToString("F0");
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 1400), "Surplus/income by income", "Surplus utils", getBucketedSurplusValues, formatValue, labels, 1000);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1900, 1700), "Surplus/income by income", "Surplus utils", getBucketedSurplusValues, formatValue, labels, 1000);
     }
 
+    void InstantiateSurplusMinusFareByIncomeBucketGraph()
+    {
+        float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
+        GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
+        GetBucketGraphValues getBucketedSurplusMinusFareValues = (City[] cities) =>
+        {
+            SimStatistic[] bucketInfos = new SimStatistic[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bucketInfos[i] = GetSurplusMinusFareBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+            }
+            return bucketInfos;
+        };
+
+        FormatBucketGraphValue formatValue = (float value) =>
+        {
+            if (value > 1000)
+            {
+                return "$" + (value / 1000).ToString("F1") + "k";
+            }
+            return "$" + value.ToString("F0");
+        };
+
+        string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(600, 1700), "Surplus minus fare by income", "Surplus utils", getBucketedSurplusMinusFareValues, formatValue, labels, 100000);
+
+
+    }
+
+    void InstantiateTotalFaresPaidByIncomeBucketGraph()
+    {
+        float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
+        GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
+        GetBucketGraphValues getBucketedFaresPaidValues = (City[] cities) =>
+        {
+            SimStatistic[] bucketInfos = new SimStatistic[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bucketInfos[i] = GetTotalFaresPaidBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+            }
+            return bucketInfos;
+        };
+
+        FormatBucketGraphValue formatValue = (float value) =>
+        {
+            if (value > 1000)
+            {
+                return "$" + (value / 1000).ToString("F1") + "k";
+            }
+            return "$" + value.ToString("F0");
+        };
+
+        string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(600, 800), "Total fares paid by income", "Fares paid $", getBucketedFaresPaidValues, formatValue, labels, 10000);
+    }
+
+    void InstantiateTotalTimeCostByIncomeBucketGraph()
+    {
+        float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
+        GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
+        GetBucketGraphValues getBucketedTimeCostValues = (City[] cities) =>
+        {
+            SimStatistic[] bucketInfos = new SimStatistic[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bucketInfos[i] = GetTotalTimeCostBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+            }
+            return bucketInfos;
+        };
+
+        FormatBucketGraphValue formatValue = (float value) =>
+        {
+            if (value > 1000)
+            {
+                return "$" + (value / 1000).ToString("F1") + "k";
+            }
+            return "$" + value.ToString("F0");
+        };
+
+        string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1900, 800), "Total time cost by income", "Money $", getBucketedTimeCostValues, formatValue, labels, 40000);
+    }
     // void InstantiatePassengerSurplusInfoBoxes()
     // {
     //     GetStatistic GetRichestAggregateSurplus = cities =>
