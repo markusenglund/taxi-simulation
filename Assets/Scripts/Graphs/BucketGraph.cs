@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-public delegate BucketInfo[] GetBucketGraphValues(City[] cities);
+public delegate SimStatistic[] GetBucketGraphValues(City[] cities);
 public delegate string FormatBucketGraphValue(float value);
 
 public class BucketGraph : MonoBehaviour
@@ -18,7 +18,10 @@ public class BucketGraph : MonoBehaviour
 
     float minValue = 0;
     float maxValue = 1;
-    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, string[] labels, Color staticColor, Color surgeColor)
+
+    static Color staticColor = ColorScheme.blue;
+    static Color surgeColor = ColorScheme.surgeRed;
+    public static BucketGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetBucketGraphValues getValues, FormatBucketGraphValue formatValue, string[] labels, float maxValue)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform prefab = Resources.Load<Transform>("Graphs/BucketGraph");
@@ -28,6 +31,7 @@ public class BucketGraph : MonoBehaviour
         bucketGraph.surgeCities = surgeCities;
         bucketGraph.getValues = getValues;
         bucketGraph.formatValue = formatValue;
+        bucketGraph.maxValue = maxValue;
 
         RectTransform rt = bucketGraphTransform.GetComponent<RectTransform>();
         rt.anchoredPosition = position;
@@ -67,8 +71,8 @@ public class BucketGraph : MonoBehaviour
         Transform graphContainerTransform = transform.Find("GraphContainer");
         while (true)
         {
-            BucketInfo[] staticBuckets = getValues(staticCities);
-            BucketInfo[] surgeBuckets = getValues(surgeCities);
+            SimStatistic[] staticBuckets = getValues(staticCities);
+            SimStatistic[] surgeBuckets = getValues(surgeCities);
             RectTransform[] staticBars = new RectTransform[4];
             RectTransform[] surgeBars = new RectTransform[4];
 
@@ -77,13 +81,13 @@ public class BucketGraph : MonoBehaviour
                 staticBars[i] = graphContainerTransform.Find($"BarGroup{i + 1}/StaticBar").GetComponent<RectTransform>();
                 surgeBars[i] = graphContainerTransform.Find($"BarGroup{i + 1}/SurgeBar").GetComponent<RectTransform>();
 
-                staticBars[i].sizeDelta = new Vector2(staticBars[i].sizeDelta.x, ConvertValueToGraphPosition(staticBuckets[i].percentageWhoGotAnUber));
-                surgeBars[i].sizeDelta = new Vector2(surgeBars[i].sizeDelta.x, ConvertValueToGraphPosition(surgeBuckets[i].percentageWhoGotAnUber));
+                staticBars[i].sizeDelta = new Vector2(staticBars[i].sizeDelta.x, ConvertValueToGraphPosition(staticBuckets[i].value));
+                surgeBars[i].sizeDelta = new Vector2(surgeBars[i].sizeDelta.x, ConvertValueToGraphPosition(surgeBuckets[i].value));
 
-                string formattedStaticValue = formatValue(staticBuckets[i].percentageWhoGotAnUber);
+                string formattedStaticValue = formatValue(staticBuckets[i].value);
                 graphContainerTransform.Find($"BarGroup{i + 1}/StaticBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedStaticValue;
 
-                string formattedSurgeValue = formatValue(surgeBuckets[i].percentageWhoGotAnUber);
+                string formattedSurgeValue = formatValue(surgeBuckets[i].value);
                 graphContainerTransform.Find($"BarGroup{i + 1}/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedSurgeValue;
 
                 string staticSampleSize = $"n = {staticBuckets[i].sampleSize}";

@@ -439,12 +439,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 538386554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fec0957ec720d5a4e9aae3d6615b0046, type: 3}
+  m_Script: {fileID: 11500000, guid: 989e139aac271db42b12df7f9708117b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
-  staticPriceSettings: {fileID: 11400000, guid: 0adf5a62cc2223548b931ffbff347d72, type: 2}
-  surgePriceSettings: {fileID: 11400000, guid: b6f55ce2423efc546bb395ef076b755b, type: 2}
+  staticPriceSettings: {fileID: 11400000, guid: 3e2a8bba0a9ec6a408301407b611ed58, type: 2}
+  surgePriceSettings: {fileID: 11400000, guid: cdc9e286baca2cd4dae050674a6d3bff, type: 2}
   graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
 --- !u!1 &1527207258
 GameObject:

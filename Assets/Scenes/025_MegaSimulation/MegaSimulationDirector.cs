@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class BucketInfo
-{
-    public float percentageWhoGotAnUber;
-    public int sampleSize;
-}
+public delegate float GetPassengerValue(PassengerPerson passenger);
+
 
 public class MegaSimulationDirector : MonoBehaviour
 {
@@ -66,9 +63,8 @@ public class MegaSimulationDirector : MonoBehaviour
 
 
 
-    public delegate float GetPassengerValue(PassengerPerson passenger);
 
-    private BucketInfo GetBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
+    private SimStatistic GetBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
     {
         PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
         {
@@ -104,7 +100,7 @@ public class MegaSimulationDirector : MonoBehaviour
         }
         int sampleSize = quartileList.Count;
         float percentageWhoGotAnUber = sampleSize == 0 ? 0 : (float)quartileList.Count(p => p.tripTypeChosen == TripType.Uber) / sampleSize;
-        return new BucketInfo { percentageWhoGotAnUber = percentageWhoGotAnUber, sampleSize = sampleSize };
+        return new SimStatistic { value = percentageWhoGotAnUber, sampleSize = sampleSize };
     }
 
     private void InstantiateTimeSensitivityBucketGraph()
@@ -113,7 +109,7 @@ public class MegaSimulationDirector : MonoBehaviour
         GetPassengerValue getTimeSensitivity = (PassengerPerson passenger) => passenger.economicParameters.timePreference;
         GetBucketGraphValues getBucketedTimeSensitivityValues = (City[] cities) =>
         {
-            BucketInfo[] bucketInfos = new BucketInfo[4];
+            SimStatistic[] bucketInfos = new SimStatistic[4];
             for (int i = 0; i < 4; i++)
             {
                 bucketInfos[i] = GetBucketInfo(cities, i, getTimeSensitivity, timeSensitivityQuartileThresholds);
@@ -126,7 +122,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", getBucketedTimeSensitivityValues, formatValue, labels, 1);
     }
 
     private void InstantiateHourlyIncomeBucketGraph()
@@ -135,7 +131,7 @@ public class MegaSimulationDirector : MonoBehaviour
         GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
         GetBucketGraphValues getBucketedHourlyIncomeValues = (City[] cities) =>
         {
-            BucketInfo[] bucketInfos = new BucketInfo[4];
+            SimStatistic[] bucketInfos = new SimStatistic[4];
             for (int i = 0; i < 4; i++)
             {
                 bucketInfos[i] = GetBucketInfo(cities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
@@ -147,7 +143,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1100), "Hourly Income", getBucketedHourlyIncomeValues, formatValue, labels, ColorScheme.blue, ColorScheme.surgeRed);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1100), "Hourly Income", getBucketedHourlyIncomeValues, formatValue, labels, 1);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
@@ -157,7 +153,7 @@ public class MegaSimulationDirector : MonoBehaviour
     //     GetPassengerValue getMaxTimeSavings = (PassengerPerson passenger) => passenger.economicParameters.GetBestSubstitute().maxTimeSavedByUber;
     //     GetBucketGraphValues getBucketedMaxTimeSavingsValues = (City[] cities) =>
     //     {
-    //         BucketInfo[] bucketInfos = new BucketInfo[4];
+    //         SimStatistic[] bucketInfos = new SimStatistic[4];
     //         for (int i = 0; i < 4; i++)
     //         {
     //             bucketInfos[i] = GetBucketInfo(cities, i, getMaxTimeSavings, maxTimeSavingsQuartileThresholds);
@@ -175,7 +171,6 @@ public class MegaSimulationDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SetSimulationStart());
-        Quaternion originalRotation = Camera.main.transform.rotation;
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 55, Ease.Quadratic));
         Quaternion newRotation = Quaternion.Euler(15, 0, 0);
