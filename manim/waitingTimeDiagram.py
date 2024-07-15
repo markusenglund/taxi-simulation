@@ -7,9 +7,10 @@ class WaitingTimeDiagram(Scene):
     def construct(self):
       self.camera.background_color = "#444444"
       
-      values=[0, 0, 0, 0, 0, 0, 0, 0, 0]
-      final_values = [0, 31, 28, 25, 22, 17, 15, 13, 12]
-      bar_names = ["-3", "-2", "-1", "0", "1", "2", "3", "4", "5"]
+      values=[0, 0, 0, 0, 0, 0, 0, 0]
+      intermediate_values = [0,0,0,22, 17, 15, 13, 12]
+      final_values = [0, 28, 25, 22, 17, 15, 13, 12]
+      bar_names = ["-2", "-1", "0", "1", "2", "3", "4", "5"]      
       chart = BarChart(
           values,
           bar_names=bar_names,
@@ -36,9 +37,14 @@ class WaitingTimeDiagram(Scene):
       self.add(chart)
       self.wait(2)
 
-      self.play(chart.animate.change_bar_values(final_values), run_time=3)
-      barLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[1:]
-      self.play(FadeIn(barLabels)) 
+      self.play(chart.animate.change_bar_values(intermediate_values), run_time=2)
+      barLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[3:]
+      self.play(FadeIn(barLabels))
+
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values), run_time=2)
+      newBarLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[1:]
+      self.play(FadeIn(newBarLabels))
 
       self.wait(3)
     
