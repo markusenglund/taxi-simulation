@@ -27,7 +27,7 @@ public class SurgeMultiplierGraphic : MonoBehaviour
         Transform background = transform.Find("Background");
         Image backgroundImage = background.GetComponent<Image>();
         // Darken color slightly to make the text more readable
-        backgroundImage.color = ColorScheme.surgeRed * 0.92f;
+        backgroundImage.color = ColorScheme.surgeRed * 0.9f;
     }
     public void SetNewValue(float surgeMultiplier)
     {

@@ -25,7 +25,7 @@ public class FareGraph : MonoBehaviour
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(2690, 1730);
+    Vector3 graphPosition = new Vector3(1150, 1730);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;

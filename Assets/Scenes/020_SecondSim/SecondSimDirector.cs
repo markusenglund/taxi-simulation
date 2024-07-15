@@ -27,7 +27,6 @@ public class SecondSimDirector : MonoBehaviour
 
     CanvasGroup worldSpaceCanvasGroup;
 
-    // A set of passenger IDs that have already spawned a PassengerStats object
     void Awake()
     {
         Time.captureFramerate = 60;
@@ -55,8 +54,7 @@ public class SecondSimDirector : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         StartCoroutine(SpawnCity(city2, 1, city2Position));
-        // yield return new WaitForSeconds(1);
-        StartCoroutine(FadeInWorldSpaceCanvas(1));
+        StartCoroutine(FadeInWorldSpaceCanvas(2));
 
         yield return null;
     }
@@ -68,7 +66,7 @@ public class SecondSimDirector : MonoBehaviour
         StartCoroutine(city1.StartSimulation());
         StartCoroutine(city2.StartSimulation());
         FareGraph.Create(city1, city2);
-        WaitingGraph.Create(city1, city2);
+        WaitingGraph.Create(city1, city2, waitTime: 7);
     }
 
     IEnumerator FadeInWorldSpaceCanvas(float duration)
@@ -77,6 +75,7 @@ public class SecondSimDirector : MonoBehaviour
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
+            t = EaseUtils.EaseInCubic(t);
             worldSpaceCanvasGroup.alpha = t;
             yield return null;
         }

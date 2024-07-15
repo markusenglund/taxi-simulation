@@ -25,7 +25,7 @@ public class WaitingGraph : MonoBehaviour
 
     int startHour = 18;
     Vector2 graphSize = new Vector2(1200, 800);
-    Vector3 graphPosition = new Vector3(1150, 1730);
+    Vector3 graphPosition = new Vector3(2690, 1730);
     float margin = 100f;
     float marginTop = 220f;
     float marginBottom = 140f;
@@ -62,8 +62,10 @@ public class WaitingGraph : MonoBehaviour
 
     float defaultLineWidth;
 
+    float waitTime;
 
-    public static WaitingGraph Create(City city1, City city2)
+
+    public static WaitingGraph Create(City city1, City city2, float waitTime)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform graphPrefab = Resources.Load<Transform>("Graphs/WaitingGraph");
@@ -74,6 +76,7 @@ public class WaitingGraph : MonoBehaviour
         graph.staticCity = city1;
         graph.surgeCity = city2;
         graph.transform.localScale = Vector3.one * 0.95f;
+        graph.waitTime = waitTime;
 
         return graph;
     }
@@ -87,12 +90,23 @@ public class WaitingGraph : MonoBehaviour
 
         // Add canvas group to graph
         canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        canvasGroup.alpha = 0;
+
+
 
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         graphContainer.sizeDelta = graphSize;
         defaultLineWidth = lrPrefab.widthMultiplier;
         InstantiateGraph();
         InstantiateInfoGroup();
+
+        foreach (LineRenderer line in GetComponentsInChildren<LineRenderer>())
+        {
+            Color color = line.startColor;
+            color.a = 0;
+            line.startColor = color;
+            line.endColor = color;
+        }
 
 
         StartCoroutine(Schedule());
@@ -112,10 +126,11 @@ public class WaitingGraph : MonoBehaviour
 
     private IEnumerator Schedule()
     {
-        StartCoroutine(SpawnCard(duration: 1));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.01f);
         StartCoroutine(UpdateCurves());
         StartCoroutine(UpdateInfoGroup());
+        yield return new WaitForSeconds(waitTime);
+        StartCoroutine(SpawnCard(duration: 1));
         yield return null;
     }
 
