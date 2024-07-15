@@ -10,7 +10,7 @@ public class SurgeMultiplierGraphic : MonoBehaviour
 
     public static SurgeMultiplierGraphic Create(Transform prefab, Vector3 screenPos)
     {
-        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform canvas = GameObject.Find("WorldSpaceCanvas").transform;
         Transform transform = Instantiate(prefab, canvas);
 
         RectTransform rectTransform = transform.GetComponent<RectTransform>();

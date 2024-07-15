@@ -108,7 +108,7 @@ public class City : MonoBehaviour
     {
         if (simulationSettings.showSurgeMultiplier)
         {
-            surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, graphSettings.surgeMultiplierGraphicPos);
+            surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, new Vector3(13, -1.3f, 0f));
         }
         float intervalSimulationTime = 5f / 60f;
         float intervalRealTime = TimeUtils.ConvertSimulationHoursDurationToRealSeconds(intervalSimulationTime);
