@@ -65,9 +65,10 @@ public class SurplusSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateSurplusBucketGraph();
         InstantiateSurplusDividedByIncomeBucketGraph();
-        InstantiateSurplusMinusFareByIncomeBucketGraph();
-        InstantiateTotalFaresPaidByIncomeBucketGraph();
-        InstantiateTotalTimeCostByIncomeBucketGraph();
+        InstantiateIncomeGraph();
+        // InstantiateSurplusMinusFareByIncomeBucketGraph();
+        // InstantiateTotalFaresPaidByIncomeBucketGraph();
+        // InstantiateTotalTimeCostByIncomeBucketGraph();
     }
 
     private SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
@@ -363,6 +364,59 @@ public class SurplusSimulationDirector : MonoBehaviour
 
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
         BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1900, 800), "Total time cost by income", "Money $", getBucketedTimeCostValues, formatValue, labels, 40000);
+    }
+
+
+    void InstantiateIncomeGraph()
+    {
+        GetStatistic GetUberIncome = cities =>
+        {
+            PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+            PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+            // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+            PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+            PassengerPerson[] allPassengers = passengersWhoCompletedJourney.Concat(passengersWhoAreWaitingOrInTransit).ToArray();
+            float uberIncome = allPassengers.Sum(passenger => passenger.trip.tripCreatedData.fare.uberCut);
+
+            int sampleSize = allPassengers.Length;
+
+            return new SimStatistic
+            {
+                value = uberIncome,
+                sampleSize = sampleSize
+            };
+        };
+
+        GetStatistic GetDriverIncome = cities =>
+        {
+            PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+            PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+            // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+            PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+            PassengerPerson[] allPassengers = passengersWhoCompletedJourney.Concat(passengersWhoAreWaitingOrInTransit).ToArray();
+            float driverIncome = allPassengers.Sum(passenger =>
+            {
+                float driverMarginalCostPerKm = staticPriceSettings.driverMarginalCostPerKm;
+                float marginalDriverCost = (passenger.trip.tripCreatedData.tripDistance + passenger.trip.driverDispatchedData.enRouteDistance) * driverMarginalCostPerKm;
+                return passenger.trip.tripCreatedData.fare.driverCut - marginalDriverCost;
+            });
+
+            int sampleSize = allPassengers.Length;
+
+            return new SimStatistic
+            {
+                value = driverIncome,
+                sampleSize = sampleSize
+            };
+        };
+
+        FormatValue formatIncome = value => $"${value:0}";
+
+        DriverUberGraph incomeGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 1200), "Income", GetUberIncome, GetDriverIncome, formatIncome);
     }
     // void InstantiatePassengerSurplusInfoBoxes()
     // {
