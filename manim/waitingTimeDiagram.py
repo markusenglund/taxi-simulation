@@ -8,13 +8,15 @@ class WaitingTimeDiagram(Scene):
       self.camera.background_color = "#444444"
       
       values=[0, 0, 0, 0, 0, 0, 0, 0]
-      intermediate_values = [0,0,0,22, 17, 15, 13, 12]
-      final_values = [0, 28, 25, 22, 17, 15, 13, 12]
+      intermediate_values = [0, 0, 0, 11.3, 9.5, 9.1, 8.0, 6.2]
+      # Values gathered from the simulation
+      final_values = [0, 19.6, 15.7, 11.3, 9.5, 9.1, 8.0, 6.2]
       bar_names = ["-2", "-1", "0", "1", "2", "3", "4", "5"]      
+      # bar_names = ["0", "1", "2", "3", "4", "5",]
       chart = BarChart(
           values,
           bar_names=bar_names,
-          y_range=[0, 40, 10],
+          y_range=[0, 20, 5],
           y_length=5.5,
           x_length=10,
           bar_fill_opacity=1,
@@ -35,6 +37,7 @@ class WaitingTimeDiagram(Scene):
       self.add(chart, xLabel)
       self.add(chart, yLabel)
       self.add(chart)
+
       self.wait(2)
 
       self.play(chart.animate.change_bar_values(intermediate_values), run_time=2)
@@ -45,6 +48,7 @@ class WaitingTimeDiagram(Scene):
       self.play(chart.animate.change_bar_values(final_values), run_time=2)
       newBarLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[1:]
       self.play(FadeIn(newBarLabels))
+      self.play(FadeIn(Text("🚫", font_size=50, color=RED).shift(LEFT * 4.3 + DOWN * 1.5)))
 
       self.wait(3)
     
