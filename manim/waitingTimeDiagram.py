@@ -17,7 +17,7 @@ class WaitingTimeDiagram(Scene):
           values,
           bar_names=bar_names,
           y_range=[0, 20, 5],
-          y_length=5.5,
+          y_length=5,
           x_length=10,
           bar_fill_opacity=1,
           y_axis_config={
@@ -30,9 +30,11 @@ class WaitingTimeDiagram(Scene):
             "include_ticks": False,
           },
           bar_colors=[ORANGE, GREEN]
-      ).shift(UP*0.2)
+      ).shift(UP*0)
       xLabel = chart.get_x_axis_label(Text("# Drivers available")).shift(LEFT*5.5 + DOWN*1.2)
       yLabel = chart.get_y_axis_label(Text("Average waiting time (minutes)", font_size=26)).shift(LEFT*3.8 + DOWN*3.1).rotate(90 * DEGREES)
+      heading = Text("More available drivers reduce wait times", font_size = 40).shift(UP*3.5)
+      self.add(heading)
       # axisLabels = chart.get_axis_labels(Text("Available drivers"), Text("Waiting time (minutes)"))
       self.add(chart, xLabel)
       self.add(chart, yLabel)
