@@ -66,6 +66,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         InstantiateSurplusBucketGraph();
         InstantiateSurplusDividedByIncomeBucketGraph();
         InstantiateIncomeGraph();
+        StartCoroutine(InspectData());
         // InstantiateSurplusMinusFareByIncomeBucketGraph();
         // InstantiateTotalFaresPaidByIncomeBucketGraph();
         // InstantiateTotalTimeCostByIncomeBucketGraph();
@@ -471,7 +472,15 @@ public class SurplusSimulationDirector : MonoBehaviour
     //     SurplusGraph surplusGraph = SurplusGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 1200), "Aggregate Surplus", GetRichestAggregateSurplus, GetPoorestAggregateSurplus, formatSurplus);
     // }
 
-
+    IEnumerator InspectData()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(5);
+            City[] allCities = staticCities.Concat(surgeCities).ToArray();
+            DataInspection.GetAverageWaitingTimeByNumAssignedTrips(allCities);
+        }
+    }
 
     IEnumerator Scene()
     {

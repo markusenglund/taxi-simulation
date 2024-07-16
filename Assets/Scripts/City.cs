@@ -438,12 +438,15 @@ public class City : MonoBehaviour
         public bool areDriversAvailable;
         public Driver fastestDriver;
         public float fastestTime;
-
         public float enRouteDistance;
+
+        public int numTripsAssigned;
     }
 
     public GetFastestDriverResponse GetFastestDriver(Vector3 pickUpPosition)
     {
+        Driver[] idleDrivers = drivers.Where(driver => driver.currentTrip == null).ToArray();
+        // A driver is considered available if they are idle or are on a trip but don't have a trip lined up after 
         Driver[] availableDrivers = drivers.Where(driver => driver.nextTrip == null).ToArray();
         // If there are less than half of the drivers available, don't assign any drivers. This is to prevent the "Wild goose chase" effect where drivers are assigned to passengers that are too far away
         if (availableDrivers.Length <= Mathf.Max(drivers.Count / 2, 3))
@@ -486,7 +489,9 @@ public class City : MonoBehaviour
                 }
             }
         }
-        return new GetFastestDriverResponse { areDriversAvailable = true, fastestDriver = fastestDriver!, fastestTime = fastestTime, enRouteDistance = enRouteDistance };
+
+        int numTripsAssigned = drivers.Count() * 2 - availableDrivers.Length - idleDrivers.Length;
+        return new GetFastestDriverResponse { areDriversAvailable = true, fastestDriver = fastestDriver!, fastestTime = fastestTime, enRouteDistance = enRouteDistance, numTripsAssigned = numTripsAssigned };
     }
 
     private Fare GetFare(float distance)
@@ -507,7 +512,7 @@ public class City : MonoBehaviour
         return fare;
     }
 
-    public (RideOffer?, Driver?) RequestRideOffer(Vector3 position, Vector3 destination)
+    public (RideOffer?, Driver?, int) RequestRideOffer(Vector3 position, Vector3 destination)
     {
         float tripDistance = GridUtils.GetDistance(position, destination);
         Fare fare = GetFare(tripDistance);
@@ -515,7 +520,7 @@ public class City : MonoBehaviour
         bool areDriversAvailable = fastestDriverResponse.areDriversAvailable;
         if (!areDriversAvailable)
         {
-            return (null, null);
+            return (null, null, fastestDriverResponse.numTripsAssigned);
         }
         float expectedWaitingTime = fastestDriverResponse.fastestTime;
         Driver fastestDriver = fastestDriverResponse.fastestDriver;
@@ -530,7 +535,7 @@ public class City : MonoBehaviour
             fare = fare,
         };
 
-        return (rideOffer, fastestDriver);
+        return (rideOffer, fastestDriver, fastestDriverResponse.numTripsAssigned);
 
     }
 

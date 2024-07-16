@@ -202,7 +202,7 @@ public class Passenger : MonoBehaviour
 
     void MakeTripDecision()
     {
-        (RideOffer? rideOffer, Driver? driver) = city.RequestRideOffer(person.startPosition, person.destination);
+        (RideOffer? rideOffer, Driver? driver, int numTripsAssigned) = city.RequestRideOffer(person.startPosition, person.destination);
 
 
         if (rideOffer == null)
@@ -230,7 +230,8 @@ public class Passenger : MonoBehaviour
                 expectedWaitingTime = rideOffer.expectedWaitingTime,
                 expectedTripTime = rideOffer.expectedTripTime,
                 fare = rideOffer.fare,
-                expectedPickupTime = expectedPickupTime
+                expectedPickupTime = expectedPickupTime,
+                numTripsAssigned = numTripsAssigned
             };
             float expectedTotalTime = rideOffer.expectedWaitingTime + rideOffer.expectedTripTime;
             float expectedWaitingCost = rideOffer.expectedWaitingTime * person.economicParameters.waitingCostPerHour;

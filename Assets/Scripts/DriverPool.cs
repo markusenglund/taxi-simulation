@@ -55,7 +55,7 @@ public class DriverPool
     {
         DriverPerson[] midnightDrivers = drivers.Where(x => x.interval != null && (x.interval.startTime == 0 || x.interval.endTime > city.simulationSettings.simulationLengthHours)).ToArray();
 
-        Debug.Log($"Drivers active during midnight: {midnightDrivers.Length} out of {city.simulationSettings.numDrivers} drivers");
+        // Debug.Log($"Drivers active during midnight: {midnightDrivers.Length} out of {city.simulationSettings.numDrivers} drivers");
 
         return midnightDrivers;
     }
@@ -64,7 +64,7 @@ public class DriverPool
     {
         DriverPerson[] driversStartingAtHour = drivers.Where(x => x.interval != null && x.interval.startTime == hour).ToArray();
 
-        Debug.Log($"Drivers starting at hour {hour}: {driversStartingAtHour.Length} out of {city.simulationSettings.numDrivers} drivers");
+        // Debug.Log($"Drivers starting at hour {hour}: {driversStartingAtHour.Length} out of {city.simulationSettings.numDrivers} drivers");
 
         return driversStartingAtHour;
     }
