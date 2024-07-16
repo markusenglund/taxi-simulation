@@ -19,7 +19,7 @@ public class HorizontalBarGraph : MonoBehaviour
 
     public static HorizontalBarGraph Create(City staticCity, City surgeCity, Vector3 position, string labelText, GetHorizontalBarValue getValue)
     {
-        Transform canvas = GameObject.Find("Canvas").transform;
+        Transform canvas = GameObject.Find("BackgroundWorldSpaceCanvas").transform;
         Transform prefab = Resources.Load<Transform>("Graphs/HorizontalBarGraph");
         Transform horizontalBarGraphTransform = Instantiate(prefab, canvas);
         HorizontalBarGraph horizontalBarGraph = horizontalBarGraphTransform.GetComponent<HorizontalBarGraph>();

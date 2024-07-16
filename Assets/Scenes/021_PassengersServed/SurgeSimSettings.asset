@@ -15,7 +15,7 @@ MonoBehaviour:
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 0
   isActive: 1
-  randomSeed: 2
+  randomSeed: 3
   simulationLengthHours: 4
   driverMaxSpeed: 40
   driverAcceleration: 1000

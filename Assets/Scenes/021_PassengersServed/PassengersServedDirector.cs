@@ -17,8 +17,8 @@ public class PassengersServedDirector : MonoBehaviour
 
     Vector3 city1Position = new Vector3(0f, 0, 0f);
     Vector3 city2Position = new Vector3(12f, 0, 0f);
-    Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
-    Vector3 cameraStartPosition = new Vector3(10.5f, 15f, -10f);
+    Vector3 lookAtPosition = new Vector3(6 + 4.5f, 3, 12f);
+    Vector3 cameraStartPosition = new Vector3(1f, 1.3f, -4f);
 
     bool hasSavedPassengerData = false;
 
@@ -36,9 +36,9 @@ public class PassengersServedDirector : MonoBehaviour
 
         worldSpaceCanvasGroup = GameObject.Find("WorldSpaceCanvas").GetComponent<CanvasGroup>();
         Camera.main.transform.position = cameraStartPosition;
-        Vector3 cameraLookAtPosition = middlePosition - Vector3.up * 1f;
+        Vector3 cameraLookAtPosition = lookAtPosition;
         Camera.main.transform.LookAt(cameraLookAtPosition);
-        Camera.main.fieldOfView = 45f;
+        Camera.main.fieldOfView = 60f;
         StartCoroutine(Scene());
     }
 
@@ -47,6 +47,7 @@ public class PassengersServedDirector : MonoBehaviour
     {
         StartCoroutine(SetSimulationStart());
         StartCoroutine(FadeInWorldSpaceCanvas(1));
+        StartCoroutine(CameraUtils.RotateCameraAround(lookAtPosition, Vector3.up, -60, 60, Ease.Linear));
 
 
         GetHorizontalBarValue GetPassengersServed = city =>
@@ -57,7 +58,7 @@ public class PassengersServedDirector : MonoBehaviour
             return numPassengersServed;
         };
 
-        HorizontalBarGraph.Create(city1, city2, new Vector3(0, 0), "Passengers served", GetPassengersServed);
+        HorizontalBarGraph.Create(city1, city2, new Vector3(11, 6), "Which system serves more passengers?", GetPassengersServed);
 
         yield return null;
     }
