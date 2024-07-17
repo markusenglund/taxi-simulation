@@ -114,9 +114,9 @@ public class PassengerPerson
     {
         float hourlyIncome = simSettings.GetRandomHourlyIncome(random);
         float timePreferenceSigma = 0.5f;
-        float timePreferenceMedian = 2f;
+        float timePreferenceMedian = 1f;
         float timePreference = timePreferenceMedian * StatisticsUtils.getRandomFromLogNormalDistribution(random, 0, timePreferenceSigma);
-        float waitingCostPerHour = hourlyIncome * timePreference;
+        float waitingCostPerHour = 10 * Mathf.Sqrt(hourlyIncome) * timePreference;
 
         List<TripOption> substitutes = GenerateSubstitutes(waitingCostPerHour, hourlyIncome);
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()

@@ -211,7 +211,7 @@ public class SecondSimDirector : MonoBehaviour
 
 // void InstantiateBucketInfoBoxes()
 // {
-//     float[] timeSensitivityQuartileThresholds = new float[] { 1.428f, 2f, 2.801f, float.PositiveInfinity };
+//     float[] timeSensitivityQuartileThresholds = new float[] { 0.714f, 1f, 1.401f, float.PositiveInfinity };
 //     GetBucket GetQuartileOfPassengersByTimeSensitivity = (City city, int quartile) =>
 //     {
 //         PassengerPerson[] passengers = city.GetPassengerPeople().Where(p => p.state != PassengerState.Idling && p.state != PassengerState.BeforeSpawn).ToArray();

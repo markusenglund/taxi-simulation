@@ -105,7 +105,7 @@ public class MegaSimulationDirector : MonoBehaviour
 
     private void InstantiateTimeSensitivityBucketGraph()
     {
-        float[] timeSensitivityQuartileThresholds = new float[] { 1.428f, 2f, 2.801f, float.PositiveInfinity };
+        float[] timeSensitivityQuartileThresholds = new float[] { 0.714f, 1f, 1.401f, float.PositiveInfinity };
         GetPassengerValue getTimeSensitivity = (PassengerPerson passenger) => passenger.economicParameters.timePreference;
         GetBucketGraphValues getBucketedTimeSensitivityValues = (City[] cities) =>
         {
