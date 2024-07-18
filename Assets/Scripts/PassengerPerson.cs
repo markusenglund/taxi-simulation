@@ -114,9 +114,7 @@ public class PassengerPerson
     {
         float hourlyIncome = simSettings.GetRandomHourlyIncome(random);
 
-        float timeSensitivitySigma = 0.5f;
-        float timeSensitivityMedian = 1f;
-        float timeSensitivity = timeSensitivityMedian * StatisticsUtils.getRandomFromLogNormalDistribution(random, 0, timeSensitivitySigma);
+        float timeSensitivity = simSettings.GetRandomTimeSensitivity(random);
 
         float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
 
