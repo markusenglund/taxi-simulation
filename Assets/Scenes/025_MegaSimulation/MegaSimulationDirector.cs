@@ -147,7 +147,6 @@ public class MegaSimulationDirector : MonoBehaviour
 
     private void InstantiateTimeSensitivityBarGraph()
     {
-        float[] timeSensitivityQuartileThresholds = new float[] { 0.714f, 1f, 1.401f, float.PositiveInfinity };
         GetVerticalBarValue getTopTimeSensitivityPassengersShareOfRides = (City[] cities) =>
         {
             PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
@@ -171,11 +170,11 @@ public class MegaSimulationDirector : MonoBehaviour
                 }
                 return true;
             }).ToArray();
-
+            float top10PercentThreshold = 1.9f;
             PassengerPerson[] topTimeSensitivityPassengers = passengersWhoGotAnUber.Where(p =>
             {
                 float value = p.economicParameters.timePreference;
-                return value >= timeSensitivityQuartileThresholds[2];
+                return value >= top10PercentThreshold;
             }).ToArray();
 
             return new SimStatistic { value = (float)topTimeSensitivityPassengers.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
@@ -186,7 +185,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopTimeSensitivityPassengersShareOfRides, formatValue);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()

@@ -99,7 +99,7 @@ public class VerticalBarGraph : MonoBehaviour
     private float ConvertValueToGraphPosition(float value)
     {
         // 10 is the minimum height of the bar so it can still be seen when the value is zero
-        float maxValue = 1;
+        float maxValue = 0.25f;
         return Mathf.Max(value * maxHeight / maxValue, 10);
     }
 }
