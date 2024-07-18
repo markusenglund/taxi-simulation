@@ -141,6 +141,8 @@ public class SimulationSettings : ScriptableObject
     public bool showPassengerCosts = true;
     public bool showPassengerReactions = true;
     public bool showSurgeMultiplier = false;
+
+    public bool showCityLabel = false;
     public float passengerScale = 4f;
     public float driverScale = 1f;
 

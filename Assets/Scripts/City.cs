@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 
 using Random = System.Random;
+using TMPro;
 
 public class Fare
 {
@@ -73,12 +74,26 @@ public class City : MonoBehaviour
     {
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
-        GridUtils.GenerateStreetGrid(this.transform);
+        // GridUtils.GenerateStreetGrid(this.transform);
         driverPool = new DriverPool(this);
 
         if (graphSettings.showGraphs)
         {
             InstantiateGraphs();
+        }
+        if (simulationSettings.showCityLabel)
+        {
+            Transform cityLabel = this.transform.Find("WorldSpaceCanvas/CityLabel");
+            if (simulationSettings.useConstantSurgeMultiplier)
+            {
+                cityLabel.GetComponent<TMP_Text>().text = "Static Pricing";
+            }
+            else
+            {
+                cityLabel.GetComponent<TMP_Text>().text = "Surge Pricing";
+                // Set position 0.5 units to the right of the city center
+                cityLabel.GetComponent<RectTransform>().anchoredPosition = new Vector2(5, -1.2f);
+            }
         }
         StartCoroutine(StartSurgeMultiplier());
         if (spawnInitialDrivers)
@@ -108,7 +123,7 @@ public class City : MonoBehaviour
     {
         if (simulationSettings.showSurgeMultiplier)
         {
-            surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, new Vector3(13, -1.3f, 0f));
+            surgeMultiplierGraphic = SurgeMultiplierGraphic.Create(SurgeMultiplierGraphicPrefab, this, new Vector3(1, -1.3f, 0f));
         }
         float intervalSimulationTime = 5f / 60f;
         float intervalRealTime = TimeUtils.ConvertSimulationHoursDurationToRealSeconds(intervalSimulationTime);

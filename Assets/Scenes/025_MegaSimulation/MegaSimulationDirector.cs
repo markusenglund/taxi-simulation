@@ -217,12 +217,13 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));
         yield return new WaitForSeconds(1.5f);
         StartCoroutine(SpawnCities());
-        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
-        StartCoroutine(CameraUtils.MoveCamera(newPosition, 55, Ease.Quadratic));
+        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 270);
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 80, Ease.Quadratic));
         yield return new WaitForSeconds(6.5f);
         StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(15, 10, 0), 3, Ease.Quadratic));
         yield return new WaitForSeconds(1.5f);
         InstantiateTimeSensitivityBarGraph();
+
         yield return null;
     }
 

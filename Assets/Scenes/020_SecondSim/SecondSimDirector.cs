@@ -54,7 +54,7 @@ public class SecondSimDirector : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         StartCoroutine(SpawnCity(city2, 1, city2Position));
-        StartCoroutine(FadeInWorldSpaceCanvas(2));
+        // StartCoroutine(FadeInWorldSpaceCanvas(2));
 
         yield return null;
     }

@@ -8,9 +8,10 @@ public class SurgeMultiplierGraphic : MonoBehaviour
     private RectTransform textContainer;
     private TMP_Text text;
 
-    public static SurgeMultiplierGraphic Create(Transform prefab, Vector3 screenPos)
+    public static SurgeMultiplierGraphic Create(Transform prefab, City city, Vector3 screenPos)
     {
-        Transform canvas = GameObject.Find("WorldSpaceCanvas").transform;
+        // Transform canvas = GameObject.Find("WorldSpaceCanvas").transform;
+        Transform canvas = city.transform.Find("WorldSpaceCanvas");
         Transform transform = Instantiate(prefab, canvas);
 
         RectTransform rectTransform = transform.GetComponent<RectTransform>();

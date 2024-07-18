@@ -6,13 +6,13 @@ public class CameraUtils : MonoBehaviour
 {
     public static IEnumerator MoveCamera(Vector3 toPosition, float duration, Ease ease)
     {
-        float startTime = Time.time;
+        float startFrameCount = Time.frameCount;
         // float startFov = Camera.main.fieldOfView;
-
+        float frameCountDuration = duration * 60;
         Vector3 startPosition = Camera.main.transform.position;
-        while (Time.time < startTime + duration)
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             if (ease == Ease.Cubic)
             {
                 t = EaseUtils.EaseInOutCubic(t);
