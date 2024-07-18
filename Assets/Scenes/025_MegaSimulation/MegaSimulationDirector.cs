@@ -3,7 +3,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-
+using Unity.VisualScripting;
+using UnityEditor;
 public delegate float GetPassengerValue(PassengerPerson passenger);
 
 
@@ -218,9 +219,11 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 80, Ease.Quadratic));
         yield return new WaitForSeconds(8f);
         InstantiateTimeSensitivityBarGraph();
+        yield return new WaitForFrames(35 * 60);
         InstantiateIncomeBarGraph();
-        yield return new WaitForFrames(5 * 60);
 
+        yield return new WaitForFrames(30 * 60);
+        EditorApplication.isPlaying = false;
         yield return null;
     }
 
