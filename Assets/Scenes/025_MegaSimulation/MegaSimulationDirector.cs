@@ -185,7 +185,50 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Share of Uber rides taken by the\ntop 10% agents by income", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+    }
+
+
+    private void InstantiateIncomeBarGraph()
+    {
+        GetVerticalBarValue getTopIncomePassengersShareOfRides = (City[] cities) =>
+        {
+            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
+            {
+                bool passengerDidNotGetAnUber = p.tripTypeChosen != TripType.Uber;
+                if (passengerDidNotGetAnUber)
+                {
+                    return false;
+                }
+                bool passengerHasNotRequestedTripYet = p.state == PassengerState.Idling || p.state == PassengerState.BeforeSpawn;
+                if (passengerHasNotRequestedTripYet)
+                {
+                    return false;
+                }
+
+                // If the passenger's driver is assigned but not yet driving to the passenger, we don't want to count them to prevent bias in favor of having a large queue of waiting passengers
+                bool passengerIsQueued = p.trip != null && (p.trip.state == TripState.Queued || p.trip.state == TripState.DriverAssigned);
+                if (passengerIsQueued)
+                {
+                    return false;
+                }
+                return true;
+            }).ToArray();
+            float top10PercentThreshold = 54.72f;
+            PassengerPerson[] topIncomePassengers = passengersWhoGotAnUber.Where(p =>
+            {
+                float value = p.economicParameters.hourlyIncome;
+                return value >= top10PercentThreshold;
+            }).ToArray();
+
+            return new SimStatistic { value = (float)topIncomePassengers.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
+        };
+
+        FormatValue formatValue = (float value) =>
+        {
+            return (value * 100).ToString("F0") + "%";
+        };
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 1300), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopIncomePassengersShareOfRides, formatValue);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
@@ -219,10 +262,10 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(SpawnCities());
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 270);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 80, Ease.Quadratic));
-        yield return new WaitForSeconds(6.5f);
-        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(15, 10, 0), 3, Ease.Quadratic));
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(8f);
         InstantiateTimeSensitivityBarGraph();
+        yield return new WaitForFrames(5 * 60);
+        InstantiateIncomeBarGraph();
 
         yield return null;
     }
@@ -271,5 +314,23 @@ public class MegaSimulationDirector : MonoBehaviour
             yield return null;
         }
         city.transform.localScale = finalScale;
+    }
+
+    public class WaitForFrames : CustomYieldInstruction
+    {
+        private int _targetFrameCount;
+
+        public WaitForFrames(int numberOfFrames)
+        {
+            _targetFrameCount = Time.frameCount + numberOfFrames;
+        }
+
+        public override bool keepWaiting
+        {
+            get
+            {
+                return Time.frameCount < _targetFrameCount;
+            }
+        }
     }
 }
