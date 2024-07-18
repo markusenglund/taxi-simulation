@@ -28,7 +28,7 @@ public class MegaSimulationDirector : MonoBehaviour
     void Awake()
     {
         Time.captureFramerate = 60;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 4; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
@@ -51,8 +51,8 @@ public class MegaSimulationDirector : MonoBehaviour
     {
 
         Camera.main.transform.position = cameraPosition;
-        Vector3 cameraLookAtPosition = middlePosition + Vector3.up * -3f;
-        Camera.main.transform.LookAt(cameraLookAtPosition);
+        Quaternion cameraRotation = Quaternion.Euler(45, 10, 0);
+        Camera.main.transform.rotation = cameraRotation;
         Camera.main.fieldOfView = 45f;
         StartCoroutine(Scene());
 
@@ -185,7 +185,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopTimeSensitivityPassengersShareOfRides, formatValue);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
@@ -213,16 +213,15 @@ public class MegaSimulationDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SetSimulationStart());
+        Quaternion newRotation = Quaternion.Euler(15, 10, 0);
+        StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(SpawnCities());
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 55, Ease.Quadratic));
-        Quaternion newRotation = Quaternion.Euler(15, 0, 0);
-        yield return new WaitForSeconds(2);
-        StartCoroutine(CameraUtils.RotateCamera(newRotation, 8, Ease.Cubic));
-        yield return new WaitForSeconds(1);
-        StartCoroutine(SpawnCities());
-        yield return new WaitForSeconds(3);
-        // InstantiateTimeSensitivityBucketGraph();
-        // InstantiateHourlyIncomeBucketGraph();
+        yield return new WaitForSeconds(6.5f);
+        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(15, 10, 0), 3, Ease.Quadratic));
+        yield return new WaitForSeconds(1.5f);
         InstantiateTimeSensitivityBarGraph();
         yield return null;
     }
