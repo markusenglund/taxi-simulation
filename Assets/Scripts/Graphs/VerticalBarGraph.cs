@@ -54,8 +54,11 @@ public class VerticalBarGraph : MonoBehaviour
         graphContainer = transform.Find("GraphContainer");
         while (true)
         {
-            float staticValue = getValue(staticCities).value;
-            float surgeValue = getValue(surgeCities).value;
+            SimStatistic staticStatistic = getValue(staticCities);
+            SimStatistic surgeStatistic = getValue(surgeCities);
+            float staticValue = staticStatistic.value;
+            float surgeValue = surgeStatistic.value;
+            int sampleSize = staticStatistic.sampleSize;
 
             RectTransform staticBar = graphContainer.Find("BarGroup1/StaticBar").GetComponent<RectTransform>();
             RectTransform surgeBar = graphContainer.Find("BarGroup1/SurgeBar").GetComponent<RectTransform>();
@@ -66,7 +69,7 @@ public class VerticalBarGraph : MonoBehaviour
 
             graphContainer.Find("BarGroup1/StaticBar/Value").GetComponent<TMPro.TMP_Text>().text = formatValue(staticValue);
             graphContainer.Find("BarGroup1/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formatValue(surgeValue);
-
+            transform.Find("SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = $"Sample Size: {sampleSize}";
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -99,7 +102,7 @@ public class VerticalBarGraph : MonoBehaviour
     private float ConvertValueToGraphPosition(float value)
     {
         // 10 is the minimum height of the bar so it can still be seen when the value is zero
-        float maxValue = 0.25f;
+        float maxValue = 1f;
         return Mathf.Max(value * maxHeight / maxValue, 10);
     }
 }

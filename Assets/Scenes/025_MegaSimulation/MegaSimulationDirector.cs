@@ -153,9 +153,8 @@ public class MegaSimulationDirector : MonoBehaviour
             PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
             PassengerPerson[] topTimeSensitivityPassengers = passengers.OrderByDescending(p => p.economicParameters.timePreference).Take((int)(passengers.Count() * 0.1)).ToArray();
             PassengerPerson[] topTimeSensitivityPassengersWhoGotAnUber = topTimeSensitivityPassengers.Where(p => p.StartedTrip()).ToArray();
-            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.StartedTrip()).ToArray();
 
-            return new SimStatistic { value = (float)topTimeSensitivityPassengersWhoGotAnUber.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
+            return new SimStatistic { value = (float)topTimeSensitivityPassengersWhoGotAnUber.Count() / topTimeSensitivityPassengers.Count(), sampleSize = topTimeSensitivityPassengers.Count() };
         };
 
         FormatValue formatValue = (float value) =>
@@ -163,7 +162,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Percentage of agents with top 10% time sensitivity who got an Uber", getTopTimeSensitivityPassengersShareOfRides, formatValue);
     }
 
 
@@ -174,16 +173,15 @@ public class MegaSimulationDirector : MonoBehaviour
             PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
             PassengerPerson[] topIncomePassengers = passengers.OrderByDescending(p => p.economicParameters.hourlyIncome).Take((int)(passengers.Count() * 0.1)).ToArray();
             PassengerPerson[] topIncomePassengersWhoGotAnUber = topIncomePassengers.Where(p => p.StartedTrip()).ToArray();
-            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.StartedTrip()).ToArray();
 
-            return new SimStatistic { value = (float)topIncomePassengersWhoGotAnUber.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
+            return new SimStatistic { value = (float)topIncomePassengersWhoGotAnUber.Count() / topIncomePassengers.Count(), sampleSize = topIncomePassengers.Count() };
         };
 
         FormatValue formatValue = (float value) =>
         {
             return (value * 100).ToString("F0") + "%";
         };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1500, 1300), "Share of Uber rides taken by the\ntop 10% agents by income", getTopIncomePassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1500, 1300), "Percentage of agents with top 10% income who got an Uber", getTopIncomePassengersShareOfRides, formatValue);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
@@ -217,9 +215,9 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(SpawnCities());
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 270);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 80, Ease.Quadratic));
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(5f);
         InstantiateTimeSensitivityBarGraph();
-        yield return new WaitForFrames(35 * 60);
+        yield return new WaitForFrames(38 * 60);
         InstantiateIncomeBarGraph();
 
         yield return new WaitForFrames(30 * 60);
@@ -246,7 +244,7 @@ public class MegaSimulationDirector : MonoBehaviour
     {
         for (int i = 1; i < staticCities.Count; i++)
         {
-            float waitTime = i == 1 ? 0.5f : 0.15f;
+            float waitTime = i == 1 ? 0.5f : 0.07f;
             City staticCity = staticCities[i];
             float z = i * 13;
             StartCoroutine(SpawnCity(staticCity, 2f, new Vector3(0, 0, z)));
