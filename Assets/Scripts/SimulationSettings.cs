@@ -182,6 +182,15 @@ public class SimulationSettings : ScriptableObject
         return hourlyIncome;
     }
 
+    public float GetRandomTimeSensitivity(Random random)
+    {
+        float timeSensitivitySigma = 0.5f;
+        float timeSensitivityMedian = 1f;
+        float mu = 0;
+        float timeSensitivity = timeSensitivityMedian * StatisticsUtils.getRandomFromLogNormalDistribution(random, mu, timeSensitivitySigma);
+        return timeSensitivity;
+    }
+
     public SimulationSettings()
     {
         expectedPassengersByHour = GetExpectedPassengersByHour();

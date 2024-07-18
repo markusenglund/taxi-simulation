@@ -48,17 +48,17 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         yield return new WaitForSeconds(1f);
         PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
         float hourlyIncome = 45.70f;
-        float timePreference = 3.10f;
-        float waitingCostPerHour = hourlyIncome * timePreference;
+        float timeSensitivity = 1.55f;
+        float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
         person.economicParameters = new PassengerEconomicParameters
         {
             hourlyIncome = hourlyIncome,
-            timePreference = timePreference,
-            waitingCostPerHour = waitingCostPerHour,
-            substitutes = person.GenerateSubstitutes(waitingCostPerHour, hourlyIncome)
+            timePreference = timeSensitivity,
+            valueOfTime = valueOfTime,
+            substitutes = person.GenerateSubstitutes(valueOfTime)
         };
         float timeHours = 24f / 60f;
-        float timeCost = timeHours * waitingCostPerHour;
+        float timeCost = timeHours * valueOfTime;
         float moneyCost = 12f;
         person.uberTripOption = new TripOption
         {

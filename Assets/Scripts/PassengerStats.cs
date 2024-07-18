@@ -193,8 +193,8 @@ public class PassengerStats : MonoBehaviour
         Stat timeCostStat = new Stat()
         {
             name = "Cost of time",
-            value = $"${(Mathf.Round(person.economicParameters.waitingCostPerHour * 10) / 10f).ToString("F2")}/hr",
-            barValue = Mathf.Sqrt(person.economicParameters.waitingCostPerHour) * 5
+            value = $"${(Mathf.Round(person.economicParameters.valueOfTime * 10) / 10f).ToString("F2")}/hr",
+            barValue = Mathf.Sqrt(person.economicParameters.valueOfTime) * 5
         };
 
 

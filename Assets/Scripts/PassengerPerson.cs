@@ -49,7 +49,7 @@ public class PassengerEconomicParameters
     [field: SerializeField] public float hourlyIncome { get; set; }
     [field: SerializeField] public float timePreference { get; set; }
 
-    [field: SerializeField] public float waitingCostPerHour { get; set; }
+    [field: SerializeField] public float valueOfTime { get; set; }
 
     public List<TripOption> substitutes { get; set; }
 
@@ -113,30 +113,32 @@ public class PassengerPerson
     PassengerEconomicParameters GenerateEconomicParameters()
     {
         float hourlyIncome = simSettings.GetRandomHourlyIncome(random);
-        float timePreferenceSigma = 0.5f;
-        float timePreferenceMedian = 1f;
-        float timePreference = timePreferenceMedian * StatisticsUtils.getRandomFromLogNormalDistribution(random, 0, timePreferenceSigma);
-        float waitingCostPerHour = 10 * Mathf.Sqrt(hourlyIncome) * timePreference;
 
-        List<TripOption> substitutes = GenerateSubstitutes(waitingCostPerHour, hourlyIncome);
+        float timeSensitivitySigma = 0.5f;
+        float timeSensitivityMedian = 1f;
+        float timeSensitivity = timeSensitivityMedian * StatisticsUtils.getRandomFromLogNormalDistribution(random, 0, timeSensitivitySigma);
+
+        float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
+
+        List<TripOption> substitutes = GenerateSubstitutes(valueOfTime);
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,
-            timePreference = timePreference,
-            waitingCostPerHour = waitingCostPerHour,
+            timePreference = timeSensitivity,
+            valueOfTime = valueOfTime,
             substitutes = substitutes
         };
 
         return passengerEconomicParameters;
     }
 
-    public List<TripOption> GenerateSubstitutes(float waitingCostPerHour, float hourlyIncome)
+    public List<TripOption> GenerateSubstitutes(float valueOfTime)
     {
         // Public transport adds a random duration between 10 minutes and 80 minutes to the arrival time due to going to the bus stop, waiting for the bus, switching buses, and walking to the destination
         float minPublicTransportExtraDuration = 10f / 60f;
         float maxPublicTransportExtraDuration = 80 / 60f;
         float publicTransportDuration = distanceToDestination / simSettings.publicTransportAverageSpeed + Mathf.Lerp(minPublicTransportExtraDuration, maxPublicTransportExtraDuration, (float)random.NextDouble());
-        float publicTransportTimeCost = publicTransportDuration * waitingCostPerHour;
+        float publicTransportTimeCost = publicTransportDuration * valueOfTime;
         float publicTransportUtilityCost = publicTransportTimeCost + simSettings.publicTransportCost;
         float maxTimeSavedByUberOverPublicTransport = publicTransportDuration - hypotheticalTripDuration;
         TripOption publicTransportSubstitute = new TripOption()
@@ -151,7 +153,7 @@ public class PassengerPerson
 
         // Walking
         float walkingTime = distanceToDestination / simSettings.walkingSpeed;
-        float timeCostOfWalking = walkingTime * waitingCostPerHour;
+        float timeCostOfWalking = walkingTime * valueOfTime;
         float moneyCostOfWalking = 0;
         float totalCostOfWalking = timeCostOfWalking + moneyCostOfWalking;
         float maxTimeSavedByUberOverWalking = walkingTime - hypotheticalTripDuration;
