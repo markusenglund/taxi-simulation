@@ -28,8 +28,6 @@ public class MegaSimulationDirector : MonoBehaviour
     void Awake()
     {
         Time.captureFramerate = 60;
-        // staticCity1 = City.Create(cityPrefab, city1Position.x, city1Position.y, staticPriceSettings, graphSettings);
-        // surgeCity1 = City.Create(cityPrefab, city2Position.x, city2Position.y, surgePriceSettings, graphSettings);
         for (int i = 0; i < 20; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
@@ -146,6 +144,51 @@ public class MegaSimulationDirector : MonoBehaviour
         BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2600, 1100), "Hourly Income", "% served by Uber", getBucketedHourlyIncomeValues, formatValue, labels, 1);
     }
 
+
+    private void InstantiateTimeSensitivityBarGraph()
+    {
+        float[] timeSensitivityQuartileThresholds = new float[] { 0.714f, 1f, 1.401f, float.PositiveInfinity };
+        GetVerticalBarValue getTopTimeSensitivityPassengersShareOfRides = (City[] cities) =>
+        {
+            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
+            {
+                bool passengerDidNotGetAnUber = p.tripTypeChosen != TripType.Uber;
+                if (passengerDidNotGetAnUber)
+                {
+                    return false;
+                }
+                bool passengerHasNotRequestedTripYet = p.state == PassengerState.Idling || p.state == PassengerState.BeforeSpawn;
+                if (passengerHasNotRequestedTripYet)
+                {
+                    return false;
+                }
+
+                // If the passenger's driver is assigned but not yet driving to the passenger, we don't want to count them to prevent bias in favor of having a large queue of waiting passengers
+                bool passengerIsQueued = p.trip != null && (p.trip.state == TripState.Queued || p.trip.state == TripState.DriverAssigned);
+                if (passengerIsQueued)
+                {
+                    return false;
+                }
+                return true;
+            }).ToArray();
+
+            PassengerPerson[] topTimeSensitivityPassengers = passengersWhoGotAnUber.Where(p =>
+            {
+                float value = p.economicParameters.timePreference;
+                return value >= timeSensitivityQuartileThresholds[2];
+            }).ToArray();
+
+            return new SimStatistic { value = (float)topTimeSensitivityPassengers.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
+        };
+
+        FormatValue formatValue = (float value) =>
+        {
+            return (value * 100).ToString("F0") + "%";
+        };
+        string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1300, 1100), "Time Sensitivity", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+    }
+
     // private void InstantiateMaxTimeSavingsBucketGraph()
     // {
     //     // Just a guess, no distribution to go off of
@@ -179,8 +222,9 @@ public class MegaSimulationDirector : MonoBehaviour
         yield return new WaitForSeconds(1);
         StartCoroutine(SpawnCities());
         yield return new WaitForSeconds(3);
-        InstantiateTimeSensitivityBucketGraph();
-        InstantiateHourlyIncomeBucketGraph();
+        // InstantiateTimeSensitivityBucketGraph();
+        // InstantiateHourlyIncomeBucketGraph();
+        InstantiateTimeSensitivityBarGraph();
         yield return null;
     }
 
