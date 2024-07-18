@@ -149,35 +149,12 @@ public class MegaSimulationDirector : MonoBehaviour
     {
         GetVerticalBarValue getTopTimeSensitivityPassengersShareOfRides = (City[] cities) =>
         {
-            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
-            {
-                bool passengerDidNotGetAnUber = p.tripTypeChosen != TripType.Uber;
-                if (passengerDidNotGetAnUber)
-                {
-                    return false;
-                }
-                bool passengerHasNotRequestedTripYet = p.state == PassengerState.Idling || p.state == PassengerState.BeforeSpawn;
-                if (passengerHasNotRequestedTripYet)
-                {
-                    return false;
-                }
+            PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+            PassengerPerson[] topTimeSensitivityPassengers = passengers.OrderByDescending(p => p.economicParameters.timePreference).Take((int)(passengers.Count() * 0.1)).ToArray();
+            PassengerPerson[] topTimeSensitivityPassengersWhoGotAnUber = topTimeSensitivityPassengers.Where(p => p.StartedTrip()).ToArray();
+            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.StartedTrip()).ToArray();
 
-                // If the passenger's driver is assigned but not yet driving to the passenger, we don't want to count them to prevent bias in favor of having a large queue of waiting passengers
-                bool passengerIsQueued = p.trip != null && (p.trip.state == TripState.Queued || p.trip.state == TripState.DriverAssigned);
-                if (passengerIsQueued)
-                {
-                    return false;
-                }
-                return true;
-            }).ToArray();
-            float top10PercentThreshold = 1.9f;
-            PassengerPerson[] topTimeSensitivityPassengers = passengersWhoGotAnUber.Where(p =>
-            {
-                float value = p.economicParameters.timePreference;
-                return value >= top10PercentThreshold;
-            }).ToArray();
-
-            return new SimStatistic { value = (float)topTimeSensitivityPassengers.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
+            return new SimStatistic { value = (float)topTimeSensitivityPassengersWhoGotAnUber.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
         };
 
         FormatValue formatValue = (float value) =>
@@ -185,7 +162,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Share of Uber rides taken by the\ntop 10% agents by income", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopTimeSensitivityPassengersShareOfRides, formatValue);
     }
 
 
@@ -193,42 +170,19 @@ public class MegaSimulationDirector : MonoBehaviour
     {
         GetVerticalBarValue getTopIncomePassengersShareOfRides = (City[] cities) =>
         {
-            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p =>
-            {
-                bool passengerDidNotGetAnUber = p.tripTypeChosen != TripType.Uber;
-                if (passengerDidNotGetAnUber)
-                {
-                    return false;
-                }
-                bool passengerHasNotRequestedTripYet = p.state == PassengerState.Idling || p.state == PassengerState.BeforeSpawn;
-                if (passengerHasNotRequestedTripYet)
-                {
-                    return false;
-                }
+            PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+            PassengerPerson[] topIncomePassengers = passengers.OrderByDescending(p => p.economicParameters.hourlyIncome).Take((int)(passengers.Count() * 0.1)).ToArray();
+            PassengerPerson[] topIncomePassengersWhoGotAnUber = topIncomePassengers.Where(p => p.StartedTrip()).ToArray();
+            PassengerPerson[] passengersWhoGotAnUber = cities.SelectMany(city => city.GetPassengerPeople()).Where(p => p.StartedTrip()).ToArray();
 
-                // If the passenger's driver is assigned but not yet driving to the passenger, we don't want to count them to prevent bias in favor of having a large queue of waiting passengers
-                bool passengerIsQueued = p.trip != null && (p.trip.state == TripState.Queued || p.trip.state == TripState.DriverAssigned);
-                if (passengerIsQueued)
-                {
-                    return false;
-                }
-                return true;
-            }).ToArray();
-            float top10PercentThreshold = 54.72f;
-            PassengerPerson[] topIncomePassengers = passengersWhoGotAnUber.Where(p =>
-            {
-                float value = p.economicParameters.hourlyIncome;
-                return value >= top10PercentThreshold;
-            }).ToArray();
-
-            return new SimStatistic { value = (float)topIncomePassengers.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
+            return new SimStatistic { value = (float)topIncomePassengersWhoGotAnUber.Count() / passengersWhoGotAnUber.Count(), sampleSize = passengersWhoGotAnUber.Count() };
         };
 
         FormatValue formatValue = (float value) =>
         {
             return (value * 100).ToString("F0") + "%";
         };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 1300), "Share of Uber rides taken by the\ntop 10% most time sensitive agents", getTopIncomePassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1500, 1300), "Share of Uber rides taken by the\ntop 10% agents by income", getTopIncomePassengersShareOfRides, formatValue);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()
@@ -264,8 +218,8 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 80, Ease.Quadratic));
         yield return new WaitForSeconds(8f);
         InstantiateTimeSensitivityBarGraph();
-        yield return new WaitForFrames(5 * 60);
         InstantiateIncomeBarGraph();
+        yield return new WaitForFrames(5 * 60);
 
         yield return null;
     }

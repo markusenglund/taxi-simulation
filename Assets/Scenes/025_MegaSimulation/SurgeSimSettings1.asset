@@ -42,6 +42,6 @@ MonoBehaviour:
   showPassengerCosts: 0
   showPassengerReactions: 0
   showSurgeMultiplier: 1
-  showCityLabel: 0
+  showCityLabel: 1
   passengerScale: 4
   driverScale: 1

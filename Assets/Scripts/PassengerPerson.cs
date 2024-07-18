@@ -170,5 +170,27 @@ public class PassengerPerson
         return substitutes;
     }
 
+    public bool StartedTrip()
+    {
+        bool passengerDidNotGetAnUber = this.tripTypeChosen != TripType.Uber;
+        if (passengerDidNotGetAnUber)
+        {
+            return false;
+        }
+        bool passengerHasNotRequestedTripYet = this.state == PassengerState.Idling || this.state == PassengerState.BeforeSpawn;
+        if (passengerHasNotRequestedTripYet)
+        {
+            return false;
+        }
+
+        // If the passenger's driver is assigned but not yet driving to the passenger, we don't want to count them to prevent bias in favor of having a large queue of waiting passengers
+        bool passengerIsQueued = this.trip != null && (this.trip.state == TripState.Queued || this.trip.state == TripState.DriverAssigned);
+        if (passengerIsQueued)
+        {
+            return false;
+        }
+        return true;
+    }
+
 
 }
