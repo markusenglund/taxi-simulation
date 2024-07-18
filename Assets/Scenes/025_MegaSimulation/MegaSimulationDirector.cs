@@ -28,7 +28,7 @@ public class MegaSimulationDirector : MonoBehaviour
     void Awake()
     {
         Time.captureFramerate = 60;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 40; i++)
         {
             SimulationSettings staticPriceSettingsClone = Instantiate(staticPriceSettings);
             staticPriceSettingsClone.randomSeed = i;
@@ -51,7 +51,7 @@ public class MegaSimulationDirector : MonoBehaviour
     {
 
         Camera.main.transform.position = cameraPosition;
-        Quaternion cameraRotation = Quaternion.Euler(45, 10, 0);
+        Quaternion cameraRotation = Quaternion.Euler(45, 5, 3);
         Camera.main.transform.rotation = cameraRotation;
         Camera.main.fieldOfView = 45f;
         StartCoroutine(Scene());
@@ -245,7 +245,7 @@ public class MegaSimulationDirector : MonoBehaviour
     {
         for (int i = 1; i < staticCities.Count; i++)
         {
-            float waitTime = i == 1 ? 0.5f : 0.2f;
+            float waitTime = i == 1 ? 0.5f : 0.15f;
             City staticCity = staticCities[i];
             float z = i * 13;
             StartCoroutine(SpawnCity(staticCity, 2f, new Vector3(0, 0, z)));
