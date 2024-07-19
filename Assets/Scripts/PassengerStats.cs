@@ -188,7 +188,7 @@ public class PassengerStats : MonoBehaviour
         {
             name = "Time sensitivity",
             value = $"{person.economicParameters.timePreference.ToString("F2")}x",
-            barValue = person.economicParameters.timePreference * 20
+            barValue = person.economicParameters.timePreference * 40
         };
         Stat timeCostStat = new Stat()
         {
