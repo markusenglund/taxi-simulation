@@ -252,14 +252,19 @@ public class SurplusSimulationDirector : MonoBehaviour
         };
         FormatBucketGraphValue formatValue = (float value) =>
         {
+            if (value > 10000)
+            {
+                return "$" + (value / 1000).ToString("F0") + "k";
+            }
             if (value > 1000)
             {
                 return "$" + (value / 1000).ToString("F1") + "k";
             }
             return "$" + value.ToString("F0");
         };
-        string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3200, 1700), "Surplus by income", "Total surplus $", getBucketedSurplusValues, formatValue, labels, 50000);
+        // string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
+        string[] labels = new string[] { "Poorest 25%", "25-50%", "50-75%", "Richest 25%" };
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3200, 1700), "Passenger surplus\nby income level", "Total surplus ($)", getBucketedSurplusValues, formatValue, labels, 50000);
     }
 
 
