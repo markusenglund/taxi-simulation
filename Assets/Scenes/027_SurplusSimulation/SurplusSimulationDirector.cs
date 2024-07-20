@@ -64,7 +64,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         Camera.main.transform.LookAt(cameraLookAtPosition);
         StartCoroutine(Scene());
         InstantiateSurplusBucketGraph();
-        InstantiateSurplusDividedByIncomeBucketGraph();
+        // InstantiateSurplusDividedByIncomeBucketGraph();
         InstantiateIncomeGraph();
         StartCoroutine(InspectData());
         // InstantiateSurplusMinusFareByIncomeBucketGraph();
@@ -264,7 +264,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         };
         // string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
         string[] labels = new string[] { "Poorest 25%", "25-50%", "50-75%", "Richest 25%" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3200, 1700), "Passenger surplus\nby income level", "Total surplus ($)", getBucketedSurplusValues, formatValue, labels, 30000);
+        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 500), "Passenger surplus\nby income level", "Total surplus ($)", getBucketedSurplusValues, formatValue, labels, 30000);
     }
 
 
@@ -314,8 +314,6 @@ public class SurplusSimulationDirector : MonoBehaviour
 
         string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
         BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(600, 1700), "Surplus minus fare by income", "Surplus utils", getBucketedSurplusMinusFareValues, formatValue, labels, 100000);
-
-
     }
 
     void InstantiateTotalFaresPaidByIncomeBucketGraph()
@@ -429,60 +427,8 @@ public class SurplusSimulationDirector : MonoBehaviour
             return "$" + value.ToString("F0");
         };
 
-        DriverUberGraph incomeGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 1200), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
+        DriverUberGraph incomeGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2620, 500), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
     }
-    // void InstantiatePassengerSurplusInfoBoxes()
-    // {
-    //     GetStatistic GetRichestAggregateSurplus = cities =>
-    //     {
-    //         PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
-
-    //         PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
-    //         // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
-    //         PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
-
-    //         float richestQuartileIncomeThreshold = 33.36f;
-
-    //         PassengerPerson[] richestPassengers = passengersWhoCompletedJourney.Where(passenger => passenger.economicParameters.hourlyIncome > richestQuartileIncomeThreshold).ToArray();
-
-    //         float aggregateSurplus = richestPassengers.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus);
-
-    //         int sampleSize = richestPassengers.Length;
-
-    //         return new SimStatistic
-    //         {
-    //             value = aggregateSurplus,
-    //             sampleSize = sampleSize
-    //         };
-    //     };
-
-    //     GetStatistic GetPoorestAggregateSurplus = cities =>
-    //     {
-    //         PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
-
-    //         PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
-    //         // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
-    //         PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
-
-    //         float poorestQuartileIncomeThreshold = 12.72f;
-
-    //         PassengerPerson[] poorestPassengers = passengersWhoCompletedJourney.Where(passenger => passenger.economicParameters.hourlyIncome < poorestQuartileIncomeThreshold).ToArray();
-
-    //         float aggregateSurplus = poorestPassengers.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus);
-
-    //         int sampleSize = poorestPassengers.Length;
-
-    //         return new SimStatistic
-    //         {
-    //             value = aggregateSurplus,
-    //             sampleSize = sampleSize
-    //         };
-    //     };
-
-    //     FormatValue formatSurplus = value => $"${value:0}";
-
-    //     SurplusGraph surplusGraph = SurplusGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 1200), "Aggregate Surplus", GetRichestAggregateSurplus, GetPoorestAggregateSurplus, formatSurplus);
-    // }
 
     IEnumerator InspectData()
     {
