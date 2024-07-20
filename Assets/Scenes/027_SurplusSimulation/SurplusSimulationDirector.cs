@@ -20,7 +20,7 @@ public class SurplusSimulationDirector : MonoBehaviour
     [SerializeField] public SimulationSettings surgePriceSettings;
     [SerializeField] public GraphSettings graphSettings;
 
-    float simulationStartTime = 4;
+    float simulationStartTime = 5;
 
     List<City> staticCities = new List<City>();
     List<City> surgeCities = new List<City>();
@@ -443,20 +443,20 @@ public class SurplusSimulationDirector : MonoBehaviour
     {
         StartCoroutine(SetSimulationStart());
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 70);
-        StartCoroutine(CameraUtils.MoveCamera(newPosition, 100, Ease.Quadratic));
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 120, Ease.Quadratic));
         yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(1.5f) + simulationStartTime);
         Time.timeScale = 0;
-        yield return new WaitForFrames(60 * 2);
+        yield return new WaitForFrames(60 * 3);
         StartCoroutine(bucketGraph.scaleGraph(2.3f, new Vector2(1900, 1080)));
         yield return new WaitForFrames(60 * 2);
         StartCoroutine(bucketGraph.FadeInDeltaLabels(duration: 1));
         StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
         yield return new WaitForFrames(60 * 9);
         StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
-        yield return new WaitForFrames(60 * 5);
+        yield return new WaitForFrames(60 * 10);
         Time.timeScale = 1;
         yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.5f)));
-        yield return new WaitForFrames(20 * 10);
+        yield return new WaitForFrames(25 * 60);
         UnityEditor.EditorApplication.isPlaying = false;
 
     }
