@@ -158,11 +158,11 @@ public class BucketGraph : MonoBehaviour
 
         while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.frameCount - startFrameCount) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             float percentage = EaseUtils.EaseInQuadratic(t);
             foreach (Transform deltaLabel in deltaLabels)
             {
-                deltaLabel.GetComponent<CanvasGroup>().alpha = t;
+                deltaLabel.GetComponent<CanvasGroup>().alpha = percentage;
             }
             yield return null;
         }
@@ -170,6 +170,26 @@ public class BucketGraph : MonoBehaviour
         {
             deltaLabel.GetComponent<CanvasGroup>().alpha = 1;
         }
+    }
+
+    public IEnumerator scaleGraph(float toScale, Vector2 toPosition)
+    {
+        int startFrameCount = Time.frameCount;
+        float frameCountDuration = 60 * 1.5f;
+        float startScale = this.transform.localScale.x;
+        RectTransform rt = transform.GetComponent<RectTransform>();
+        Vector2 startPosition = rt.anchoredPosition;
+        Vector2 scaledUpPosition = new Vector2(1900, 1080);
+        while (Time.frameCount < startFrameCount + frameCountDuration)
+        {
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
+            t = EaseUtils.EaseInOutQuadratic(t);
+            float scale = Mathf.Lerp(startScale, toScale, t);
+            this.transform.localScale = scale * Vector3.one;
+            rt.anchoredPosition = Vector2.Lerp(startPosition, toPosition, t);
+            yield return null;
+        }
+        this.transform.localScale = toScale * Vector3.one;
     }
     private float ConvertValueToGraphPosition(float value)
     {

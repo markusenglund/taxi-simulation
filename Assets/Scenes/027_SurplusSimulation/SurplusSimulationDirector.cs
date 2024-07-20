@@ -31,6 +31,7 @@ public class SurplusSimulationDirector : MonoBehaviour
     Vector3 cameraPosition = new Vector3(30f, 7f, 4.5f);
 
     BucketGraph bucketGraph;
+    DriverUberGraph driverUberGraph;
 
 
     // A set of passenger IDs that have already spawned a PassengerStats object
@@ -65,8 +66,8 @@ public class SurplusSimulationDirector : MonoBehaviour
         Vector3 cameraLookAtPosition = middlePosition + Vector3.up * -8f;
         Camera.main.transform.LookAt(cameraLookAtPosition);
         StartCoroutine(Scene());
-        InstantiateSurplusBucketGraph();
         InstantiateIncomeGraph();
+        InstantiateSurplusBucketGraph();
         // StartCoroutine(InspectData());
     }
 
@@ -425,7 +426,7 @@ public class SurplusSimulationDirector : MonoBehaviour
             return "$" + value.ToString("F0");
         };
 
-        DriverUberGraph incomeGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2620, 500), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
+        driverUberGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2620, 500), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
     }
 
     IEnumerator InspectData()
@@ -441,15 +442,21 @@ public class SurplusSimulationDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SetSimulationStart());
-        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 100);
-        StartCoroutine(CameraUtils.MoveCamera(newPosition, 90, Ease.Quadratic));
+        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 70);
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 100, Ease.Quadratic));
         yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(1.5f) + simulationStartTime);
         Time.timeScale = 0;
+        yield return new WaitForFrames(60 * 2);
+        StartCoroutine(bucketGraph.scaleGraph(2.3f, new Vector2(1900, 1080)));
+        yield return new WaitForFrames(60 * 2);
         StartCoroutine(bucketGraph.FadeInDeltaLabels(duration: 1));
-        yield return new WaitForFrames(60 * 10);
+        StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
+        yield return new WaitForFrames(60 * 9);
+        StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
+        yield return new WaitForFrames(60 * 5);
         Time.timeScale = 1;
         yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.5f)));
-        yield return new WaitForSeconds(10);
+        yield return new WaitForFrames(20 * 10);
         UnityEditor.EditorApplication.isPlaying = false;
 
     }
