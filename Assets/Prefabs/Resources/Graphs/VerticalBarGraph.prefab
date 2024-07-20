@@ -2947,7 +2947,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: -225, y: 0}
-  m_SizeDelta: {x: 300, y: 80}
+  m_SizeDelta: {x: 300, y: 218.93}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &826098529200322479
 CanvasRenderer:
@@ -3000,7 +3000,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   r: {x: 20, y: 20, z: 2, w: 2}
-  rect2props: {x: 0.000015258789, y: -9, z: 126.57212, w: 126.57212}
+  rect2props: {x: 0.000015258789, y: -9.0000305, z: 175.6913, w: 175.6913}
   image: {fileID: 1510725009641753453}
 --- !u!1 &8794861635506166589
 GameObject:

@@ -1485,13 +1485,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 539927704018745182}
   - {fileID: 8573713332345210099}
   - {fileID: 8489952494804481745}
   - {fileID: 8927393662344683105}
   - {fileID: 9170896260766677535}
   - {fileID: 3229892306337480511}
   - {fileID: 2592671338946135940}
-  - {fileID: 539927704018745182}
   m_Father: {fileID: 3936727528733972511}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4296,7 +4296,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 200, y: 80}
+  m_SizeDelta: {x: 200, y: 299}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &826098529200322479
 CanvasRenderer:
@@ -4349,7 +4349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   r: {x: 20, y: 20, z: 2, w: 2}
-  rect2props: {x: 0.0000076293945, y: -9.000008, z: 91.21678, w: 91.21678}
+  rect2props: {x: 0.0000076293945, y: -9.0000305, z: 168.64497, w: 168.64497}
   image: {fileID: 1510725009641753453}
 --- !u!1 &8794861635506166589
 GameObject:
