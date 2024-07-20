@@ -65,7 +65,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateSurplusBucketGraph();
         InstantiateIncomeGraph();
-        StartCoroutine(InspectData());
+        // StartCoroutine(InspectData());
     }
 
     private SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
@@ -440,9 +440,10 @@ public class SurplusSimulationDirector : MonoBehaviour
     {
         StartCoroutine(SetSimulationStart());
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
-        StartCoroutine(CameraUtils.MoveCamera(newPosition, 55, Ease.Quadratic));
+        yield return StartCoroutine(CameraUtils.MoveCamera(newPosition, 90, Ease.Quadratic));
+        // Shut down scene
+        UnityEditor.EditorApplication.isPlaying = false;
 
-        yield return null;
     }
 
     IEnumerator SetSimulationStart()
