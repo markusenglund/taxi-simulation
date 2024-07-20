@@ -415,9 +415,16 @@ public class SurplusSimulationDirector : MonoBehaviour
             };
         };
 
-        FormatValue formatIncome = value => $"${value:0}";
+        FormatValue formatIncome = value =>
+        {
+            if (value > 1000)
+            {
+                return "$" + (value / 1000).ToString("F1") + "k";
+            }
+            return "$" + value.ToString("F0");
+        };
 
-        DriverUberGraph incomeGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 1200), "Income", GetUberIncome, GetDriverIncome, formatIncome);
+        DriverUberGraph incomeGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(700, 1200), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
     }
     // void InstantiatePassengerSurplusInfoBoxes()
     // {

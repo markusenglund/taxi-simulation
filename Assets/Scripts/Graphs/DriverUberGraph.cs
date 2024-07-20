@@ -15,7 +15,7 @@ public class DriverUberGraph : MonoBehaviour
     private RectTransform graphContainer;
 
     float minValue = 0;
-    float maxValue = 20000;
+    float maxValue = 30000;
     public static DriverUberGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetStatistic getUberIncome, GetStatistic getDriverIncome, FormatValue formatValue)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
@@ -40,8 +40,8 @@ public class DriverUberGraph : MonoBehaviour
         driverUberGraph.graphContainer.Find("BarGroup2/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = ColorScheme.surgeRed;
 
 
-        driverUberGraph.graphContainer.Find($"BarGroup1/Label").GetComponent<TMPro.TMP_Text>().text = "Driver Income";
-        driverUberGraph.graphContainer.Find($"BarGroup2/Label").GetComponent<TMPro.TMP_Text>().text = "Uber Income";
+        // driverUberGraph.graphContainer.Find($"BarGroup1/Label").GetComponent<TMPro.TMP_Text>().text = "Driver Income";
+        // driverUberGraph.graphContainer.Find($"BarGroup2/Label").GetComponent<TMPro.TMP_Text>().text = "Uber Income";
 
 
         return driverUberGraph;
@@ -74,10 +74,10 @@ public class DriverUberGraph : MonoBehaviour
             string formattedSurgeValue = formatValue(driverIncomeSurge.value);
             graphContainerTransform.Find($"BarGroup1/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedSurgeValue;
 
-            string staticSampleSize = $"n = {driverIncomeStatic.sampleSize}";
-            graphContainerTransform.Find($"BarGroup1/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = staticSampleSize;
-            string surgeSampleSize = $"n = {driverIncomeSurge.sampleSize}";
-            graphContainerTransform.Find($"BarGroup1/SurgeBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = surgeSampleSize;
+            // string staticSampleSize = $"n = {driverIncomeStatic.sampleSize}";
+            // graphContainerTransform.Find($"BarGroup1/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = staticSampleSize;
+            // string surgeSampleSize = $"n = {driverIncomeSurge.sampleSize}";
+            // graphContainerTransform.Find($"BarGroup1/SurgeBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = surgeSampleSize;
 
 
 
@@ -96,10 +96,10 @@ public class DriverUberGraph : MonoBehaviour
             string formattedUberSurgeValue = formatValue(uberIncomeSurge.value);
             graphContainerTransform.Find($"BarGroup2/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedUberSurgeValue;
 
-            string uberStaticSampleSize = $"n = {uberIncomeStatic.sampleSize}";
-            graphContainerTransform.Find($"BarGroup2/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = uberStaticSampleSize;
-            string uberSurgeSampleSize = $"n = {uberIncomeSurge.sampleSize}";
-            graphContainerTransform.Find($"BarGroup2/SurgeBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = uberSurgeSampleSize;
+            // string uberStaticSampleSize = $"n = {uberIncomeStatic.sampleSize}";
+            // graphContainerTransform.Find($"BarGroup2/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = uberStaticSampleSize;
+            // string uberSurgeSampleSize = $"n = {uberIncomeSurge.sampleSize}";
+            // graphContainerTransform.Find($"BarGroup2/SurgeBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = uberSurgeSampleSize;
             yield return new WaitForSeconds(0.1f);
 
         }
