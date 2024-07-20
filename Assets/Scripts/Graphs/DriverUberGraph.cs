@@ -12,6 +12,9 @@ public class DriverUberGraph : MonoBehaviour
     FormatValue formatValue;
     CanvasGroup canvasGroup;
 
+    Transform[] deltaLabels = new Transform[2];
+
+
     private RectTransform graphContainer;
 
     float minValue = 0;
@@ -39,6 +42,10 @@ public class DriverUberGraph : MonoBehaviour
         driverUberGraph.graphContainer.Find("BarGroup2/StaticBar").GetComponent<UnityEngine.UI.Image>().color = ColorScheme.blue;
         driverUberGraph.graphContainer.Find("BarGroup2/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = ColorScheme.surgeRed;
 
+        for (int i = 0; i < 2; i++)
+        {
+            driverUberGraph.deltaLabels[i] = driverUberGraph.graphContainer.Find($"BarGroup{i + 1}/Delta");
+        }
 
         // driverUberGraph.graphContainer.Find($"BarGroup1/Label").GetComponent<TMPro.TMP_Text>().text = "Driver Income";
         // driverUberGraph.graphContainer.Find($"BarGroup2/Label").GetComponent<TMPro.TMP_Text>().text = "Uber Income";
@@ -96,6 +103,27 @@ public class DriverUberGraph : MonoBehaviour
             string formattedUberSurgeValue = formatValue(uberIncomeSurge.value);
             graphContainerTransform.Find($"BarGroup2/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedUberSurgeValue;
 
+            float driverDelta = driverIncomeSurge.value - driverIncomeStatic.value;
+            float uberDelta = uberIncomeSurge.value - uberIncomeStatic.value;
+            deltaLabels[0].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(driverDelta);
+            deltaLabels[1].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(uberDelta);
+
+            RectTransform driverDeltaRectTransform = deltaLabels[0].GetComponent<RectTransform>();
+            driverDeltaRectTransform.anchoredPosition = new Vector2(driverDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(driverIncomeSurge.value) + 120);
+
+            // Set the z-rotation of the delta label arrow based on the delta value
+            float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, driverDelta));
+            deltaLabels[0].Find("Arrow").localRotation = Quaternion.Euler(0, 0, rotation);
+
+
+            RectTransform uberDeltaRectTransform = deltaLabels[1].GetComponent<RectTransform>();
+            uberDeltaRectTransform.anchoredPosition = new Vector2(uberDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(uberIncomeSurge.value) + 120);
+
+            // Set the z-rotation of the delta label arrow based on the delta value
+            float uberRotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, uberDelta));
+            deltaLabels[1].Find("Arrow").localRotation = Quaternion.Euler(0, 0, uberRotation);
+
+
             // string uberStaticSampleSize = $"n = {uberIncomeStatic.sampleSize}";
             // graphContainerTransform.Find($"BarGroup2/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = uberStaticSampleSize;
             // string uberSurgeSampleSize = $"n = {uberIncomeSurge.sampleSize}";
@@ -128,6 +156,42 @@ public class DriverUberGraph : MonoBehaviour
         }
         canvasGroup.alpha = finalAlpha;
     }
+
+    public IEnumerator FadeInDeltaLabels(float duration)
+    {
+        float startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
+
+        while (Time.frameCount < startFrameCount + frameCountDuration)
+        {
+            float t = (Time.frameCount - startFrameCount) / duration;
+            float percentage = EaseUtils.EaseInQuadratic(t);
+            foreach (Transform deltaLabel in deltaLabels)
+            {
+                deltaLabel.GetComponent<CanvasGroup>().alpha = t;
+            }
+            yield return null;
+        }
+        foreach (Transform deltaLabel in deltaLabels)
+        {
+            deltaLabel.GetComponent<CanvasGroup>().alpha = 1;
+        }
+    }
+
+    private string FormatDeltaValue(float value)
+    {
+        string sign = "";
+        if (value > 0)
+        {
+            sign = "+";
+        }
+        else if (value < 0)
+        {
+            sign = "-";
+        }
+        return $"{sign}{formatValue(Mathf.Abs(value))}";
+    }
+
     private float ConvertValueToGraphPosition(float value)
     {
         float graphHeight = graphContainer.sizeDelta.y;

@@ -30,6 +30,8 @@ public class SurplusSimulationDirector : MonoBehaviour
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
     Vector3 cameraPosition = new Vector3(30f, 7f, 4.5f);
 
+    BucketGraph bucketGraph;
+
 
     // A set of passenger IDs that have already spawned a PassengerStats object
     void Awake()
@@ -260,7 +262,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         };
         // string[] labels = new string[] { "< $12.72", "$12.72 - $20", "$20 - $33.36", "> $33.36" };
         string[] labels = new string[] { "Poorest 25%", "25-50%", "50-75%", "Richest 25%" };
-        BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 500), "Passenger surplus\nby income level", "Total surplus ($)", getBucketedSurplusValues, formatValue, labels, 30000);
+        bucketGraph = BucketGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1200, 500), "Passenger surplus\nby income level", "Total surplus ($)", getBucketedSurplusValues, formatValue, labels, 30000);
     }
 
 
@@ -439,9 +441,15 @@ public class SurplusSimulationDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SetSimulationStart());
-        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 200);
-        yield return StartCoroutine(CameraUtils.MoveCamera(newPosition, 90, Ease.Quadratic));
-        // Shut down scene
+        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 100);
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 90, Ease.Quadratic));
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(1.5f) + simulationStartTime);
+        Time.timeScale = 0;
+        StartCoroutine(bucketGraph.FadeInDeltaLabels(duration: 1));
+        yield return new WaitForFrames(60 * 10);
+        Time.timeScale = 1;
+        yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.5f)));
+        yield return new WaitForSeconds(10);
         UnityEditor.EditorApplication.isPlaying = false;
 
     }

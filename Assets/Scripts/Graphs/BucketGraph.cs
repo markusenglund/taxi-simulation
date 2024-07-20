@@ -13,6 +13,7 @@ public class BucketGraph : MonoBehaviour
     GetBucketGraphValues getValues;
     FormatBucketGraphValue formatValue;
     CanvasGroup canvasGroup;
+    Transform[] deltaLabels = new Transform[4];
 
     private RectTransform graphContainer;
 
@@ -49,10 +50,12 @@ public class BucketGraph : MonoBehaviour
         bucketGraph.graphContainer.Find("BarGroup4/SurgeBar").GetComponent<UnityEngine.UI.Image>().color = surgeColor;
 
         bucketGraph.graphContainer.Find("Axis/AxisLabel").GetComponent<TMPro.TMP_Text>().text = axisLabelText;
+
         // Set labels
         for (int i = 0; i < 4; i++)
         {
             bucketGraph.graphContainer.Find($"BarGroup{i + 1}/Label").GetComponent<TMPro.TMP_Text>().text = labels[i];
+            bucketGraph.deltaLabels[i] = bucketGraph.graphContainer.Find($"BarGroup{i + 1}/Delta");
         }
 
 
@@ -64,6 +67,20 @@ public class BucketGraph : MonoBehaviour
         canvasGroup = gameObject.AddComponent<CanvasGroup>();
         StartCoroutine(FadeIn(1));
         StartCoroutine(UpdateValueLoop());
+    }
+
+    private string FormatDeltaValue(float value)
+    {
+        string sign = "";
+        if (value > 0)
+        {
+            sign = "+";
+        }
+        else if (value < 0)
+        {
+            sign = "-";
+        }
+        return $"{sign}{formatValue(Mathf.Abs(value))}";
     }
 
     IEnumerator UpdateValueLoop()
@@ -94,6 +111,17 @@ public class BucketGraph : MonoBehaviour
                 graphContainerTransform.Find($"BarGroup{i + 1}/StaticBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = staticSampleSize;
                 string surgeSampleSize = $"n = {surgeBuckets[i].sampleSize}";
                 graphContainerTransform.Find($"BarGroup{i + 1}/SurgeBar/SampleSizeLabel").GetComponent<TMPro.TMP_Text>().text = surgeSampleSize;
+
+                // Set delta label text to the difference between static and surge values
+                float delta = surgeBuckets[i].value - staticBuckets[i].value;
+                deltaLabels[i].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(delta);
+                // Set the y position of the delta label to be above the surge bar
+                RectTransform deltaRectTransform = deltaLabels[i].GetComponent<RectTransform>();
+                deltaRectTransform.anchoredPosition = new Vector2(deltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(surgeBuckets[i].value) + 120);
+
+                // Set the z-rotation of the delta label arrow based on the delta value
+                float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, delta));
+                deltaLabels[i].Find("Arrow").localRotation = Quaternion.Euler(0, 0, rotation);
             }
             yield return new WaitForSeconds(0.1f);
         }
@@ -121,6 +149,27 @@ public class BucketGraph : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = finalAlpha;
+    }
+
+    public IEnumerator FadeInDeltaLabels(float duration)
+    {
+        float startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
+
+        while (Time.frameCount < startFrameCount + frameCountDuration)
+        {
+            float t = (Time.frameCount - startFrameCount) / duration;
+            float percentage = EaseUtils.EaseInQuadratic(t);
+            foreach (Transform deltaLabel in deltaLabels)
+            {
+                deltaLabel.GetComponent<CanvasGroup>().alpha = t;
+            }
+            yield return null;
+        }
+        foreach (Transform deltaLabel in deltaLabels)
+        {
+            deltaLabel.GetComponent<CanvasGroup>().alpha = 1;
+        }
     }
     private float ConvertValueToGraphPosition(float value)
     {
