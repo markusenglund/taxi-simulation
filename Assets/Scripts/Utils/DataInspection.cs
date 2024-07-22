@@ -128,20 +128,25 @@ public class DataInspection : MonoBehaviour
 
         float surplusDifferenceDueToTimeSensitivity = surgeTotalTimeCostSavedByUberTimeSensitivity - staticTotalTimeCostSavedByUberTimeSensitivity;
         Debug.Log("Surplus difference due to time sensitivity: " + surplusDifferenceDueToTimeSensitivity);
+        Debug.Log("Surplus difference due to time sensitivity per passenger: " + surplusDifferenceDueToTimeSensitivity / staticPassengers.Length);
 
 
         float staticAverageHourlyIncome = staticPassengers.Average(passenger => passenger.economicParameters.hourlyIncome);
         float surgeAverageHourlyIncome = surgePassengers.Average(passenger => passenger.economicParameters.hourlyIncome);
+        Debug.Log("Static average hourly income: " + staticAverageHourlyIncome);
+        Debug.Log("Surge average hourly income: " + surgeAverageHourlyIncome);
         float staticAverageValueOfTimeNetOfIncome = staticAverageValueOfTime / Mathf.Sqrt(staticAverageHourlyIncome);
         float staticTotalTimeCostSavedByUberIncome = staticTotalTimeSavedByUber * staticAverageValueOfTimeNetOfIncome * Mathf.Sqrt(staticAverageHourlyIncome);
         float surgeTotalTimeCostSavedByUberIncome = staticTotalTimeSavedByUber * staticAverageValueOfTimeNetOfIncome * Mathf.Sqrt(surgeAverageHourlyIncome);
         float surplusDifferenceDueToIncome = surgeTotalTimeCostSavedByUberIncome - staticTotalTimeCostSavedByUberIncome;
         Debug.Log("Surplus difference due to income: " + surplusDifferenceDueToIncome);
+        Debug.Log("Surplus difference due to income per passenger: " + surplusDifferenceDueToIncome / staticPassengers.Length);
 
         float staticAverageMaxTimeSavedByUber = staticPassengers.Average(passenger => passenger.economicParameters.GetBestSubstitute().maxTimeSavedByUber);
         float surgeAverageMaxTimeSavedByUber = surgePassengers.Average(passenger => passenger.economicParameters.GetBestSubstitute().maxTimeSavedByUber);
         Debug.Log("Static average max time saved by Uber: " + FormatUtils.formatTime(staticAverageMaxTimeSavedByUber));
         Debug.Log("Surge average max time saved by Uber: " + FormatUtils.formatTime(surgeAverageMaxTimeSavedByUber));
+        Debug.Log("Difference in average time saved: " + FormatUtils.formatTime(surgeAverageMaxTimeSavedByUber - staticAverageMaxTimeSavedByUber));
 
         float staticAverageMaxTimeCostSavedByUber = staticAverageMaxTimeSavedByUber * staticAverageValueOfTime;
         float surgeAverageMaxTimeCostSavedByUber = surgeAverageMaxTimeSavedByUber * staticAverageValueOfTime;
@@ -149,6 +154,7 @@ public class DataInspection : MonoBehaviour
         float surgeTotalMaxTimeCostSavedByUber = surgeAverageMaxTimeCostSavedByUber * staticPassengers.Length;
         float surplusDifferenceDueToMaxTimeSavedByUber = surgeTotalMaxTimeCostSavedByUber - staticTotalMaxTimeCostSavedByUber;
         Debug.Log("Surplus difference due to max time saved by Uber: " + surplusDifferenceDueToMaxTimeSavedByUber);
+        Debug.Log("Surplus difference due to max time saved by Uber per passenger: " + surplusDifferenceDueToMaxTimeSavedByUber / staticPassengers.Length);
     }
 
     public static void ShowSurplusBreakdown(City[] staticCities, City[] surgeCities)
@@ -160,9 +166,10 @@ public class DataInspection : MonoBehaviour
 
         Debug.Log($"Static aggregate surplus: {staticAggregateSurplus}, static surplus per potential passenger: {staticSurplusPerPotentialPassenger}");
         Debug.Log($"Surge aggregate surplus: {surgeAggregateSurplus}, surge surplus per potential passenger: {surgeSurplusPerPotentialPassenger}");
-
-        float surgePerCapitaSurplusIncrease = (surgeSurplusPerPotentialPassenger - staticSurplusPerPotentialPassenger) / staticSurplusPerPotentialPassenger;
-        Debug.Log("Surge per capita surplus increase: " + FormatUtils.formatPercentage(surgePerCapitaSurplusIncrease));
+        Debug.Log("Difference in aggregate surplus: " + (surgeAggregateSurplus - staticAggregateSurplus));
+        float surgeSurplusPerPassengerCorrected = surgeAggregateSurplus / numStaticPassengersWhoGotRides;
+        float surplusDifferencePerPassenger = surgeSurplusPerPassengerCorrected - staticSurplusPerPassenger;
+        Debug.Log("Surplus difference per passenger: " + surplusDifferencePerPassenger);
 
         (float staticAggregateFaresPaid, float staticAverageFarePaid) = GetFaresPaid(staticCities);
         (float surgeAggregateFaresPaid, float surgeAverageFarePaid) = GetFaresPaid(surgeCities);
@@ -176,7 +183,8 @@ public class DataInspection : MonoBehaviour
 
         (float staticAggregateWaitingTime, float staticAverageWaitingTime, float staticAverageValueOfTime) = GetWaitingTime(staticCities);
         (float surgeAggregateWaitingTime, float surgeAverageWaitingTime, float surgeAverageValueOfTime) = GetWaitingTime(surgeCities);
-
+        Debug.Log("Average static waiting time: " + FormatUtils.formatTime(staticAverageWaitingTime));
+        Debug.Log("Average surge waiting time: " + FormatUtils.formatTime(surgeAverageWaitingTime));
         Debug.Log("Average static value of time: " + staticAverageValueOfTime);
         Debug.Log("Average surge value of time: " + surgeAverageValueOfTime);
 
@@ -193,12 +201,16 @@ public class DataInspection : MonoBehaviour
         Debug.Log("Average static waiting cost: " + staticAverageWaitingCost);
         Debug.Log("Average surge waiting cost: " + surgeAverageWaitingCostCorrected);
         Debug.Log("Utility difference due to time cost: " + utilityDifferenceDueToTimeCost);
+        Debug.Log("Utility difference due to time cost per passenger: " + utilityDifferenceDueToTimeCost / numStaticPassengersWhoGotRides);
 
         float surgePassengerDifference = numSurgePassengersWhoGotRides - numStaticPassengersWhoGotRides;
         // Assume that surge passengers have the same average surplus per trip as static passengers
         float utilityDifferenceDueToPassengerDifference = surgePassengerDifference * staticSurplusPerPassenger;
+        Debug.Log("Number of static passengers: " + numStaticPassengersWhoGotRides);
+        Debug.Log("Number of surge passengers: " + numSurgePassengersWhoGotRides);
         Debug.Log("Number of passengers difference: " + surgePassengerDifference);
         Debug.Log("Utility difference due to passenger difference: " + utilityDifferenceDueToPassengerDifference);
+        Debug.Log("Utility difference due to passenger difference per passenger: " + utilityDifferenceDueToPassengerDifference / numStaticPassengersWhoGotRides);
 
         ShowSurplusDifferenceCausedByAllocation(staticCities, surgeCities, staticAverageValueOfTime);
     }
