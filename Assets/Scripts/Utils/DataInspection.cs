@@ -46,4 +46,26 @@ public class DataInspection : MonoBehaviour
         return averageWaitingTimeByNumAssignedTrips;
 
     }
+
+    private static (float, float) GetAggregateSurplus(City[] cities)
+    {
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+        PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+        PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+        float aggregateSurplus = passengersWhoCompletedJourney.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus) + passengersWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedPassengerData.expectedValueSurplus);
+        float surplusPerPotentialPassenger = aggregateSurplus / passengers.Length;
+        return (aggregateSurplus, surplusPerPotentialPassenger);
+    }
+    public static void ShowSurplusBreakdown(City[] staticCities, City[] surgeCities)
+    {
+        (float staticAggregateSurplus, float staticSurplusPerPotentialPassenger) = GetAggregateSurplus(staticCities);
+        (float surgeAggregateSurplus, float surgeSurplusPerPotentialPassenger) = GetAggregateSurplus(surgeCities);
+
+        Debug.Log($"Static aggregate surplus: {staticAggregateSurplus}, static surplus per potential passenger: {staticSurplusPerPotentialPassenger}");
+        Debug.Log($"Surge aggregate surplus: {surgeAggregateSurplus}, surge surplus per potential passenger: {surgeSurplusPerPotentialPassenger}");
+
+        float surgePerCapitaSurplusIncrease = (surgeSurplusPerPotentialPassenger - staticSurplusPerPotentialPassenger) / staticSurplusPerPotentialPassenger;
+        Debug.Log("Surge per capita surplus increase: " + FormatUtils.formatPercentage(surgePerCapitaSurplusIncrease));
+    }
+
 }

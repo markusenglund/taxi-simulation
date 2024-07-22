@@ -68,7 +68,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateIncomeGraph();
         InstantiateSurplusBucketGraph();
-        // StartCoroutine(InspectData());
+        StartCoroutine(InspectData());
     }
 
     private SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
@@ -433,9 +433,10 @@ public class SurplusSimulationDirector : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(5);
+            yield return new WaitForFrames(5 * 60);
             City[] allCities = staticCities.Concat(surgeCities).ToArray();
-            DataInspection.GetAverageWaitingTimeByNumAssignedTrips(allCities);
+            DataInspection.ShowSurplusBreakdown(staticCities.ToArray(), surgeCities.ToArray());
+            // DataInspection.GetAverageWaitingTimeByNumAssignedTrips(allCities);
         }
     }
 
