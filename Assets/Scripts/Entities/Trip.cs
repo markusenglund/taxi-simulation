@@ -34,6 +34,8 @@ public class TripCreatedPassengerData
 
     public float expectedTripTimeCost { get; set; }
 
+    public float expectedTotalTimeCost { get; set; }
+
     public float expectedValueSurplus { get; set; }
 
     public float expectedUtilitySurplus { get; set; }

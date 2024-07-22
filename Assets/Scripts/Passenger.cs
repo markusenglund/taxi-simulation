@@ -268,6 +268,7 @@ public class Passenger : MonoBehaviour
             {
                 expectedWaitingCost = expectedWaitingCost,
                 expectedTripTimeCost = expectedTripTimeCost,
+                expectedTotalTimeCost = expectedTotalTimeCost,
                 expectedValueSurplus = expectedValueSurplus,
                 expectedUtilitySurplus = expectedUtilitySurplus,
             };
