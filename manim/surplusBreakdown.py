@@ -1,21 +1,20 @@
 from manim import *
 
-DEFAULT_FONT_SIZE = 17
+DEFAULT_FONT_SIZE = 50
 Text.set_default(font="sans-serif", font_size=DEFAULT_FONT_SIZE)
 
 class SurplusBreakdown(Scene):
     def construct(self):
       self.camera.background_color = "#444444"
       orange = ORANGE
-      # values=[0, 0, 0, 0, 0, 0, 0]
+      values=[-0.01, 0, 0, 0, 0, -0.01, -0.01]
       final_values = [-0.24, 4.47, 4.94, 3.06, 2.61, -16.07, -2.61]
       bar_names = ["Total", "Waiting time", "Time sensitivity", "Income", "Substitute speed", "Fare", "# passengers"]      
-      # bar_names = ["0", "1", "2", "3", "4", "5",]
       chart = BarChart(
-          final_values,
+          values,
           bar_names=bar_names,
-          y_range=[-20, 20, 10],
-          y_length=5,
+          y_range=[-15, 15, 5],
+          y_length=6,
           x_length=12,
           bar_fill_opacity=1,
           y_axis_config={
@@ -23,9 +22,9 @@ class SurplusBreakdown(Scene):
             "label_constructor": Text,   
           },
           x_axis_config={
-            "font_size": DEFAULT_FONT_SIZE,
+            "font_size": 18,
             "label_constructor": Text,
-            "include_ticks": False,
+            "include_ticks": True,
           },
           bar_colors=[ORANGE, GREEN, GREEN, GREEN, GREEN, ORANGE, ORANGE]
       ).shift(UP*0)
@@ -35,16 +34,33 @@ class SurplusBreakdown(Scene):
       # axisLabels = chart.get_axis_labels(Text("Available drivers"), Text("Waiting time (minutes)"))
       self.add(chart, yLabel)
       self.add(chart)
-
-      self.wait(2)
-
-      self.play(chart.animate.change_bar_values(final_values), run_time=2)
       def prefix_label(text):
         if "-" not in text:
           return Text("+$" + text)
         return Text("-$" + text.replace("-", ""))
+      def get_bar_labels():
+        return chart.get_bar_labels(font_size=24, label_constructor=lambda text: prefix_label(text))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values[0:1]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:1]))
+      # self.wait(1)
+      # self.play(chart.animate.change_bar_values(final_values[0:2]), run_time=1)
+      # self.play(FadeIn(get_bar_labels()[0:2]))
+      # self.wait(1)
+      # self.play(chart.animate.change_bar_values(final_values[0:3]), run_time=1)
+      # self.play(FadeIn(get_bar_labels()[0:3]))
+      # self.wait(1)
+      # self.play(chart.animate.change_bar_values(final_values[0:4]), run_time=1)
+      # self.play(FadeIn(get_bar_labels()[0:4]))
+      # self.wait(1)
+      # self.play(chart.animate.change_bar_values(final_values[0:5]), run_time=1)
+      # self.play(FadeIn(get_bar_labels()[0:5]))
+      # self.wait(1)
+      # self.play(chart.animate.change_bar_values(final_values[0:6]), run_time=1)
+      # self.play(FadeIn(get_bar_labels()[0:6]))
+      # self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values), run_time=1)
+      self.play(FadeIn(get_bar_labels()))
 
-      barLabels = chart.get_bar_labels(font_size=24, label_constructor=lambda text: prefix_label(text))
-      self.play(FadeIn(barLabels))
       self.wait(3)
     
