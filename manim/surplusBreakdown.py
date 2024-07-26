@@ -7,9 +7,9 @@ class SurplusBreakdown(Scene):
     def construct(self):
       self.camera.background_color = "#444444"
       orange = ORANGE
-      values=[-0.01, 0, 0, 0, 0, -0.01, -0.01]
-      final_values = [-0.24, 4.47, 4.94, 3.06, 2.61, -16.07, -2.61]
-      bar_names = ["Total", "Waiting time", "Time sensitivity", "Income", "Substitute speed", "Fare", "# passengers"]      
+      values=[-0.01, -0.01, 0, 0, 0, 0, -0.01]
+      final_values = [-0.24,-16.07, 4.47, 4.94, 3.06, 2.61, -2.61]
+      bar_names = ["Total", "Fare","Waiting time", "Time sensitivity", "Income", "Substitute speed",  "# passengers"]      
       chart = BarChart(
           values,
           bar_names=bar_names,
@@ -26,13 +26,13 @@ class SurplusBreakdown(Scene):
             "label_constructor": Text,
             "include_ticks": True,
           },
-          bar_colors=[ORANGE, GREEN, GREEN, GREEN, GREEN, ORANGE, ORANGE]
+          bar_colors=[ORANGE, ORANGE, GREEN, GREEN, GREEN, GREEN, ORANGE]
       ).shift(UP*0)
-      yLabel = chart.get_y_axis_label(Text("Surplus difference ($)", font_size=26)).shift(LEFT*3.3 + DOWN*3.1).rotate(90 * DEGREES)
-      heading = Text("Difference in surplus per passenger", font_size = 40).shift(UP*3.5)
+      # yLabel = chart.get_y_axis_label(Text("Difference in surplus ($/passenger)", font_size=26)).shift(LEFT*3.3 + DOWN*3.1).rotate(90 * DEGREES)
+      heading = Text("Difference in surplus ($/passenger)", font_size = 40).shift(UP*3.5)
       self.add(heading)
       # axisLabels = chart.get_axis_labels(Text("Available drivers"), Text("Waiting time (minutes)"))
-      self.add(chart, yLabel)
+      # self.add(chart, yLabel)
       self.add(chart)
       def prefix_label(text):
         if "-" not in text:
@@ -43,22 +43,22 @@ class SurplusBreakdown(Scene):
       self.wait(1)
       self.play(chart.animate.change_bar_values(final_values[0:1]), run_time=1)
       self.play(FadeIn(get_bar_labels()[0:1]))
-      # self.wait(1)
-      # self.play(chart.animate.change_bar_values(final_values[0:2]), run_time=1)
-      # self.play(FadeIn(get_bar_labels()[0:2]))
-      # self.wait(1)
-      # self.play(chart.animate.change_bar_values(final_values[0:3]), run_time=1)
-      # self.play(FadeIn(get_bar_labels()[0:3]))
-      # self.wait(1)
-      # self.play(chart.animate.change_bar_values(final_values[0:4]), run_time=1)
-      # self.play(FadeIn(get_bar_labels()[0:4]))
-      # self.wait(1)
-      # self.play(chart.animate.change_bar_values(final_values[0:5]), run_time=1)
-      # self.play(FadeIn(get_bar_labels()[0:5]))
-      # self.wait(1)
-      # self.play(chart.animate.change_bar_values(final_values[0:6]), run_time=1)
-      # self.play(FadeIn(get_bar_labels()[0:6]))
-      # self.wait(1)
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values[0:2]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:2]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values[0:3]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:3]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values[0:4]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:4]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values[0:5]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:5]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values[0:6]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:6]))
+      self.wait(1)
       self.play(chart.animate.change_bar_values(final_values), run_time=1)
       self.play(FadeIn(get_bar_labels()))
 
