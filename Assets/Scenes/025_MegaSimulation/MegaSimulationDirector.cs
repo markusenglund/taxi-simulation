@@ -162,7 +162,7 @@ public class MegaSimulationDirector : MonoBehaviour
             return (value * 100).ToString("F0") + "%";
         };
         string[] labels = new string[] { "< 1.43x", "1.43 - 2x", "2 - 2.80x", "> 2.80x" };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Percentage of agents with top 10% time sensitivity who got an Uber", getTopTimeSensitivityPassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(3100, 1300), "Percentage of agents with top 10% time sensitivity who got an Uber", "% share of agents who got an Uber", getTopTimeSensitivityPassengersShareOfRides, formatValue);
     }
 
 
@@ -181,7 +181,7 @@ public class MegaSimulationDirector : MonoBehaviour
         {
             return (value * 100).ToString("F0") + "%";
         };
-        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1500, 1300), "Percentage of agents with top 10% income who got an Uber", getTopIncomePassengersShareOfRides, formatValue);
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1500, 1300), "Percentage of agents with top 10% income who got an Uber", "% share of agents who got an Uber", getTopIncomePassengersShareOfRides, formatValue);
     }
 
     // private void InstantiateMaxTimeSavingsBucketGraph()

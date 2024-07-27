@@ -17,8 +17,9 @@ public class VerticalBarGraph : MonoBehaviour
     Transform graphContainer;
 
     float maxHeight;
+    float maxValue;
 
-    public static VerticalBarGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, GetVerticalBarValue getValue, FormatValue formatValue)
+    public static VerticalBarGraph Create(City[] staticCities, City[] surgeCities, Vector3 position, string labelText, string axisLabelText, GetVerticalBarValue getValue, FormatValue formatValue, float maxValue = 1, string[] tickLabels = null)
     {
         Transform canvas = GameObject.Find("Canvas").transform;
         Transform prefab = Resources.Load<Transform>("Graphs/VerticalBarGraph");
@@ -28,6 +29,7 @@ public class VerticalBarGraph : MonoBehaviour
         verticalBarGraph.surgeCities = surgeCities;
         verticalBarGraph.getValue = getValue;
         verticalBarGraph.formatValue = formatValue;
+        verticalBarGraph.maxValue = maxValue;
 
         RectTransform rt = verticalBarGraphTransform.GetComponent<RectTransform>();
         rt.anchoredPosition = position;
@@ -39,6 +41,17 @@ public class VerticalBarGraph : MonoBehaviour
 
         float barGroupHeight = verticalBarGraphTransform.Find("GraphContainer/BarGroup1").GetComponent<RectTransform>().rect.height;
         verticalBarGraph.maxHeight = barGroupHeight;
+
+        if (tickLabels != null)
+        {
+            for (int i = 0; i < tickLabels.Length; i++)
+            {
+                Transform tickLabel = verticalBarGraphTransform.Find($"GraphContainer/Axis/TickLabel{i + 1}");
+                tickLabel.GetComponent<TMPro.TMP_Text>().text = tickLabels[i];
+            }
+        }
+        verticalBarGraphTransform.Find("GraphContainer/Axis/AxisLabel").GetComponent<TMPro.TMP_Text>().text = axisLabelText;
+
         return verticalBarGraph;
     }
     private void Start()
@@ -102,7 +115,6 @@ public class VerticalBarGraph : MonoBehaviour
     private float ConvertValueToGraphPosition(float value)
     {
         // 10 is the minimum height of the bar so it can still be seen when the value is zero
-        float maxValue = 1f;
         return Mathf.Max(value * maxHeight / maxValue, 10);
     }
 }

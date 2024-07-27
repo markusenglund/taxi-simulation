@@ -68,6 +68,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateIncomeGraph();
         InstantiateSurplusBucketGraph();
+        InstantiateTotalSurplusGraph();
         StartCoroutine(InspectData());
     }
 
@@ -427,6 +428,43 @@ public class SurplusSimulationDirector : MonoBehaviour
         };
 
         driverUberGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2620, 500), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
+    }
+
+    void InstantiateTotalSurplusGraph()
+    {
+        GetVerticalBarValue getTotalSurplus = (City[] cities) =>
+        {
+            PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+            PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+            // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+            PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+            float aggregatePassengerSurplus = passengersWhoCompletedJourney.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus) + passengersWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedPassengerData.expectedValueSurplus);
+            // float aggregateExpectedSurplus = passengersWhoAreWaitingOrInTransit
+            int sampleSize = passengersWhoCompletedJourney.Length + passengersWhoAreWaitingOrInTransit.Length;
+
+            PassengerPerson[] allPassengers = passengersWhoCompletedJourney.Concat(passengersWhoAreWaitingOrInTransit).ToArray();
+            float driverIncome = allPassengers.Sum(passenger =>
+            {
+                float driverMarginalCostPerKm = staticPriceSettings.driverMarginalCostPerKm;
+                float marginalDriverCost = (passenger.trip.tripCreatedData.tripDistance + passenger.trip.driverDispatchedData.enRouteDistance) * driverMarginalCostPerKm;
+                return passenger.trip.tripCreatedData.fare.driverCut - marginalDriverCost;
+            });
+
+            float uberIncome = allPassengers.Sum(passenger => passenger.trip.tripCreatedData.fare.uberCut);
+
+
+
+            return new SimStatistic
+            {
+                value = aggregatePassengerSurplus + driverIncome + uberIncome,
+                sampleSize = sampleSize
+            };
+        };
+        string[] tickLabels = new string[] { "$0", "$20k", "$40k", "$60k", "$80k", "$100k" };
+        VerticalBarGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(1900, 1560), "Combined surplus created", "", getTotalSurplus, FormatUtils.formatMoney, maxValue: 100000, tickLabels);
+
     }
 
     IEnumerator InspectData()

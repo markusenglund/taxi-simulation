@@ -27,4 +27,17 @@ public class FormatUtils : MonoBehaviour
             return timeHours.ToString("0.0") + " hours";
         }
     }
+
+    public static string formatMoney(float value)
+    {
+        if (value > 10000)
+        {
+            return "$" + (value / 1000).ToString("F0") + "k";
+        }
+        if (value > 1000)
+        {
+            return "$" + (value / 1000).ToString("F1") + "k";
+        }
+        return "$" + value.ToString("F0");
+    }
 }
