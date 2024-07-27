@@ -9,7 +9,7 @@ class SurplusBreakdown(Scene):
       orange = ORANGE
       values=[-0.01, -0.01, 0, 0, 0, 0, -0.01]
       final_values = [-0.24,-16.07, 4.47, 4.94, 3.06, 2.61, -2.61]
-      bar_names = ["Total", "Fare","Waiting time", "Time sensitivity", "Income", "Substitute speed",  "# passengers"]      
+      bar_names = ["Total", "Fare","Waiting time", "   Time\nsensitivity", "Income", "Substitute\n   speed",  "# passengers"]      
       chart = BarChart(
           values,
           bar_names=bar_names,
@@ -22,7 +22,7 @@ class SurplusBreakdown(Scene):
             "label_constructor": Text,   
           },
           x_axis_config={
-            "font_size": 18,
+            "font_size": 21,
             "label_constructor": Text,
             "include_ticks": True,
           },
@@ -64,3 +64,41 @@ class SurplusBreakdown(Scene):
 
       self.wait(3)
     
+class TotalSurplusBreakdown(Scene):
+    def construct(self):
+      self.camera.background_color = "#444444"
+      values=[-0.01, 0, 0, 0]
+      final_values = [-332, 12600, 6000, 18300]
+      bar_names = ["Passenger surplus", "Driver surplus", "Uber surplus", "Total surplus"]      
+      chart = BarChart(
+          values,
+          bar_names=bar_names,
+          y_range=[0, 20000, 5000],
+          y_length=6,
+          x_length=12,
+          bar_fill_opacity=1,
+          y_axis_config={
+            "font_size": 24,
+            "label_constructor": Text,   
+          },
+          x_axis_config={
+            "font_size": 21,
+            "label_constructor": Text,
+            "include_ticks": True,
+          },
+          bar_colors=[ORANGE,GREEN, GREEN, GREEN]
+      ).shift(UP*0)
+      heading = Text("Difference in surplus ($)", font_size = 40).shift(UP*3.5)
+      self.add(heading)
+      self.add(chart)
+      def prefix_label(text):
+        if "-" not in text:
+          return Text("+$" + text)
+        return Text("-$" + text.replace("-", ""))
+      def get_bar_labels():
+        return chart.get_bar_labels(font_size=24, label_constructor=lambda text: prefix_label(text))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(final_values), run_time=1)
+      self.play(FadeIn(get_bar_labels()))
+
+      self.wait(3)
