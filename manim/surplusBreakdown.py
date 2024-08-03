@@ -7,9 +7,9 @@ class SurplusBreakdown(Scene):
     def construct(self):
       self.camera.background_color = "#444444"
       orange = ORANGE
-      values=[-0.01, -0.01, 0, 0, 0, 0, -0.01]
-      final_values = [-0.24,-16.07, 4.47, 4.94, 3.06, 2.61, -2.61]
-      bar_names = ["Total", "Fare","Waiting time", "   Time\nsensitivity", "Income", "Substitute\n   speed",  "# passengers"]      
+      values=[-0.01, 0, -0.01, 0, 0, 0, -0.01]
+      final_values = [-16.07, 4.47, -2.61, 4.94, 2.61, 3.06, -0.24]
+      bar_names = ["Fare", "Waiting time",  "# passengers","   Time\nsensitivity", "Substitute\n   speed", "Income", "Total"]      
       chart = BarChart(
           values,
           bar_names=bar_names,
@@ -26,7 +26,7 @@ class SurplusBreakdown(Scene):
             "label_constructor": Text,
             "include_ticks": True,
           },
-          bar_colors=[ORANGE, ORANGE, GREEN, GREEN, GREEN, GREEN, ORANGE]
+          bar_colors=[ORANGE, GREEN, ORANGE, GREEN, GREEN, GREEN, ORANGE]
       ).shift(UP*0)
       # yLabel = chart.get_y_axis_label(Text("Difference in surplus ($/passenger)", font_size=26)).shift(LEFT*3.3 + DOWN*3.1).rotate(90 * DEGREES)
       heading = Text("Difference in surplus ($/passenger)", font_size = 40).shift(UP*3.5)
