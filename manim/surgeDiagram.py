@@ -20,6 +20,9 @@ class SurgePriceDiagram(Scene):
       
       surgeGraph = axes.plot(lambda x: 0.2 if x < 0 else 0.2 + 0.7 * (x) ** 2, color=YELLOW)
       self.add(axes)
+
+      leftArrow = Arrow(start=RIGHT, end=LEFT, max_stroke_width_to_length_ratio=0).shift(3*DOWN + 4.3*LEFT)
+      self.add(leftArrow)
       self.play(FadeIn(x_label), FadeIn(y_label), FadeIn(x_label2))
       self.play(Create(surgeGraph))
       surgeLabel = Text("Surge Pricing", color=YELLOW).scale(0.7).shift(1.7*UP + 2.2*RIGHT)

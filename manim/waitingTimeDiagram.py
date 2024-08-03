@@ -1,17 +1,17 @@
 from manim import *
 
-DEFAULT_FONT_SIZE = 30
+DEFAULT_FONT_SIZE = 50
 Text.set_default(font="sans-serif", font_size=DEFAULT_FONT_SIZE)
 
 class WaitingTimeDiagram(Scene):
     def construct(self):
       self.camera.background_color = "#444444"
       
-      values=[0, 0, 0, 0, 0, 0, 0, 0]
-      intermediate_values = [0, 0, 0, 11.3, 9.5, 9.1, 8.0, 6.2]
+      values=[ 0, 0, 0, 0, 0, 0]
+      intermediate_values = [ 0, 11.3, 9.5, 9.1, 8.0, 6.2]
       # Values gathered from the simulation
-      final_values = [0, 19.6, 15.7, 11.3, 9.5, 9.1, 8.0, 6.2]
-      bar_names = ["-2", "-1", "0", "1", "2", "3", "4", "5"]      
+      final_values = [17.9, 11.3, 9.5, 9.1, 8.0, 6.2]
+      bar_names = ["0", "1", "2", "3", "4", "5"]      
       # bar_names = ["0", "1", "2", "3", "4", "5",]
       chart = BarChart(
           values,
@@ -31,9 +31,9 @@ class WaitingTimeDiagram(Scene):
           },
           bar_colors=[ORANGE, GREEN]
       ).shift(UP*0)
-      xLabel = chart.get_x_axis_label(Text("# Drivers available")).shift(LEFT*5.5 + DOWN*1.2)
+      xLabel = chart.get_x_axis_label(Text("# idle drivers when ride is requested", font_size=30)).shift(LEFT*3.5 + DOWN*1.2)
       yLabel = chart.get_y_axis_label(Text("Average waiting time (minutes)", font_size=26)).shift(LEFT*3.8 + DOWN*3.1).rotate(90 * DEGREES)
-      heading = Text("Wait times go down with more available drivers", font_size = 40).shift(UP*3.5)
+      heading = Text("Wait times go down with more idle drivers", font_size = 40).shift(UP*3.5)
       self.add(heading)
       # axisLabels = chart.get_axis_labels(Text("Available drivers"), Text("Waiting time (minutes)"))
       self.add(chart, xLabel)
@@ -43,14 +43,13 @@ class WaitingTimeDiagram(Scene):
       self.wait(2)
 
       self.play(chart.animate.change_bar_values(intermediate_values), run_time=2)
-      barLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[3:]
+      barLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[1:]
       self.play(FadeIn(barLabels))
 
       self.wait(1)
       self.play(chart.animate.change_bar_values(final_values), run_time=2)
-      newBarLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)[1:]
+      newBarLabels = chart.get_bar_labels(font_size=24, label_constructor=Text)
       self.play(FadeIn(newBarLabels))
-      self.play(FadeIn(Text("🚫", font_size=50, color=RED).shift(LEFT * 4.3 + DOWN * 1.5)))
 
       self.wait(3)
     
