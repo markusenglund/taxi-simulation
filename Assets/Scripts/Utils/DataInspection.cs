@@ -47,14 +47,26 @@ public class DataInspection : MonoBehaviour
 
     }
 
-    private static (float, float, float) GetAggregateSurplus(City[] cities)
+    private static (float, float, float, float, float, float) GetAggregateSurplus(City[] cities)
     {
         PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
         PassengerPerson[] passengersWhoGotRide = passengers.Where(passenger => passenger.StartedTrip()).ToArray();
-        float aggregateSurplus = passengersWhoGotRide.Sum(passenger => passenger.trip.droppedOffData != null ? passenger.trip.droppedOffPassengerData.valueSurplus : passenger.trip.tripCreatedPassengerData.expectedValueSurplus);
-        float surplusPerPotentialPassenger = aggregateSurplus / passengers.Length;
-        float surplusPerPassenger = aggregateSurplus / passengersWhoGotRide.Length;
-        return (aggregateSurplus, surplusPerPotentialPassenger, surplusPerPassenger);
+        float aggregatePassengerSurplus = passengersWhoGotRide.Sum(passenger => passenger.trip.droppedOffData != null ? passenger.trip.droppedOffPassengerData.valueSurplus : passenger.trip.tripCreatedPassengerData.expectedValueSurplus);
+        float surplusPerPotentialPassenger = aggregatePassengerSurplus / passengers.Length;
+        float surplusPerPassenger = aggregatePassengerSurplus / passengersWhoGotRide.Length;
+
+        float driverIncome = passengersWhoGotRide.Sum(passenger =>
+        {
+            // Marginal cost should be the same in all cities, so pick from the first one
+            float driverMarginalCostPerKm = cities[0].simulationSettings.driverMarginalCostPerKm;
+            float marginalDriverCost = (passenger.trip.tripCreatedData.tripDistance + passenger.trip.driverDispatchedData.enRouteDistance) * driverMarginalCostPerKm;
+            return passenger.trip.tripCreatedData.fare.driverCut - marginalDriverCost;
+        });
+
+        float uberIncome = passengersWhoGotRide.Sum(passenger => passenger.trip.tripCreatedData.fare.uberCut);
+        float totalSurplus = aggregatePassengerSurplus + driverIncome + uberIncome;
+
+        return (aggregatePassengerSurplus, surplusPerPotentialPassenger, surplusPerPassenger, driverIncome, uberIncome, totalSurplus);
     }
 
     private static (float, float) GetFaresPaid(City[] cities)
@@ -161,15 +173,26 @@ public class DataInspection : MonoBehaviour
     {
         float numStaticPassengersWhoGotRides = GetNumberOfRides(staticCities);
         float numSurgePassengersWhoGotRides = GetNumberOfRides(surgeCities);
-        (float staticAggregateSurplus, float staticSurplusPerPotentialPassenger, float staticSurplusPerPassenger) = GetAggregateSurplus(staticCities);
-        (float surgeAggregateSurplus, float surgeSurplusPerPotentialPassenger, float surgeSurplusPerPassenger) = GetAggregateSurplus(surgeCities);
+        (float staticAggregatePassengerSurplus, float staticSurplusPerPotentialPassenger, float staticSurplusPerPassenger, float staticDriverIncome, float staticUberIncome, float staticTotalSurplus) = GetAggregateSurplus(staticCities);
+        (float surgeAggregatePassengerSurplus, float surgeSurplusPerPotentialPassenger, float surgeSurplusPerPassenger, float surgeDriverIncome, float surgeUberIncome, float surgeTotalSurplus) = GetAggregateSurplus(surgeCities);
 
-        Debug.Log($"Static aggregate surplus: {staticAggregateSurplus}, static surplus per potential passenger: {staticSurplusPerPotentialPassenger}");
-        Debug.Log($"Surge aggregate surplus: {surgeAggregateSurplus}, surge surplus per potential passenger: {surgeSurplusPerPotentialPassenger}");
-        Debug.Log("Difference in aggregate surplus: " + (surgeAggregateSurplus - staticAggregateSurplus));
-        float surgeSurplusPerPassengerCorrected = surgeAggregateSurplus / numStaticPassengersWhoGotRides;
+        Debug.Log($"Static aggregate passenger surplus: {staticAggregatePassengerSurplus}, static surplus per potential passenger: {staticSurplusPerPotentialPassenger}");
+        Debug.Log($"Surge aggregate passengersurplus: {surgeAggregatePassengerSurplus}, surge surplus per potential passenger: {surgeSurplusPerPotentialPassenger}");
+        Debug.Log("Difference in aggregate passenger surplus: " + (surgeAggregatePassengerSurplus - staticAggregatePassengerSurplus));
+        float surgeSurplusPerPassengerCorrected = surgeAggregatePassengerSurplus / numStaticPassengersWhoGotRides;
         float surplusDifferencePerPassenger = surgeSurplusPerPassengerCorrected - staticSurplusPerPassenger;
         Debug.Log("Surplus difference per passenger: " + surplusDifferencePerPassenger);
+
+        // Log driver, uber and total surplus
+        Debug.Log("Static driver income: " + staticDriverIncome);
+        Debug.Log("Surge driver income: " + surgeDriverIncome);
+        Debug.Log("Difference in driver income: " + (surgeDriverIncome - staticDriverIncome));
+        Debug.Log("Static uber income: " + staticUberIncome);
+        Debug.Log("Surge uber income: " + surgeUberIncome);
+        Debug.Log("Difference in uber income: " + (surgeUberIncome - staticUberIncome));
+        Debug.Log("Static total surplus: " + staticTotalSurplus);
+        Debug.Log("Surge total surplus: " + surgeTotalSurplus);
+        Debug.Log("Difference in total surplus: " + (surgeTotalSurplus - staticTotalSurplus));
 
         (float staticAggregateFaresPaid, float staticAverageFarePaid) = GetFaresPaid(staticCities);
         (float surgeAggregateFaresPaid, float surgeAverageFarePaid) = GetFaresPaid(surgeCities);
