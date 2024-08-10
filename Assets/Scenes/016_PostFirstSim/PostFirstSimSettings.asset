@@ -22,7 +22,7 @@ MonoBehaviour:
   walkingSpeed: 3.5
   publicTransportAverageSpeed: 20
   publicTransportCost: 2.5
-  baseStartingFare: 4
+  baseStartingFare: 6
   baseFarePerKm: 1.5
   driverFareCutPercentage: 0.67
   driverMarginalCostPerKm: 0.13
