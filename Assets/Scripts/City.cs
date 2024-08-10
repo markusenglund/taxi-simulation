@@ -218,12 +218,12 @@ public class City : MonoBehaviour
             float tripCapacityNextHour = drivers.Count * simulationSettings.driverAverageTripsPerHour - numCurrentPassengersBias * (numWaitingPassengers + numOccupiedDrivers / 2) / simulationSettings.driverAverageTripsPerHour;
 
             // Account for some passenger agents not finding Uber to be the best option for them
-            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.5f;
+            float totalExpectedPassengers = expectedNumPassengersPerHour / 1.4f;
 
 
             float demandPerSupply = totalExpectedPassengers / tripCapacityNextHour;
 
-            float minMultiplier = 0.7f;
+            float minMultiplier = 0.4f;
             float newSurgeMultiplier = Mathf.Max(1f + (demandPerSupply - 1), minMultiplier);
 
             surgeMultiplier = newSurgeMultiplier;
