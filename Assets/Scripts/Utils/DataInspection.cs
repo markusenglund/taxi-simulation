@@ -86,6 +86,11 @@ public class DataInspection : MonoBehaviour
         float averageWaitingTime = aggregateWaitingTime / passengersWhoGotRide.Length;
         float summedValueOfTime = passengersWhoGotRide.Sum(passenger => passenger.economicParameters.valueOfTime);
         float averageValueOfTime = summedValueOfTime / passengersWhoGotRide.Length;
+
+        float aggregateEnRouteDistance = passengersWhoGotRide.Sum(passenger => passenger.trip.driverDispatchedData.enRouteDistance);
+        float averageEnRouteDistance = aggregateEnRouteDistance / passengersWhoGotRide.Length;
+        Debug.Log("Average en route distance: " + averageEnRouteDistance);
+
         return (aggregateWaitingTime, averageWaitingTime, averageValueOfTime);
     }
 
@@ -236,6 +241,7 @@ public class DataInspection : MonoBehaviour
         Debug.Log("Utility difference due to passenger difference per passenger: " + utilityDifferenceDueToPassengerDifference / numStaticPassengersWhoGotRides);
 
         ShowSurplusDifferenceCausedByAllocation(staticCities, surgeCities, staticAverageValueOfTime);
+
     }
 
 }

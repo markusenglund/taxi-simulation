@@ -15,7 +15,7 @@ MonoBehaviour:
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
-  randomSeed: 3
+  randomSeed: 2
   simulationLengthHours: 4
   driverMaxSpeed: 40
   driverAcceleration: 1000
@@ -26,17 +26,17 @@ MonoBehaviour:
   baseFarePerKm: 1.5
   driverFareCutPercentage: 0.67
   driverMarginalCostPerKm: 0.13
-  numDrivers: 5
+  numDrivers: 6
   maxSessionLength: 4
   passengerMedianIncome: 20
   passengerIncomeSigma: 0.9
   demandIndexMultiplier: 1
   expectedPassengersByHour:
   - 10
-  - 8
-  - 40
-  - 35
-  - 37
+  - 10
+  - 10
+  - 50
+  - 10
   - 0
   showDriverEarnings: 0
   showPassengerCosts: 1

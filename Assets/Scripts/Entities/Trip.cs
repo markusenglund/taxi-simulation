@@ -150,7 +150,6 @@ public class Trip
     {
         state = TripState.DriverEnRoute;
         float driverDispatchedTime = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
-
         driverDispatchedData = new DriverDispatchedData
         {
             startPosition = startPosition,
