@@ -85,17 +85,21 @@ public class Passenger : MonoBehaviour
         {
             dressBaseColor = Color.Lerp(ColorScheme.dressRed, ColorScheme.orange, Mathf.InverseLerp(10, 15, hourlyIncome));
         }
-        else if (hourlyIncome <= 20)
+        else if (hourlyIncome <= 17)
         {
-            dressBaseColor = Color.Lerp(ColorScheme.orange, ColorScheme.yellow, Mathf.InverseLerp(15, 20, hourlyIncome));
+            dressBaseColor = ColorScheme.orange;
         }
-        else if (hourlyIncome <= 40)
+        else if (hourlyIncome <= 25)
         {
-            dressBaseColor = Color.Lerp(ColorScheme.yellow, ColorScheme.green, Mathf.InverseLerp(20, 40, hourlyIncome));
+            dressBaseColor = Color.Lerp(ColorScheme.orange, ColorScheme.dressYellow, Mathf.InverseLerp(17, 25, hourlyIncome));
+        }
+        else if (hourlyIncome <= 45)
+        {
+            dressBaseColor = Color.Lerp(ColorScheme.dressYellow, ColorScheme.dressGreen, Mathf.InverseLerp(25, 45, hourlyIncome));
         }
         else
         {
-            dressBaseColor = Color.Lerp(ColorScheme.green, ColorScheme.darkGreen, Mathf.InverseLerp(40, 120, hourlyIncome));
+            dressBaseColor = Color.Lerp(ColorScheme.dressGreen, ColorScheme.darkGreen, Mathf.InverseLerp(45, 120, hourlyIncome));
         }
         // We just assume that the first material is DressBase and second is DressAccent, let's hope it doesn't change
         dressMaterials[0].color = dressBaseColor;

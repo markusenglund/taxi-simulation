@@ -443,8 +443,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
-  staticPriceSettings: {fileID: 11400000, guid: 3e2a8bba0a9ec6a408301407b611ed58, type: 2}
-  surgePriceSettings: {fileID: 11400000, guid: cdc9e286baca2cd4dae050674a6d3bff, type: 2}
+  staticPriceSettings: {fileID: 11400000, guid: d60f29b4a07de6d4f863bad94bab474e, type: 2}
+  surgePriceSettings: {fileID: 11400000, guid: bb21e00c571f43648a11b87be9ffc1c1, type: 2}
   graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
 --- !u!1 &1527207258
 GameObject:

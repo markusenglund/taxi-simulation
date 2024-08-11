@@ -90,12 +90,13 @@ public class VerticalBarGraph : MonoBehaviour
 
     private IEnumerator FadeIn(float duration)
     {
-        float startTime = Time.time;
+        int startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
         float startAlpha = 0;
         float finalAlpha = 1;
-        while (Time.time < startTime + duration)
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             float percentage = EaseUtils.EaseInQuadratic(t);
             float alpha = Mathf.Lerp(startAlpha, finalAlpha, percentage);
             canvasGroup.alpha = alpha;

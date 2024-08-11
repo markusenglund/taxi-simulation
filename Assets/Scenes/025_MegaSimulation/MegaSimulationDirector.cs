@@ -215,12 +215,12 @@ public class MegaSimulationDirector : MonoBehaviour
         StartCoroutine(SpawnCities());
         Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 270);
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 80, Ease.Quadratic));
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(8f);
         InstantiateTimeSensitivityBarGraph();
-        yield return new WaitForFrames(38 * 60);
+        yield return new WaitForFrames(Mathf.FloorToInt(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.6f) * 60));
         InstantiateIncomeBarGraph();
 
-        yield return new WaitForFrames(30 * 60);
+        yield return new WaitForFrames(20 * 60);
         EditorApplication.isPlaying = false;
         yield return null;
     }

@@ -15,6 +15,11 @@ public class ColorScheme : MonoBehaviour
 
     public static Color dressRed = new Color32(212, 38, 38, 255);
 
+    public static Color dressGreen = new Color32(60, 160, 60, 255);
+
+    public static Color dressYellow = new Color32(159, 159, 40, 255);
+
+
     public static Color darkRed = new Color32(205, 20, 20, 255);
 
     public static Color orange = new Color32(255, 153, 0, 255);
