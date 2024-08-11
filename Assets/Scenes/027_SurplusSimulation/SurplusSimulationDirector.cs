@@ -492,7 +492,7 @@ public class SurplusSimulationDirector : MonoBehaviour
         yield return null;
         StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
 
-        yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(1f)));
+        yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.6f)));
         UnityEditor.EditorApplication.isPlaying = false;
 
     }

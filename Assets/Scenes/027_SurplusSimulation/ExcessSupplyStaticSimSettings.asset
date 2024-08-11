@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c895f3cd3ce74493b83c995efd1ee3bb, type: 3}
-  m_Name: SurgeSimSettings
+  m_Name: ExcessSupplyStaticSimSettings
   m_EditorClassIdentifier: 
   useConstantSupplyMode: 1
-  useConstantSurgeMultiplier: 0
+  useConstantSurgeMultiplier: 1
   isActive: 1
   randomSeed: 3
-  simulationLengthHours: 2
+  simulationLengthHours: 4
   driverMaxSpeed: 40
   driverAcceleration: 1000
   walkingSpeed: 3.5
@@ -32,17 +32,16 @@ MonoBehaviour:
   passengerIncomeSigma: 0.9
   demandIndexMultiplier: 1
   expectedPassengersByHour:
-  - 40
-  - 40
-  - 40
-  - 40
-  - 40
-  - 40
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
   - 0
   showDriverEarnings: 0
   showPassengerCosts: 0
   showPassengerReactions: 0
-  showSurgeMultiplier: 1
+  showSurgeMultiplier: 0
   showCityLabel: 1
   passengerScale: 4
   driverScale: 1
