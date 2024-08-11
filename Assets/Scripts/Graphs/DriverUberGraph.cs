@@ -166,11 +166,11 @@ public class DriverUberGraph : MonoBehaviour
 
         while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.frameCount - startFrameCount) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             float percentage = EaseUtils.EaseInQuadratic(t);
             foreach (Transform deltaLabel in deltaLabels)
             {
-                deltaLabel.GetComponent<CanvasGroup>().alpha = t;
+                deltaLabel.GetComponent<CanvasGroup>().alpha = percentage;
             }
             yield return null;
         }

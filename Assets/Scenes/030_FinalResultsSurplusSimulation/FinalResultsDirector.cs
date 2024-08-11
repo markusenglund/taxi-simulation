@@ -252,8 +252,8 @@ public class FinalResultsDirector : MonoBehaviour
         StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
         yield return new WaitForFrames(60 * 2);
         Time.timeScale = 1;
-        yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.5f)));
-        yield return new WaitForFrames(50 * 60);
+        yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(3)));
+        yield return new WaitForFrames(25 * 60);
         UnityEditor.EditorApplication.isPlaying = false;
 
     }
