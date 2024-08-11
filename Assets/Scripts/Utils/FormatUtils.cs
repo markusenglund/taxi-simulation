@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FormatUtils : MonoBehaviour
 {
-    public static string formatPercentage(float value)
+    public static string formatPercentage(float value, string format = "0.0")
     {
-        return (value * 100).ToString("0.0") + "%";
+        return (value * 100).ToString(format) + "%";
     }
 
     public static string formatTime(float timeHours)

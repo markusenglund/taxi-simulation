@@ -83,6 +83,11 @@ public class BucketGraph : MonoBehaviour
         return $"{sign}{formatValue(Mathf.Abs(value))}";
     }
 
+    private string FormatDeltaPercentage(float value)
+    {
+        return FormatUtils.formatPercentage(value, "0");
+    }
+
     IEnumerator UpdateValueLoop()
     {
         Transform graphContainerTransform = transform.Find("GraphContainer");
@@ -114,13 +119,15 @@ public class BucketGraph : MonoBehaviour
 
                 // Set delta label text to the difference between static and surge values
                 float delta = surgeBuckets[i].value - staticBuckets[i].value;
-                deltaLabels[i].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(delta);
+                float deltaPercentage = staticBuckets[i].value == 0 ? 0 : delta / staticBuckets[i].value;
+                deltaLabels[i].GetComponent<TMPro.TMP_Text>().text = FormatDeltaPercentage(deltaPercentage);
+                // deltaLabels[i].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(delta);
                 // Set the y position of the delta label to be above the surge bar
                 RectTransform deltaRectTransform = deltaLabels[i].GetComponent<RectTransform>();
                 deltaRectTransform.anchoredPosition = new Vector2(deltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(surgeBuckets[i].value) + 120);
 
                 // Set the z-rotation of the delta label arrow based on the delta value
-                float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, delta));
+                float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-0.3f, 0.3f, deltaPercentage));
                 deltaLabels[i].Find("Arrow").localRotation = Quaternion.Euler(0, 0, rotation);
             }
             yield return new WaitForSeconds(0.1f);
