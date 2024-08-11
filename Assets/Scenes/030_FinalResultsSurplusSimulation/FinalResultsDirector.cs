@@ -59,7 +59,7 @@ public class FinalResultsDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateIncomeGraph();
         InstantiateSurplusBucketGraph();
-        InstantiateTotalSurplusGraph();
+        // InstantiateTotalSurplusGraph();
         StartCoroutine(InspectData());
     }
 
@@ -244,15 +244,14 @@ public class FinalResultsDirector : MonoBehaviour
         yield return new WaitForSeconds(1);
         StartCoroutine(bucketGraph.FadeInDeltaLabels(duration: 1));
         StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(1.5f) + simulationStartTime);
-        // Time.timeScale = 0;
-        // yield return new WaitForFrames(60 * 3);
-        // StartCoroutine(bucketGraph.scaleGraph(2.3f, new Vector2(1900, 1080)));
-        // yield return new WaitForFrames(60 * 2);
-        // yield return new WaitForFrames(60 * 9);
-        // StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
-        // yield return new WaitForFrames(60 * 20);
-        // Time.timeScale = 1;
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2f) + simulationStartTime - 1);
+        Time.timeScale = 0;
+        yield return new WaitForFrames(60 * 2);
+        StartCoroutine(bucketGraph.scaleGraph(2.3f, new Vector2(1900, 1080)));
+        yield return new WaitForFrames(60 * 5);
+        StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
+        yield return new WaitForFrames(60 * 2);
+        Time.timeScale = 1;
         yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.5f)));
         yield return new WaitForFrames(50 * 60);
         UnityEditor.EditorApplication.isPlaying = false;
