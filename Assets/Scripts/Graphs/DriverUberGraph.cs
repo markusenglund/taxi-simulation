@@ -104,12 +104,14 @@ public class DriverUberGraph : MonoBehaviour
             graphContainerTransform.Find($"BarGroup2/SurgeBar/Value").GetComponent<TMPro.TMP_Text>().text = formattedUberSurgeValue;
 
             float driverDelta = driverIncomeSurge.value - driverIncomeStatic.value;
+            float driverDeltaPercentage = driverIncomeStatic.value == 0 ? 0 : driverDelta / driverIncomeStatic.value;
             float uberDelta = uberIncomeSurge.value - uberIncomeStatic.value;
-            deltaLabels[0].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(driverDelta);
-            deltaLabels[1].GetComponent<TMPro.TMP_Text>().text = FormatDeltaValue(uberDelta);
+            float uberDeltaPercentage = uberIncomeStatic.value == 0 ? 0 : uberDelta / uberIncomeStatic.value;
+            deltaLabels[0].GetComponent<TMPro.TMP_Text>().text = FormatUtils.formatPercentage(driverDeltaPercentage, "0");
+            deltaLabels[1].GetComponent<TMPro.TMP_Text>().text = FormatUtils.formatPercentage(uberDeltaPercentage, "0");
 
             RectTransform driverDeltaRectTransform = deltaLabels[0].GetComponent<RectTransform>();
-            driverDeltaRectTransform.anchoredPosition = new Vector2(driverDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(driverIncomeSurge.value) + 120);
+            driverDeltaRectTransform.anchoredPosition = new Vector2(driverDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(driverIncomeSurge.value) + 170);
 
             // Set the z-rotation of the delta label arrow based on the delta value
             float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, driverDelta));
@@ -117,10 +119,10 @@ public class DriverUberGraph : MonoBehaviour
 
 
             RectTransform uberDeltaRectTransform = deltaLabels[1].GetComponent<RectTransform>();
-            uberDeltaRectTransform.anchoredPosition = new Vector2(uberDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(uberIncomeSurge.value) + 120);
+            uberDeltaRectTransform.anchoredPosition = new Vector2(uberDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(uberIncomeSurge.value) + 170);
 
             // Set the z-rotation of the delta label arrow based on the delta value
-            float uberRotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, uberDelta));
+            float uberRotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-0.3f, 0.3f, uberDelta));
             deltaLabels[1].Find("Arrow").localRotation = Quaternion.Euler(0, 0, uberRotation);
 
 

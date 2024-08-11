@@ -243,12 +243,12 @@ public class FinalResultsDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveCamera(newPosition, 120, Ease.Quadratic));
         yield return new WaitForSeconds(1);
         StartCoroutine(bucketGraph.FadeInDeltaLabels(duration: 1));
+        StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
         yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(1.5f) + simulationStartTime);
         // Time.timeScale = 0;
         // yield return new WaitForFrames(60 * 3);
         // StartCoroutine(bucketGraph.scaleGraph(2.3f, new Vector2(1900, 1080)));
         // yield return new WaitForFrames(60 * 2);
-        // StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
         // yield return new WaitForFrames(60 * 9);
         // StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
         // yield return new WaitForFrames(60 * 20);
