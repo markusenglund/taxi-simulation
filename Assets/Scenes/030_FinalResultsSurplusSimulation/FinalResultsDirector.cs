@@ -59,7 +59,7 @@ public class FinalResultsDirector : MonoBehaviour
         StartCoroutine(Scene());
         InstantiateIncomeGraph();
         InstantiateSurplusBucketGraph();
-        // InstantiateTotalSurplusGraph();
+        InstantiateTotalSurplusGraph();
         StartCoroutine(InspectData());
     }
 
