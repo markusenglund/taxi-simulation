@@ -11,6 +11,8 @@ public class GridUtils : MonoBehaviour
   static int numXIntersections = 4;
   static int numZIntersections = 4;
 
+  public static float curbHeight = 0.075f;
+
   static int numTilesX = blockSize * (numXIntersections - 1) + 1;
   static int numTilesZ = blockSize * (numZIntersections - 1) + 1;
 

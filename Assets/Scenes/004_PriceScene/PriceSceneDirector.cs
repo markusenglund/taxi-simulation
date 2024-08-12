@@ -35,7 +35,7 @@ public class PriceSceneDirector : MonoBehaviour
         Time.timeScale = 0.8f;
         DriverPerson driverPerson = CreateGenericDriverPerson();
         city.CreateDriver(driverPerson, new Vector3(6.1f, 0, 0));
-        Vector3 passengerPosition = new Vector3(9f, 0.08f, 6f);
+        Vector3 passengerPosition = new Vector3(9f, GridUtils.curbHeight, 6f);
         Passenger passenger = city.CreatePassenger(passengerPosition);
         Animator animator = passenger.GetComponentInChildren<Animator>();
         yield return new WaitForSeconds(1.6f);

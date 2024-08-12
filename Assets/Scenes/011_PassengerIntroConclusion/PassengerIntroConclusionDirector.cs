@@ -13,7 +13,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
 
     [SerializeField] public Transform passengerPrefab;
     public Random passengerSpawnRandom;
-    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0f);
+    Vector3 passengerPosition = new Vector3(1.7f, GridUtils.curbHeight, 0f);
     Animator passengerAnimator;
 
     Driver driver;
@@ -106,7 +106,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
         passenger.transform.SetParent(null);
         float startTime = Time.time;
         Vector3 startPosition = passenger.transform.position;
-        Vector3 finalPosition = new Vector3(startPosition.x + 0.23f, 0.08f, startPosition.z);
+        Vector3 finalPosition = new Vector3(startPosition.x + 0.23f, GridUtils.curbHeight, startPosition.z);
 
         Quaternion startRotation = passenger.transform.localRotation;
         Quaternion finalRotation = Quaternion.Euler(0, 90, 0);

@@ -6,7 +6,7 @@ public class TestSceneDirector : MonoBehaviour
 {
 
     [SerializeField] public Transform passengerPrefab;
-    Vector3 passengerPosition = new Vector3(1.7f, 0.08f, 0.22f);
+    Vector3 passengerPosition = new Vector3(1.7f, GridUtils.curbHeight, 0.22f);
     Transform passenger;
 
     void Start()

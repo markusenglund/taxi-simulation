@@ -12,7 +12,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
     [SerializeField] public Transform passengerStatsPrefab;
     [SerializeField] public SimulationSettings simSettings;
 
-    Vector3 passengerPosition = new Vector3(2.5f - 4.5f, 0.08f, -4.3f);
+    Vector3 passengerPosition = new Vector3(2.5f - 4.5f, GridUtils.curbHeight, -4.3f);
     // Vector3 closeUpCameraPosition = new Vector3(1.7f, 0.4f, -0.2f);
     Animator passengerAnimator;
     PassengerStats passengerStats;
@@ -292,7 +292,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
     IEnumerator SpawnPassengerStats(Passenger passenger)
     {
-        Vector3 position = new Vector3(-0.24f, 0.19f, 0.08f);
+        Vector3 position = new Vector3(-0.24f, 0.19f, GridUtils.curbHeight);
         Quaternion rotation = Quaternion.Euler(0, 20, 0);
         PassengerStats passengerStats = PassengerStats.Create(passengerStatsPrefab, passenger.transform, position, rotation, passenger.person, mode: PassengerStatMode.Slow);
         this.passengerStats = passengerStats;
@@ -403,7 +403,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         passenger.transform.SetParent(null);
         float startTime = Time.time;
         Vector3 startPosition = passenger.transform.position;
-        Vector3 finalPosition = new Vector3(startPosition.x + 0.23f, 0.08f, startPosition.z);
+        Vector3 finalPosition = new Vector3(startPosition.x + 0.23f, GridUtils.curbHeight, startPosition.z);
 
         Quaternion startRotation = passenger.transform.localRotation;
         Quaternion finalRotation = Quaternion.Euler(0, 90, 0);

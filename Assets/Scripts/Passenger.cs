@@ -150,7 +150,7 @@ public class Passenger : MonoBehaviour
         }
 
 
-        return (new Vector3(positionX, 0.08f, positionZ), rotation);
+        return (new Vector3(positionX, GridUtils.curbHeight, positionZ), rotation);
     }
 
     void Awake()
@@ -360,7 +360,7 @@ public class Passenger : MonoBehaviour
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
         // I'm flummoxed by why the passengers feet are not on the ground when they are at the top of the car unless we do this hack
-        float topTaxiY = 1.45f - passengerScale * 0.05f;
+        float topTaxiY = 1.45f - passengerScale * 0.06f;
         Vector3 finalPosition = new Vector3(0.09f, topTaxiY, 0);
 
         Quaternion startRotation = transform.localRotation;
@@ -398,7 +398,7 @@ public class Passenger : MonoBehaviour
         Vector3 finalPosition = GetSideWalkPositionRotation(person.destination).position;
 
         Quaternion startRotation = transform.localRotation;
-        Quaternion finalRotation = Quaternion.LookRotation(finalPosition - new Vector3(startPosition.x, 0.08f, startPosition.z), Vector3.up);
+        Quaternion finalRotation = Quaternion.LookRotation(finalPosition - new Vector3(startPosition.x, GridUtils.curbHeight, startPosition.z), Vector3.up);
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
