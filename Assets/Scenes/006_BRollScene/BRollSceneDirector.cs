@@ -26,13 +26,13 @@ public class BRollDirector : MonoBehaviour
     {
         Camera.main.transform.position = cameraStartPosition;
         Camera.main.transform.rotation = cameraStartRotation;
-        Time.timeScale = 0.8f;
+        Time.timeScale = 0.7f;
         StartCoroutine(Scene());
     }
 
     IEnumerator Scene()
     {
-        StartCoroutine(CameraUtils.MoveCamera(cameraStartPosition + new Vector3(0, 0, 9), duration: 25, Ease.Linear));
+        StartCoroutine(CameraUtils.MoveCamera(cameraStartPosition + new Vector3(0, 0, 9), duration: 30, Ease.Linear));
         yield return new WaitForSeconds(25);
 
         EditorApplication.isPlaying = false;
