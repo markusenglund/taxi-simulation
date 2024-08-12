@@ -15,11 +15,12 @@ MonoBehaviour:
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
-  randomSeed: 4
+  randomSeed: 14
   simulationLengthHours: 4
-  driverSpeed: 30
+  driverMaxSpeed: 40
+  driverAcceleration: 1000
   walkingSpeed: 3.5
-  publicTransportSpeed: 25
+  publicTransportAverageSpeed: 20
   publicTransportCost: 2.5
   baseStartingFare: 4
   baseFarePerKm: 1.5
@@ -37,5 +38,9 @@ MonoBehaviour:
   - 5
   - 5
   showDriverEarnings: 0
+  showPassengerCosts: 1
   showPassengerReactions: 0
+  showSurgeMultiplier: 0
+  showCityLabel: 0
   passengerScale: 1.5
+  driverScale: 1

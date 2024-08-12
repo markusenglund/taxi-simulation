@@ -33,7 +33,7 @@ public class OverviewSceneDirector : MonoBehaviour
         StartCoroutine(MoveCamera(toPosition: new Vector3(4.5f, 11.3f, 4.5f), duration: 1.5f, ease: Ease.Cubic));
         yield return new WaitForSeconds(2);
         StartCoroutine(RotateCameraAround(new Vector3(5.5f, 1, 5.5f), new Vector3(1, 0, 0), -70, 3));
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(6);
         EditorApplication.isPlaying = false;
     }
 
