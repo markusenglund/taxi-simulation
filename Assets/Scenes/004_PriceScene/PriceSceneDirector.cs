@@ -39,7 +39,7 @@ public class PriceSceneDirector : MonoBehaviour
         Passenger passenger = city.CreatePassenger(passengerPosition);
         Animator animator = passenger.GetComponentInChildren<Animator>();
         yield return new WaitForSeconds(1.6f);
-        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 180, 3.0f, Ease.Cubic));
+        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 180, 3.2f, Ease.Cubic));
         yield return new WaitForSeconds(3.2f);
         // Set camera to follow passenger
         StartCoroutine(FollowObject(passenger.transform, 4));

@@ -17,9 +17,10 @@ MonoBehaviour:
   isActive: 1
   randomSeed: 1
   simulationLengthHours: 4
-  driverSpeed: 30
-  walkingSpeed: 3.5
-  publicTransportSpeed: 25
+  driverMaxSpeed: 40
+  driverAcceleration: 1000
+  walkingSpeed: 0.1
+  publicTransportAverageSpeed: 0.1
   publicTransportCost: 2.5
   baseStartingFare: 4
   baseFarePerKm: 1.5
@@ -27,7 +28,7 @@ MonoBehaviour:
   driverMarginalCostPerKm: 0.13
   numDrivers: 0
   maxSessionLength: 4
-  passengerMedianIncome: 200
+  passengerMedianIncome: 2000
   passengerIncomeSigma: 0.9
   demandIndexMultiplier: 5
   expectedPassengersByHour:
@@ -37,5 +38,9 @@ MonoBehaviour:
   - 0
   - 0
   showDriverEarnings: 1
+  showPassengerCosts: 1
   showPassengerReactions: 1
+  showSurgeMultiplier: 0
+  showCityLabel: 0
   passengerScale: 0.6
+  driverScale: 1
