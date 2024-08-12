@@ -263,9 +263,9 @@ public class Driver : MonoBehaviour
     public void SetDestination(Vector3 destination)
     {
 
-        this.destination = destination;
-        waypoints = GridUtils.GetWaypoints(transform.localPosition, destination);
-        currentWaypointSegment = CalculateWaypointSegment(transform.localPosition, destination, maxSpeed, acceleration);
+        this.destination = new Vector3(destination.x, y, destination.z);
+        waypoints = GridUtils.GetWaypoints(transform.localPosition, this.destination);
+        currentWaypointSegment = CalculateWaypointSegment(transform.localPosition, this.destination, maxSpeed, acceleration);
     }
 
     void Update()
