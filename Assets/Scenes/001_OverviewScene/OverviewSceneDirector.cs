@@ -29,10 +29,10 @@ public class OverviewSceneDirector : MonoBehaviour
     {
         Time.timeScale = 5;
         yield return new WaitForSeconds(10);
-        Time.timeScale = 1;
-        StartCoroutine(MoveCamera(toPosition: new Vector3(4.5f, 11.3f, 4.5f), duration: 1.5f, ease: Ease.Cubic));
+        Time.timeScale = 0.8f;
+        StartCoroutine(MoveCamera(toPosition: new Vector3(4.5f, 11.3f, 4.5f), duration: 1.1f, ease: Ease.Cubic));
         yield return new WaitForSeconds(2);
-        StartCoroutine(RotateCameraAround(new Vector3(5.5f, 1, 5.5f), new Vector3(1, 0, 0), -70, 3));
+        StartCoroutine(RotateCameraAround(new Vector3(5.5f, 1, 5.5f), new Vector3(1, 0, 0), -70, 2.2f));
         yield return new WaitForSeconds(6);
         EditorApplication.isPlaying = false;
     }

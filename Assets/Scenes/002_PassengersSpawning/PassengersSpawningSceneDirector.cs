@@ -30,7 +30,7 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
     {
         Camera.main.transform.position = new Vector3(-1f, 0.7f, 3f);
         Camera.main.transform.rotation = Quaternion.Euler(10, 90, 0);
-        StartCoroutine(CameraUtils.MoveCamera(toPosition: new Vector3(8f, 1, 3f), duration: 6, ease: Ease.Linear));
+        StartCoroutine(CameraUtils.MoveCamera(toPosition: new Vector3(8f, 1, 3f), duration: 8, ease: Ease.Linear));
         yield return new WaitForSeconds(0.3f);
         DriverPerson driverPerson = CreateGenericDriverPerson();
         city.CreateDriver(driverPerson, new Vector3(6, 0, 6));
@@ -41,12 +41,12 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
         Animator animator2 = passenger2.GetComponentInChildren<Animator>();
         animator2.SetTrigger("BreathingIdle");
         animator2.SetTrigger("IdleVariation1");
-        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(40, 90, 0), duration: 5, ease: Ease.QuadraticIn));
+        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(40, 90, 0), duration: 6, ease: Ease.QuadraticIn));
         yield return new WaitForSeconds(1.5f);
 
         SpawnPassenger(new Vector3(9.23f, GridUtils.curbHeight, 6f));
         SpawnPassenger(new Vector3(6.23f, GridUtils.curbHeight, 2.5f));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.2f);
         Passenger passenger5 = SpawnPassenger(new Vector3(9.23f, GridUtils.curbHeight, 2.77f));
         Animator animator5 = passenger5.GetComponentInChildren<Animator>();
         animator5.SetTrigger("BreathingIdle");

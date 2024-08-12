@@ -208,7 +208,6 @@ public class Passenger : MonoBehaviour
     {
         (RideOffer? rideOffer, Driver? driver, int numTripsAssigned) = city.RequestRideOffer(person.startPosition, person.destination);
 
-
         if (rideOffer == null)
         {
             person.SetState(PassengerState.NoRideOffer);
@@ -415,6 +414,10 @@ public class Passenger : MonoBehaviour
 
     public void ShowPassengerReaction(TripType tripType, bool receivedRideOffer)
     {
+        if (!city.simulationSettings.showPassengerReactions)
+        {
+            return;
+        }
         Dictionary<TripType, string> tripTypeToEmoji = new Dictionary<TripType, string>()
         {
             { TripType.Uber, "🚕" },

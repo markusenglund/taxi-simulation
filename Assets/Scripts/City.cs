@@ -464,7 +464,7 @@ public class City : MonoBehaviour
         // A driver is considered available if they are idle or are on a trip but don't have a trip lined up after 
         Driver[] availableDrivers = drivers.Where(driver => driver.nextTrip == null).ToArray();
         // If there are less than half of the drivers available, don't assign any drivers. This is to prevent the "Wild goose chase" effect where drivers are assigned to passengers that are too far away
-        if (availableDrivers.Length <= Mathf.Max(drivers.Count / 2, 3))
+        if (availableDrivers.Length <= Mathf.Max(drivers.Count / 2, 3) && drivers.Count() > 2)
         {
             return new GetFastestDriverResponse { areDriversAvailable = false };
         }
