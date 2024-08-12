@@ -8,7 +8,8 @@ using System.Linq;
 public class SlowRotatingScene : MonoBehaviour
 {
     [SerializeField] private Transform cityPrefab;
-    [SerializeField] public SimulationSettings simSettings;
+    [SerializeField] public SimulationSettings staticSimSettings;
+    [SerializeField] public SimulationSettings surgeSimSettings;
     [SerializeField] public GraphSettings graphSettings;
     Vector3 city1MiddlePosition = new Vector3(4.5f, -2, 4.5f);
     Vector3 middlePosition = new Vector3(10.5f, -2, 4.5f);
@@ -16,10 +17,10 @@ public class SlowRotatingScene : MonoBehaviour
     City city2;
     void Awake()
     {
-        city1 = City.Create(cityPrefab, 0, 0, simSettings, graphSettings);
+        city1 = City.Create(cityPrefab, 0, 0, staticSimSettings, graphSettings);
         StartCoroutine(city1.StartSimulation());
 
-        city2 = City.Create(cityPrefab, 12, 0, simSettings, graphSettings);
+        city2 = City.Create(cityPrefab, 12, 0, surgeSimSettings, graphSettings);
         StartCoroutine(city2.StartSimulation());
 
         city2.transform.position = new Vector3(12, -100, 0);
