@@ -21,7 +21,7 @@ public class PriceSceneDirector : MonoBehaviour
 
     void Start()
     {
-        Camera.main.transform.position = new Vector3(7, 1, 6);
+        Camera.main.transform.position = new Vector3(7f, 0.77f, 6);
         Camera.main.transform.LookAt(new Vector3(9, 0.3f, 6));
         passengerSpawnRandom = new Random(1);
         StartCoroutine(city.StartSimulation());
@@ -32,15 +32,15 @@ public class PriceSceneDirector : MonoBehaviour
     {
 
         yield return null; // Wait for the city to run the Start method before generating passenger
-        Time.timeScale = 0.8f;
+        Time.timeScale = 0.7f;
         DriverPerson driverPerson = CreateGenericDriverPerson();
         city.CreateDriver(driverPerson, new Vector3(6.1f, 0, 0));
-        Vector3 passengerPosition = new Vector3(9f, GridUtils.curbHeight, 6f);
+        Vector3 passengerPosition = new Vector3(9f, GridUtils.curbHeight, 5.95f);
         Passenger passenger = city.CreatePassenger(passengerPosition);
         Animator animator = passenger.GetComponentInChildren<Animator>();
         yield return new WaitForSeconds(1.6f);
-        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 180, 3.2f, Ease.Cubic));
-        yield return new WaitForSeconds(3.8f);
+        StartCoroutine(CameraUtils.RotateCameraAround(passengerPosition, Vector3.up, 180, 3.0f, Ease.Cubic));
+        yield return new WaitForSeconds(3.2f);
         // Set camera to follow passenger
         StartCoroutine(FollowObject(passenger.transform, 4));
         yield return new WaitForSeconds(0.5f);
