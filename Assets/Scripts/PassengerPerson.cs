@@ -63,7 +63,6 @@ public class PassengerEconomicParameters
 [Serializable]
 public class PassengerPerson
 {
-    static int incrementalId = 1;
     public int id { get; set; }
     public float timeSpawned { get; set; }
     public PassengerEconomicParameters economicParameters { get; set; }
@@ -89,19 +88,29 @@ public class PassengerPerson
     public float hypotheticalTripDuration { get; set; }
 
     public PassengerPerson() { }
-    public PassengerPerson(Vector3 startPosition, SimulationSettings simSettings, Random random)
+    public PassengerPerson(Vector3 startPosition, SimulationSettings simSettings, Random random, int id)
     {
-        id = incrementalId;
-        incrementalId++;
+        this.id = id;
         this.random = random;
         this.simSettings = simSettings;
+        // Put the focus passenger in a specific position for the video
+        destination = GridUtils.GetRandomPosition(random);
+        if (simSettings.randomSeed == 4 && id == 55)
+        {
+            startPosition = new Vector3(0, startPosition.y, startPosition.z + 0.33f);
+            destination = new Vector3(6.33f, destination.y, 6);
+        }
         this.startPosition = startPosition;
         timeSpawned = TimeUtils.ConvertRealSecondsTimeToSimulationHours(Time.time);
         state = PassengerState.BeforeSpawn;
-        destination = GridUtils.GetRandomPosition(random);
         distanceToDestination = GridUtils.GetDistance(startPosition, destination);
         hypotheticalTripDuration = Driver.CalculateWaypointSegment(startPosition, destination, simSettings.driverMaxSpeed, simSettings.driverAcceleration).duration + simSettings.timeSpentWaitingForPassenger;
         economicParameters = GenerateEconomicParameters();
+        // Cheat by setting the focus passenger's time preference to a value that fits the narrative
+        if (simSettings.randomSeed == 4 && id == 55)
+        {
+            economicParameters = GenerateFakeEconomicParameters();
+        }
         rideOfferStatus = RideOfferStatus.NotYetRequested;
     }
 
@@ -119,6 +128,42 @@ public class PassengerPerson
         float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
 
         List<TripOption> substitutes = GenerateSubstitutes(valueOfTime);
+        PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
+        {
+            hourlyIncome = hourlyIncome,
+            timePreference = timeSensitivity,
+            valueOfTime = valueOfTime,
+            substitutes = substitutes
+        };
+
+        return passengerEconomicParameters;
+    }
+
+    PassengerEconomicParameters GenerateFakeEconomicParameters()
+    {
+        float hourlyIncome = 10.40f;
+
+        float timeSensitivity = 2.90f;
+
+        float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
+
+        TripOption walkingSubstitute = new TripOption
+        {
+            type = TripType.Walking,
+            timeHours = 1.9f,
+            timeCost = 1.9f * valueOfTime,
+            moneyCost = 0,
+            totalCost = 1.9f * valueOfTime
+        };
+        TripOption publicTransportSubstitute = new TripOption
+        {
+            type = TripType.PublicTransport,
+            timeHours = 1.2f,
+            timeCost = 1.2f * valueOfTime,
+            moneyCost = 2.5f,
+            totalCost = 1.2f * valueOfTime + 2.5f
+        };
+        List<TripOption> substitutes = new List<TripOption> { walkingSubstitute, publicTransportSubstitute };
         PassengerEconomicParameters passengerEconomicParameters = new PassengerEconomicParameters()
         {
             hourlyIncome = hourlyIncome,

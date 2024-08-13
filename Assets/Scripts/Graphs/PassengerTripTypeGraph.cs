@@ -154,17 +154,13 @@ public class PassengerTripTypeGraph : MonoBehaviour
 
             foreach (PassengerPerson passenger in passengers)
             {
-                if (passenger.state == PassengerState.BeforeSpawn || passenger.state == PassengerState.Idling)
-                {
-                    continue;
-                }
-                if (passenger.tripTypeChosen == TripType.Uber)
-                {
-                    numUberPassengers++;
-                }
-                else if (passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport)
+                if (passenger.tripTypeChosen == TripType.Walking || passenger.tripTypeChosen == TripType.PublicTransport)
                 {
                     numSubstitutePassengers++;
+                }
+                else if (passenger.StartedTrip() && passenger.tripTypeChosen == TripType.Uber)
+                {
+                    numUberPassengers++;
                 }
             }
 

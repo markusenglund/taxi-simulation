@@ -57,7 +57,7 @@ public class PassengersSpawningSceneDirector : MonoBehaviour
 
     Passenger SpawnPassenger(Vector3 position)
     {
-        PassengerPerson person = new PassengerPerson(position, simSettings, passengerSpawnRandom);
+        PassengerPerson person = new PassengerPerson(position, simSettings, passengerSpawnRandom, 100);
         Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, simSettings, city, mode: PassengerMode.Inactive, spawnDuration: 1);
         return passenger;
     }

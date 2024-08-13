@@ -64,15 +64,20 @@ public class PostFirstSimDirector : MonoBehaviour
     void LogFocusPassengerOptions()
     {
         PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simSettings.randomSeed + "_016");
-        Debug.Log(savedPersons.Length);
         // Sort passengers by the totalCost of bestSubstitute, starting from the higher cost
+        if (savedPersons == null)
+        {
+            Debug.Log("No saved passengers found");
+            return;
+        }
         List<PassengerPerson> sortedPersons = savedPersons
             .Where(person => person.rideOfferStatus == RideOfferStatus.NoneReceived)
             .OrderByDescending(person => person.economicParameters.timePreference)
             .ToList();
+        Debug.Log($"Spawned {savedPersons.Length} agents, No ride offer: {sortedPersons.Count}");
         // Show the best substitute cost, timeSensitivity, hourlyIncome, and time cost of best substitute for the top 5 passengers
         Debug.Log("Top 5 passengers who were screwed by not getting a ride offer:");
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 3; i++)
         {
             PassengerPerson person = sortedPersons[i];
             TripOption bestSubstitute = person.economicParameters.GetBestSubstitute();
@@ -159,6 +164,8 @@ public class PostFirstSimDirector : MonoBehaviour
             Debug.Log($"Saving passenger data from {persons.Count} passengers");
             SaveData.SaveObject(simSettings.randomSeed + "_016", persons);
             hasSavedPassengerData = true;
+            LogFocusPassengerOptions();
+
         }
     }
 }

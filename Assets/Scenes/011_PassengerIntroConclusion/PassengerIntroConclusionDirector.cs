@@ -36,7 +36,7 @@ public class PassengerIntroConclusionDirector : MonoBehaviour
 
         DriverPerson driverPerson = CreateGenericDriverPerson();
         driver = city.CreateDriver(driverPerson, new Vector3(7, 0, 0));
-        PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
+        PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom, 100);
         float spawnDuration = 1.5f;
         Passenger passenger = Passenger.Create(person, passengerPrefab, city.transform, simSettings, city, mode: PassengerMode.Inactive, spawnDuration);
         // TODO: All passengerStats stuff should be added back in when replacing passengerBase

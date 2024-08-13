@@ -188,13 +188,13 @@ public class PassengerStats : MonoBehaviour
         {
             name = "Time sensitivity",
             value = $"{person.economicParameters.timePreference.ToString("F2")}x",
-            barValue = person.economicParameters.timePreference * 40
+            barValue = person.economicParameters.timePreference * 45
         };
         Stat timeCostStat = new Stat()
         {
-            name = "Cost of time",
+            name = "Value of time",
             value = $"${(Mathf.Round(person.economicParameters.valueOfTime * 10) / 10f).ToString("F2")}/hr",
-            barValue = Mathf.Sqrt(person.economicParameters.valueOfTime) * 5
+            barValue = Mathf.Sqrt(person.economicParameters.valueOfTime) * 7
         };
 
 

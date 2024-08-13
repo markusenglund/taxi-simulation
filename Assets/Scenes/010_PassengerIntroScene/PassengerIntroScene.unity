@@ -186,7 +186,7 @@ MonoBehaviour:
   spawnAnimationPrefab: {fileID: 4805017702919070, guid: 6634ac450e36fea418cebc0a02264d7f, type: 3}
   passengerPrefab: {fileID: 2793057743256562329, guid: 2b531f7646900574cbe9fd61f11a72d8, type: 3}
   passengerStatsPrefab: {fileID: 7420584253704279518, guid: 6316bdce544ade54c96b77ed55fcd97d, type: 3}
-  simSettings: {fileID: 11400000, guid: 019e238a4fa93471b82673b97cf3bd06, type: 2}
+  simSettings: {fileID: 11400000, guid: 7c69f99fe79acc44d9285e5454b27a0f, type: 2}
 --- !u!4 &46887370
 Transform:
   m_ObjectHideFlags: 0
@@ -413,9 +413,9 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.85
+    m_Strength: 0.8
     m_Bias: 0.01
-    m_NormalBias: 0.1
+    m_NormalBias: 0
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1

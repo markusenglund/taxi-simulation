@@ -46,16 +46,32 @@ public class PassengerIntroSceneDirector : MonoBehaviour
 
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 2.5f));
         yield return new WaitForSeconds(1f);
-        PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom);
-        float hourlyIncome = 45.70f;
-        float timeSensitivity = 1.55f;
+        PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom, 100);
+        float hourlyIncome = 16.00f;
+        float timeSensitivity = 1.70f;
         float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
+        TripOption walkingSubstitute = new TripOption
+        {
+            type = TripType.Walking,
+            timeHours = 1.25f,
+            timeCost = 1.25f * valueOfTime,
+            moneyCost = 0,
+            totalCost = 1.25f * valueOfTime
+        };
+        TripOption publicTransportSubstitute = new TripOption
+        {
+            type = TripType.PublicTransport,
+            timeHours = 0.9f,
+            timeCost = 0.9f * valueOfTime,
+            moneyCost = 2.5f,
+            totalCost = 0.9f * valueOfTime + 2.5f
+        };
         person.economicParameters = new PassengerEconomicParameters
         {
             hourlyIncome = hourlyIncome,
             timePreference = timeSensitivity,
             valueOfTime = valueOfTime,
-            substitutes = person.GenerateSubstitutes(valueOfTime)
+            substitutes = new List<TripOption> { walkingSubstitute, publicTransportSubstitute }
         };
         float timeHours = 24f / 60f;
         float timeCost = timeHours * valueOfTime;

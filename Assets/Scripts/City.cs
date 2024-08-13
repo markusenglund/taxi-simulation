@@ -47,6 +47,8 @@ public class City : MonoBehaviour
     public Random passengerSpawnRandom;
     public Random driverSpawnRandom;
 
+    private int incrementalPassengerId = 1;
+
     private ResultsInfoBox resultsInfoBox;
     private SurgeMultiplierGraphic surgeMultiplierGraphic;
 
@@ -281,7 +283,8 @@ public class City : MonoBehaviour
 
     public Passenger CreatePassenger(Vector3 position)
     {
-        PassengerPerson person = new PassengerPerson(position, simulationSettings, passengerSpawnRandom);
+        PassengerPerson person = new PassengerPerson(position, simulationSettings, passengerSpawnRandom, incrementalPassengerId);
+        incrementalPassengerId += 1;
         passengerAgents.Add(person);
         Passenger passenger = Passenger.Create(person, passengerPrefab, transform, simulationSettings, city: this);
         passengers.Add(passenger);
