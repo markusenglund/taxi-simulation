@@ -17,10 +17,10 @@ public class PassengerEvalDirector : MonoBehaviour
     City city;
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
-    Vector3 firstCameraOffset = new Vector3(-1.8f, -0.1f, 0f);
-    Vector3 zoomedInCameraOffset = new Vector3(-0.3f, -0.7f, 0);
-    float timeWhenFocusPassengerSpawns = 2.3f;
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.67f);
+    Vector3 firstCameraOffset = new Vector3(-1.8f, -0.1f, 0.1f);
+    Vector3 zoomedInCameraOffset = new Vector3(-1.5f, -0.1f, -0.1f);
+    float timeWhenFocusPassengerSpawns = 3.47f;
 
 
     Vector3 finalCameraPosition;
@@ -96,18 +96,17 @@ public class PassengerEvalDirector : MonoBehaviour
                 continue;
             }
             Passenger passenger = passengers[i];
-            if (passenger.person.id == 44)// || passenger.person.id == 3)
+            if (passenger.person.id == 55)
             {
                 StartCoroutine(FocusPassengerSchedule(passenger));
             }
         }
     }
 
-    IEnumerator SlowTime(float duration)
+    IEnumerator SlowTime(float duration, float finalTimeScale)
     {
         float startTimeScale = Time.timeScale;
         float startTime = Time.time;
-        float finalTimeScale = 0.1f;
         while (Time.time < startTime + duration)
         {
             float t = (Time.time - startTime) / duration;
@@ -118,111 +117,106 @@ public class PassengerEvalDirector : MonoBehaviour
 
     IEnumerator FocusPassengerSchedule(Passenger passenger)
     {
-        passenger.SetMode(PassengerMode.Inactive);
+        // passenger.SetMode(PassengerMode.Inactive);
         spawnedPassengerStats.Add(passenger.person.id);
 
-        city.PauseSimulation();
-        yield return new WaitForSeconds(0.5f);
+        // city.PauseSimulation();
+        yield return new WaitForSeconds(0.8f);
+        StartCoroutine(SlowTime(0.7f, 0.02f));
+        // Time.timeScale = 0.02f;
+        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForFrames(30);
         StartCoroutine(SpawnPassengerStats(passenger));
-        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position, Vector3.up, 15, 3, Ease.Cubic));
-        yield return new WaitForSeconds(2f);
-        Animator animator = passenger.GetComponentInChildren<Animator>();
-        animator.SetTrigger("BeDisappointed");
-        yield return new WaitForSeconds(26f);
-        StartCoroutine(HoverPassengers(city.GetPassengers()));
-
-        StartCoroutine(ShrinkPassengers(city.GetPassengers()));
-        Vector3 zoomedInCameraPosition = focusPassengerPosition + zoomedInCameraOffset;
-        yield return new WaitForSeconds(1.5f);
-        StartCoroutine(CameraUtils.MoveCamera(zoomedInCameraPosition, 2, Ease.Cubic));
-
-        float originalScale = simSettings.passengerScale;
-        simSettings.passengerScale = 1;
-        yield return new WaitForSeconds(0.5f);
-        city.SpawnSavedPassengers();
-        yield return new WaitForSeconds(2);
-        simSettings.passengerScale = originalScale;
-    }
-
-
-    IEnumerator ShrinkPassengers(Passenger[] passengers)
-    {
-        foreach (Passenger passenger in passengers)
-        {
-            bool isPassengerDestroyed = passenger == null;
-            if (isPassengerDestroyed)
-            {
-                continue;
-            }
-            StartCoroutine(ShrinkPassenger(passenger));
-            yield return new WaitForSeconds(0.1f);
-        }
-        yield return null;
-    }
-
-    IEnumerator HoverPassengers(Passenger[] passengers)
-    {
-        foreach (Passenger passenger in passengers)
-        {
-            bool isPassengerDestroyed = passenger == null;
-            if (isPassengerDestroyed)
-            {
-                continue;
-            }
-            StartCoroutine(HoverPassenger(passenger));
-            yield return new WaitForSeconds(0.1f);
-        }
-        yield return null;
-    }
-
-    IEnumerator ShrinkPassenger(Passenger passenger)
-    {
-        passenger.SetMode(PassengerMode.Inactive);
-        yield return new WaitForSeconds(1);
-        float shrinkDuration = 1;
-        if (passenger == null)
-        {
-            yield break;
-        }
-        Vector3 startScale = passenger.transform.localScale;
-        Vector3 finalScale = Vector3.one;
-        float shrinkStartTime = Time.time;
-        while (Time.time < shrinkStartTime + shrinkDuration)
-        {
-            float t = (Time.time - shrinkStartTime) / shrinkDuration;
-            float scaleFactor = EaseUtils.EaseInOutCubic(t);
-            if (passenger == null)
-            {
-                yield break;
-            }
-            passenger.transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
-            yield return null;
-        }
-    }
-
-    IEnumerator HoverPassenger(Passenger passenger)
-    {
-        yield return new WaitForSeconds(0.5f);
-        float hoverDuration = 1;
-        Vector3 startPosition = passenger.transform.position;
-        Vector3 hoverPosition = startPosition + new Vector3(0, 6f, 0);
-        float hoverStartTime = Time.time;
-        while (Time.time < hoverStartTime + hoverDuration)
-        {
-            float t = (Time.time - hoverStartTime) / hoverDuration;
-            float hoverFactor = EaseUtils.EaseInOutCubic(t);
-            passenger.transform.position = Vector3.Lerp(startPosition, hoverPosition, hoverFactor);
-            yield return null;
-        }
+        Quaternion newCameraRotation = Quaternion.Euler(-3.175f, 110, 0);
+        StartCoroutine(CameraUtils.RotateCamera(newCameraRotation, 4, Ease.Cubic));
+        StartCoroutine(CameraUtils.MoveCamera(focusPassengerPosition + zoomedInCameraOffset, 4, Ease.Cubic));
+        yield return new WaitForFrames(4 * 60);
+        // yield return new WaitForFrames(4 * 60);
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position + new Vector3(0, 0, -0.33f), Vector3.up, 10, duration: 10, Ease.Cubic));
+        yield return new WaitForFrames(10 * 60);
     }
 
     IEnumerator SpawnPassengerStats(Passenger passenger)
     {
         Transform passengerStatsPrefab = Resources.Load<Transform>("PassengerStatsCanvas");
-        Vector3 statsPosition = new Vector3(-0.24f, 0.19f, -0.02f);
+        Vector3 statsPosition = new Vector3(-0.25f, 0.19f, 0.1f);
         Quaternion rotation = Quaternion.Euler(0, 25, 0);
 
         PassengerStats.Create(passengerStatsPrefab, passenger.transform, statsPosition, rotation, passenger.person);
         yield return null;
     }
+
+
+    // IEnumerator ShrinkPassengers(Passenger[] passengers)
+    // {
+    //     foreach (Passenger passenger in passengers)
+    //     {
+    //         bool isPassengerDestroyed = passenger == null;
+    //         if (isPassengerDestroyed)
+    //         {
+    //             continue;
+    //         }
+    //         StartCoroutine(ShrinkPassenger(passenger));
+    //         yield return new WaitForSeconds(0.1f);
+    //     }
+    //     yield return null;
+    // }
+
+    // IEnumerator HoverPassengers(Passenger[] passengers)
+    // {
+    //     foreach (Passenger passenger in passengers)
+    //     {
+    //         bool isPassengerDestroyed = passenger == null;
+    //         if (isPassengerDestroyed)
+    //         {
+    //             continue;
+    //         }
+    //         StartCoroutine(HoverPassenger(passenger));
+    //         yield return new WaitForSeconds(0.1f);
+    //     }
+    //     yield return null;
+    // }
+
+    // IEnumerator ShrinkPassenger(Passenger passenger)
+    // {
+    //     passenger.SetMode(PassengerMode.Inactive);
+    //     yield return new WaitForSeconds(1);
+    //     float shrinkDuration = 1;
+    //     if (passenger == null)
+    //     {
+    //         yield break;
+    //     }
+    //     Vector3 startScale = passenger.transform.localScale;
+    //     Vector3 finalScale = Vector3.one;
+    //     float shrinkStartTime = Time.time;
+    //     while (Time.time < shrinkStartTime + shrinkDuration)
+    //     {
+    //         float t = (Time.time - shrinkStartTime) / shrinkDuration;
+    //         float scaleFactor = EaseUtils.EaseInOutCubic(t);
+    //         if (passenger == null)
+    //         {
+    //             yield break;
+    //         }
+    //         passenger.transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
+    //         yield return null;
+    //     }
+    // }
+
+    // IEnumerator HoverPassenger(Passenger passenger)
+    // {
+    //     yield return new WaitForSeconds(0.5f);
+    //     float hoverDuration = 1;
+    //     Vector3 startPosition = passenger.transform.position;
+    //     Vector3 hoverPosition = startPosition + new Vector3(0, 6f, 0);
+    //     float hoverStartTime = Time.time;
+    //     while (Time.time < hoverStartTime + hoverDuration)
+    //     {
+    //         float t = (Time.time - hoverStartTime) / hoverDuration;
+    //         float hoverFactor = EaseUtils.EaseInOutCubic(t);
+    //         passenger.transform.position = Vector3.Lerp(startPosition, hoverPosition, hoverFactor);
+    //         yield return null;
+    //     }
+    // }
+
+
 }

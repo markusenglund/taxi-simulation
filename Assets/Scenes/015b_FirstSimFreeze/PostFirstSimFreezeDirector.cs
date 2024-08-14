@@ -18,7 +18,7 @@ public class PostFirstSimFreezeDirector : MonoBehaviour
 
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.67f);
     float timeWhenFocusPassengerSpawns = 3.0f;
 
 
@@ -80,6 +80,9 @@ public class PostFirstSimFreezeDirector : MonoBehaviour
         Time.timeScale = 0.1f;
         StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, 1, Ease.Cubic));
         yield return new WaitForSeconds(1);
+        StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, 0.3f, Ease.Cubic));
+        Time.timeScale = 1f;
+        yield return new WaitForSeconds(1f);
         EditorApplication.isPlaying = false;
     }
 

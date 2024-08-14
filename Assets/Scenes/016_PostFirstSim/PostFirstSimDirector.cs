@@ -19,8 +19,11 @@ public class PostFirstSimDirector : MonoBehaviour
     // private float simulationStartTime = 0.1f;
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.33f);
-    float timeWhenFocusPassengerSpawns = 2.3f;
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.67f);
+
+    Vector3 firstCameraOffset = new Vector3(-1.8f, -0.1f, 0.1f);
+
+    float timeWhenFocusPassengerSpawns = 3.47f;
 
 
     Vector3 finalCameraPosition;
@@ -99,27 +102,27 @@ public class PostFirstSimDirector : MonoBehaviour
         StartCoroutine(city.StartSimulation());
 
 
-        // float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
+        float realTimeWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursTimeToRealSeconds(timeWhenFocusPassengerSpawns);
 
-        // Vector3 passengerCameraPosition = focusPassengerPosition + new Vector3(-1.8f, -0.1f, 0f);
-        // Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
+        Vector3 passengerCameraPosition = focusPassengerPosition + firstCameraOffset;
+        Quaternion passengerCameraRotation = Quaternion.LookRotation(focusPassengerPosition - passengerCameraPosition, Vector3.up);
 
 
-        // StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, realTimeWhenFocusPassengerSpawns, Ease.Cubic));
-        // yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns / 3f);
+        StartCoroutine(CameraUtils.MoveCamera(passengerCameraPosition, realTimeWhenFocusPassengerSpawns, Ease.Cubic));
+        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns / 3f);
 
-        // StartCoroutine(CameraUtils.RotateCamera(passengerCameraRotation, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
-        // StartCoroutine(CameraUtils.ZoomCamera(75, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
-        // yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
-        // yield return new WaitForSeconds(1.5f);
+        StartCoroutine(CameraUtils.RotateCamera(passengerCameraRotation, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
+        StartCoroutine(CameraUtils.ZoomCamera(75, realTimeWhenFocusPassengerSpawns * 2 / 3f, Ease.Cubic));
+        yield return new WaitForSeconds(realTimeWhenFocusPassengerSpawns * 2 / 3f);
+        yield return new WaitForSeconds(1.5f);
 
-        // Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
-        // float duration = -1.5f + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
-        // StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
-        // StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
-        // StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
-        // // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
-        // yield return new WaitForSeconds(duration);
+        Quaternion finalCameraRotation = Quaternion.LookRotation(finalLookAtPosition - finalCameraPosition, Vector3.up);
+        float duration = -1.5f + TimeUtils.ConvertSimulationHoursTimeToRealSeconds(city.simulationSettings.simulationLengthHours - timeWhenFocusPassengerSpawns);
+        StartCoroutine(CameraUtils.MoveCamera(finalCameraPosition, duration, Ease.Cubic));
+        StartCoroutine(CameraUtils.RotateCamera(finalCameraRotation, duration * 2 / 3f, Ease.Cubic));
+        StartCoroutine(CameraUtils.ZoomCamera(30, duration * 2 / 3f, Ease.Cubic));
+        // StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(finalCameraPosition, finalCameraRotation, duration, Ease.Cubic, 30));
+        yield return new WaitForSeconds(duration);
 
     }
 

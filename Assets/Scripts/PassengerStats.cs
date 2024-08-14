@@ -112,10 +112,11 @@ public class PassengerStats : MonoBehaviour
     {
         Vector3 startScale = new Vector3(0, 0.002f, 0.001f);
         Vector3 finalScale = Vector3.one * 0.002f;
-        float startTime = Time.time;
-        while (Time.time < startTime + duration)
+        float startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             float scaleFactor = EaseUtils.EaseInOutCubic(t);
             transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
             yield return null;
@@ -127,15 +128,16 @@ public class PassengerStats : MonoBehaviour
     {
         float startWidth = 100;
         float finalWidth = 200;
-        float startTime = Time.time;
+        float startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
         RectTransform passengerStatsSheetRect = transform.GetChild(0).GetComponent<RectTransform>();
         // Set dividing line to active
         dividingLine.gameObject.SetActive(true);
         if (mode == PassengerStatMode.Slow)
         {
-            while (Time.time < startTime + duration)
+            while (Time.frameCount < startFrameCount + frameCountDuration)
             {
-                float t = (Time.time - startTime) / duration;
+                float t = (Time.frameCount - startFrameCount) / frameCountDuration;
                 float scaleFactor = EaseUtils.EaseInOutCubic(t);
                 passengerStatsSheetRect.sizeDelta = new Vector2(Mathf.Lerp(startWidth, finalWidth, scaleFactor), passengerStatsSheetRect.sizeDelta.y);
                 yield return null;
@@ -147,13 +149,13 @@ public class PassengerStats : MonoBehaviour
 
     public IEnumerator DespawnCard()
     {
-        float duration = 1f;
-        float startTime = Time.time;
+        float frameCountDuration = 60;
+        float startFrameCount = Time.frameCount;
         Vector3 startScale = transform.localScale;
         Vector3 finalScale = new Vector3(0f, 0f, 0f);
-        while (Time.time < startTime + duration)
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             float scaleFactor = EaseUtils.EaseInOutCubic(t);
             transform.localScale = Vector3.Lerp(startScale, finalScale, scaleFactor);
             yield return null;
@@ -163,10 +165,11 @@ public class PassengerStats : MonoBehaviour
 
     private IEnumerator FadeInText(TextMeshProUGUI text, float duration)
     {
-        float startTime = Time.time;
-        while (Time.time < startTime + duration)
+        float startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             text.color = new Color(text.color.r, text.color.g, text.color.b, t);
             yield return null;
         }
@@ -277,10 +280,11 @@ public class PassengerStats : MonoBehaviour
 
     IEnumerator FadeInCanvasGroup(CanvasGroup canvasGroup, float duration)
     {
-        float startTime = Time.time;
-        while (Time.time < startTime + duration)
+        float frameCountDuration = duration * 60;
+        float startFrameCount = Time.frameCount;
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             canvasGroup.alpha = t;
             yield return null;
         }
@@ -307,10 +311,11 @@ public class PassengerStats : MonoBehaviour
         // statTexts.Add(statNameText)
 
         CanvasGroup canvasGroup = statText.GetComponent<CanvasGroup>();
-        float startTime = Time.time;
-        while (Time.time < startTime + duration)
+        float frameCountDuration = duration * 60;
+        float startFrameCount = Time.frameCount;
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             canvasGroup.alpha = t;
             yield return null;
         }

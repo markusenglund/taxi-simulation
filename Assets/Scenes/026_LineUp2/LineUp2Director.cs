@@ -70,33 +70,40 @@ public class LineUp2Director : MonoBehaviour
         Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         // Passenger focusPassenger = Array.Find(passengers, p => p.person.id == 44);
         // Get the passenger with the highest time sensitivity stat
-        Passenger focusPassenger = passengers.OrderByDescending(p => p.person.economicParameters.timePreference).First();
-        StartCoroutine(SpawnFocusPassengerStats(focusPassenger));
-        Vector3 cameraPosition = new Vector3(0f, 4, -12);
-        Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
-        StartCoroutine(MovePassengersToLineUp(passengers));
-        yield return new WaitForSeconds(3f);
-        Vector3 chartFirstCameraPosition = new Vector3(4.5f, 1, -10);
-        Quaternion chartFirstCameraRotation = Quaternion.LookRotation(canvasPosition - chartFirstCameraPosition, Vector3.up);
-        Camera.main.transform.position = chartFirstCameraPosition;
-        Camera.main.transform.rotation = chartFirstCameraRotation;
-        StartCoroutine(FadeInCanvas());
-        yield return new WaitForSeconds(1f);
-        StartCoroutine(CameraUtils.RotateCameraAround(canvasPosition, Vector3.right, 45, 3, Ease.Cubic));
-        yield return new WaitForSeconds(1f);
-        StartCoroutine(ShowPassengerResults(passengers));
-        StartCoroutine(TriggerIdleVariations(passengers));
-        yield return new WaitForSeconds(2f);
-        StartCoroutine(focusPassengerStats.DespawnCard());
-        yield return new WaitForSeconds(5f);
-        StartCoroutine(ChangeGraphToIncome(passengers));
-        Vector3 currentCameraPosition = Camera.main.transform.position;
-        Quaternion currentCameraRotation = Camera.main.transform.rotation;
-        Quaternion wideShotCameraRotation = Quaternion.Euler(60, 5, 3);
-        Vector3 wideShotCameraPosition = currentCameraPosition + new Vector3(2f, 3f, -0.5f);
-        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(wideShotCameraPosition, wideShotCameraRotation, 2f, Ease.Cubic));
-        yield return new WaitForSeconds(15f);
+        Passenger focusPassenger = passengers.FirstOrDefault(p => p.person.id == 55);
+        if (focusPassenger != null)
+        {
+            StartCoroutine(SpawnFocusPassengerStats(focusPassenger));
+            Vector3 cameraPosition = new Vector3(0f, 4, -12);
+            Quaternion cameraRotation = Quaternion.LookRotation(cityMiddlePosition - cameraPosition, Vector3.up);
+            StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(cameraPosition, cameraRotation, 2.5f, Ease.Cubic));
+            StartCoroutine(MovePassengersToLineUp(passengers));
+            yield return new WaitForSeconds(3f);
+            Vector3 chartFirstCameraPosition = new Vector3(4.5f, 1, -10);
+            Quaternion chartFirstCameraRotation = Quaternion.LookRotation(canvasPosition - chartFirstCameraPosition, Vector3.up);
+            Camera.main.transform.position = chartFirstCameraPosition;
+            Camera.main.transform.rotation = chartFirstCameraRotation;
+            StartCoroutine(FadeInCanvas());
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(CameraUtils.RotateCameraAround(canvasPosition, Vector3.right, 45, 3, Ease.Cubic));
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(ShowPassengerResults(passengers));
+            StartCoroutine(TriggerIdleVariations(passengers));
+            yield return new WaitForSeconds(2f);
+            StartCoroutine(focusPassengerStats.DespawnCard());
+            yield return new WaitForSeconds(5f);
+            StartCoroutine(ChangeGraphToIncome(passengers));
+            Vector3 currentCameraPosition = Camera.main.transform.position;
+            Quaternion currentCameraRotation = Camera.main.transform.rotation;
+            Quaternion wideShotCameraRotation = Quaternion.Euler(60, 5, 3);
+            Vector3 wideShotCameraPosition = currentCameraPosition + new Vector3(2f, 3f, -0.5f);
+            StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(wideShotCameraPosition, wideShotCameraRotation, 2f, Ease.Cubic));
+            yield return new WaitForSeconds(15f);
+        }
+        else
+        {
+            Debug.Log("Passenger with id 55 not found.");
+        }
         // Stop playing
         UnityEditor.EditorApplication.isPlaying = false;
     }
