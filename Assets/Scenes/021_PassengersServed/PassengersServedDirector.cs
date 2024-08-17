@@ -47,7 +47,7 @@ public class PassengersServedDirector : MonoBehaviour
     {
         StartCoroutine(SetSimulationStart());
         StartCoroutine(FadeInWorldSpaceCanvas(1));
-        StartCoroutine(CameraUtils.RotateCameraAroundRealTime(lookAtPosition, Vector3.up, -60, 150, Ease.Linear));
+        StartCoroutine(CameraUtils.RotateCameraAroundRealTime(lookAtPosition, Vector3.up, -60, 100, Ease.Linear));
 
 
         GetHorizontalBarValue GetPassengersServed = city =>
@@ -58,7 +58,7 @@ public class PassengersServedDirector : MonoBehaviour
             return numPassengersServed;
         };
 
-        HorizontalBarGraph.Create(city1, city2, new Vector3(11, 6), "Which system serves more passengers?", GetPassengersServed);
+        HorizontalBarGraph.Create(city1, city2, new Vector3(11, 6), "Which pricing regime serves more passengers during peak hours?", GetPassengersServed);
 
         yield return null;
     }
