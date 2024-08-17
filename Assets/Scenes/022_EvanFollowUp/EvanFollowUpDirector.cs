@@ -47,7 +47,7 @@ public class EvanFollowUpDirector : MonoBehaviour
     void Update()
     {
         Passenger[] passengers = city2.GetPassengers();
-        Passenger focusPassenger = Array.Find(passengers, passenger => passenger.person.id == 14);
+        Passenger focusPassenger = Array.Find(passengers, passenger => passenger.person.id == 55);
 
         if (focusPassenger != null && !hasFoundFocusPassenger)
         {
@@ -63,7 +63,7 @@ public class EvanFollowUpDirector : MonoBehaviour
         Quaternion focusPassengerRotation = focusPassenger.transform.rotation;
         // Move the camera to just in front of the focus passenger
         Vector3 cameraPosition = focusPassengerPosition - focusPassengerRotation * new Vector3(0, 0, -3.5f) + Vector3.up * 0.75f;
-        Vector3 cameraLookAtPosition = focusPassengerPosition + Vector3.up * 0.6f;
+        Vector3 cameraLookAtPosition = focusPassengerPosition + Vector3.up * 0.9f;
         Camera.main.transform.position = cameraPosition;
         Camera.main.transform.LookAt(cameraLookAtPosition);
         Vector3 secondCameraPosition = focusPassengerPosition - focusPassengerRotation * new Vector3(0, 0, -2.5f) + Vector3.up * 0.75f;
@@ -77,11 +77,11 @@ public class EvanFollowUpDirector : MonoBehaviour
     IEnumerator FollowPassenger(Transform target, float duration)
     {
         float startTime = Time.time;
-        Vector3 startTargetDirection = target.position + Vector3.up * 0.6f - Camera.main.transform.position;
+        Vector3 startTargetDirection = target.position + Vector3.up * 0.9f - Camera.main.transform.position;
         while (Time.time < startTime + duration && target != null)
         {
-            Vector3 desiredPosition = target.position + Vector3.up * 0.6f - (startTargetDirection * 1.02f);
-            Quaternion desiredRotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
+            Vector3 desiredPosition = target.position + Vector3.up * 0.9f - (startTargetDirection * 1.02f);
+            Quaternion desiredRotation = Quaternion.LookRotation(target.position + Vector3.up * 0.6f - Camera.main.transform.position);
             // Vector3 middlePosition = target.position - normalizedTargetDirection * 0.8f;
             // Vector3 desiredPosition = new Vector3(middlePosition.x, Camera.main.transform.position.y, middlePosition.z);
             // Quaternion desiredRotation = Quaternion.LookRotation(target.position - Camera.main.transform.position);
@@ -96,6 +96,7 @@ public class EvanFollowUpDirector : MonoBehaviour
     {
         StartCoroutine(SetSimulationStart());
         StartCoroutine(FadeInWorldSpaceCanvas(1));
+
 
         yield return null;
     }

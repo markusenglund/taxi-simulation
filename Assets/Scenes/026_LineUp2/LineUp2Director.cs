@@ -90,6 +90,7 @@ public class LineUp2Director : MonoBehaviour
             StartCoroutine(ShowPassengerResults(passengers));
             StartCoroutine(TriggerIdleVariations(passengers));
             yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(10f);
             StartCoroutine(focusPassengerStats.DespawnCard());
             yield return new WaitForSeconds(5f);
             StartCoroutine(ChangeGraphToIncome(passengers));
@@ -158,16 +159,16 @@ public class LineUp2Director : MonoBehaviour
             Passenger randomPassenger1 = passengers[random.Next(passengers.Length)];
             Animator passengerAnimator = randomPassenger1.GetComponentInChildren<Animator>();
             passengerAnimator.SetTrigger("IdleVariation1");
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2f);
             Passenger randomPassenger2 = passengers[random.Next(passengers.Length)];
             Animator passengerAnimator2 = randomPassenger2.GetComponentInChildren<Animator>();
             passengerAnimator2.SetTrigger("IdleVariation2");
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
 
             Passenger randomPassenger3 = passengers[random.Next(passengers.Length)];
             Animator passengerAnimator3 = randomPassenger3.GetComponentInChildren<Animator>();
             passengerAnimator3.SetTrigger("IdleVariation1");
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2f);
         }
     }
 

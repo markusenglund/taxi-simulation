@@ -15,7 +15,7 @@ MonoBehaviour:
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
-  randomSeed: 2
+  randomSeed: 4
   simulationLengthHours: 3
   driverMaxSpeed: 40
   driverAcceleration: 1000
@@ -36,13 +36,11 @@ MonoBehaviour:
   - 40
   - 40
   - 40
-  - 40
-  - 40
   - 0
   showDriverEarnings: 0
   showPassengerCosts: 1
   showPassengerReactions: 1
   showSurgeMultiplier: 0
   showCityLabel: 1
-  passengerScale: 4
+  passengerScale: 2
   driverScale: 1

@@ -646,8 +646,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cityPrefab: {fileID: 8656776186715745561, guid: 6f4b1300a472a40bdab1003c78682a95, type: 3}
-  staticPriceSettings: {fileID: 11400000, guid: 0adf5a62cc2223548b931ffbff347d72, type: 2}
-  surgePriceSettings: {fileID: 11400000, guid: cdc9e286baca2cd4dae050674a6d3bff, type: 2}
+  staticPriceSettings: {fileID: 11400000, guid: df031315b52d6ad48bfbb223529f4af0, type: 2}
+  surgePriceSettings: {fileID: 11400000, guid: d2902380e035e0d4784edd0549e98119, type: 2}
   graphSettings: {fileID: 11400000, guid: bcbf82d3e9ca4324ca7587dc076d9d12, type: 2}
 --- !u!1 &1176440002
 GameObject:
@@ -921,7 +921,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
+  near clip plane: 0.2
   far clip plane: 1000
   field of view: 60
   orthographic: 0
