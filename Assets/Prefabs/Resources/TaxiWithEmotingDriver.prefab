@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2149938672200620344}
   - component: {fileID: 5759278930973193172}
   m_Layer: 0
-  m_Name: Taxi2
+  m_Name: TaxiWithEmotingDriver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4919620783473645054}
-  - {fileID: 4010290725653301543}
+  - {fileID: 4483387113629216748}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47,9 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {x: 0, y: 0, z: 0}
+  state: 0
   id: 0
   agentStatusTextPrefab: {fileID: 7420584253704279518, guid: 899bd1bc7108dcf4184794d900c5ba7b, type: 3}
---- !u!1001 &3471663260974362316
+--- !u!1001 &4157536786783111175
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -87,11 +88,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9945219
+      value: 0.99421674
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.10452837
+      value: -0.10739212
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
       propertyPath: m_LocalRotation.y
@@ -103,7 +104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -12
+      value: -12.33
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -113,23 +114,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 021b548590863b140bcfd04b08049284, type: 3}
       propertyPath: m_Name
-      value: blender-character-v5@Standing Greeting (1)
+      value: blender-character-v5@Standing Greeting
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -5568371526223589888, guid: 021b548590863b140bcfd04b08049284, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 021b548590863b140bcfd04b08049284, type: 3}
---- !u!4 &4010290725653301543 stripped
+--- !u!4 &4483387113629216748 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 021b548590863b140bcfd04b08049284, type: 3}
-  m_PrefabInstance: {fileID: 3471663260974362316}
+  m_PrefabInstance: {fileID: 4157536786783111175}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4920595967097841636
 PrefabInstance:

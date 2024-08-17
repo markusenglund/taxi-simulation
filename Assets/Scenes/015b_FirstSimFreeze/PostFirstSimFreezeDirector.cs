@@ -18,8 +18,8 @@ public class PostFirstSimFreezeDirector : MonoBehaviour
 
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.67f);
-    float timeWhenFocusPassengerSpawns = 3.0f;
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 6.33f);
+    float timeWhenFocusPassengerSpawns = 2.9f;
 
 
     Vector3 finalCameraPosition;
@@ -74,7 +74,7 @@ public class PostFirstSimFreezeDirector : MonoBehaviour
 
         float realDurationToWhenFocusPassengerSpawns = TimeUtils.ConvertSimulationHoursDurationToRealSeconds(timeWhenFocusPassengerSpawns);
         Debug.Log(realDurationToWhenFocusPassengerSpawns);
-        Vector3 passengerCameraPosition = new Vector3(2, 5, cityPosition.z + 3.5f);
+        Vector3 passengerCameraPosition = new Vector3(1.8f, 5, cityPosition.z + 4.6f);
         yield return new WaitForSeconds(realDurationToWhenFocusPassengerSpawns);
         Debug.Log("Focus passenger spawns");
         Time.timeScale = 0.1f;

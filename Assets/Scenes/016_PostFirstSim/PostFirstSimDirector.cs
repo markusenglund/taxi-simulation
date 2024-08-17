@@ -19,7 +19,7 @@ public class PostFirstSimDirector : MonoBehaviour
     // private float simulationStartTime = 0.1f;
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.67f);
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 6.33f);
 
     Vector3 firstCameraOffset = new Vector3(-1.8f, -0.1f, 0.1f);
 

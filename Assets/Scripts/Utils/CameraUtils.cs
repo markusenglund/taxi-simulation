@@ -151,11 +151,12 @@ public class CameraUtils : MonoBehaviour
 
     public static IEnumerator RotateCameraAroundMovingObject(Transform target, float distance, Vector3 axis, float angle, float duration, Ease ease = Ease.Cubic)
     {
-        float startTime = Time.time;
+        float startFrameCount = Time.frameCount;
+        float frameCountDuration = duration * 60;
         float prevT = 0;
-        while (Time.time < startTime + duration)
+        while (Time.frameCount < startFrameCount + frameCountDuration)
         {
-            float t = (Time.time - startTime) / duration;
+            float t = (Time.frameCount - startFrameCount) / frameCountDuration;
             if (ease == Ease.Cubic)
             {
                 t = EaseUtils.EaseInOutCubic(t);

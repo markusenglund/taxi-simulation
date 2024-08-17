@@ -10,39 +10,37 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c895f3cd3ce74493b83c995efd1ee3bb, type: 3}
-  m_Name: FirstSimSettings
+  m_Name: SimSettings
   m_EditorClassIdentifier: 
   useConstantSupplyMode: 1
   useConstantSurgeMultiplier: 1
   isActive: 1
-  randomSeed: 4
-  simulationLengthHours: 5
+  randomSeed: 1
+  simulationLengthHours: 4
   driverMaxSpeed: 40
   driverAcceleration: 1000
-  walkingSpeed: 3.5
-  publicTransportAverageSpeed: 20
+  walkingSpeed: 0.1
+  publicTransportAverageSpeed: 0.1
   publicTransportCost: 2.5
-  baseStartingFare: 6
+  baseStartingFare: 4
   baseFarePerKm: 1.5
   driverFareCutPercentage: 0.67
   driverMarginalCostPerKm: 0.13
-  numDrivers: 6
+  numDrivers: 0
   maxSessionLength: 4
-  passengerMedianIncome: 20
+  passengerMedianIncome: 2000
   passengerIncomeSigma: 0.9
-  demandIndexMultiplier: 1
+  demandIndexMultiplier: 5
   expectedPassengersByHour:
-  - 10
-  - 10
-  - 10
-  - 40
-  - 10
-  - 10
   - 0
-  showDriverEarnings: 0
+  - 0
+  - 0
+  - 0
+  - 0
+  showDriverEarnings: 1
   showPassengerCosts: 1
   showPassengerReactions: 1
   showSurgeMultiplier: 0
   showCityLabel: 0
-  passengerScale: 4
+  passengerScale: 0.6
   driverScale: 1

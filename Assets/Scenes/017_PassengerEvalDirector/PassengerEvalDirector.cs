@@ -17,7 +17,7 @@ public class PassengerEvalDirector : MonoBehaviour
     City city;
 
     Vector3 cityPosition = new Vector3(-4.5f, 0, 0f);
-    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 4.67f);
+    Vector3 focusPassengerPosition = new Vector3(0f - 4.5f, 1f, 6.33f);
     Vector3 firstCameraOffset = new Vector3(-1.8f, -0.1f, 0.1f);
     Vector3 zoomedInCameraOffset = new Vector3(-1.5f, -0.1f, -0.1f);
     float timeWhenFocusPassengerSpawns = 3.47f;
@@ -132,8 +132,11 @@ public class PassengerEvalDirector : MonoBehaviour
         StartCoroutine(CameraUtils.MoveCamera(focusPassengerPosition + zoomedInCameraOffset, 4, Ease.Cubic));
         yield return new WaitForFrames(4 * 60);
         // yield return new WaitForFrames(4 * 60);
-        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position + new Vector3(0, 0, -0.33f), Vector3.up, 10, duration: 10, Ease.Cubic));
-        yield return new WaitForFrames(10 * 60);
+        StartCoroutine(CameraUtils.RotateCameraAround(passenger.transform.position + new Vector3(0, 0, -0.33f), Vector3.up, 10, duration: 20, Ease.Cubic));
+        yield return new WaitForFrames(20 * 60);
+        Time.timeScale = 0.2f;
+        yield return new WaitForFrames(20 * 60);
+        EditorApplication.isPlaying = false;
     }
 
     IEnumerator SpawnPassengerStats(Passenger passenger)

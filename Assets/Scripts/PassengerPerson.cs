@@ -97,7 +97,7 @@ public class PassengerPerson
         destination = GridUtils.GetRandomPosition(random);
         if (simSettings.randomSeed == 4 && id == 55)
         {
-            startPosition = new Vector3(0, startPosition.y, 4.67f);
+            startPosition = new Vector3(0, startPosition.y, 6.33f);
             destination = new Vector3(6.33f, destination.y, 6);
         }
         this.startPosition = startPosition;
@@ -141,7 +141,7 @@ public class PassengerPerson
 
     PassengerEconomicParameters GenerateFakeEconomicParameters()
     {
-        float hourlyIncome = 13.40f;
+        float hourlyIncome = 16.40f;
 
         float timeSensitivity = 2.90f;
 
