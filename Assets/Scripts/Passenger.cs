@@ -44,7 +44,7 @@ public class Passenger : MonoBehaviour
     public static Passenger Create(PassengerPerson person, Transform prefab, Transform parentTransform, SimulationSettings simSettings, City? city, PassengerMode mode = PassengerMode.Active, float spawnDuration = 1f)
     {
 
-        (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition);
+        (Vector3 position, Quaternion rotation) = GetSideWalkPositionRotation(person.startPosition, person.id);
 
         Transform passengerTransform = Instantiate(prefab, parentTransform, false);
         passengerTransform.rotation = rotation;
@@ -109,7 +109,7 @@ public class Passenger : MonoBehaviour
         dressMaterials[1].color = accentColor;
         armMaterials[1].color = accentColor;
     }
-    private static (Vector3 position, Quaternion rotation) GetSideWalkPositionRotation(Vector3 roadPosition)
+    private static (Vector3 position, Quaternion rotation) GetSideWalkPositionRotation(Vector3 roadPosition, int passengerId)
     {
         float positionX = roadPosition.x;
         float positionZ = roadPosition.z;
@@ -120,13 +120,13 @@ public class Passenger : MonoBehaviour
         {
             if (isVerticalRoad)
             {
-                positionZ = roadPosition.z + .23f;
-                rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
+                positionZ = roadPosition.z + (passengerId % 2 == 0 ? -.23f : .23f);
+                rotation = Quaternion.LookRotation(new Vector3(0, 0, passengerId % 2 == 0 ? 1 : -1));
             }
             if (isHorizontalRoad)
             {
-                positionX = roadPosition.x + .23f;
-                rotation = Quaternion.LookRotation(new Vector3(-1, 0, 0));
+                positionX = roadPosition.x + (passengerId % 2 == 0 ? -.23f : .23f);
+                rotation = Quaternion.LookRotation(new Vector3(passengerId % 2 == 0 ? 1 : -1, 0, 0));
             }
 
         }
@@ -395,7 +395,7 @@ public class Passenger : MonoBehaviour
         transform.SetParent(parentTransform);
         float startTime = Time.time;
         Vector3 startPosition = transform.localPosition;
-        Vector3 finalPosition = GetSideWalkPositionRotation(person.destination).position;
+        Vector3 finalPosition = GetSideWalkPositionRotation(person.destination, this.person.id).position;
 
         Quaternion startRotation = transform.localRotation;
         Quaternion finalRotation = Quaternion.LookRotation(finalPosition - new Vector3(startPosition.x, GridUtils.curbHeight, startPosition.z), Vector3.up);
