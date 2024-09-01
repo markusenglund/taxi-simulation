@@ -218,6 +218,7 @@ public class MegaSimulationDirector : MonoBehaviour
         yield return new WaitForSeconds(8f);
         InstantiateTimeSensitivityBarGraph();
         yield return new WaitForFrames(Mathf.FloorToInt(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2.6f) * 60));
+        yield return new WaitForFrames(10 * 60);
         InstantiateIncomeBarGraph();
 
         yield return new WaitForFrames(20 * 60);
