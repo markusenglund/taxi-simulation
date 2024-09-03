@@ -83,7 +83,7 @@ public class LineUpDirector : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         // Get all passenger who don't have state BeforeSpawn or Idling
-        Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
+        Passenger[] passengers = city.SpawnSavedPassengers("016").Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         Passenger focusPassenger = Array.Find(passengers, p => p.person.id == 44);
         StartCoroutine(SpawnFocusPassengerStats(focusPassenger));
         Vector3 cameraPosition = new Vector3(0f, 4, -12);

@@ -268,9 +268,9 @@ public class City : MonoBehaviour
         }
     }
 
-    public Passenger[] SpawnSavedPassengers()
+    public Passenger[] SpawnSavedPassengers(string version)
     {
-        PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simulationSettings.randomSeed + "_016");
+        PassengerPerson[] savedPersons = SaveData.LoadObject<PassengerPerson[]>(simulationSettings.randomSeed + "_" + version);
 
         foreach (PassengerPerson person in savedPersons)
         {

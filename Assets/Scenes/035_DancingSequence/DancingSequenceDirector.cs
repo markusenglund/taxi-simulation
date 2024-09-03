@@ -58,21 +58,33 @@ public class DancingSequenceDirector : MonoBehaviour
 
     void Start()
     {
-        Vector3 chartFirstCameraPosition = new Vector3(4.5f, 1, -10);
-        Quaternion chartFirstCameraRotation = Quaternion.LookRotation(canvasPosition - chartFirstCameraPosition, Vector3.up);
-        Camera.main.transform.position = chartFirstCameraPosition;
-        Camera.main.transform.rotation = chartFirstCameraRotation;
         StartCoroutine(Scene());
     }
 
     IEnumerator Scene()
     {
+        Vector3 position1 = new Vector3(0, 0.4f, -0.1f);
+        Quaternion rotation1 = Quaternion.Euler(18f, 49f, 0);
+
+        Vector3 position2 = new Vector3(1.2f, 0.38f, -0.25f);
+        Quaternion rotation2 = Quaternion.Euler(11, -9.6f, 0);
+
+        Vector3 position3 = new Vector3(-0.43f, 0.35f, 6);
+        Quaternion rotation3 = Quaternion.Euler(9, 71, 0);
+
+        Vector3 position4 = new Vector3(4.5f, 11.3f, 4.5f);
+        Quaternion rotation4 = Quaternion.Euler(90, 90, 0);
+
+        Vector3 position5 = new Vector3(4.5f, 200, 4.5f);
+
+        Camera.main.transform.position = position1;
+        Camera.main.transform.rotation = rotation1;
+
         yield return new WaitForSeconds(0.01f);
         // Get all passenger who don't have state BeforeSpawn or Idling
-        Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
+        Passenger[] passengers = city.SpawnSavedPassengers("020").Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         RemovePassengerCollisions(passengers);
-        // Passenger focusPassenger = Array.Find(passengers, p => p.person.id == 44);
-        // Get the passenger with the highest time sensitivity stat
+
         Passenger focusPassenger = passengers.FirstOrDefault(p => p.person.id == 55);
         // MovePassengersToLineUp(passengers);
         StartDancing(passengers);
@@ -85,9 +97,23 @@ public class DancingSequenceDirector : MonoBehaviour
         {
             Debug.Log("Passenger with id 55 not found.");
         }
-        StartCoroutine(FadeInCanvas());
-        // StartCoroutine(TriggerIdleVariations(passengers));
-        yield return new WaitForSeconds(100f);
+        Vector3 twerkingPassengerPosition = new Vector3(0.33f, 0.075f, 0.23f);
+        StartCoroutine(CameraUtils.RotateCameraAround(twerkingPassengerPosition, Vector3.up, -40, 8, Ease.Linear));
+        yield return new WaitForSeconds(7.4f);
+        StartCoroutine(CameraUtils.MoveCamera(position2, 0.6f, Ease.Cubic));
+        yield return new WaitForSeconds(0.6f);
+        Vector3 sadPassengerPosition = new Vector3(1.33f, 0.075f, 0.23f);
+        StartCoroutine(CameraUtils.RotateCameraAround(sadPassengerPosition, Vector3.up, -15, 4, Ease.QuadraticOut));
+        yield return new WaitForSeconds(4f);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(position3, rotation3, 1.5f, Ease.Cubic));
+        Vector3 evanPosition = focusPassenger.transform.position;
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(CameraUtils.RotateCameraAround(evanPosition, Vector3.up, 25, 5, Ease.Linear));
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(CameraUtils.MoveAndRotateCameraLocal(position4, rotation4, 4f, Ease.Linear));
+        yield return new WaitForSeconds(4f);
+        StartCoroutine(CameraUtils.MoveCamera(position5, 20f, Ease.Linear));
+        yield return new WaitForSeconds(10f);
         // Stop playing
         UnityEditor.EditorApplication.isPlaying = false;
     }
@@ -97,13 +123,33 @@ public class DancingSequenceDirector : MonoBehaviour
         int i = 1;
         foreach (Passenger passenger in passengers)
         {
+            Vector3 pointAbovePassengersHead = new Vector3(0, 0.36f, 0);
+            // Vector3 awayFromCamera = (passenger.transform.position - Camera.main.transform.position).normalized * 0.05f;
+            // awayFromCamera.y = 0;
+            Vector3 reactionPosition = pointAbovePassengersHead;
+
             Animator passengerAnimator = passenger.GetComponentInChildren<Animator>();
             if (passenger.person.trip != null)
             {
-                passengerAnimator.SetTrigger("Celebrate" + i);
+                if (passenger.person.id == 65)
+                {
+                    passengerAnimator.SetTrigger("Celebrate5");
+                }
+                else if (passenger.person.id == 55)
+                {
+                    passengerAnimator.SetTrigger("Celebrate2");
+                }
+                else
+                {
+                    passengerAnimator.SetTrigger("Celebrate" + i);
+                }
+                string reaction = "🙂";
+                AgentOverheadReaction.Create(passenger.transform.GetChild(0).transform, reactionPosition, reaction, ColorScheme.green, isBold: true, durationBeforeFade: 100f);
             }
             else
             {
+                string reaction = "🙁";
+                AgentOverheadReaction.Create(passenger.transform, reactionPosition, reaction, ColorScheme.surgeRed, isBold: true, durationBeforeFade: 100f);
                 passengerAnimator.SetTrigger("Cry");
             }
             i++;
@@ -154,27 +200,6 @@ public class DancingSequenceDirector : MonoBehaviour
         }
     }
 
-    IEnumerator TriggerIdleVariations(Passenger[] passengers)
-    {
-        while (true)
-        {
-            // Pick a random passenger
-            Passenger randomPassenger1 = passengers[random.Next(passengers.Length)];
-            Animator passengerAnimator = randomPassenger1.GetComponentInChildren<Animator>();
-            passengerAnimator.SetTrigger("IdleVariation1");
-            yield return new WaitForSeconds(2f);
-            Passenger randomPassenger2 = passengers[random.Next(passengers.Length)];
-            Animator passengerAnimator2 = randomPassenger2.GetComponentInChildren<Animator>();
-            passengerAnimator2.SetTrigger("IdleVariation2");
-            yield return new WaitForSeconds(1f);
-
-            Passenger randomPassenger3 = passengers[random.Next(passengers.Length)];
-            Animator passengerAnimator3 = randomPassenger3.GetComponentInChildren<Animator>();
-            passengerAnimator3.SetTrigger("IdleVariation1");
-            yield return new WaitForSeconds(2f);
-        }
-    }
-
     void RemovePassengerCollision(Passenger passenger)
     {
         Vector3 position = passenger.transform.position;
@@ -185,7 +210,7 @@ public class DancingSequenceDirector : MonoBehaviour
             isEndPositionFree = true;
             foreach (Vector3 existingPosition in passengerPositions)
             {
-                if (Vector3.Distance(existingPosition, position) < 0.35f / 4f)
+                if (Vector3.Distance(existingPosition, position) < 0.55f / 4f)
                 {
                     position = position + new Vector3(0, 0, 0.05f);
                     isEndPositionFree = false;

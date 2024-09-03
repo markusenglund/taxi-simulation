@@ -67,7 +67,7 @@ public class LineUp2Director : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         // Get all passenger who don't have state BeforeSpawn or Idling
-        Passenger[] passengers = city.SpawnSavedPassengers().Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
+        Passenger[] passengers = city.SpawnSavedPassengers("016").Where(p => p.person.state != PassengerState.BeforeSpawn && p.person.state != PassengerState.Idling).ToArray();
         // Passenger focusPassenger = Array.Find(passengers, p => p.person.id == 44);
         // Get the passenger with the highest time sensitivity stat
         Passenger focusPassenger = passengers.FirstOrDefault(p => p.person.id == 55);
