@@ -206,7 +206,7 @@ public class Passenger : MonoBehaviour
 
     void MakeTripDecision()
     {
-        Debug.Log("Passenger " + person.id + " is making a trip decision at start position " + person.startPosition);
+        // Debug.Log("Passenger " + person.id + " is making a trip decision at start position " + person.startPosition);
         (RideOffer? rideOffer, Driver? driver, int numTripsAssigned) = city.RequestRideOffer(person.startPosition, person.destination);
 
         if (rideOffer == null)

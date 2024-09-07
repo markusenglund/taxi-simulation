@@ -240,8 +240,67 @@ public class DataInspection : MonoBehaviour
         Debug.Log("Utility difference due to passenger difference: " + utilityDifferenceDueToPassengerDifference);
         Debug.Log("Utility difference due to passenger difference per passenger: " + utilityDifferenceDueToPassengerDifference / numStaticPassengersWhoGotRides);
 
-        ShowSurplusDifferenceCausedByAllocation(staticCities, surgeCities, staticAverageValueOfTime);
+        // ShowSurplusDifferenceCausedByAllocation(staticCities, surgeCities, staticAverageValueOfTime);
+        ShowSurplusBucketInfo(staticCities, surgeCities);
+    }
 
+    private static void ShowSurplusBucketInfo(City[] staticCities, City[] surgeCities)
+    {
+        float[] hourlyIncomeQuartileThresholds = new float[] { 12.72f, 20f, 33.36f, float.PositiveInfinity };
+
+        GetPassengerValue getHourlyIncome = (PassengerPerson passenger) => passenger.economicParameters.hourlyIncome;
+
+        SimStatistic[] surgeBuckets = new SimStatistic[4];
+        SimStatistic[] staticBuckets = new SimStatistic[4];
+        for (int i = 0; i < 4; i++)
+        {
+            surgeBuckets[i] = DataInspection.GetSurplusBucketInfo(surgeCities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+            staticBuckets[i] = DataInspection.GetSurplusBucketInfo(staticCities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
+        }
+        Debug.Log($"Poorest quartile - Static avg: {staticBuckets[0].value / staticBuckets[0].totalNumPassengers}, Surge avg: {surgeBuckets[0].value / surgeBuckets[0].totalNumPassengers}");
+        // Debug.Log($"Poorest quartile static - number of Uber passengers: {staticBuckets[0].sampleSize}, number of total passengers: {staticBuckets[0].totalNumPassengers} total surplus: {staticBuckets[0].value}");
+        // Debug.Log($"Poorest quartile surge - number of passengers: {surgeBuckets[0].totalNumPassengers}, total surplus: {surgeBuckets[0].value}");
+        Debug.Log($"Second quartile - Static avg: {staticBuckets[1].value / staticBuckets[1].totalNumPassengers}, Surge avg: {surgeBuckets[1].value / surgeBuckets[1].totalNumPassengers}");
+        Debug.Log($"Third quartile - Static avg: {staticBuckets[2].value / staticBuckets[2].totalNumPassengers}, Surge avg: {surgeBuckets[2].value / surgeBuckets[2].totalNumPassengers}");
+        Debug.Log($"Richest quartile - Static avg: {staticBuckets[3].value / staticBuckets[3].totalNumPassengers}, Surge avg: {surgeBuckets[3].value / surgeBuckets[3].totalNumPassengers}");
+    }
+
+    public static SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)
+    {
+        PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
+
+        PassengerPerson[] passengersWhoCompletedJourney = passengers.Where(passenger => passenger.state == PassengerState.DroppedOff).ToArray();
+        // Don't count passengers who are queued to get a ride (trip state = DriverAssigned)
+        PassengerPerson[] passengersWhoAreWaitingOrInTransit = passengers.Where(passenger => passenger.state == PassengerState.AssignedToTrip && (passenger.trip.state == TripState.DriverEnRoute || passenger.trip.state == TripState.DriverWaiting || passenger.trip.state == TripState.OnTrip)).ToArray();
+
+
+        List<PassengerPerson> passengersInQuartileWhoCompletedJourney = new List<PassengerPerson>();
+        List<PassengerPerson> passengersInQuartileWhoAreWaitingOrInTransit = new List<PassengerPerson>();
+        List<PassengerPerson> passengersInQuartile = new List<PassengerPerson>();
+        if (quartile == 0)
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartile = passengers.Where(passenger => getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+        else
+        {
+            passengersInQuartileWhoCompletedJourney = passengersWhoCompletedJourney.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartileWhoAreWaitingOrInTransit = passengersWhoAreWaitingOrInTransit.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+            passengersInQuartile = passengers.Where(passenger => getValue(passenger) >= quartileThresholds[quartile - 1] && getValue(passenger) < quartileThresholds[quartile]).ToList();
+        }
+
+        float aggregateSurplus = passengersInQuartileWhoCompletedJourney.Sum(passenger => passenger.trip.droppedOffPassengerData.valueSurplus) + passengersInQuartileWhoAreWaitingOrInTransit.Sum(passenger => passenger.trip.tripCreatedPassengerData.expectedValueSurplus);
+        // float aggregateExpectedSurplus = passengersWhoAreWaitingOrInTransit
+        int sampleSize = passengersInQuartileWhoCompletedJourney.Count + passengersInQuartileWhoAreWaitingOrInTransit.Count;
+        int totalNumPassengers = passengersInQuartile.Count;
+
+        return new SimStatistic
+        {
+            value = aggregateSurplus,
+            sampleSize = sampleSize,
+            totalNumPassengers = totalNumPassengers
+        };
     }
 
 }

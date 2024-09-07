@@ -86,7 +86,8 @@ public class AgentOverheadReaction : MonoBehaviour
     public static AgentOverheadReaction Create(Transform parent, Vector3 positionOffset, string text, Color color, bool isBold = false, float durationBeforeFade = 0.8f, bool addPadding = false, bool receivedOffer = true)
     {
         Transform statTextPrefab = Resources.Load<Transform>("AgentReaction");
-        Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity, parent);
+        Transform agentStatusText = Instantiate(statTextPrefab, parent.position + positionOffset, Quaternion.identity);
+        agentStatusText.parent = parent;
         AgentOverheadReaction agentStatusTextComponent = agentStatusText.GetComponent<AgentOverheadReaction>();
         agentStatusTextComponent.text = text;
         agentStatusTextComponent.color = color;
