@@ -258,11 +258,14 @@ public class DataInspection : MonoBehaviour
             staticBuckets[i] = DataInspection.GetSurplusBucketInfo(staticCities, i, getHourlyIncome, hourlyIncomeQuartileThresholds);
         }
         Debug.Log($"Poorest quartile - Static avg: {staticBuckets[0].value / staticBuckets[0].totalNumPassengers}, Surge avg: {surgeBuckets[0].value / surgeBuckets[0].totalNumPassengers}");
-        // Debug.Log($"Poorest quartile static - number of Uber passengers: {staticBuckets[0].sampleSize}, number of total passengers: {staticBuckets[0].totalNumPassengers} total surplus: {staticBuckets[0].value}");
-        // Debug.Log($"Poorest quartile surge - number of passengers: {surgeBuckets[0].totalNumPassengers}, total surplus: {surgeBuckets[0].value}");
         Debug.Log($"Second quartile - Static avg: {staticBuckets[1].value / staticBuckets[1].totalNumPassengers}, Surge avg: {surgeBuckets[1].value / surgeBuckets[1].totalNumPassengers}");
         Debug.Log($"Third quartile - Static avg: {staticBuckets[2].value / staticBuckets[2].totalNumPassengers}, Surge avg: {surgeBuckets[2].value / surgeBuckets[2].totalNumPassengers}");
         Debug.Log($"Richest quartile - Static avg: {staticBuckets[3].value / staticBuckets[3].totalNumPassengers}, Surge avg: {surgeBuckets[3].value / surgeBuckets[3].totalNumPassengers}");
+
+        Debug.Log($"Poorest quartile - percentage change: {((surgeBuckets[0].value - staticBuckets[0].value) / staticBuckets[0].value) * 100}%");
+        Debug.Log($"Second quartile - percentage change: {((surgeBuckets[1].value - staticBuckets[1].value) / staticBuckets[1].value) * 100}%");
+        Debug.Log($"Third quartile - percentage change: {((surgeBuckets[2].value - staticBuckets[2].value) / staticBuckets[2].value) * 100}%");
+        Debug.Log($"Richest quartile - percentage change: {((surgeBuckets[3].value - staticBuckets[3].value) / staticBuckets[3].value) * 100}%");
     }
 
     public static SimStatistic GetSurplusBucketInfo(City[] cities, int quartile, GetPassengerValue getValue, float[] quartileThresholds)

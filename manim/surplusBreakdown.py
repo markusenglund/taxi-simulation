@@ -106,3 +106,107 @@ class SurplusBreakdownFlip(Scene):
       self.play(chart.animate.change_bar_values(excess_supply_values), run_time=1)
       self.play(FadeIn(get_bar_labels()))
       self.wait(3)
+
+
+
+excess_demand_percentage_changes = [-49, -32, -15, 12]
+excess_supply_percentage_changes = [44, 31, 25, 14]
+class QuartileSurplusChangeBreakdown(Scene):
+    def construct(self):
+      label_constructor=lambda text: prefix_label(text)
+      self.camera.background_color = "#444444"
+      values=[-0.01, -0.01, -0.01, 0]
+      bar_names = ["Lowest income", "Lower middle income",  "Upper middle income", "Highest income"]      
+      chart = BarChart(
+          values,
+          bar_names=bar_names,
+          y_range=[-50, 50, 25],
+          y_length=6,
+          x_length=12,
+          bar_fill_opacity=1,
+          y_axis_config={
+            "font_size": 24,
+            "label_constructor": Text,
+            "exclude_origin_tick": False,
+            "include_ticks": True,
+            # "include_numbers": False,
+          },
+          x_axis_config={
+            "font_size": 21,
+            "label_constructor": Text,
+          },
+          bar_colors=[ORANGE, ORANGE, ORANGE, GREEN]
+      ).shift(UP*0)
+      heading = Text("Change in welfare for different income groups (%)", font_size = 40).shift(UP*3.5)
+      self.add(heading)
+      self.add(chart)
+      def prefix_label(text):
+        if "-" not in text:
+          return Text("+" + text + "%")
+        return Text(text + "%")
+      def get_bar_labels():
+        return chart.get_bar_labels(font_size=24, label_constructor=label_constructor)
+        
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes[0:1]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:1]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes[0:2]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:2]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes[0:3]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:3]))
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes), run_time=1)
+      self.play(FadeIn(get_bar_labels()))
+
+      self.wait(1)
+
+      self.play(chart.animate.change_bar_values(excess_supply_percentage_changes), run_time=1)
+      self.play(FadeIn(get_bar_labels()))
+      self.wait(3)
+
+
+class QuartileSurplusChangeBreakdownFlip(Scene):
+    def construct(self):
+      label_constructor=lambda text: prefix_label(text)
+      self.camera.background_color = "#444444"
+      values = [0, 0, 0, 0]
+      bar_names = ["Lowest income", "Lower middle income",  "Upper middle income", "Highest income"]      
+      chart = BarChart(
+          values=values,
+          bar_names=bar_names,
+          y_range=[-50, 50, 25],
+          y_length=6,
+          x_length=12,
+          bar_fill_opacity=1,
+          y_axis_config={
+            "font_size": 24,
+            "label_constructor": Text,
+            "exclude_origin_tick": False,
+            "include_ticks": True,
+            # "include_numbers": False,
+          },
+          x_axis_config={
+            "font_size": 21,
+            "label_constructor": Text,
+          },
+          bar_colors=[GREEN, GREEN, GREEN, GREEN]
+      ).shift(UP*0)
+      heading = Text("Change in welfare for different income groups (%)", font_size = 40).shift(UP*3.5)
+      self.add(heading)
+      self.add(chart)
+      def prefix_label(text):
+        if "-" not in text:
+          return Text("+" + text + "%")
+        return Text(text + "%")
+      def get_bar_labels():
+        return chart.get_bar_labels(font_size=24, label_constructor=label_constructor)
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes), run_time=1)
+
+      self.wait(1)
+      self.play(chart.animate.change_bar_values(excess_supply_percentage_changes), run_time=1)
+      self.play(FadeIn(get_bar_labels()))
+
+      self.wait(3)
