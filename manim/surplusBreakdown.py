@@ -149,15 +149,9 @@ class QuartileSurplusChangeBreakdown(Scene):
         
       self.wait(1)
       self.play(chart.animate.change_bar_values(excess_demand_percentage_changes[0:1]), run_time=1)
-      self.play(FadeIn(get_bar_labels()[0:1]))
-      self.wait(1)
-      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes[0:2]), run_time=1)
-      self.play(FadeIn(get_bar_labels()[0:2]))
-      self.wait(1)
-      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes[0:3]), run_time=1)
-      self.play(FadeIn(get_bar_labels()[0:3]))
-      self.wait(1)
-      self.play(chart.animate.change_bar_values(excess_demand_percentage_changes), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:1]), chart.animate.change_bar_values(excess_demand_percentage_changes[0:2]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:2]), chart.animate.change_bar_values(excess_demand_percentage_changes[0:3]), run_time=1)
+      self.play(FadeIn(get_bar_labels()[0:3]), chart.animate.change_bar_values(excess_demand_percentage_changes), run_time=1)
       self.play(FadeIn(get_bar_labels()))
 
       self.wait(1)
