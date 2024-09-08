@@ -11,7 +11,7 @@ public class FinalResultsDirector : MonoBehaviour
     [SerializeField] public SimulationSettings surgePriceSettings;
     [SerializeField] public GraphSettings graphSettings;
 
-    float simulationStartTime = 5;
+    float simulationStartTime = 15;
 
     List<City> staticCities = new List<City>();
     List<City> surgeCities = new List<City>();
@@ -19,7 +19,7 @@ public class FinalResultsDirector : MonoBehaviour
     Vector3 city1Position = new Vector3(0f, 0, 0f);
     Vector3 city2Position = new Vector3(12f, 0, 0f);
     Vector3 middlePosition = new Vector3(6 + 4.5f, 0, 4.5f);
-    Vector3 cameraPosition = new Vector3(30f, 7f, 4.5f);
+    Vector3 cameraPosition = new Vector3(24f, 7f, 4.5f);
 
     BucketGraph bucketGraph;
     DriverUberGraph driverUberGraph;
@@ -54,12 +54,12 @@ public class FinalResultsDirector : MonoBehaviour
     {
 
         Camera.main.transform.position = cameraPosition;
-        Vector3 cameraLookAtPosition = middlePosition + Vector3.up * -8f;
-        Camera.main.transform.LookAt(cameraLookAtPosition);
+        Quaternion startRotation = Quaternion.Euler(37.5f, -65, 10);
+        Camera.main.transform.rotation = startRotation;
+        // Vector3 cameraLookAtPosition = middlePosition + Vector3.up * -8f;
+        // Camera.main.transform.LookAt(cameraLookAtPosition);
         StartCoroutine(Scene());
-        InstantiateIncomeGraph();
-        InstantiateSurplusBucketGraph();
-        InstantiateTotalSurplusGraph();
+        // InstantiateTotalSurplusGraph();
         StartCoroutine(InspectData());
     }
 
@@ -186,6 +186,7 @@ public class FinalResultsDirector : MonoBehaviour
         };
 
         driverUberGraph = DriverUberGraph.Create(staticCities.ToArray(), surgeCities.ToArray(), new Vector3(2620, 500), "Producer surplus", GetUberIncome, GetDriverIncome, formatIncome);
+        driverUberGraph.transform.SetAsFirstSibling();
     }
 
     void InstantiateTotalSurplusGraph()
@@ -239,21 +240,28 @@ public class FinalResultsDirector : MonoBehaviour
     IEnumerator Scene()
     {
         StartCoroutine(SetSimulationStart());
-        Vector3 newPosition = Camera.main.transform.position + new Vector3(0, 0, 70);
-        StartCoroutine(CameraUtils.MoveCamera(newPosition, 120, Ease.Quadratic));
-        yield return new WaitForSeconds(1);
+        Vector3 newPosition = Camera.main.transform.position + new Vector3(6, 0, 15);
+        StartCoroutine(CameraUtils.MoveCamera(newPosition, 15, Ease.Linear));
+        yield return new WaitForSeconds(8);
+        StartCoroutine(CameraUtils.RotateCamera(Quaternion.Euler(37.5f, -90, 0), 14, Ease.Cubic));
+        yield return new WaitForSeconds(7);
+
+        InstantiateSurplusBucketGraph();
         StartCoroutine(bucketGraph.FadeInDeltaLabels(duration: 1));
+        StartCoroutine(CameraUtils.MoveCamera(Camera.main.transform.position + new Vector3(0, 0, 120), 120, Ease.Linear));
+        yield return new WaitForSeconds(7);
+        InstantiateIncomeGraph();
         StartCoroutine(driverUberGraph.FadeInDeltaLabels(duration: 1));
-        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2f) + simulationStartTime - 1);
+        yield return new WaitForSeconds(TimeUtils.ConvertSimulationHoursDurationToRealSeconds(2f) - 7);
         Time.timeScale = 0;
         yield return new WaitForFrames(60 * 2);
         StartCoroutine(bucketGraph.scaleGraph(2.3f, new Vector2(1900, 1080)));
-        yield return new WaitForFrames(60 * 5);
+        yield return new WaitForFrames(60 * 6);
         StartCoroutine(bucketGraph.scaleGraph(1, new Vector2(1200, 500)));
         yield return new WaitForFrames(60 * 2);
         Time.timeScale = 1;
         yield return new WaitForFrames(Mathf.FloorToInt(60f * TimeUtils.ConvertSimulationHoursDurationToRealSeconds(3)));
-        yield return new WaitForFrames(25 * 60);
+        yield return new WaitForFrames(35 * 60);
         UnityEditor.EditorApplication.isPlaying = false;
 
     }

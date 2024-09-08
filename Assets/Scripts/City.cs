@@ -76,7 +76,7 @@ public class City : MonoBehaviour
     {
         passengerSpawnRandom = new Random(simulationSettings.randomSeed);
         driverSpawnRandom = new Random(simulationSettings.randomSeed);
-        // GridUtils.GenerateStreetGrid(this.transform);
+        GridUtils.GenerateStreetGrid(this.transform);
         driverPool = new DriverPool(this);
 
         if (graphSettings.showGraphs)
@@ -106,7 +106,7 @@ public class City : MonoBehaviour
 
     void Update()
     {
-        SpawnAndRemoveDrivers();
+        // SpawnAndRemoveDrivers();
         EndSimulation();
     }
 

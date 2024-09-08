@@ -114,7 +114,7 @@ public class DriverUberGraph : MonoBehaviour
             driverDeltaRectTransform.anchoredPosition = new Vector2(driverDeltaRectTransform.anchoredPosition.x, ConvertValueToGraphPosition(driverIncomeSurge.value) + 170);
 
             // Set the z-rotation of the delta label arrow based on the delta value
-            float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-200, 200, driverDelta));
+            float rotation = Mathf.Lerp(-135, -45, Mathf.InverseLerp(-0.3f, 0.3f, driverDeltaPercentage));
             deltaLabels[0].Find("Arrow").localRotation = Quaternion.Euler(0, 0, rotation);
 
 
