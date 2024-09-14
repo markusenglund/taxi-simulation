@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 #nullable enable
+
 
 public enum DespawnReason
 {
@@ -30,6 +32,8 @@ public class Passenger : MonoBehaviour
     private City city;
 
     private Transform parentTransform;
+
+
 
     public PassengerPerson person;
 
@@ -207,8 +211,8 @@ public class Passenger : MonoBehaviour
     void MakeTripDecision()
     {
         // Debug.Log("Passenger " + person.id + " is making a trip decision at start position " + person.startPosition);
-        (RideOffer? rideOffer, Driver? driver, int numTripsAssigned) = city.RequestRideOffer(person.startPosition, person.destination);
-
+        (RideOffer? rideOffer, Driver? driver, int numTripsAssigned, int numIdleDrivers) = city.RequestRideOffer(person.startPosition, person.destination);
+        city.idleDriversData.Add(numIdleDrivers);
         if (rideOffer == null)
         {
             person.SetState(PassengerState.NoRideOffer);
@@ -235,7 +239,8 @@ public class Passenger : MonoBehaviour
                 expectedTripTime = rideOffer.expectedTripTime,
                 fare = rideOffer.fare,
                 expectedPickupTime = expectedPickupTime,
-                numTripsAssigned = numTripsAssigned
+                numTripsAssigned = numTripsAssigned,
+                numIdleDrivers = numIdleDrivers
             };
             float expectedTotalTime = rideOffer.expectedWaitingTime + rideOffer.expectedTripTime;
             float expectedWaitingCost = rideOffer.expectedWaitingTime * person.economicParameters.valueOfTime;

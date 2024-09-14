@@ -208,8 +208,8 @@ public class SurplusSimulationDirector : MonoBehaviour
         {
             yield return new WaitForFrames(5 * 60);
             DataInspection.ShowSurplusBreakdown(staticCities.ToArray(), surgeCities.ToArray());
-            // City[] allCities = staticCities.Concat(surgeCities).ToArray();
-            // DataInspection.GetAverageWaitingTimeByNumAssignedTrips(allCities);
+            City[] allCities = staticCities.Concat(surgeCities).ToArray();
+            DataInspection.GetAverageWaitingTimeByNumIdleDrivers(allCities);
         }
     }
 

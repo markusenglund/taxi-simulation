@@ -11,39 +11,39 @@ public class WaitingTimeData
 public class DataInspection : MonoBehaviour
 {
 
-    public static Dictionary<int, WaitingTimeData> GetAverageWaitingTimeByNumAssignedTrips(City[] cities)
+    public static Dictionary<int, WaitingTimeData> GetAverageWaitingTimeByNumIdleDrivers(City[] cities)
     {
         List<Trip> trips = cities.SelectMany(city => city.GetTrips()).ToList();
-        Dictionary<int, float[]> waitingTimesByNumAssignedTrips = new Dictionary<int, float[]>();
+        Dictionary<int, float[]> waitingTimesByNumIdleDrivers = new Dictionary<int, float[]>();
         foreach (Trip trip in trips)
         {
-            int numAssignedTrips = trip.tripCreatedData.numTripsAssigned;
-            if (!waitingTimesByNumAssignedTrips.ContainsKey(numAssignedTrips))
+            int numIdleDrivers = trip.tripCreatedData.numIdleDrivers;
+            if (!waitingTimesByNumIdleDrivers.ContainsKey(numIdleDrivers))
             {
-                waitingTimesByNumAssignedTrips[numAssignedTrips] = new float[] { trip.tripCreatedData.expectedWaitingTime };
+                waitingTimesByNumIdleDrivers[numIdleDrivers] = new float[] { trip.tripCreatedData.expectedWaitingTime };
             }
             else
             {
-                waitingTimesByNumAssignedTrips[numAssignedTrips] = waitingTimesByNumAssignedTrips[numAssignedTrips].Append(trip.tripCreatedData.expectedWaitingTime).ToArray();
+                waitingTimesByNumIdleDrivers[numIdleDrivers] = waitingTimesByNumIdleDrivers[numIdleDrivers].Append(trip.tripCreatedData.expectedWaitingTime).ToArray();
             }
         }
 
-        Dictionary<int, WaitingTimeData> averageWaitingTimeByNumAssignedTrips = new Dictionary<int, WaitingTimeData>();
-        foreach (KeyValuePair<int, float[]> entry in waitingTimesByNumAssignedTrips)
+        Dictionary<int, WaitingTimeData> averageWaitingTimeByNumIdleDrivers = new Dictionary<int, WaitingTimeData>();
+        foreach (KeyValuePair<int, float[]> entry in waitingTimesByNumIdleDrivers)
         {
-            int numAssignedTrips = entry.Key;
+            int numIdleDrivers = entry.Key;
             float[] waitingTimes = entry.Value;
             float averageWaitingTime = waitingTimes.Average();
-            averageWaitingTimeByNumAssignedTrips[numAssignedTrips] = new WaitingTimeData
+            averageWaitingTimeByNumIdleDrivers[numIdleDrivers] = new WaitingTimeData
             {
                 sampleSize = waitingTimes.Length,
                 averageWaitingTime = averageWaitingTime
             };
 
-            Debug.Log($"Num assigned trips: {numAssignedTrips}, Average waiting time: {(averageWaitingTime * 60).ToString()}, sample size: {waitingTimes.Length}");
+            Debug.Log($"Num idle drivers: {numIdleDrivers}, Average waiting time: {(averageWaitingTime * 60).ToString()}, sample size: {waitingTimes.Length}");
         }
 
-        return averageWaitingTimeByNumAssignedTrips;
+        return averageWaitingTimeByNumIdleDrivers;
 
     }
 
@@ -78,7 +78,7 @@ public class DataInspection : MonoBehaviour
         return (aggregateFaresPaid, averageFarePaid);
     }
 
-    private static (float, float, float) GetWaitingTime(City[] cities)
+    private static (float, float, float, float) GetWaitingTime(City[] cities)
     {
         PassengerPerson[] passengers = cities.SelectMany(city => city.GetPassengerPeople()).ToArray();
         PassengerPerson[] passengersWhoGotRide = passengers.Where(passenger => passenger.StartedTrip()).ToArray();
@@ -91,7 +91,10 @@ public class DataInspection : MonoBehaviour
         float averageEnRouteDistance = aggregateEnRouteDistance / passengersWhoGotRide.Length;
         Debug.Log("Average en route distance: " + averageEnRouteDistance);
 
-        return (aggregateWaitingTime, averageWaitingTime, averageValueOfTime);
+        int aggregateNumIdleDrivers = passengersWhoGotRide.Sum(passenger => passenger.trip.tripCreatedData.numIdleDrivers);
+        float averageNumIdleDrivers = (float)aggregateNumIdleDrivers / passengersWhoGotRide.Length;
+
+        return (aggregateWaitingTime, averageWaitingTime, averageValueOfTime, averageNumIdleDrivers);
     }
 
     private static float GetNumberOfRides(City[] cities)
@@ -209,12 +212,29 @@ public class DataInspection : MonoBehaviour
         Debug.Log("Average surge fare paid: " + surgeAverageFarePaid);
         Debug.Log("Utility difference due to fares: " + utilityDifferenceDueToFares);
 
-        (float staticAggregateWaitingTime, float staticAverageWaitingTime, float staticAverageValueOfTime) = GetWaitingTime(staticCities);
-        (float surgeAggregateWaitingTime, float surgeAverageWaitingTime, float surgeAverageValueOfTime) = GetWaitingTime(surgeCities);
+        (float staticAggregateWaitingTime, float staticAverageWaitingTime, float staticAverageValueOfTime, float staticAverageNumIdleDrivers) = GetWaitingTime(staticCities);
+        (float surgeAggregateWaitingTime, float surgeAverageWaitingTime, float surgeAverageValueOfTime, float surgeAverageNumIdleDrivers) = GetWaitingTime(surgeCities);
         Debug.Log("Average static waiting time: " + FormatUtils.formatTime(staticAverageWaitingTime));
         Debug.Log("Average surge waiting time: " + FormatUtils.formatTime(surgeAverageWaitingTime));
         Debug.Log("Average static value of time: " + staticAverageValueOfTime);
         Debug.Log("Average surge value of time: " + surgeAverageValueOfTime);
+        Debug.Log("Average static num idle drivers: " + staticAverageNumIdleDrivers);
+        Debug.Log("Average surge num idle drivers: " + surgeAverageNumIdleDrivers);
+
+        // Add together all idle driver data points from all cities into one array
+        int[] staticNumIdleDrivers = staticCities.SelectMany(city => city.idleDriversData).ToArray();
+        if (staticNumIdleDrivers.Length > 0)
+        {
+            float staticAverageNumIdleDrivers2 = (float)staticNumIdleDrivers.Average();
+            Debug.Log("Average static num idle drivers 2: " + staticAverageNumIdleDrivers2);
+        }
+
+        int[] surgeNumIdleDrivers = surgeCities.SelectMany(city => city.idleDriversData).ToArray();
+        if (surgeNumIdleDrivers.Length > 0)
+        {
+            float surgeAverageNumIdleDrivers2 = (float)surgeNumIdleDrivers.Average();
+            Debug.Log("Average surge num idle drivers 2: " + surgeAverageNumIdleDrivers2);
+        }
 
         // This calculation is not entirely correct, since waiting time and value of time are not independent.
         float staticAverageWaitingCost = staticAverageWaitingTime * staticAverageValueOfTime;
@@ -224,8 +244,6 @@ public class DataInspection : MonoBehaviour
         float aggregateStaticWaitingCost = staticAverageWaitingCost * numStaticPassengersWhoGotRides;
         float aggregateSurgeWaitingCostCorrected = surgeAverageWaitingCostCorrected * numStaticPassengersWhoGotRides;
         float utilityDifferenceDueToTimeCost = aggregateStaticWaitingCost - aggregateSurgeWaitingCostCorrected;
-        Debug.Log("Average static waiting time: " + FormatUtils.formatTime(staticAverageWaitingTime));
-        Debug.Log("Average surge waiting time: " + FormatUtils.formatTime(surgeAverageWaitingTime));
         Debug.Log("Average static waiting cost: " + staticAverageWaitingCost);
         Debug.Log("Average surge waiting cost: " + surgeAverageWaitingCostCorrected);
         Debug.Log("Utility difference due to time cost: " + utilityDifferenceDueToTimeCost);

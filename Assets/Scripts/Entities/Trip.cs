@@ -25,6 +25,7 @@ public class TripCreatedData
     public Fare fare { get; set; }
     public float expectedPickupTime { get; set; }
     public int numTripsAssigned { get; set; }
+    public int numIdleDrivers { get; set; }
 }
 
 public class TripCreatedPassengerData

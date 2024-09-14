@@ -47,7 +47,7 @@ public class PassengerIntroSceneDirector : MonoBehaviour
         StartCoroutine(MoveCamera(closeUpCameraPosition, Quaternion.Euler(15, 0, 0), 2.5f));
         yield return new WaitForSeconds(1f);
         PassengerPerson person = new PassengerPerson(passengerPosition, simSettings, passengerSpawnRandom, 100);
-        float hourlyIncome = 16.00f;
+        float hourlyIncome = 6.00f;
         float timeSensitivity = 1.70f;
         float valueOfTime = 10 * Mathf.Sqrt(hourlyIncome) * timeSensitivity;
         TripOption walkingSubstitute = new TripOption
