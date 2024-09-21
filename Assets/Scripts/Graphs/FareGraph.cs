@@ -93,7 +93,6 @@ public class FareGraph : MonoBehaviour
 
 
         StartCoroutine(Schedule());
-
     }
 
     private void Update()
