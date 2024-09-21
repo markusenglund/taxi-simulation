@@ -7,12 +7,11 @@ class WaitingTimeDiagram(Scene):
     def construct(self):
       self.camera.background_color = "#444444"
       
-      values=[ 0, 0, 0, 0, 0, 0]
-      intermediate_values = [ 0, 11.3, 9.5, 9.1, 8.0, 6.2]
-      # Values gathered from the simulation
-      final_values = [17.9, 11.3, 9.5, 9.1, 8.0, 6.2]
-      bar_names = ["0", "1", "2", "3", "4", "5"]      
-      # bar_names = ["0", "1", "2", "3", "4", "5",]
+      values=[ 0, 0, 0, 0, 0, 0, 0]
+      intermediate_values = [ 0, 11.6, 9.9, 8.7, 8.2, 7.0, 6.2]
+      # Values gathered from the simulation - specifically 027_SurplusSimulation with excess demand settings
+      final_values = [ 19.1, 11.6, 9.9, 8.7, 8.2, 7.0, 6.2]
+      bar_names = ["0", "1", "2", "3", "4", "5", "6"]      
       chart = BarChart(
           values,
           bar_names=bar_names,
@@ -33,7 +32,7 @@ class WaitingTimeDiagram(Scene):
       ).shift(UP*0)
       xLabel = chart.get_x_axis_label(Text("# idle drivers when ride is requested", font_size=30)).shift(LEFT*3.5 + DOWN*1.2)
       yLabel = chart.get_y_axis_label(Text("Average waiting time (minutes)", font_size=26)).shift(LEFT*3.8 + DOWN*3.1).rotate(90 * DEGREES)
-      heading = Text("Wait times go down with more idle drivers", font_size = 40).shift(UP*3.5)
+      heading = Text("Waiting times are lower with more idle drivers", font_size = 40).shift(UP*3.5)
       self.add(heading)
       # axisLabels = chart.get_axis_labels(Text("Available drivers"), Text("Waiting time (minutes)"))
       self.add(chart, xLabel)
